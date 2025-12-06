@@ -1,8 +1,4 @@
 <template>
-  <!-- <link
-    href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC&display=swap"
-    rel="stylesheet"
-  /> -->
   <div id="vueapp">
     <div class="product-serve">
       <input class="find" type="text" placeholder="喝一杯靜謐的午後時光" />

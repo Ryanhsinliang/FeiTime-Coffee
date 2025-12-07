@@ -740,42 +740,68 @@
   }
 
   @media (768px <= width < 1024px) {
-    .find {
+    /* .find {
       font-size: 20px;
       padding: 8px 18px;
       border-radius: 8px;
+    } */
+
+    .find {
+      @apply text-[20px] py-[8px] px-[18px] rounded-[8px];
     }
 
+    /* .category {
+      padding: 4px 12px;
+    } */
     .category {
-      padding: 4px 12px;
+      @apply px-[12px];
     }
 
+    /* .roast {
+      padding: 4px 12px;
+    } */
     .roast {
-      padding: 4px 12px;
+      @apply px-[12px];
     }
 
+    /* .source {
+      padding: 4px 12px;
+    } */
     .source {
-      padding: 4px 12px;
+      @apply px-[12px];
     }
 
+    /* .flavor {
+      padding: 4px 12px;
+    } */
     .flavor {
-      padding: 4px 12px;
+      @apply px-[12px];
     }
 
+    /* .money-area {
+      padding: 4px 12px;
+    } */
     .money-area {
-      padding: 4px 12px;
+      @apply px-[12px];
     }
 
-    .sort {
+    /* .sort {
       margin-left: 6%;
       margin-right: 6%;
+    } */
+    .sort {
+      @apply mx-[6%];
     }
 
-    .product-pic-area {
+    /* .product-pic-area {
       margin: 0 6%;
       width: 88%;
       gap: 60px;
       grid-template-columns: repeat(2, 1fr);
+    } */
+
+    .product-pic-area {
+      @apply mx-[6%] w-[88%] gap-[60px] grid-cols-2;
     }
   }
 

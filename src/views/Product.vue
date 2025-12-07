@@ -423,64 +423,99 @@
     @apply pr-[8px] leading-[30px];
   }
 
-  .category {
+  /* .category {
     padding: 4px 24px;
     display: flex;
     font-size: 20px;
     flex-direction: column;
+  } */
+
+  .category {
+    @apply flex py-[4px] px-[24px] text-[20px] flex-col;
   }
+
+  /* .category-word {
+    display: flex;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 12px;
+    padding-right: 10px;
+    background-color: #cfbde8;
+  } */
 
   .category-word {
-    display: flex;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    padding-left: 12px;
-    padding-right: 10px;
-    background-color: #cfbde8;
+    @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#cfbde8];
   }
 
-  .category-choose {
+  /* .category-choose {
     border: 4px solid #cfbde8;
     padding: 0 4px;
+  } */
+
+  .category-choose {
+    @apply px-[4px] border-[#cfbde8] border-solid border-4;
   }
+
+  /* .category-bg {
+    background-color: #cfbde8;
+  } */
 
   .category-bg {
-    background-color: #cfbde8;
+    @apply bg-[#cfbde8];
   }
 
-  .roast {
+  /* .roast {
     padding: 4px 24px;
     display: flex;
     font-size: 20px;
     flex-direction: column;
+  } */
+
+  .roast {
+    @apply flex py-[4px] px-[24px] text-[20px] flex-col;
   }
 
-  .roast-word {
+  /* .roast-word {
     display: flex;
     padding-top: 4px;
     padding-bottom: 4px;
     padding-left: 12px;
     padding-right: 10px;
     background-color: var(--soft-brown);
+  } */
+  .roast-word {
+    @apply flex py-[4px] pl-[12px] pr-[10px] bg-[var(--soft-brown)];
   }
 
-  .roast-choose {
+  /* .roast-choose {
     border: 4px solid var(--soft-brown);
     padding: 0 4px;
+  } */
+
+  .roast-choose {
+    @apply px-[4px] border-[var(--soft-brown)] border-solid border-4;
   }
+
+  /* .roast-bg {
+    background-color: var(--soft-brown);
+  } */
 
   .roast-bg {
-    background-color: var(--soft-brown);
+    @apply bg-[var(--soft-brown)];
   }
 
-  .source {
+  /* .source {
     padding: 4px 24px;
     display: flex;
     font-size: 20px;
     flex-direction: column;
+  } */
+
+  .source {
+    @apply flex py-[4px] px-[24px] text-[20px] flex-col;
   }
 
-  .source-word {
+  /* .source-word {
     display: flex;
     padding-top: 4px;
     padding-bottom: 4px;
@@ -488,68 +523,110 @@
     padding-right: 10px;
     background-color: var(--green-gray);
     color: #000000;
+  } */
+  .source-word {
+    @apply flex py-[4px] pl-[12px] pr-[10px] bg-[var(--green-gray)] text-black;
   }
 
-  .source-choose {
+  /* .source-choose {
     border: 4px solid var(--green-gray);
     padding-left: 4px;
     padding-right: 4px;
+  } */
+
+  .source-choose {
+    @apply px-[4px] border-[var(--green-gray)] border-solid border-4;
   }
+
+  /* .source-bg {
+    background-color: var(--green-gray);
+  } */
 
   .source-bg {
-    background-color: var(--green-gray);
+    @apply bg-[var(--green-gray)];
   }
 
-  .flavor {
+  /* .flavor {
     padding: 4px 24px;
     display: flex;
     font-size: 20px;
     flex-direction: column;
+  } */
+
+  .flavor {
+    @apply flex py-[4px] px-[24px] text-[20px] flex-col;
   }
 
-  .flavor-word {
+  /* .flavor-word {
     display: flex;
     padding-top: 4px;
     padding-bottom: 4px;
     padding-left: 12px;
     padding-right: 10px;
     background-color: #d8c2c3;
+  } */
+  .flavor-word {
+    @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#d8c2c3];
   }
 
-  .flavor-choose {
+  /* .flavor-choose {
     border: 4px solid #d8c2c3;
     padding-left: 4px;
     padding-right: 4px;
+  } */
+
+  .flavor-choose {
+    @apply px-[4px] border-[#d8c2c3] border-solid border-4;
   }
+
+  /* .flavor-bg {
+    background-color: #d8c2c3;
+  } */
 
   .flavor-bg {
-    background-color: #d8c2c3;
+    @apply bg-[#d8c2c3];
   }
 
-  .money-area {
+  /* .money-area {
     padding: 4px 24px;
     display: flex;
     font-size: 20px;
     flex-direction: column;
+  } */
+
+  .money-area {
+    @apply flex py-[4px] px-[24px] text-[20px] flex-col;
   }
 
-  .money-area-word {
+  /* .money-area-word {
     display: flex;
     padding-top: 4px;
     padding-bottom: 4px;
     padding-left: 12px;
     padding-right: 10px;
     background-color: #c4ced6;
+  } */
+
+  .money-area-word {
+    @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#c4ced6];
   }
 
-  .money-area-choose {
+  /* .money-area-choose {
     border: 4px solid #c4ced6;
     padding-left: 4px;
     padding-right: 4px;
+  } */
+
+  .money-area-choose {
+    @apply px-[4px] border-[#c4ced6] border-solid border-4;
   }
 
-  .money-area-bg {
+  /* .money-area-bg {
     background-color: #c4ced6;
+  } */
+
+  .money-area-bg {
+    @apply bg-[#c4ced6];
   }
 
   .sort {

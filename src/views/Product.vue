@@ -365,19 +365,6 @@
     outline: none;
   }
 
-  /* select {  移除下拉式選單三角形
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  } */
-
-  /* 加入自己做的三角形 的方法
-  padding: 8px 30px 8px 10px;   右側留空給箭頭 
-  background: url('arrow-down.svg') no-repeat right center;  自訂箭頭 
-  background-size: 16px 16px;     調整大小 
-  border: 1px solid #ccc;
-  border-radius: 4px; */
-
   select:focus {
     outline: none;
     box-shadow: none;
@@ -392,7 +379,7 @@
     color: var(--light-gray);
   }
 
-  .product-serve {
+  /* .product-serve {
     margin-top: 100px;
     margin-bottom: 80px;
     margin-left: 3%;
@@ -400,25 +387,40 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+  } */
+
+  .product-serve {
+    @apply mt-[100px] mb-[80px] mx-[3%] flex flex-col items-center;
   }
 
-  .find {
-    display: block;
+  /* .find {
     border: 2px solid var(--green-gray);
     width: 70%;
     font-size: 24px;
     padding: 12px 24px;
     border-radius: 12px;
+  } */
+
+  .find {
+    @apply border-2 border-solid border-[var(--green-gray)] w-[70%] text-[24px] py-[12px] px-[24px] rounded-[12px];
   }
 
-  .find-filter {
+  /* .find-filter {
     margin-top: 12px;
     display: flex;
+  } */
+
+  .find-filter {
+    @apply mt-[12px] flex;
   }
 
-  .IC-filter-list {
+  /* .IC-filter-list {
     line-height: 30px;
     padding-right: 8px;
+  } */
+
+  .IC-filter-list {
+    @apply pr-[8px] leading-[30px];
   }
 
   .category {

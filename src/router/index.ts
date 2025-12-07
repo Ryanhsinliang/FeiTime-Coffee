@@ -1,7 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '@/views/HomePage.vue'
-import Product from '@/views/Product.vue'
-import ProductDetail from '@/views/ProductDetail.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import HomePage from '@/views/HomePage/HomePage.vue';
+import Product from '@/views/Product/Product.vue';
+import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
+import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
 
 const routes = [
   {
@@ -19,11 +20,16 @@ const routes = [
     name: 'ProductDetail',
     component: ProductDetail,
   },
-]
+  {
+    path: '/coffee-id-test',
+    name: 'CoffeeIdTest',
+    component: CoffeeIdTest,
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-})
+});
 
-export default router
+export default router;

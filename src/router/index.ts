@@ -3,7 +3,7 @@ import HomePage from '@/views/HomePage/HomePage.vue';
 import Product from '@/views/Product/Product.vue';
 import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
 import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
-
+import CoffeeIdTestCard from '@/views/CoffeeIdTest/CoffeeIdTestCard.vue';
 const routes = [
   {
     path: '/', // URL 地址，使用者訪問此頁面時的路徑
@@ -24,6 +24,11 @@ const routes = [
     path: '/coffee-id-test',
     name: 'CoffeeIdTest',
     component: CoffeeIdTest,
+  },
+  {
+    path: '/coffee-id-test-card',
+    name: 'CoffeeIdTestCard',
+    component: CoffeeIdTestCard,
   },
 ];
 

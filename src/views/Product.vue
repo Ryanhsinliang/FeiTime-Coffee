@@ -2,11 +2,12 @@
   <div id="vueapp">
     <div class="mt-[100px] mb-[80px] mx-[3%] flex flex-col items-center">
       <input
-        class="border-2 border-solid border-[var(--green-gray)] w-[70%] text-[24px] py-[12px] px-[24px] rounded-[12px]"
+        class="border-2 border-solid border-[var(--green-gray)] lg:w-[70%] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:w-[70%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] w-[88%] text-[20px] py-[8px] px-[18px] rounded-[8px]"
         type="text"
         placeholder="喝一杯靜謐的午後時光"
       />
-      <div class="mt-[12px] flex">
+      <!-- TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO -->
+      <div class="mt-[12px] flex lg:flex-row md:flex-row flex-col">
         <!-- category start -->
         <div class="flex py-[4px] px-[24px] text-[20px] flex-col">
           <div class="flex py-[4px] pl-[12px] pr-[10px] bg-[#cfbde8]">
@@ -380,6 +381,13 @@ export default {};
 
 /* Font-awesome */
 /* https://fontawesome.com/search?ic=free-collection */
+
+/* 
+先寫不會變動的樣式
+再用lg: 寫電腦版
+再用md: 寫平板
+手機版 不用特別寫 
+*/
 
 :root {
   --main-color: #faf9ee;
@@ -782,6 +790,7 @@ input:focus {
   @apply text-[28px] font-bold;
 } */
 
+/* md:xxxxx max-lg:xxxxx */
 @media (768px <= width < 1024px) {
   /* .find {
       font-size: 20px;
@@ -789,9 +798,9 @@ input:focus {
       border-radius: 8px;
     } */
 
-  .find {
+  /* .find {
     @apply text-[20px] py-[8px] px-[18px] rounded-[8px];
-  }
+  } */
 
   /* .category {
       padding: 4px 12px;
@@ -855,9 +864,9 @@ input:focus {
       padding: 8px 18px;
       border-radius: 8px;
     } */
-  .find {
+  /* .find {
     @apply w-[88%] text-[20px] py-[8px] px-[18px] rounded-[8px];
-  }
+  } */
 
   /* .find-filter {
       flex-direction: column;

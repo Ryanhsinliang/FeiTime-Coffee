@@ -6,9 +6,12 @@
         type="text"
         placeholder="喝一杯靜謐的午後時光"
       />
-      <div class="mt-[12px] flex lg:flex-row md:flex-row flex-col">
+      <div
+        class="mt-[12px] w-[88%] flex flex-col md:w-auto md:mx-0 md:flex-row lg:w-auto lg:mx-0 lg:flex-row lg:justify-center"
+      >
+        <!-- TODOTODO   TODOTODO   TODOTODO   TODOTODO   TODOTODO   TODOTODO   TODOTODO   TODOTODO   TODOTODO   TODOTODO   TODOTODO   TODOTODO   TODOTODO -->
         <!-- category start -->
-        <div class="flex py-[4px] px-[24px] text-[20px] flex-col">
+        <div class="flex py-[4px] px-[24px] text-[20px] flex-col lg:w-[200px]">
           <div class="flex py-[4px] pl-[12px] pr-[10px] bg-[#cfbde8]">
             <i class="fa-solid fa-store pr-[8px] leading-[30px]"></i>
             <p>類別</p>

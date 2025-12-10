@@ -157,11 +157,13 @@
           </select>
         </div>
         <!-- money-area end -->
+
+        <!-- TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO -->
       </div>
     </div>
-    <div class="sort">
-      <div class="sort-set">
-        <label class="sort-title" for="hot-sale">
+    <div class="flex mx-[3%] mb-[12px] text-[20px]">
+      <div class="flex">
+        <label class="flex mr-[4px]" for="hot-sale">
           <i class="fa-solid fa-star IC-sort"></i>
           <p>熱門商品</p>
         </label>
@@ -170,8 +172,8 @@
         </div>
       </div>
 
-      <div class="sort-set">
-        <label class="sort-title" for="low-to-high">
+      <div class="flex">
+        <label class="flex mr-[4px]" for="low-to-high">
           <i class="fa-solid fa-arrow-trend-up IC-sort"></i>
           <p>價錢低到高</p>
         </label>
@@ -180,8 +182,8 @@
         </div>
       </div>
 
-      <div class="sort-set">
-        <label class="sort-title" for="high-to-low">
+      <div class="flex">
+        <label class="flex mr-[4px]" for="high-to-low">
           <i class="fa-solid fa-arrow-trend-down IC-sort"></i>
           <p>價錢高到低</p>
         </label>
@@ -687,26 +689,26 @@ input:focus {
     font-size: 20px;
   } */
 
-.sort {
+/* .sort {
   @apply flex mx-[3%] mb-[12px] text-[20px];
-}
+} */
 
 /* .sort-set {
     display: flex;
   } */
 
-.sort-set {
+/* .sort-set {
   @apply flex;
-}
+} */
 
 /* .sort-title {
     display: flex;
     margin-right: 4px;
   } */
 
-.sort-title {
+/* .sort-title {
   @apply flex mr-[4px];
-}
+} */
 
 /* .IC-sort {
     line-height: 30px;

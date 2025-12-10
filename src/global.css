@@ -1,0 +1,15 @@
+/* 全站共用 class 或樣式 */
+/* @apply 是 Tailwind 提供的工具，可以在 CSS 裡套用 Tailwind class。
+套用字型
+body {
+  font-family: 'LXGW WenKai TC', sans-serif;
+}
+共用按鈕樣式
+.btn-primary {
+  @apply bg-blue-500 text-white px-4 py-2 rounded;
+}
+
+共用卡片樣式
+.card {
+  @apply border p-4 rounded shadow-md bg-white;
+} */

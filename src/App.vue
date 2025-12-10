@@ -1,7 +1,23 @@
-<script setup lang="ts"></script>
-
 <template>
-  <router-view></router-view>
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <Header></Header>
+
+    <!-- 主要頁面內容 -->
+    <main class="flex-1">
+      <router-view />
+    </main>
+
+    <!-- Footer -->
+    <Footer></Footer>
+  </div>
 </template>
 
-<style scoped></style>
+<script setup>
+  import Header from './components/Header.vue';
+  import Footer from './components/Footer.vue';
+</script>
+
+<style>
+  /* App 全局樣式放這裡 */
+</style>

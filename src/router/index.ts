@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '@/views/HomePage/HomePage.vue';
 import Product from '@/views/Product/Product.vue';
 import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
-import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
+import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeSimulator.vue';
+import CoffeeSimulator from '@/views/CoffeeSimulator/CoffeeSimulator.vue';
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/coffee-id-test',
     name: 'CoffeeIdTest',
     component: CoffeeIdTest,
+  },
+  {
+    path: '/coffee-simulator',
+    name: 'CoffeeSimulator',
+    component: CoffeeSimulator,
   },
 ];
 

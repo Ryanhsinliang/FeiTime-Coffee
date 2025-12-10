@@ -1,57 +1,85 @@
 <template>
   <div id="vueapp">
-    <div class="product-serve">
-      <input class="find" type="text" placeholder="喝一杯靜謐的午後時光" />
-      <div class="find-filter">
+    <div class="mt-[100px] mb-[80px] mx-[3%] flex flex-col items-center">
+      <input
+        class="border-2 border-solid border-[var(--green-gray)] w-[70%] text-[24px] py-[12px] px-[24px] rounded-[12px]"
+        type="text"
+        placeholder="喝一杯靜謐的午後時光"
+      />
+      <div class="mt-[12px] flex">
         <!-- category start -->
-        <div class="category">
-          <div class="category-word">
-            <i class="fa-solid fa-store IC-filter-list"></i>
+        <div class="flex py-[4px] px-[24px] text-[20px] flex-col">
+          <div class="flex py-[4px] pl-[12px] pr-[10px] bg-[#cfbde8]">
+            <i class="fa-solid fa-store pr-[8px] leading-[30px]"></i>
             <p>類別</p>
           </div>
-          <select class="category-choose">
+          <select class="px-[4px] border-[#cfbde8] border-solid border-4">
             <option
               disabled
               selected
               value=""
-              class="disabled-word category-bg"
+              class="color-[var(--light-gray)] bg-[#cfbde8]"
             >
               請選擇
             </option>
-            <option class="category-bg" value="coffee-beans">精選咖啡豆</option>
-            <option class="category-bg" value="drip-coffee">輕巧濾掛包</option>
-            <option class="category-bg" value="appliance">精良器具</option>
+            <option class="bg-[#cfbde8]" value="coffee-beans">
+              精選咖啡豆
+            </option>
+            <option class="bg-[#cfbde8]" value="drip-coffee">輕巧濾掛包</option>
+            <option class="bg-[#cfbde8]" value="appliance">精良器具</option>
           </select>
         </div>
         <!-- category end -->
 
         <!-- roast start -->
-        <div class="roast">
-          <div class="roast-word">
-            <i class="fa-solid fa-fire IC-filter-list"></i>
+        <div class="flex py-[4px] px-[24px] text-[20px] flex-col">
+          <div class="flex py-[4px] pl-[12px] pr-[10px] bg-[var(--soft-brown)]">
+            <i class="fa-solid fa-fire pr-[8px] leading-[30px]"></i>
             <p>焙度</p>
           </div>
-          <select class="roast-choose">
-            <option disabled selected value="" class="disabled-word roast-bg">
+          <select
+            class="px-[4px] border-[var(--soft-brown)] border-solid border-4"
+          >
+            <option
+              disabled
+              selected
+              value=""
+              class="color-[var(--light-gray)] bg-[var(--soft-brown)]"
+            >
               請選擇
             </option>
-            <option class="roast-bg" value="light-roast">淺焙</option>
-            <option class="roast-bg" value="medium-roast">中焙</option>
-            <option class="roast-bg" value="medium-dark-roast">中深焙</option>
-            <option class="roast-bg" value="dark-roast">深焙</option>
+            <option class="bg-[var(--soft-brown)]" value="light-roast">
+              淺焙
+            </option>
+            <option class="bg-[var(--soft-brown)]" value="medium-roast">
+              中焙
+            </option>
+            <option class="bg-[var(--soft-brown)]" value="medium-dark-roast">
+              中深焙
+            </option>
+            <option class="bg-[var(--soft-brown)]" value="dark-roast">
+              深焙
+            </option>
           </select>
         </div>
         <!-- roast end -->
-
+        <!-- TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO
+TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO
+TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO -->
         <!-- source start -->
         <div class="source">
           <div class="source-word">
-            <i class="fa-solid fa-earth-americas IC-filter-list"></i>
+            <i class="fa-solid fa-earth-americas pr-[8px] leading-[30px]"></i>
             <p>產地</p>
           </div>
 
           <select class="source-choose">
-            <option disabled selected value="" class="disabled-word source-bg">
+            <option
+              disabled
+              selected
+              value=""
+              class="color-[var(--light-gray)] source-bg"
+            >
               請選擇
             </option>
             <option class="source-bg" value="Ethiopia">衣索比亞</option>
@@ -69,11 +97,16 @@
         <!-- processing start -->
         <div class="flavor">
           <div class="flavor-word">
-            <i class="fa-solid fa-mug-hot IC-filter-list"></i>
+            <i class="fa-solid fa-mug-hot pr-[8px] leading-[30px]"></i>
             <p>風味</p>
           </div>
           <select class="flavor-choose">
-            <option disabled selected value="" class="disabled-word flavor-bg">
+            <option
+              disabled
+              selected
+              value=""
+              class="color-[var(--light-gray)] flavor-bg"
+            >
               請選擇
             </option>
             <option class="flavor-bg" value="orange">柑橘</option>
@@ -89,7 +122,9 @@
         <!-- money-area start -->
         <div class="money-area">
           <div class="money-area-word">
-            <i class="fa-solid fa-money-bill-1-wave IC-filter-list"></i>
+            <i
+              class="fa-solid fa-money-bill-1-wave pr-[8px] leading-[30px]"
+            ></i>
             <p>價錢區間</p>
           </div>
           <select class="money-area-choose">
@@ -97,7 +132,7 @@
               disabled
               selected
               value=""
-              class="disabled-word money-area-bg"
+              class="color-[var(--light-gray)] money-area-bg"
             >
               請選擇
             </option>
@@ -329,57 +364,58 @@
 </template>
 
 <script>
-  export default {};
+export default {};
 </script>
 
 <style>
-  /* Tailwind 3.4 官網 */
-  /* https://v3.tailwindcss.com/ */
+/* Tailwind 3.4 官網 */
+/* https://v3.tailwindcss.com/ */
 
-  /* Font-awesome */
-  /* https://fontawesome.com/search?ic=free-collection */
+/* Font-awesome */
+/* https://fontawesome.com/search?ic=free-collection */
 
-  :root {
-    --main-color: #faf9ee;
-    /* 淡黃 */
-    --green-gray: #a2af9b;
-    /* 抹茶綠 */
-    --soft-brown: #dccfc0;
-    /* 亮咖啡 */
-    --light-gray: #eeeeee;
-    /* 淡灰 */
-  }
+:root {
+  --main-color: #faf9ee;
+  /* 淡黃 */
+  --green-gray: #a2af9b;
+  /* 抹茶綠 */
+  --soft-brown: #dccfc0;
+  /* 亮咖啡 */
+  --light-gray: #eeeeee;
+  /* 淡灰 */
+}
 
-  * {
-    font-family: "LXGW WenKai TC";
-    color: #222222;
-  }
+* {
+  font-family: "LXGW WenKai TC";
+  color: #222222;
+}
 
-  body {
-    background-color: var(--main-color);
-  }
+body {
+  background-color: var(--main-color);
+}
 
-  a {
-    color: inherit;
-    text-decoration: none;
-    outline: none;
-  }
+a {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
 
-  select:focus {
-    outline: none;
-    box-shadow: none;
-  }
+select:focus {
+  outline: none;
+  box-shadow: none;
+}
 
-  input:focus {
-    outline: none;
-    box-shadow: none;
-  }
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
 
-  .disabled-word {
-    color: var(--light-gray);
-  }
+/* .disabled-word {
+  color: var(--light-gray);
+} */
+/* color-[var(--light-gray)] */
 
-  /* .product-serve {
+/* .product-serve {
     margin-top: 100px;
     margin-bottom: 80px;
     margin-left: 3%;
@@ -389,11 +425,11 @@
     align-items: center;
   } */
 
-  .product-serve {
-    @apply mt-[100px] mb-[80px] mx-[3%] flex flex-col items-center;
-  }
+/* .product-serve {
+  @apply mt-[100px] mb-[80px] mx-[3%] flex flex-col items-center;
+} */
 
-  /* .find {
+/* .find {
     border: 2px solid var(--green-gray);
     width: 70%;
     font-size: 24px;
@@ -401,40 +437,40 @@
     border-radius: 12px;
   } */
 
-  .find {
-    @apply border-2 border-solid border-[var(--green-gray)] w-[70%] text-[24px] py-[12px] px-[24px] rounded-[12px];
-  }
+/* .find {
+  @apply border-2 border-solid border-[var(--green-gray)] w-[70%] text-[24px] py-[12px] px-[24px] rounded-[12px];
+} */
 
-  /* .find-filter {
+/* .find-filter {
     margin-top: 12px;
     display: flex;
   } */
 
-  .find-filter {
-    @apply mt-[12px] flex;
-  }
+/* .find-filter {
+  @apply mt-[12px] flex;
+} */
 
-  /* .IC-filter-list {
+/* .IC-filter-list {
     line-height: 30px;
     padding-right: 8px;
   } */
 
-  .IC-filter-list {
-    @apply pr-[8px] leading-[30px];
-  }
+/* .IC-filter-list {
+  @apply pr-[8px] leading-[30px];
+} */
 
-  /* .category {
+/* .category {
     padding: 4px 24px;
     display: flex;
     font-size: 20px;
     flex-direction: column;
   } */
 
-  .category {
-    @apply flex py-[4px] px-[24px] text-[20px] flex-col;
-  }
+/* .category {
+  @apply flex py-[4px] px-[24px] text-[20px] flex-col;
+} */
 
-  /* .category-word {
+/* .category-word {
     display: flex;
     padding-top: 4px;
     padding-bottom: 4px;
@@ -443,39 +479,39 @@
     background-color: #cfbde8;
   } */
 
-  .category-word {
-    @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#cfbde8];
-  }
+/* .category-word {
+  @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#cfbde8];
+} */
 
-  /* .category-choose {
+/* .category-choose {
     border: 4px solid #cfbde8;
     padding: 0 4px;
   } */
 
-  .category-choose {
-    @apply px-[4px] border-[#cfbde8] border-solid border-4;
-  }
+/* .category-choose {
+  @apply px-[4px] border-[#cfbde8] border-solid border-4;
+} */
 
-  /* .category-bg {
+/* .category-bg {
     background-color: #cfbde8;
   } */
 
-  .category-bg {
-    @apply bg-[#cfbde8];
-  }
+/* .category-bg {
+  @apply bg-[#cfbde8];
+} */
 
-  /* .roast {
+/* .roast {
     padding: 4px 24px;
     display: flex;
     font-size: 20px;
     flex-direction: column;
   } */
 
-  .roast {
-    @apply flex py-[4px] px-[24px] text-[20px] flex-col;
-  }
+/* .roast {
+  @apply flex py-[4px] px-[24px] text-[20px] flex-col;
+} */
 
-  /* .roast-word {
+/* .roast-word {
     display: flex;
     padding-top: 4px;
     padding-bottom: 4px;
@@ -483,39 +519,39 @@
     padding-right: 10px;
     background-color: var(--soft-brown);
   } */
-  .roast-word {
-    @apply flex py-[4px] pl-[12px] pr-[10px] bg-[var(--soft-brown)];
-  }
+/* .roast-word {
+  @apply flex py-[4px] pl-[12px] pr-[10px] bg-[var(--soft-brown)];
+} */
 
-  /* .roast-choose {
+/* .roast-choose {
     border: 4px solid var(--soft-brown);
     padding: 0 4px;
   } */
 
-  .roast-choose {
-    @apply px-[4px] border-[var(--soft-brown)] border-solid border-4;
-  }
+/* .roast-choose {
+  @apply px-[4px] border-[var(--soft-brown)] border-solid border-4;
+} */
 
-  /* .roast-bg {
+/* .roast-bg {
     background-color: var(--soft-brown);
   } */
 
-  .roast-bg {
-    @apply bg-[var(--soft-brown)];
-  }
+.roast-bg {
+  @apply bg-[var(--soft-brown)];
+}
 
-  /* .source {
+/* .source {
     padding: 4px 24px;
     display: flex;
     font-size: 20px;
     flex-direction: column;
   } */
 
-  .source {
-    @apply flex py-[4px] px-[24px] text-[20px] flex-col;
-  }
+.source {
+  @apply flex py-[4px] px-[24px] text-[20px] flex-col;
+}
 
-  /* .source-word {
+/* .source-word {
     display: flex;
     padding-top: 4px;
     padding-bottom: 4px;
@@ -524,40 +560,40 @@
     background-color: var(--green-gray);
     color: #000000;
   } */
-  .source-word {
-    @apply flex py-[4px] pl-[12px] pr-[10px] bg-[var(--green-gray)] text-black;
-  }
+.source-word {
+  @apply flex py-[4px] pl-[12px] pr-[10px] bg-[var(--green-gray)] text-black;
+}
 
-  /* .source-choose {
+/* .source-choose {
     border: 4px solid var(--green-gray);
     padding-left: 4px;
     padding-right: 4px;
   } */
 
-  .source-choose {
-    @apply px-[4px] border-[var(--green-gray)] border-solid border-4;
-  }
+.source-choose {
+  @apply px-[4px] border-[var(--green-gray)] border-solid border-4;
+}
 
-  /* .source-bg {
+/* .source-bg {
     background-color: var(--green-gray);
   } */
 
-  .source-bg {
-    @apply bg-[var(--green-gray)];
-  }
+.source-bg {
+  @apply bg-[var(--green-gray)];
+}
 
-  /* .flavor {
+/* .flavor {
     padding: 4px 24px;
     display: flex;
     font-size: 20px;
     flex-direction: column;
   } */
 
-  .flavor {
-    @apply flex py-[4px] px-[24px] text-[20px] flex-col;
-  }
+.flavor {
+  @apply flex py-[4px] px-[24px] text-[20px] flex-col;
+}
 
-  /* .flavor-word {
+/* .flavor-word {
     display: flex;
     padding-top: 4px;
     padding-bottom: 4px;
@@ -565,40 +601,40 @@
     padding-right: 10px;
     background-color: #d8c2c3;
   } */
-  .flavor-word {
-    @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#d8c2c3];
-  }
+.flavor-word {
+  @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#d8c2c3];
+}
 
-  /* .flavor-choose {
+/* .flavor-choose {
     border: 4px solid #d8c2c3;
     padding-left: 4px;
     padding-right: 4px;
   } */
 
-  .flavor-choose {
-    @apply px-[4px] border-[#d8c2c3] border-solid border-4;
-  }
+.flavor-choose {
+  @apply px-[4px] border-[#d8c2c3] border-solid border-4;
+}
 
-  /* .flavor-bg {
+/* .flavor-bg {
     background-color: #d8c2c3;
   } */
 
-  .flavor-bg {
-    @apply bg-[#d8c2c3];
-  }
+.flavor-bg {
+  @apply bg-[#d8c2c3];
+}
 
-  /* .money-area {
+/* .money-area {
     padding: 4px 24px;
     display: flex;
     font-size: 20px;
     flex-direction: column;
   } */
 
-  .money-area {
-    @apply flex py-[4px] px-[24px] text-[20px] flex-col;
-  }
+.money-area {
+  @apply flex py-[4px] px-[24px] text-[20px] flex-col;
+}
 
-  /* .money-area-word {
+/* .money-area-word {
     display: flex;
     padding-top: 4px;
     padding-bottom: 4px;
@@ -607,29 +643,29 @@
     background-color: #c4ced6;
   } */
 
-  .money-area-word {
-    @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#c4ced6];
-  }
+.money-area-word {
+  @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#c4ced6];
+}
 
-  /* .money-area-choose {
+/* .money-area-choose {
     border: 4px solid #c4ced6;
     padding-left: 4px;
     padding-right: 4px;
   } */
 
-  .money-area-choose {
-    @apply px-[4px] border-[#c4ced6] border-solid border-4;
-  }
+.money-area-choose {
+  @apply px-[4px] border-[#c4ced6] border-solid border-4;
+}
 
-  /* .money-area-bg {
+/* .money-area-bg {
     background-color: #c4ced6;
   } */
 
-  .money-area-bg {
-    @apply bg-[#c4ced6];
-  }
+.money-area-bg {
+  @apply bg-[#c4ced6];
+}
 
-  /* .sort {
+/* .sort {
     display: flex;
     margin-left: 3%;
     margin-right: 3%;
@@ -637,84 +673,84 @@
     font-size: 20px;
   } */
 
-  .sort {
-    @apply flex mx-[3%] mb-[12px] text-[20px];
-  }
+.sort {
+  @apply flex mx-[3%] mb-[12px] text-[20px];
+}
 
-  /* .sort-set {
+/* .sort-set {
     display: flex;
   } */
 
-  .sort-set {
-    @apply flex;
-  }
+.sort-set {
+  @apply flex;
+}
 
-  /* .sort-title {
+/* .sort-title {
     display: flex;
     margin-right: 4px;
   } */
 
-  .sort-title {
-    @apply flex mr-[4px];
-  }
+.sort-title {
+  @apply flex mr-[4px];
+}
 
-  /* .IC-sort {
+/* .IC-sort {
     line-height: 30px;
     margin-right: 4px;
   } */
 
-  .IC-sort {
-    @apply mr-[4px] leading-[30px];
-  }
+.IC-sort {
+  @apply mr-[4px] leading-[30px];
+}
 
-  /* .radio-center {
+/* .radio-center {
     display: flex;
     align-items: center;
   } */
 
-  .radio-center {
-    @apply flex items-center;
-  }
+.radio-center {
+  @apply flex items-center;
+}
 
-  /* .sort-radio {
+/* .sort-radio {
     margin-right: 24px;
     width: 20px;
     height: 20px;
     accent-color:var(--soft-brown);
   } */
 
-  .sort-radio {
-    @apply mr-[24px] w-[20px] h-[20px] accent-[var(--soft-brown)];
-  }
+.sort-radio {
+  @apply mr-[24px] w-[20px] h-[20px] accent-[var(--soft-brown)];
+}
 
-  /* .product-pic-area {
+/* .product-pic-area {
     display: grid;
     margin: 0 3%;
     width: 94%;
     gap: 80px;
     grid-template-columns: repeat(3, 1fr);
   } */
-  .product-pic-area {
-    @apply grid grid-cols-3 mx-[3%] w-[94%] gap-[80px];
-  }
+.product-pic-area {
+  @apply grid grid-cols-3 mx-[3%] w-[94%] gap-[80px];
+}
 
-  /* .product-card {
+/* .product-card {
     position: relative;
   } */
 
-  .product-card {
-    @apply relative;
-  }
+.product-card {
+  @apply relative;
+}
 
-  /* .product-pic {
+/* .product-pic {
     width: 100%;
   } */
 
-  .product-pic {
-    @apply w-[100%];
-  }
+.product-pic {
+  @apply w-[100%];
+}
 
-  /* .product-word {
+/* .product-word {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -726,179 +762,179 @@
     font-size: 20px;
   } */
 
-  .product-word {
-    @apply flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%];
-  }
+.product-word {
+  @apply flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%];
+}
 
-  /* .product-name {
+/* .product-name {
     font-size: 28px;
     font-weight: 700;
   } */
 
-  .product-name {
-    @apply text-[28px] font-bold;
-  }
+.product-name {
+  @apply text-[28px] font-bold;
+}
 
-  @media (768px <= width < 1024px) {
-    /* .find {
+@media (768px <= width < 1024px) {
+  /* .find {
       font-size: 20px;
       padding: 8px 18px;
       border-radius: 8px;
     } */
 
-    .find {
-      @apply text-[20px] py-[8px] px-[18px] rounded-[8px];
-    }
+  .find {
+    @apply text-[20px] py-[8px] px-[18px] rounded-[8px];
+  }
 
-    /* .category {
+  /* .category {
       padding: 4px 12px;
     } */
-    .category {
-      @apply px-[12px];
-    }
+  .category {
+    @apply px-[12px];
+  }
 
-    /* .roast {
+  /* .roast {
       padding: 4px 12px;
     } */
-    .roast {
-      @apply px-[12px];
-    }
+  .roast {
+    @apply px-[12px];
+  }
 
-    /* .source {
+  /* .source {
       padding: 4px 12px;
     } */
-    .source {
-      @apply px-[12px];
-    }
+  .source {
+    @apply px-[12px];
+  }
 
-    /* .flavor {
+  /* .flavor {
       padding: 4px 12px;
     } */
-    .flavor {
-      @apply px-[12px];
-    }
+  .flavor {
+    @apply px-[12px];
+  }
 
-    /* .money-area {
+  /* .money-area {
       padding: 4px 12px;
     } */
-    .money-area {
-      @apply px-[12px];
-    }
+  .money-area {
+    @apply px-[12px];
+  }
 
-    /* .sort {
+  /* .sort {
       margin-left: 6%;
       margin-right: 6%;
     } */
-    .sort {
-      @apply mx-[6%];
-    }
+  .sort {
+    @apply mx-[6%];
+  }
 
-    /* .product-pic-area {
+  /* .product-pic-area {
       margin: 0 6%;
       width: 88%;
       gap: 60px;
       grid-template-columns: repeat(2, 1fr);
     } */
 
-    .product-pic-area {
-      @apply mx-[6%] w-[88%] gap-[60px] grid-cols-2;
-    }
+  .product-pic-area {
+    @apply mx-[6%] w-[88%] gap-[60px] grid-cols-2;
   }
+}
 
-  @media (width < 768px) {
-    /* .find {
+@media (width < 768px) {
+  /* .find {
       width: 88%;
       font-size: 20px;
       padding: 8px 18px;
       border-radius: 8px;
     } */
-    .find {
-      @apply w-[88%] text-[20px] py-[8px] px-[18px] rounded-[8px];
-    }
+  .find {
+    @apply w-[88%] text-[20px] py-[8px] px-[18px] rounded-[8px];
+  }
 
-    /* .find-filter {
+  /* .find-filter {
       flex-direction: column;
       width: 88%;
     } */
-    .find-filter {
-      @apply w-[88%] flex-col;
-    }
+  .find-filter {
+    @apply w-[88%] flex-col;
+  }
 
-    /* .category {
+  /* .category {
       padding: 4px 12px;
     } */
-    .category {
-      @apply px-[12px];
-    }
+  .category {
+    @apply px-[12px];
+  }
 
-    /* .roast {
+  /* .roast {
       padding: 4px 12px;
     } */
-    .roast {
-      @apply px-[12px];
-    }
+  .roast {
+    @apply px-[12px];
+  }
 
-    /* .source {
+  /* .source {
       padding: 4px 12px;
     } */
-    .source {
-      @apply px-[12px];
-    }
+  .source {
+    @apply px-[12px];
+  }
 
-    /* .flavor {
+  /* .flavor {
       padding: 4px 12px;
     } */
-    .flavor {
-      @apply px-[12px];
-    }
+  .flavor {
+    @apply px-[12px];
+  }
 
-    /* .money-area {
+  /* .money-area {
       padding: 4px 12px;
     } */
-    .money-area {
-      @apply px-[12px];
-    }
+  .money-area {
+    @apply px-[12px];
+  }
 
-    /* .sort {
+  /* .sort {
       margin-left: 6%;
       margin-right: 6%;
     } */
 
-    .sort {
-      @apply mx-[6%];
-    }
+  .sort {
+    @apply mx-[6%];
+  }
 
-    /* .product-pic-area {
+  /* .product-pic-area {
       margin: 0 6%;
       width: 88%;
       gap: 60px;
       grid-template-columns: repeat(1, 1fr);
     } */
 
-    .product-pic-area {
-      @apply mx-[6%] w-[88%] gap-[60px] grid-cols-1;
-    }
+  .product-pic-area {
+    @apply mx-[6%] w-[88%] gap-[60px] grid-cols-1;
+  }
 
-    /* .sort {
+  /* .sort {
       flex-direction: column;
     } */
 
-    .sort {
-      @apply flex-col;
-    }
+  .sort {
+    @apply flex-col;
+  }
 
-    /* .product-word {
+  /* .product-word {
       font-size: 24px;
     } */
-    .product-word {
-      @apply text-[24px];
-    }
+  .product-word {
+    @apply text-[24px];
+  }
 
-    /* .product-name {
+  /* .product-name {
       font-size: 32px;
     } */
-    .product-name {
-      @apply text-[32px];
-    }
+  .product-name {
+    @apply text-[32px];
   }
+}
 </style>

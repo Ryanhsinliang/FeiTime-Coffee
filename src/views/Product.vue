@@ -226,12 +226,14 @@
       <!-- card start -->
       <a href="#" target="_blank">
         <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex2.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">臺灣</p>
-            <h3 class="product-name">阿里山好喝咖啡</h3>
-            <p class="price">$ 599</p>
+        <div class="relative">
+          <img class="w-[100%]" src="./pic/ex2.jpg" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>臺灣</p>
+            <h3 class="text-[28px] font-bold">阿里山好喝咖啡</h3>
+            <p>$ 599</p>
           </div>
         </div>
       </a>
@@ -240,12 +242,14 @@
       <!-- card start -->
       <a href="#" target="_blank">
         <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex3.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">日本</p>
-            <h3 class="product-name">茶の凪</h3>
-            <p class="price">¥ 9800</p>
+        <div class="relative">
+          <img class="w-[100%]" src="./pic/ex3.jpg" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>日本</p>
+            <h3 class="text-[28px] font-bold">茶の凪</h3>
+            <p>¥ 9800</p>
           </div>
         </div>
       </a>
@@ -254,12 +258,14 @@
       <!-- card start -->
       <a href="#" target="_blank">
         <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex2.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">臺灣</p>
-            <h3 class="product-name">阿里山好喝咖啡</h3>
-            <p class="price">$ 599</p>
+        <div class="relative">
+          <img class="w-[100%]" src="./pic/ex2.jpg" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>臺灣</p>
+            <h3 class="text-[28px] font-bold">阿里山好喝咖啡</h3>
+            <p>$ 599</p>
           </div>
         </div>
       </a>
@@ -268,12 +274,14 @@
       <!-- card start -->
       <a href="#" target="_blank">
         <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex3.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">日本</p>
-            <h3 class="product-name">茶の凪</h3>
-            <p class="price">¥ 9800</p>
+        <div class="relative">
+          <img class="w-[100%]" src="./pic/ex3.jpg" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>茶の凪</p>
+            <h3 class="text-[28px] font-bold">日本</h3>
+            <p>¥ 9800</p>
           </div>
         </div>
       </a>
@@ -282,12 +290,14 @@
       <!-- card start -->
       <a href="#" target="_blank">
         <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">USA USA</p>
-            <h3 class="product-name">Coffee Coffee Coffee</h3>
-            <p class="price">$ 70</p>
+        <div class="relative">
+          <img class="w-[100%]" src="./pic/ex.jpg" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>USA USA</p>
+            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
+            <p>$ 70</p>
           </div>
         </div>
       </a>
@@ -296,12 +306,14 @@
       <!-- card start -->
       <a href="#" target="_blank">
         <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex3.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">日本</p>
-            <h3 class="product-name">茶の凪</h3>
-            <p class="price">¥ 9800</p>
+        <div class="relative">
+          <img class="w-[100%]" src="./pic/ex.jpg" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>USA USA</p>
+            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
+            <p>$ 70</p>
           </div>
         </div>
       </a>
@@ -310,12 +322,14 @@
       <!-- card start -->
       <a href="#" target="_blank">
         <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex3.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">日本</p>
-            <h3 class="product-name">茶の凪</h3>
-            <p class="price">¥ 9800</p>
+        <div class="relative">
+          <img class="w-[100%]" src="./pic/ex.jpg" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>USA USA</p>
+            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
+            <p>$ 70</p>
           </div>
         </div>
       </a>
@@ -324,12 +338,14 @@
       <!-- card start -->
       <a href="#" target="_blank">
         <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex3.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">日本</p>
-            <h3 class="product-name">茶の凪</h3>
-            <p class="price">¥ 9800</p>
+        <div class="relative">
+          <img class="w-[100%]" src="./pic/ex.jpg" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>USA USA</p>
+            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
+            <p>$ 70</p>
           </div>
         </div>
       </a>
@@ -338,54 +354,14 @@
       <!-- card start -->
       <a href="#" target="_blank">
         <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex3.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">日本</p>
-            <h3 class="product-name">茶の凪</h3>
-            <p class="price">¥ 9800</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
-
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex3.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">日本</p>
-            <h3 class="product-name">茶の凪</h3>
-            <p class="price">¥ 9800</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
-
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex3.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">日本</p>
-            <h3 class="product-name">茶の凪</h3>
-            <p class="price">¥ 9800</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
-
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex3.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">日本</p>
-            <h3 class="product-name">茶の凪</h3>
-            <p class="price">¥ 9800</p>
+        <div class="relative">
+          <img class="w-[100%]" src="./pic/ex3.jpg" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>日本</p>
+            <h3 class="text-[28px] font-bold">茶の凪</h3>
+            <p>¥ 9800</p>
           </div>
         </div>
       </a>

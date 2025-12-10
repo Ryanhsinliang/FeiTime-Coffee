@@ -1,5 +1,5 @@
 <template>
-  <main id="app" class="relative">
+  <main class="relative">
     <!-- Product Guide Section -->
     <section class="flex flex-col lg:flex-row justify-center relative min-h-[600px]">
       <!-- Photo Gallery -->
@@ -130,12 +130,12 @@
             無論手沖還是義式沖煮,都能呈現均衡香氣與圓潤口感,特別適合喜歡酸度柔和、香氣明亮且口感平衡的咖啡愛好者。
           </p>
         </div>
-        <video src="./photo/video.mp4" autoplay muted loop class="w-full lg:w-[45%]"></video>
+        <video src="./assets/video.mp4" autoplay muted loop class="w-full lg:w-[45%]"></video>
       </div>
 
       <!-- Second Detail Block -->
       <div class="mt-28 flex flex-col lg:flex-row min-h-[400px]">
-        <img class="w-full lg:w-[45%]" src="./photo/coffee_bean.jpg" alt="coffee_bean" />
+        <img class="w-full lg:w-[45%]" src="./assets/coffee_bean.jpg" alt="coffee_bean" />
         <div class="w-full lg:w-[55%] p-[10vw]">
           <div>
             <button
@@ -187,12 +187,12 @@
           class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
         >
           <img
-            src="./photo/orange.png"
+            src="./assets/orange.png"
             alt="orange"
             class="min-w-full aspect-[2/3] w-full object-cover"
           />
           <img
-            src="./photo/coffee_cup.png"
+            src="./assets/coffee_cup.png"
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
@@ -201,12 +201,12 @@
           class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
         >
           <img
-            src="./photo/orange.png"
+            src="./assets/orange.png"
             alt="orange"
             class="min-w-full aspect-[2/3] w-full object-cover"
           />
           <img
-            src="./photo/coffee_cup.png"
+            src="./assets/coffee_cup.png"
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
@@ -215,12 +215,12 @@
           class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
         >
           <img
-            src="./photo/orange.png"
+            src="./assets/orange.png"
             alt="orange"
             class="min-w-full aspect-[2/3] w-full object-cover"
           />
           <img
-            src="./photo/coffee_cup.png"
+            src="./assets/coffee_cup.png"
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
@@ -229,12 +229,12 @@
           class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
         >
           <img
-            src="./photo/orange.png"
+            src="./assets/orange.png"
             alt="orange"
             class="min-w-full aspect-[2/3] w-full object-cover"
           />
           <img
-            src="./photo/coffee_cup.png"
+            src="./assets/coffee_cup.png"
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
@@ -243,12 +243,12 @@
           class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
         >
           <img
-            src="./photo/orange.png"
+            src="./assets/orange.png"
             alt="orange"
             class="min-w-full aspect-[2/3] w-full object-cover"
           />
           <img
-            src="./photo/coffee_cup.png"
+            src="./assets/coffee_cup.png"
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
@@ -256,9 +256,9 @@
         <div
           class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
         >
-          <img src="./photo/Jasmine.png" alt="Jasmine" class="w-[200px] aspect-square" />
+          <img src="./assets/Jasmine.png" alt="Jasmine" class="w-[200px] aspect-square" />
           <img
-            src="./photo/coffee_cup.png"
+            src="./assets/coffee_cup.png"
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
@@ -276,77 +276,48 @@
 </template>
 
 <script>
-  const { createApp } = Vue;
-
-  createApp({
+  export default {
     data() {
       return {
         currentIndex: 0,
         photos: [
-          {
-            name: 'bag',
-            image: './photo/coffee_bag2.png',
-          },
+          { name: 'bag', image: '@/views/ProductDetail/assets/coffee_bag2.png' },
           {
             name: 'beans',
-            image:
-              'https://images.unsplash.com/photo-1675306408031-a9aad9f23308?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            image: 'https://images.unsplash.com/photo-1675306408031-a9aad9f23308',
           },
-          {
-            name: 'flower',
-            image: './photo/coffee_cup2.jpg',
-          },
+          { name: 'flower', image: '@/assets/coffee_cup2.jpg' },
         ],
         isheartOpen: true,
         activeTab: 'roast',
         menuData: {
-          roast: {
-            title: '烘焙方式',
-            content: '淺中焙 / 手沖烘焙',
-          },
-          beans: {
-            title: '豆種組合',
-            content: '原生種 Arabica',
-          },
-          flavor: {
-            title: '風味特性',
-            content: ['果香', '花香', '圓潤平衡'],
-          },
+          roast: { title: '烘焙方式', content: '淺中焙 / 手沖烘焙' },
+          beans: { title: '豆種組合', content: '原生種 Arabica' },
+          flavor: { title: '風味特性', content: ['果香', '花香', '圓潤平衡'] },
         },
       };
     },
+
     computed: {
       currentPhoto() {
         return this.photos[this.currentIndex];
       },
     },
+
     methods: {
       prevPhoto() {
-        if (this.currentIndex > 0) {
-          this.currentIndex = this.currentIndex - 1;
-        } else {
-          this.currentIndex = this.photos.length - 1;
-        }
+        this.currentIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.photos.length - 1;
       },
       nextPhoto() {
-        if (this.currentIndex < this.photos.length - 1) {
-          this.currentIndex = this.currentIndex + 1;
-        } else {
-          this.currentIndex = 0;
-        }
+        this.currentIndex = this.currentIndex < this.photos.length - 1 ? this.currentIndex + 1 : 0;
       },
       toggleHeart() {
         this.isheartOpen = !this.isheartOpen;
-        if (!this.isheartOpen) {
-          alert('已加入最愛');
-        }
-        if (this.isheartOpen) {
-          alert('已從最愛移除');
-        }
+        alert(this.isheartOpen ? '已從最愛移除' : '已加入最愛');
       },
       addtoCart() {
         alert('已加入購物車');
       },
     },
-  }).mount('#app');
+  };
 </script>

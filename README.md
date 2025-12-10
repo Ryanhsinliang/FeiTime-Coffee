@@ -162,7 +162,7 @@ FEITIME-COFFEE/
 
 ## ▶️ 如何開始
 
-### 安裝
+### 安裝 (只要是新拉下來的專案都要先做)
 
 - npm install
 
@@ -170,7 +170,7 @@ FEITIME-COFFEE/
 
 - npm run dev
 
-### 打包
+### 打包 (這步先不用)
 
 - npm run build
 

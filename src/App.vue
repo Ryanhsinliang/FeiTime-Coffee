@@ -19,5 +19,5 @@
 </script>
 
 <style>
-  /* App 全局樣式可以放這裡 */
+  /* App 全局樣式放這裡 */
 </style>

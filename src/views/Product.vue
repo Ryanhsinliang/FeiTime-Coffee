@@ -63,83 +63,97 @@
           </select>
         </div>
         <!-- roast end -->
-        <!-- TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO
-TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO
-TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO -->
+
         <!-- source start -->
-        <div class="source">
-          <div class="source-word">
+        <div class="flex py-[4px] px-[24px] text-[20px] flex-col">
+          <div
+            class="flex py-[4px] pl-[12px] pr-[10px] bg-[var(--green-gray)] text-black"
+          >
             <i class="fa-solid fa-earth-americas pr-[8px] leading-[30px]"></i>
             <p>產地</p>
           </div>
 
-          <select class="source-choose">
+          <select
+            class="px-[4px] border-[var(--green-gray)] border-solid border-4"
+          >
             <option
               disabled
               selected
               value=""
-              class="color-[var(--light-gray)] source-bg"
+              class="color-[var(--light-gray)] bg-[var(--green-gray)]"
             >
               請選擇
             </option>
-            <option class="source-bg" value="Ethiopia">衣索比亞</option>
-            <option class="source-bg" value="Kenya">肯亞</option>
-            <option class="source-bg" value="Colombia">哥倫比亞</option>
-            <option class="source-bg" value="Guatemala">瓜地馬拉</option>
-            <option class="source-bg" value="Brazil">巴西</option>
-            <option class="source-bg" value="Costa-Rica">哥斯大黎加</option>
-            <option class="source-bg" value="Indonesia">印尼</option>
-            <option class="source-bg" value="El-Salvador">薩爾瓦多</option>
+            <option class="bg-[var(--green-gray)]" value="Ethiopia">
+              衣索比亞
+            </option>
+            <option class="bg-[var(--green-gray)]" value="Kenya">肯亞</option>
+            <option class="bg-[var(--green-gray)]" value="Colombia">
+              哥倫比亞
+            </option>
+            <option class="bg-[var(--green-gray)]" value="Guatemala">
+              瓜地馬拉
+            </option>
+            <option class="bg-[var(--green-gray)]" value="Brazil">巴西</option>
+            <option class="bg-[var(--green-gray)]" value="Costa-Rica">
+              哥斯大黎加
+            </option>
+            <option class="bg-[var(--green-gray)]" value="Indonesia">
+              印尼
+            </option>
+            <option class="bg-[var(--green-gray)]" value="El-Salvador">
+              薩爾瓦多
+            </option>
           </select>
         </div>
         <!-- source end -->
 
         <!-- processing start -->
-        <div class="flavor">
-          <div class="flavor-word">
+        <div class="flex py-[4px] px-[24px] text-[20px] flex-col">
+          <div class="flex py-[4px] pl-[12px] pr-[10px] bg-[#d8c2c3]">
             <i class="fa-solid fa-mug-hot pr-[8px] leading-[30px]"></i>
             <p>風味</p>
           </div>
-          <select class="flavor-choose">
+          <select class="px-[4px] border-[#d8c2c3] border-solid border-4">
             <option
               disabled
               selected
               value=""
-              class="color-[var(--light-gray)] flavor-bg"
+              class="color-[var(--light-gray)] bg-[#d8c2c3]"
             >
               請選擇
             </option>
-            <option class="flavor-bg" value="orange">柑橘</option>
-            <option class="flavor-bg" value="flower">花香</option>
-            <option class="flavor-bg" value="friut">果香</option>
-            <option class="flavor-bg" value="chocolate">巧克力</option>
-            <option class="flavor-bg" value="nut">堅果</option>
-            <option class="flavor-bg" value="liquor">酒香</option>
+            <option class="bg-[#d8c2c3]" value="orange">柑橘</option>
+            <option class="bg-[#d8c2c3]" value="flower">花香</option>
+            <option class="bg-[#d8c2c3]" value="friut">果香</option>
+            <option class="bg-[#d8c2c3]" value="chocolate">巧克力</option>
+            <option class="bg-[#d8c2c3]" value="nut">堅果</option>
+            <option class="bg-[#d8c2c3]" value="liquor">酒香</option>
           </select>
         </div>
         <!-- processing end -->
 
         <!-- money-area start -->
-        <div class="money-area">
-          <div class="money-area-word">
+        <div class="flex py-[4px] px-[24px] text-[20px] flex-col">
+          <div class="flex py-[4px] pl-[12px] pr-[10px] bg-[#c4ced6]">
             <i
               class="fa-solid fa-money-bill-1-wave pr-[8px] leading-[30px]"
             ></i>
             <p>價錢區間</p>
           </div>
-          <select class="money-area-choose">
+          <select class="px-[4px] border-[#c4ced6] border-solid border-4">
             <option
               disabled
               selected
               value=""
-              class="color-[var(--light-gray)] money-area-bg"
+              class="color-[var(--light-gray)] bg-[#c4ced6]"
             >
               請選擇
             </option>
-            <option class="money-area-bg" value="">~1000</option>
-            <option class="money-area-bg" value="">1000~3000</option>
-            <option class="money-area-bg" value="">3000~7000</option>
-            <option class="money-area-bg" value="">7000~</option>
+            <option class="bg-[#c4ced6]" value="">~1000</option>
+            <option class="bg-[#c4ced6]" value="">1000~3000</option>
+            <option class="bg-[#c4ced6]" value="">3000~7000</option>
+            <option class="bg-[#c4ced6]" value="">7000~</option>
           </select>
         </div>
         <!-- money-area end -->
@@ -536,9 +550,9 @@ input:focus {
     background-color: var(--soft-brown);
   } */
 
-.roast-bg {
+/* .roast-bg {
   @apply bg-[var(--soft-brown)];
-}
+} */
 
 /* .source {
     padding: 4px 24px;
@@ -547,9 +561,9 @@ input:focus {
     flex-direction: column;
   } */
 
-.source {
+/* .source {
   @apply flex py-[4px] px-[24px] text-[20px] flex-col;
-}
+} */
 
 /* .source-word {
     display: flex;
@@ -560,9 +574,9 @@ input:focus {
     background-color: var(--green-gray);
     color: #000000;
   } */
-.source-word {
+/* .source-word {
   @apply flex py-[4px] pl-[12px] pr-[10px] bg-[var(--green-gray)] text-black;
-}
+} */
 
 /* .source-choose {
     border: 4px solid var(--green-gray);
@@ -570,17 +584,17 @@ input:focus {
     padding-right: 4px;
   } */
 
-.source-choose {
+/* .source-choose {
   @apply px-[4px] border-[var(--green-gray)] border-solid border-4;
-}
+} */
 
 /* .source-bg {
     background-color: var(--green-gray);
   } */
 
-.source-bg {
+/* .source-bg {
   @apply bg-[var(--green-gray)];
-}
+} */
 
 /* .flavor {
     padding: 4px 24px;
@@ -589,9 +603,9 @@ input:focus {
     flex-direction: column;
   } */
 
-.flavor {
+/* .flavor {
   @apply flex py-[4px] px-[24px] text-[20px] flex-col;
-}
+} */
 
 /* .flavor-word {
     display: flex;
@@ -601,9 +615,9 @@ input:focus {
     padding-right: 10px;
     background-color: #d8c2c3;
   } */
-.flavor-word {
+/* .flavor-word {
   @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#d8c2c3];
-}
+} */
 
 /* .flavor-choose {
     border: 4px solid #d8c2c3;
@@ -611,17 +625,17 @@ input:focus {
     padding-right: 4px;
   } */
 
-.flavor-choose {
+/* .flavor-choose {
   @apply px-[4px] border-[#d8c2c3] border-solid border-4;
-}
+} */
 
 /* .flavor-bg {
     background-color: #d8c2c3;
   } */
 
-.flavor-bg {
+/* .flavor-bg {
   @apply bg-[#d8c2c3];
-}
+} */
 
 /* .money-area {
     padding: 4px 24px;
@@ -630,9 +644,9 @@ input:focus {
     flex-direction: column;
   } */
 
-.money-area {
+/* .money-area {
   @apply flex py-[4px] px-[24px] text-[20px] flex-col;
-}
+} */
 
 /* .money-area-word {
     display: flex;
@@ -643,9 +657,9 @@ input:focus {
     background-color: #c4ced6;
   } */
 
-.money-area-word {
+/* .money-area-word {
   @apply flex py-[4px] pl-[12px] pr-[10px] bg-[#c4ced6];
-}
+} */
 
 /* .money-area-choose {
     border: 4px solid #c4ced6;
@@ -653,17 +667,17 @@ input:focus {
     padding-right: 4px;
   } */
 
-.money-area-choose {
+/* .money-area-choose {
   @apply px-[4px] border-[#c4ced6] border-solid border-4;
-}
+} */
 
 /* .money-area-bg {
     background-color: #c4ced6;
   } */
 
-.money-area-bg {
+/* .money-area-bg {
   @apply bg-[#c4ced6];
-}
+} */
 
 /* .sort {
     display: flex;

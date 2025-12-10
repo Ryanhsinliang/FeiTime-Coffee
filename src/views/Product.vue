@@ -157,52 +157,67 @@
           </select>
         </div>
         <!-- money-area end -->
-
-        <!-- TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO  TODO -->
       </div>
     </div>
     <div class="flex mx-[3%] mb-[12px] text-[20px]">
       <div class="flex">
         <label class="flex mr-[4px]" for="hot-sale">
-          <i class="fa-solid fa-star IC-sort"></i>
+          <i class="fa-solid fa-star mr-[4px] leading-[30px]"></i>
           <p>熱門商品</p>
         </label>
-        <div class="radio-center">
-          <input class="sort-radio" id="hot-sale" name="sort" type="radio" />
+        <div class="flex items-center">
+          <input
+            class="mr-[24px] w-[20px] h-[20px] accent-[var(--soft-brown)]"
+            id="hot-sale"
+            name="sort"
+            type="radio"
+          />
         </div>
       </div>
 
       <div class="flex">
         <label class="flex mr-[4px]" for="low-to-high">
-          <i class="fa-solid fa-arrow-trend-up IC-sort"></i>
+          <i class="fa-solid fa-arrow-trend-up mr-[4px] leading-[30px]"></i>
           <p>價錢低到高</p>
         </label>
-        <div class="radio-center">
-          <input class="sort-radio" id="low-to-high" name="sort" type="radio" />
+        <div class="flex items-center">
+          <input
+            class="mr-[24px] w-[20px] h-[20px] accent-[var(--soft-brown)]"
+            id="low-to-high"
+            name="sort"
+            type="radio"
+          />
         </div>
       </div>
 
       <div class="flex">
         <label class="flex mr-[4px]" for="high-to-low">
-          <i class="fa-solid fa-arrow-trend-down IC-sort"></i>
+          <i class="fa-solid fa-arrow-trend-down mr-[4px] leading-[30px]"></i>
           <p>價錢高到低</p>
         </label>
-        <div class="radio-center">
-          <input class="sort-radio" id="high-to-low" name="sort" type="radio" />
+        <div class="flex items-center">
+          <input
+            class="mr-[24px] w-[20px] h-[20px] accent-[var(--soft-brown)]"
+            id="high-to-low"
+            name="sort"
+            type="radio"
+          />
         </div>
       </div>
     </div>
 
-    <div class="product-pic-area">
+    <div class="grid grid-cols-3 mx-[3%] w-[94%] gap-[80px]">
       <!-- card start -->
       <a href="#" target="_blank">
         <!-- 待放網址 -->
-        <div class="product-card">
-          <img class="product-pic" src="./pic/ex.jpg" alt="圖片加載中..." />
-          <div class="product-word">
-            <p class="country">USA USA</p>
-            <h3 class="product-name">CoffeeCoffeeCoffee</h3>
-            <p class="price">$ 70</p>
+        <div class="relative">
+          <img class="w-[100%]" src="./pic/ex.jpg" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>USA USA</p>
+            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
+            <p>$ 70</p>
           </div>
         </div>
       </a>
@@ -715,18 +730,18 @@ input:focus {
     margin-right: 4px;
   } */
 
-.IC-sort {
+/* .IC-sort {
   @apply mr-[4px] leading-[30px];
-}
+} */
 
 /* .radio-center {
     display: flex;
     align-items: center;
   } */
 
-.radio-center {
+/* .radio-center {
   @apply flex items-center;
-}
+} */
 
 /* .sort-radio {
     margin-right: 24px;
@@ -735,9 +750,9 @@ input:focus {
     accent-color:var(--soft-brown);
   } */
 
-.sort-radio {
+/* .sort-radio {
   @apply mr-[24px] w-[20px] h-[20px] accent-[var(--soft-brown)];
-}
+} */
 
 /* .product-pic-area {
     display: grid;
@@ -746,25 +761,25 @@ input:focus {
     gap: 80px;
     grid-template-columns: repeat(3, 1fr);
   } */
-.product-pic-area {
+/* .product-pic-area {
   @apply grid grid-cols-3 mx-[3%] w-[94%] gap-[80px];
-}
+} */
 
 /* .product-card {
     position: relative;
   } */
 
-.product-card {
+/* .product-card {
   @apply relative;
-}
+} */
 
 /* .product-pic {
     width: 100%;
   } */
 
-.product-pic {
+/* .product-pic {
   @apply w-[100%];
-}
+} */
 
 /* .product-word {
     display: flex;
@@ -778,18 +793,18 @@ input:focus {
     font-size: 20px;
   } */
 
-.product-word {
+/* .product-word {
   @apply flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%];
-}
+} */
 
 /* .product-name {
     font-size: 28px;
     font-weight: 700;
   } */
 
-.product-name {
+/* .product-name {
   @apply text-[28px] font-bold;
-}
+} */
 
 @media (768px <= width < 1024px) {
   /* .find {

@@ -14,17 +14,16 @@ const routes = [
     component: HomePage, // 對應的頁面元件，會渲染到 <router-view />
   },
   {
-    path: "/product",
-    name: "Product",
+    path: '/product',
+    name: 'Product',
     component: Product,
   },
+
   {
-    path: "/product-detail",
-    name: "ProductDetail",
+    path: '/product-detail',
+    name: 'ProductDetail',
     component: ProductDetail,
   },
-<<<<<<< HEAD
-=======
   {
     path: '/coffee-id-test',
     name: 'CoffeeIdTest',
@@ -45,7 +44,6 @@ const routes = [
     name: 'Member',
     component: Member,
   },
->>>>>>> main
 ];
 
 const router = createRouter({

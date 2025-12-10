@@ -6,7 +6,7 @@
     >
       Coffee ID TEST
     </h2>
-    <!-- 進度條 -->
+    <!-- 進度條第一版 -->
     <div class="w-2/3 h-8 rounded-lg mx-auto mb-5 bg-[rgb(238,238,238)]">
       <div
         class="h-full bg-[#79916e] transition-all duration-500 rounded-lg bg-gradient-to-r from-[#dccfc0] to-[#a2af9b] relative"
@@ -19,11 +19,29 @@
           alt=""
         />
       </div>
+      <div class="text-right">第 {{ currentIndex + 1 }} 題　/　共 {{ questions.length }} 題</div>
     </div>
+
     <!-- 內容區塊（RWD 置中） -->
     <section id="questionCard" class="flex flex-wrap justify-center">
       <div v-if="questions[currentIndex]" class="bg-[rgb(238,238,238)] w-2/3 p-5 rounded-2xl mb-5">
         <!-- img放logo -->
+        <button
+          :disabled="currentIndex == 0"
+          @click="toLastQuestion"
+          type="button"
+          class="border-[#dccfc0] border p-2 rounded-lg hover:bg-[#a2af9b]"
+        >
+          <
+        </button>
+        <button
+          v-if="currentIndex >= 1"
+          @click="resetTest"
+          type="button"
+          class="border-[#dccfc0] border p-2 rounded-lg hover:bg-[#a2af9b]"
+        >
+          重新測驗
+        </button>
         <h3 class="text-center">{{ questions[currentIndex].id }}</h3>
         <p class="text-center mt-3">{{ questions[currentIndex].title }}</p>
         <p class="text-center text-xs text-[#875e2f]">{{ questions[currentIndex].subtitle }}</p>
@@ -38,20 +56,14 @@
             <p class="text-[#79916e] text-xs">{{ option.label }}</p>
           </div>
         </div>
-        <button
-          v-if="currentIndex >= 1"
-          @click="toLastQuestion"
-          type="button"
-          class="border-[#dccfc0] border p-2 rounded-lg hover:bg-[#a2af9b]"
-        >
-          回上一題
-        </button>
       </div>
     </section>
+    <CoffeeID />
   </main>
 </template>
 
 <script>
+  import CoffeeID from '../../components/CoffeeID.vue';
   import { classicNameResolver } from 'typescript';
 
   export default {
@@ -546,6 +558,17 @@
       toLastQuestion() {
         this.currentIndex--;
       },
+      resetTest() {
+        this.currentIndex = 0;
+        this.scores.acidity = 0;
+        this.scores.sweetness = 0;
+        this.scores.body = 0;
+        this.scores.aftertaste = 0;
+        this.scores.clarity = 0;
+      },
+    },
+    components: {
+      CoffeeID,
     },
   };
 </script>

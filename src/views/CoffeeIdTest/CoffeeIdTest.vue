@@ -34,12 +34,6 @@
         >
           開始測驗
         </button>
-        <button
-          @click="backToHomePage"
-          class="relative bg-[#DCCFC0] text-2xl py-2 px-8 rounded-full hover:cursor-pointer"
-        >
-          回到首頁
-        </button>
       </div>
     </section>
   </main>
@@ -51,7 +45,7 @@
     methods: {
       startTest() {
         // 添加開始測驗的邏輯
-        this.$router.push('/coffee-id');
+        this.$router.push('/coffee-id-test-card');
       },
     },
   };

@@ -3,11 +3,11 @@
     <!-- Product Guide Section -->
     <section class="flex flex-col lg:flex-row justify-center relative min-h-[600px]">
       <!-- Photo Gallery -->
-      <div class="w-full lg:w-1/2 bg-[#f3eeea] relative max-h-[600px]">
+      <div class="w-full lg:w-1/2 bg-[#f3eeea] relative max-h-[800px]">
         <img
           :src="currentPhoto.image"
           alt=""
-          class="object-cover aspect-square w-full max-h-[600px]"
+          class="object-cover aspect-square w-full max-h-[800px]"
         />
 
         <!-- Navigation Buttons -->
@@ -49,25 +49,16 @@
             id="quantity"
             value="1"
             min="1"
-            class="border border-gray-300 px-3 py-2 rounded"
+            class="border border-gray-300 px-3 py-2 rounded w-1/2"
           />
         </div>
 
-        <div>
+        <div class="pb-4">
           <label for="weight" class="block">重量</label>
-          <select name="weight" id="weight" class="border border-gray-300 px-3 py-2 rounded w-full">
+          <select name="weight" id="weight" class="border border-gray-300 px-3 py-2 rounded w-1/2">
             <option value="">100g</option>
             <option value="">250g</option>
             <option value="">500g</option>
-          </select>
-        </div>
-
-        <div class="py-4">
-          <label for="grind" class="block">研磨度</label>
-          <select name="grind" id="grind" class="border border-gray-300 px-3 py-2 rounded w-full">
-            <option value="">整豆</option>
-            <option value="">手沖研磨</option>
-            <option value="">義式研磨</option>
           </select>
         </div>
 
@@ -76,7 +67,7 @@
             @click="toggleHeart"
             v-show="isheartOpen"
             type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5"
+            class="bg-[#6d654f] text-white text-sm p-3.5 rounded"
           >
             <i class="fa-regular fa-heart"></i>
           </button>
@@ -84,18 +75,20 @@
             @click="toggleHeart"
             v-show="!isheartOpen"
             type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5"
+            class="bg-[#6d654f] text-white text-sm p-3.5 rounded"
           >
             <i class="fa-solid fa-heart"></i>
           </button>
           <button
             @click="addtoCart"
             type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 mx-2"
+            class="bg-[#6d654f] text-white text-sm p-3.5 mx-2 rounded"
           >
             加到購物車
           </button>
-          <button type="submit" class="bg-[#6d654f] text-white text-sm p-3.5">立即購買</button>
+          <button type="submit" class="bg-[#6d654f] text-white text-sm p-3.5 rounded w-24">
+            立即購買
+          </button>
         </div>
       </form>
     </section>
@@ -179,17 +172,15 @@
 
     <!-- Hot Products Section -->
     <section class="bg-[#eeeeee] py-[100px]">
-      <h2 class="p-10 text-center text-3xl text-[#6d654f]">熱門商品</h2>
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[5vw] max-w-[1400px] mx-auto px-8"
-      >
+      <h2 class="p-10 text-center text-3xl text-[#6d654f]">推薦商品</h2>
+      <div class="flex gap-[2vw] mx-auto px-8">
         <div
           class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
             alt="orange"
-            class="min-w-full aspect-[2/3] w-full object-cover"
+            class="min-w-[400] aspect-[2/3] w-full object-cover"
           />
           <img
             src="./assets/coffee_cup.png"
@@ -281,12 +272,16 @@
       return {
         currentIndex: 0,
         photos: [
-          { name: 'bag', image: '@/views/ProductDetail/assets/coffee_bag2.png' },
+          { name: 'bag', image: '/src/assets/coffee_bag2.png' },
           {
             name: 'beans',
             image: 'https://images.unsplash.com/photo-1675306408031-a9aad9f23308',
           },
-          { name: 'flower', image: '@/assets/coffee_cup2.jpg' },
+          {
+            name: 'cup',
+            image:
+              'https://plus.unsplash.com/premium_photo-1675435644687-562e8042b9db?q=80&w=749&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          },
         ],
         isheartOpen: true,
         activeTab: 'roast',

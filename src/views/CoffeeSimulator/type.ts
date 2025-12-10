@@ -1,0 +1,16 @@
+// 背景 key，對應目前所有背景圖
+export type BackgroundKey = 'cafe' | 'mountain' | 'escalator' | 'campus';
+
+// 背景對應的圖片路徑
+// 使用 Record 保證每個 key 都有對應的字串路徑
+export type BackgroundMap = Record<BackgroundKey, string>;
+
+// 如果之後想新增其他屬性，例如每個背景的描述或顏色
+export interface BackgroundInfo {
+  src: string; // 圖片路徑
+  description?: string; // 可選描述
+  color?: string; // 可選背景色或漸層
+}
+
+// 可擴展成 map，例如有更多背景屬性
+export type BackgroundInfoMap = Record<BackgroundKey, BackgroundInfo>;

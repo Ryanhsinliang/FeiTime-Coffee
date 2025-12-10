@@ -77,15 +77,19 @@ FEITIME-COFFEE/
 
     - 📂 HomePage/
       - 📂 assets/ # HomePage 專屬資源
+      - 🧩 HomePage.vue # 頁面
       - 📄 type.ts # HomePage 專屬型別
     - 📂 ProductPage/
       - 📂 assets/ # ProductPage 專屬資源
+      - 🧩 ProductPage.vue # 頁面
       - 📄 type.ts # ProductPage 專屬型別
     - 📂 ProductDetail/
       - 📂 assets/ # ProductDetail 專屬資源
+      - 🧩 ProductDetail.vue # 頁面
       - 📄 type.ts # ProductDetail 專屬型別
     - 📂 CoffeeIdTest/
       - 📂 assets/ # CoffeeIdTest 專屬資源
+      - 🧩 CoffeeIdTest.vue # 頁面
       - 📄 type.ts # CoffeeIdTest 專屬型別
 
   - 📂 router/ # 路由設定
@@ -123,30 +127,42 @@ FEITIME-COFFEE/
 
 ## 🗂 Git 開發流程
 
-### 專案開始（第一次只做一次）
+### 專案開始（只做一次）
+
+-說明: clone 專案下來--> 新增自己的分支 --> 切換到自己的分支
 
 - git clone
 - git branch memberA
 - git checkout memberA
 
-### 每天開發流程
+### 每天開發流程 (每次開發都要做)
+
+-說明: 在自己本機完成修改 → commit → push 自己的分支到遠端（線上）
 
 - git add .
 - git commit -m "fix: 修正 Coffee ID 測驗頁面跳轉錯誤" (範例)
 - git push origin memberA
 
-### 下次開始前（一定要做）
+### 將 main 合併到自己的分支（先不做，但會做想做的人之後可以做）
+
+-說明: 切換到目前最新的主線上(main) --> 把最新主線拉下來 --> 切換到自己的分支 --> 將目前最新版的 main merge 到自己的分支上 --> 若有衝突可能需要解(這部分有不懂再問我) --> 順利解完衝突，你的分支就會有最新版的 main 內容(不會蓋到自己在分支做的東西)
 
 - git checkout main
 - git pull
 - git checkout memberA
 - git merge main
 
+### git 大方向流程
+
+1. 從 gitHub 拉專案下來到各自的本機
+2. 各自開自己的分支出去做，不要在 main 上做 commit
+3. 最後專案要準備收尾時，將所有分支合併回主線 (由一人做即可)
+
 ---
 
 ## ▶️ 如何開始
 
-### 安裝
+### 安裝 (只要是新拉下來的專案都要先做)
 
 - npm install
 
@@ -154,7 +170,7 @@ FEITIME-COFFEE/
 
 - npm run dev
 
-### 打包
+### 打包 (這步先不用)
 
 - npm run build
 

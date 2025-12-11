@@ -14,3 +14,39 @@ export interface BackgroundInfo {
 
 // 可擴展成 map，例如有更多背景屬性
 export type BackgroundInfoMap = Record<BackgroundKey, BackgroundInfo>;
+
+export interface QuizData {
+  currentIndex: number;
+  answers: Option[]; // 已選答案
+  scores: Scores;
+  questions: Question[];
+  showResult: boolean;
+}
+
+export interface Scores {
+  acidity: number;
+  sweetness: number;
+  body: number;
+  aftertaste: number;
+  clarity: number;
+}
+
+export interface Option {
+  option: string; // a, b, c, d
+  label: string; // 選項文字
+  helper?: string; // 選項補充說明（可選）
+  score: Scores; // 分數物件
+}
+
+export interface Question {
+  id: string;
+  title: string;
+  subtitle: string;
+  options: Option[];
+}
+export interface QuizMethods {
+  selectOption(score: Scores): void;
+  recalculateScores(): void;
+  toPreviousQuestion(): void;
+  resetTest(): void;
+}

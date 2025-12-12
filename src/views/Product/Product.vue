@@ -7,12 +7,26 @@
         placeholder="喝一杯靜謐的午後時光"
       />
       <div class="filter">
-        <p class="filter-list">類別</p>
-        <p class="filter-list">焙度</p>
-        <p class="filter-list">風格</p>
-        <p class="filter-list">產地</p>
+        <div class="filter-type">
+          <p>類別</p>
+          <div class="type-list">
+            <p class="list">咖啡豆</p>
+            <p class="list">濾掛包</p>
+            <p class="list">器具</p>
+          </div>
+        </div>
+        <div class="filter-type">焙度</div>
+        <div class="filter-type">風格</div>
+        <div class="filter-type">產地</div>
       </div>
     </div>
+
+    <!-- 2 焙度 (淺焙、中焙、深焙) -->
+    <!-- 3 風格 (果香明亮、清爽茶感、甜感平衡、可可堅果、濃厚飽滿、酒香發酵 ) -->
+    <!-- 4 產地  (肯亞、哥倫比亞、瓜地馬拉、巴西、哥斯大黎加、印尼、薩爾瓦多、衣索比亞)
+還在規劃 先不動 -->
+
+    <!-- 【排序】 價錢 熱門度 甜味 酸味 口感 餘韻 澄澈度 -->
 
     <div
       class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 mx-[6%] w-[88%] gap-[60px] grid-cols-1"
@@ -205,6 +219,8 @@
     /* 抹茶綠 */
     --soft-brown: #dccfc0;
     /* 亮咖啡 */
+    --heavy-brown: #b49e89;
+    /* 深咖啡 */
     --light-gray: #eeeeee;
     /* 淡灰 */
   }
@@ -236,13 +252,40 @@
     width: 70%;
   }
 
-  .filter-list {
+  .filter-type {
     font-size: 20px;
     padding: 4px 12px;
     background-color: var(--soft-brown);
     border-radius: 12px;
     margin-left: 8px;
     margin-right: 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .type-list {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--soft-brown);
+    border-radius: 24px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    padding: 0px 24px;
+    z-index: 2;
+    opacity: 0.5;
+  }
+
+  .list {
+    margin: 12px;
+    padding: 12px;
+    border-bottom: 2px solid transparent;
+  }
+
+  .list:hover {
+    border-bottom: 2px solid var(--heavy-brown);
   }
 
   @media (768px <= width < 1024px) {

@@ -3,9 +3,15 @@
     <div class="mt-[100px] mb-[80px] mx-[3%] flex flex-col items-center">
       <input
         class="border-2 border-solid border-[var(--soft-brown)] lg:w-[70%] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:w-[70%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] w-[88%] text-[20px] py-[8px] px-[18px] rounded-[8px]"
-        type="text"
+        type="search"
         placeholder="喝一杯靜謐的午後時光"
       />
+      <div class="filter">
+        <p class="filter-list">類別</p>
+        <p class="filter-list">焙度</p>
+        <p class="filter-list">風格</p>
+        <p class="filter-list">產地</p>
+      </div>
     </div>
 
     <div
@@ -223,88 +229,21 @@
     box-shadow: none;
   }
 
-  /* .disabled-word {
-  color: var(--light-gray);
-} */
-  /* color-[var(--light-gray)] */
-
-  /* .product-serve {
-    margin-top: 100px;
-    margin-bottom: 80px;
-    margin-left: 3%;
-    margin-right: 3%;
+  .filter {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-  } */
-
-  /* .product-serve {
-  @apply mt-[100px] mb-[80px] mx-[3%] flex flex-col items-center;
-} */
-
-  /* .find {
-    border: 2px solid var(--green-gray);
+    padding: 0 10px;
+    padding-top: 12px;
     width: 70%;
-    font-size: 24px;
-    padding: 12px 24px;
-    border-radius: 12px;
-  } */
+  }
 
-  /* .find {
-  @apply border-2 border-solid border-[var(--green-gray)] w-[70%] text-[24px] py-[12px] px-[24px] rounded-[12px];
-} */
-
-  /* .product-pic-area {
-    display: grid;
-    margin: 0 3%;
-    width: 94%;
-    gap: 80px;
-    grid-template-columns: repeat(3, 1fr);
-  } */
-  /* .product-pic-area {
-  @apply grid grid-cols-3 mx-[3%] w-[94%] gap-[80px];
-} */
-
-  /* .product-card {
-    position: relative;
-  } */
-
-  /* .product-card {
-  @apply relative;
-} */
-
-  /* .product-pic {
-    width: 100%;
-  } */
-
-  /* .product-pic {
-  @apply w-[100%];
-} */
-
-  /* .product-word {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: absolute;
-    width: 100%;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
+  .filter-list {
     font-size: 20px;
-  } */
-
-  /* .product-word {
-  @apply flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%];
-} */
-
-  /* .product-name {
-    font-size: 28px;
-    font-weight: 700;
-  } */
-
-  /* .product-name {
-  @apply text-[28px] font-bold;
-} */
+    padding: 4px 12px;
+    background-color: var(--soft-brown);
+    border-radius: 12px;
+    margin-left: 8px;
+    margin-right: 8px;
+  }
 
   @media (768px <= width < 1024px) {
   }

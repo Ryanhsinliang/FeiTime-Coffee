@@ -8,23 +8,47 @@
       />
       <div class="filter">
         <div class="filter-type">
-          <p>類別</p>
+          <p class="filter-word" tabindex="0">類別</p>
           <div class="type-list">
             <p class="list" tabindex="0">咖啡豆</p>
             <p class="list" tabindex="0">濾掛包</p>
             <p class="list" tabindex="0">器具</p>
           </div>
         </div>
-        <div class="filter-type">焙度</div>
-        <div class="filter-type">風格</div>
-        <div class="filter-type">產地</div>
+        <div class="filter-type">
+          <p class="filter-word" tabindex="0">焙度</p>
+          <div class="type-list">
+            <p class="list" tabindex="0">淺焙</p>
+            <p class="list" tabindex="0">中焙</p>
+            <p class="list" tabindex="0">深焙</p>
+          </div>
+        </div>
+        <div class="filter-type">
+          <p class="filter-word" tabindex="0">風格</p>
+          <div class="type-list">
+            <p class="list" tabindex="0">果香明亮</p>
+            <p class="list" tabindex="0">清爽茶感</p>
+            <p class="list" tabindex="0">甜感平衡</p>
+            <p class="list" tabindex="0">可可堅果</p>
+            <p class="list" tabindex="0">濃厚飽滿</p>
+            <p class="list" tabindex="0">酒香發酵</p>
+          </div>
+        </div>
+        <div class="filter-type">
+          <p class="filter-word" tabindex="0">產地</p>
+          <div class="type-list">
+            <p class="list" tabindex="0">肯亞</p>
+            <p class="list" tabindex="0">哥倫比亞</p>
+            <p class="list" tabindex="0">瓜地馬拉</p>
+            <p class="list" tabindex="0">巴西</p>
+            <p class="list" tabindex="0">哥斯大黎加</p>
+            <p class="list" tabindex="0">印尼</p>
+            <p class="list" tabindex="0">薩爾瓦多</p>
+            <p class="list" tabindex="0">衣索比亞</p>
+          </div>
+        </div>
       </div>
     </div>
-
-    <!-- 2 焙度 (淺焙、中焙、深焙) -->
-    <!-- 3 風格 (果香明亮、清爽茶感、甜感平衡、可可堅果、濃厚飽滿、酒香發酵 ) -->
-    <!-- 4 產地  (肯亞、哥倫比亞、瓜地馬拉、巴西、哥斯大黎加、印尼、薩爾瓦多、衣索比亞)
-還在規劃 先不動 -->
 
     <!-- 【排序】 價錢 熱門度 甜味 酸味 口感 餘韻 澄澈度 -->
 
@@ -265,8 +289,11 @@
   }
 
   .type-list {
+    display: none;
+  }
+  .filter-type:focus-within .type-list {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     background-color: var(--soft-brown);
     border-radius: 24px;
     position: absolute;
@@ -275,7 +302,6 @@
     white-space: nowrap;
     padding: 0px 24px;
     z-index: 2;
-    /* opacity: 0.5; */
   }
 
   .list {
@@ -286,11 +312,13 @@
 
   .list:hover {
     border-bottom: 2px solid var(--heavy-brown);
+    color: var(--heavy-brown);
   }
 
   .list:focus {
     background-color: var(--heavy-brown);
     border-bottom: 2px solid transparent;
+    color: #222222;
     border-radius: 16px;
     box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.35);
   }

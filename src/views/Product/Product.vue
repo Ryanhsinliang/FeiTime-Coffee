@@ -49,8 +49,29 @@
         </div>
       </div>
     </div>
-
-    <!-- 【排序】 價錢 熱門度 甜味 酸味 口感 餘韻 澄澈度 -->
+    <div class="sort">
+      <img class="IC-sort" src="./assets/sort.svg" alt="" />
+      <select id="sort-page">
+        <option value="">排序</option>
+        <option value="">價錢</option>
+        <option value="">熱門度</option>
+        <option value="">甜味</option>
+        <option value="">酸味</option>
+        <option value="">口感</option>
+        <option value="">餘韻</option>
+        <option value="">澄澈度</option>
+      </select>
+      <div class="line-hako">
+        <div class="line">
+          <label for="circle">
+            <input type="checkbox" id="circle" />
+            <div class="maru" @click="sortChange"></div>
+          </label>
+          <span v-if="sortHe" class="oriru">↓高到低</span>
+          <span v-else class="oriru">↑低到高</span>
+        </div>
+      </div>
+    </div>
 
     <div
       class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 mx-[6%] w-[88%] gap-[60px] grid-cols-1"
@@ -219,7 +240,19 @@
 </template>
 
 <script>
-  export default {};
+  export default {
+    data() {
+      return {
+        sortHe: true, // 調整【排序】高到低 還是 低到高 按鈕的參數
+      };
+    },
+    methods: {
+      sortChange() {
+        // 切換【排序】高到低 還是 低到高
+        this.sortHe = !this.sortHe;
+      },
+    },
+  };
 </script>
 
 <style>
@@ -262,6 +295,13 @@
   select:focus {
     outline: none;
     box-shadow: none;
+  }
+
+  select {
+    /* 移除原生的箭頭和外觀  */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   }
 
   input:focus {
@@ -328,6 +368,76 @@
     color: #222222;
     border-radius: 16px;
     box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.35);
+  }
+
+  .sort {
+    margin-left: 3%;
+    margin-right: 3%;
+    margin-bottom: 12px;
+    display: flex;
+  }
+
+  .IC-sort {
+    width: 32px;
+  }
+
+  #sort-page {
+    background-color: var(--main-color);
+    padding: 0 8px;
+    cursor: pointer;
+  }
+
+  .maru {
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    background-color: #eeeeee;
+    box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+  }
+
+  .line-hako {
+    display: flex;
+    align-items: center;
+  }
+
+  .line {
+    width: 40px;
+    height: 10px;
+    background-color: var(--soft-brown);
+    border-radius: 60px;
+    position: relative;
+  }
+
+  .maru {
+    position: absolute;
+    top: -50%;
+    left: 0;
+  }
+
+  .oriru {
+    display: block;
+    position: absolute;
+    left: calc(100% + 16px);
+    top: -8px;
+    white-space: nowrap;
+  }
+
+  .noboru {
+    display: block;
+    position: absolute;
+    left: calc(100% + 16px);
+    top: -8px;
+    white-space: nowrap;
+  }
+
+  #circle {
+    display: none;
+  }
+
+  #circle:checked + .maru {
+    left: 20px;
+    background-color: #eeeeee;
   }
 
   @media (768px <= width < 1024px) {

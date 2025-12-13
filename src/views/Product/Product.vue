@@ -286,19 +286,26 @@
     position: relative;
     display: flex;
     align-items: center;
+    cursor: pointer;
   }
 
   .type-list {
     display: none;
   }
+
+  .filter-type:focus-within {
+    background-color: var(--heavy-brown);
+  }
+
   .filter-type:focus-within .type-list {
     display: flex;
     flex-direction: column;
     background-color: var(--soft-brown);
-    border-radius: 24px;
+    border-radius: 16px;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
     white-space: nowrap;
     padding: 0px 24px;
     z-index: 2;

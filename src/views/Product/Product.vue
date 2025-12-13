@@ -49,8 +49,23 @@
         </div>
       </div>
     </div>
-
-    <!-- 【排序】 價錢 熱門度 甜味 酸味 口感 餘韻 澄澈度 -->
+    <div class="sort">
+      <label for="sort-page">
+        <img class="IC-sort" src="./assets/sort.svg" alt="" />
+      </label>
+      <select id="sort-page">
+        <option value="">篩選</option>
+        <option value="">價錢</option>
+        <option value="">熱門度</option>
+        <option value="">甜味</option>
+        <option value="">酸味</option>
+        <option value="">口感</option>
+        <option value="">餘韻</option>
+        <option value="">澄澈度</option>
+      </select>
+      <button class="kara" type="button"><i class="fa-solid fa-arrow-trend-up"></i></button>
+      <button class="kara" type="button"><i class="fa-solid fa-arrow-trend-down"></i></button>
+    </div>
 
     <div
       class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 mx-[6%] w-[88%] gap-[60px] grid-cols-1"
@@ -328,6 +343,30 @@
     color: #222222;
     border-radius: 16px;
     box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.35);
+  }
+
+  .sort {
+    margin-left: 3%;
+    margin-right: 3%;
+    margin-bottom: 12px;
+    display: flex;
+  }
+
+  .IC-sort {
+    width: 32px;
+  }
+
+  #sort-page {
+    background-color: var(--main-color);
+    padding: 0 8px;
+  }
+
+  .kara {
+    padding: 2px;
+    margin-left: 12px;
+    margin-right: 12px;
+    border-radius: 2px;
+    background-color: var(--green-gray);
   }
 
   @media (768px <= width < 1024px) {

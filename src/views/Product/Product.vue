@@ -50,9 +50,7 @@
       </div>
     </div>
     <div class="sort">
-      <label for="sort-page">
-        <img class="IC-sort" src="./assets/sort.svg" alt="" />
-      </label>
+      <img class="IC-sort" src="./assets/sort.svg" alt="" />
       <select id="sort-page">
         <option value="">篩選</option>
         <option value="">價錢</option>
@@ -63,8 +61,6 @@
         <option value="">餘韻</option>
         <option value="">澄澈度</option>
       </select>
-      <button class="kara" type="button"><i class="fa-solid fa-arrow-trend-up"></i></button>
-      <button class="kara" type="button"><i class="fa-solid fa-arrow-trend-down"></i></button>
     </div>
 
     <div
@@ -279,6 +275,13 @@
     box-shadow: none;
   }
 
+  /* select {
+    移除原生的箭頭和外觀 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  } */
+
   input:focus {
     outline: none;
     box-shadow: none;
@@ -359,6 +362,7 @@
   #sort-page {
     background-color: var(--main-color);
     padding: 0 8px;
+    cursor: pointer;
   }
 
   .kara {

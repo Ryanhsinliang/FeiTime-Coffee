@@ -10,9 +10,9 @@
         <div class="filter-type">
           <p>類別</p>
           <div class="type-list">
-            <p class="list">咖啡豆</p>
-            <p class="list">濾掛包</p>
-            <p class="list">器具</p>
+            <p class="list" tabindex="0">咖啡豆</p>
+            <p class="list" tabindex="0">濾掛包</p>
+            <p class="list" tabindex="0">器具</p>
           </div>
         </div>
         <div class="filter-type">焙度</div>
@@ -275,17 +275,24 @@
     white-space: nowrap;
     padding: 0px 24px;
     z-index: 2;
-    opacity: 0.5;
+    /* opacity: 0.5; */
   }
 
   .list {
     margin: 12px;
-    padding: 12px;
+    padding: 12px 24px;
     border-bottom: 2px solid transparent;
   }
 
   .list:hover {
     border-bottom: 2px solid var(--heavy-brown);
+  }
+
+  .list:focus {
+    background-color: var(--heavy-brown);
+    border-bottom: 2px solid transparent;
+    border-radius: 16px;
+    box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.35);
   }
 
   @media (768px <= width < 1024px) {

@@ -31,13 +31,24 @@ export interface Scores {
   clarity: number;
 }
 
+// export interface Option {
+//   option: string; // a, b, c, d
+//   label: string; // 選項文字
+//   helper?: string; // 選項補充說明（可選）
+//   score: Scores; // 分數物件
+// }
 export interface Option {
-  option: string; // a, b, c, d
-  label: string; // 選項文字
-  helper?: string; // 選項補充說明（可選）
-  score: Scores; // 分數物件
+  option: string;
+  label: string;
+  helper: string;
+  score: {
+    acidity: number;
+    sweetness: number;
+    body: number;
+    aftertaste: number;
+    clarity: number;
+  };
 }
-
 export interface Question {
   id: string;
   title: string;

@@ -1,13 +1,11 @@
 <template>
-  <main class="font-wenkai min-h-screen bg-cover bg-center bg-no-repeat bg-fixed">
+  <h2
+    class="w-2/3 mx-auto my-8 relative text-center font-shizuru text-3xl font-bold p-6 bg-[rgba(238,238,238,0.3)] rounded-2xl ]"
+  >
+    Coffee ID TEST
+  </h2>
+  <main class="font-wenkai min-h-screen bg-cover bg-center bg-no-repeat bg-fixed w-1/2 float-right">
     <section class="mx-auto py-10 w-2/3">
-      <!-- Title -->
-      <h2
-        class="relative text-center font-shizuru text-3xl font-bold p-6 bg-[rgba(238,238,238,0.9)] rounded-2xl border-[5px] border-dotted border-[#dccfc0]"
-      >
-        Coffee ID TEST
-      </h2>
-
       <!-- 動畫背景 -->
       <div class="w-[80%] mx-auto flex justify-center rounded-2xl bg-cover bg-bottom bg-slide mt-8">
         <img src=".\assets\img\coffeeWalk.gif" class="invert" alt="Coffee Walk Animation" />
@@ -88,20 +86,4 @@
   }
 </style>
 
-<!-- 全局樣式：移除 #app 的 padding -->
-<style>
-  #app {
-    padding: 0 !important;
-    margin: 0;
-    min-height: 100vh;
-  }
-  body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    background-image: url('.\assets\img\bgImage.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-</style>
+<style></style>

@@ -61,6 +61,14 @@
         <option value="">餘韻</option>
         <option value="">澄澈度</option>
       </select>
+      <div class="line-hako">
+        <div class="line">
+          <label for="circle">
+            <div class="maru"></div>
+          </label>
+        </div>
+      </div>
+      <input type="checkbox" id="circle" />
     </div>
 
     <div
@@ -275,12 +283,12 @@
     box-shadow: none;
   }
 
-  /* select {
-    移除原生的箭頭和外觀 
+  select {
+    /* 移除原生的箭頭和外觀  */
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-  } */
+  }
 
   input:focus {
     outline: none;
@@ -365,12 +373,30 @@
     cursor: pointer;
   }
 
-  .kara {
-    padding: 2px;
-    margin-left: 12px;
-    margin-right: 12px;
-    border-radius: 2px;
-    background-color: var(--green-gray);
+  .maru {
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    background-color: #ffb8f4;
+  }
+
+  .line-hako {
+    display: flex;
+    align-items: center;
+  }
+
+  .line {
+    width: 40px;
+    height: 10px;
+    background-color: aqua;
+    border-radius: 60px;
+    position: relative;
+  }
+
+  .maru {
+    position: absolute;
+    top: -50%;
+    left: 0;
   }
 
   @media (768px <= width < 1024px) {

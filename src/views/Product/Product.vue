@@ -64,11 +64,11 @@
       <div class="line-hako">
         <div class="line">
           <label for="circle">
+            <input type="checkbox" id="circle" />
             <div class="maru"></div>
           </label>
         </div>
       </div>
-      <input type="checkbox" id="circle" />
     </div>
 
     <div
@@ -377,7 +377,9 @@
     width: 20px;
     height: 20px;
     border-radius: 100%;
-    background-color: #ffb8f4;
+    background-color: #eeeeee;
+    box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
   }
 
   .line-hako {
@@ -388,7 +390,7 @@
   .line {
     width: 40px;
     height: 10px;
-    background-color: aqua;
+    background-color: var(--heavy-brown);
     border-radius: 60px;
     position: relative;
   }
@@ -397,6 +399,15 @@
     position: absolute;
     top: -50%;
     left: 0;
+  }
+
+  #circle {
+    display: none;
+  }
+
+  #circle:checked + .maru {
+    left: 20px;
+    background-color: #222222;
   }
 
   @media (768px <= width < 1024px) {

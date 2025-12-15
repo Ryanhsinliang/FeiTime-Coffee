@@ -1,7 +1,7 @@
 <template>
   <!-- 標題 -->
   <h2
-    class="w-2/3 mx-auto my-8 relative text-center font-shizuru text-3xl font-bold p-6 bg-[rgba(238,238,238,0.3)] rounded-2xl ]"
+    class="w-2/3 mx-auto my-8 relative text-center font-shizuru text-3xl font-bold p-6 bg-[rgb(238,238,238)] rounded-2xl ]"
   >
     Coffee ID TEST
   </h2>
@@ -70,7 +70,7 @@
           </div>
         </div>
         <button
-          v-if="quizData.currentIndex == quizData.questions.length - 1"
+          v-if="isLastQuestionAnswered"
           @click="showResultCard"
           type="button"
           class="w-full border-[#dccfc0] border p-2 rounded-lg hover:bg-[#a2af9b]"
@@ -90,7 +90,7 @@
 
   const quizData = reactive<{
     currentIndex: number;
-    answers: Option[];
+    answers: (Option | undefined)[];
     scores: Scores;
     questions: Question[];
     showResult: boolean;
@@ -556,10 +556,9 @@
       },
     ],
   });
-
+  const answered = computed(() => quizData.answers.filter((a) => a !== undefined).length);
   const progressWidth = computed(() => {
-    const answered = quizData.answers.filter((a) => a !== undefined).length;
-    return (answered / quizData.questions.length) * 100;
+    return (answered.value / quizData.questions.length) * 100;
   });
   function selectOption(option: Option) {
     quizData.answers[quizData.currentIndex] = option;
@@ -573,7 +572,7 @@
   }
   function isSelected(option: Option) {
     const answer = quizData.answers[quizData.currentIndex];
-    return answer === option; // 選中就變色
+    return answer === option;
   }
   function recalculateScores() {
     // 重置
@@ -598,6 +597,7 @@
   function toPreviousQuestion() {
     if (quizData.currentIndex > 0) {
       quizData.currentIndex--;
+      quizData.answers[quizData.currentIndex] = undefined;
       recalculateScores();
     }
   }
@@ -616,12 +616,15 @@
   const emit = defineEmits(['quiz-finished']);
 
   function showResultCard() {
-    const answered = quizData.answers.filter((a) => a !== undefined).length;
-    if (answered == 8) {
+    if (answered.value == 8) {
       quizData.showResult = true;
     }
     emit('quiz-finished', quizData.scores, quizData.answers);
   }
+  const isLastQuestionAnswered = computed(() => {
+    const lastIndex = quizData.questions.length - 1;
+    return quizData.currentIndex === lastIndex && quizData.answers[lastIndex] !== undefined;
+  });
 </script>
 
 <style>

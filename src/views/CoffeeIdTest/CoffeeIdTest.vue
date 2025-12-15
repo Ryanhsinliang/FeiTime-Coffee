@@ -1,6 +1,6 @@
 <template>
   <h2
-    class="w-2/3 mx-auto my-8 relative text-center font-shizuru text-3xl font-bold p-6 bg-[rgba(238,238,238,0.3)] rounded-2xl ]"
+    class="w-2/3 mx-auto my-8 relative text-center font-shizuru text-3xl font-bold p-6 bg-[rgb(238,238,238)] rounded-2xl ]"
   >
     Coffee ID TEST
   </h2>

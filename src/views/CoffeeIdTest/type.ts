@@ -17,7 +17,7 @@ export type BackgroundInfoMap = Record<BackgroundKey, BackgroundInfo>;
 
 export interface QuizData {
   currentIndex: number;
-  answers: Option[]; // 已選答案
+  answers: (Option | undefined)[]; // 已選答案
   scores: Scores;
   questions: Question[];
   showResult: boolean;

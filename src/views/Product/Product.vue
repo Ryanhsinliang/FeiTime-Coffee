@@ -52,7 +52,7 @@
     <div class="sort">
       <img class="IC-sort" src="./assets/sort.svg" alt="" />
       <select id="sort-page">
-        <option value="">篩選</option>
+        <option value="">排序</option>
         <option value="">價錢</option>
         <option value="">熱門度</option>
         <option value="">甜味</option>
@@ -64,6 +64,8 @@
       <div class="line-hako">
         <div class="line">
           <label for="circle">
+            <span class="oriru">↓高到低</span>
+            <span class="noboru">↑低到高</span>
             <input type="checkbox" id="circle" />
             <div class="maru"></div>
           </label>
@@ -390,7 +392,7 @@
   .line {
     width: 40px;
     height: 10px;
-    background-color: var(--heavy-brown);
+    background-color: var(--soft-brown);
     border-radius: 60px;
     position: relative;
   }
@@ -401,13 +403,29 @@
     left: 0;
   }
 
+  .noboru {
+    display: block;
+    position: absolute;
+    left: calc(100% + 16px);
+    top: -8px;
+    white-space: nowrap;
+  }
+
+  .oriru {
+    display: block;
+    position: absolute;
+    left: calc(100% + 16px);
+    top: -8px;
+    white-space: nowrap;
+  }
+
   #circle {
     display: none;
   }
 
   #circle:checked + .maru {
     left: 20px;
-    background-color: #222222;
+    background-color: #eeeeee;
   }
 
   @media (768px <= width < 1024px) {

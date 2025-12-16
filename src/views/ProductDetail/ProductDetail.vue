@@ -62,6 +62,16 @@
           </select>
         </div>
 
+        <p class="py-4">
+          烘焙方式: 淺中焙｜保留花果香與自然甜感
+          <br />
+          豆種組合: 100% 原生種 Arabica
+          <br />
+          風味特性: 果酸 / 花香 / 清爽 / 平衡 / 細緻
+          <br />
+          處理方式: 水洗處理｜風味乾淨、澄澈
+        </p>
+
         <div>
           <button
             @click="toggleHeart"
@@ -130,57 +140,22 @@
       <div class="mt-28 flex flex-col lg:flex-row min-h-[400px]">
         <img class="w-full lg:w-[45%]" src="./assets/coffee_bean.jpg" alt="coffee_bean" />
         <div class="w-full lg:w-[55%] p-[10vw]">
-          <div>
-            <button
-              class="text-base px-3 border-r cursor-pointer transition-colors"
-              :class="activeTab === 'roast' ? 'text-[#6d654f]' : 'text-[#abaaaa] border-[#abaaaa]'"
-              @click="activeTab = 'roast'"
-            >
-              烘焙方式
-            </button>
-            <button
-              class="text-base px-3 border-r cursor-pointer transition-colors"
-              :class="activeTab === 'beans' ? 'text-[#6d654f]' : 'text-[#abaaaa] border-[#abaaaa]'"
-              @click="activeTab = 'beans'"
-            >
-              豆種組合
-            </button>
-            <button
-              class="text-base px-3 cursor-pointer transition-colors"
-              :class="activeTab === 'flavor' ? 'text-[#6d654f]' : 'text-[#abaaaa]'"
-              @click="activeTab = 'flavor'"
-            >
-              風味特性
-            </button>
-          </div>
-
-          <hr class="my-4 border-[#6d654f] w-2/3" />
-
-          <div class="mt-8">
-            <p v-if="activeTab !== 'flavor'" class="text-2xl text-[#6d654f]">
-              {{ menuData[activeTab].content }}
-            </p>
-            <ul v-else class="text-2xl text-[#6d654f]">
-              <li v-for="item in menuData[activeTab].content" :key="item" class="mb-2">
-                {{ item }}
-              </li>
-            </ul>
-          </div>
+          <img src="./assets/Flavor_Wheel.png" alt="" />
         </div>
       </div>
     </section>
 
     <!-- Hot Products Section -->
-    <section class="bg-[#eeeeee] py-[100px]">
+    <section class="bg-[#eeeeee] py-[100px] h-[600px]">
       <h2 class="p-10 text-center text-3xl text-[#6d654f]">推薦商品</h2>
-      <div class="flex gap-[2vw] mx-auto px-8">
+      <div class="flex gap-[2vw] mx-auto px-2vw">
         <div
-          class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
             alt="orange"
-            class="min-w-[400] aspect-[2/3] w-full object-cover"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
           />
           <img
             src="./assets/coffee_cup.png"
@@ -189,12 +164,12 @@
           />
         </div>
         <div
-          class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
             alt="orange"
-            class="min-w-full aspect-[2/3] w-full object-cover"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
           />
           <img
             src="./assets/coffee_cup.png"
@@ -203,12 +178,12 @@
           />
         </div>
         <div
-          class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
             alt="orange"
-            class="min-w-full aspect-[2/3] w-full object-cover"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
           />
           <img
             src="./assets/coffee_cup.png"
@@ -217,12 +192,12 @@
           />
         </div>
         <div
-          class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
             alt="orange"
-            class="min-w-full aspect-[2/3] w-full object-cover"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
           />
           <img
             src="./assets/coffee_cup.png"
@@ -231,12 +206,12 @@
           />
         </div>
         <div
-          class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
             alt="orange"
-            class="min-w-full aspect-[2/3] w-full object-cover"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
           />
           <img
             src="./assets/coffee_cup.png"
@@ -245,9 +220,13 @@
           />
         </div>
         <div
-          class="h-[600px] w-full max-w-[400px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
         >
-          <img src="./assets/Jasmine.png" alt="Jasmine" class="w-[200px] aspect-square" />
+          <img
+            src="./assets/orange.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
           <img
             src="./assets/coffee_cup.png"
             alt="coffee_cup"
@@ -272,7 +251,7 @@
       return {
         currentIndex: 0,
         photos: [
-          { name: 'bag', image: '/src/assets/coffee_bag2.png' },
+          { name: 'bag', image: '/src/views/ProductDetail/assets/coffee_bag2.png' },
           {
             name: 'beans',
             image: 'https://images.unsplash.com/photo-1675306408031-a9aad9f23308',
@@ -285,10 +264,12 @@
         ],
         isheartOpen: true,
         activeTab: 'roast',
+
         menuData: {
-          roast: { title: '烘焙方式', content: '淺中焙 / 手沖烘焙' },
-          beans: { title: '豆種組合', content: '原生種 Arabica' },
-          flavor: { title: '風味特性', content: ['果香', '花香', '圓潤平衡'] },
+          roast: { title: '烘焙方式', content: '淺中焙｜保留花果香與自然甜感' },
+          beans: { title: '豆種組合', content: '100% 原生種 Arabica' },
+          flavor: { title: '風味特性', content: '果酸 / 花香 / 清爽 / 平衡 / 細緻' },
+          Process: { title: '處理方式', content: '水洗處理｜風味乾淨、澄澈' },
         },
       };
     },

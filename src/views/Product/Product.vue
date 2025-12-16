@@ -64,11 +64,11 @@
       <div class="line-hako">
         <div class="line">
           <label for="circle">
-            <span class="oriru">↓高到低</span>
-            <span class="noboru">↑低到高</span>
             <input type="checkbox" id="circle" />
-            <div class="maru"></div>
+            <div class="maru" @click="sortChange"></div>
           </label>
+          <span v-if="sortHe" class="oriru">↓高到低</span>
+          <span v-else class="oriru">↑低到高</span>
         </div>
       </div>
     </div>
@@ -240,7 +240,19 @@
 </template>
 
 <script>
-  export default {};
+  export default {
+    data() {
+      return {
+        sortHe: true, // 調整【排序】高到低 還是 低到高 按鈕的參數
+      };
+    },
+    methods: {
+      sortChange() {
+        // 切換【排序】高到低 還是 低到高
+        this.sortHe = !this.sortHe;
+      },
+    },
+  };
 </script>
 
 <style>
@@ -403,7 +415,7 @@
     left: 0;
   }
 
-  .noboru {
+  .oriru {
     display: block;
     position: absolute;
     left: calc(100% + 16px);
@@ -411,7 +423,7 @@
     white-space: nowrap;
   }
 
-  .oriru {
+  .noboru {
     display: block;
     position: absolute;
     left: calc(100% + 16px);

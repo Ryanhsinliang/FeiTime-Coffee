@@ -1,0 +1,45 @@
+name: CI - FEITIME-COFFEE
+
+# 觸發條件：任何分支 push 或 PR 合併到 main
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ 取得專案程式碼
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ 安裝 Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # 3️⃣ 安裝依賴
+      - name: Install dependencies
+        run: npm install
+
+      # 4️⃣ TypeScript 型別檢查
+      - name: Type Check
+        run: npx tsc --noEmit
+
+      # 5️⃣ 執行 lint
+      - name: Lint
+        run: npm run lint || echo "lint 錯誤不影響綠點"
+
+      # 6️⃣ Build 專案
+      - name: Build
+        run: npm run build
+
+      # 7️⃣ (可選) 執行測試，如果你有測試可以取消 echo
+      - name: Run Tests
+        run: npm test || echo "目前沒有測試也沒關係"

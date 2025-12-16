@@ -38,51 +38,67 @@
       <!-- Product Form -->
       <form class="p-[5vw] bg-[#f9f8f6] w-full lg:w-1/2 text-[#6d654f]">
         <p id="origin">衣索比亞(產地)</p>
-        <h2 class="text-4xl py-4">阿拉比卡．Arabica Classic</h2>
-        <p id="price">$400(價格)</p>
+        <h2 class="text-4xl py-4 font-semibold">阿拉比卡．Arabica Classic</h2>
+        <p id="price" class="text-lg font-semibold">$400(價格)</p>
 
         <div class="py-4">
-          <label for="quantity" class="block">數量</label>
+          <label for="quantity" class="block font-semibold">數量</label>
           <input
             type="number"
             name="quantity"
             id="quantity"
             value="1"
             min="1"
-            class="border border-gray-300 px-3 py-2 rounded w-1/3"
+            class="border border-gray-300 px-3 py-2 rounded w-1/2"
           />
         </div>
 
-        <div class="pb-4">
-          <label for="weight" class="block">重量</label>
-          <select name="weight" id="weight" class="border border-gray-300 px-3 py-2 rounded w-1/3">
+        <div>
+          <label for="weight" class="block font-semibold">重量</label>
+          <select name="weight" id="weight" class="border border-gray-300 px-3 py-2 rounded w-1/2">
             <option value="">100g</option>
             <option value="">250g</option>
             <option value="">500g</option>
           </select>
         </div>
 
-        <div>
-          <button type="button" @click="toggleRoast" class="w-1/2 py-2 block text-left">
-            烘焙方式
+        <div class="py-4">
+          <button
+            type="button"
+            @click="toggleRoast"
+            class="w-1/2 py-2 flex justify-between font-semibold"
+          >
+            烘焙度
             <i class="fa-solid fa-plus"></i>
-            <p v-show="showRoast" class="py-2">淺中焙｜保留花果香與自然甜感</p>
           </button>
-          <button type="button" @click="toggleBeans" class="w-1/2 py-2 block text-left">
+          <p v-show="showRoast" class="py-2">淺中焙｜保留花果香與自然甜感</p>
+          <button
+            type="button"
+            @click="toggleBeans"
+            class="w-1/2 py-2 flex justify-between font-semibold"
+          >
             豆種組合
             <i class="fa-solid fa-plus"></i>
-            <p v-show="showBeans" class="py-2">100% 原生種 Arabica</p>
           </button>
-          <button type="button" @click="toggleProcess" class="w-1/2 py-2 block text-left">
+          <p v-show="showBeans" class="py-2">100% 原生種 Arabica</p>
+          <button
+            type="button"
+            @click="toggleProcess"
+            class="w-1/2 py-2 flex justify-between font-semibold"
+          >
             處理方式
             <i class="fa-solid fa-plus"></i>
-            <p v-show="showProcess" class="py-2">水洗處理｜風味乾淨、澄澈</p>
           </button>
-          <button type="button" @click="toggleFlavor" class="w-1/2 py-2 block text-left">
+          <p v-show="showProcess" class="py-2">水洗處理｜風味乾淨、澄澈</p>
+          <button
+            type="button"
+            @click="toggleFlavor"
+            class="w-1/2 py-2 flex justify-between font-semibold"
+          >
             風味特性
             <i class="fa-solid fa-plus"></i>
-            <p v-show="showFlavor" class="py-2">果酸 / 花香 / 清爽 / 平衡 / 細緻</p>
           </button>
+          <p v-show="showFlavor" class="py-2">果酸 / 花香 / 清爽 / 平衡 / 細緻</p>
         </div>
 
         <div>
@@ -151,7 +167,11 @@
 
       <!-- Second Detail Block -->
       <div class="mt-28 flex flex-col lg:flex-row min-h-[400px]">
-        <img class="w-full lg:w-[45%]" src="./assets/coffee_bean.jpg" alt="coffee_bean" />
+        <img
+          class="object-cover w-full lg:w-[45%]"
+          src="./assets/coffee_bean.jpg"
+          alt="coffee_bean"
+        />
         <div class="w-full lg:w-[55%] p-[10vw]">
           <img src="./assets/Flavor_Wheel.png" alt="" />
         </div>
@@ -312,7 +332,7 @@
       },
       toggleHeart() {
         this.isheartOpen = !this.isheartOpen;
-        alert(this.isheartOpen ? '已從最愛移除' : '已加入最愛');
+        alert(this.isheartOpen ? '已從收藏移除' : '已加入收藏');
       },
       addtoCart() {
         alert('已加入購物車');

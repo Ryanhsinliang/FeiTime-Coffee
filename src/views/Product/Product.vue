@@ -2,7 +2,7 @@
   <div class="font-wenkai text-[#222222]">
     <div class="mt-[100px] mb-[80px] mx-[3%] flex flex-col items-center">
       <input
-        class="border-2 border-solid border-[var(--soft-brown)] lg:w-[70%] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:w-[70%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] w-[88%] text-[20px] py-[8px] px-[18px] rounded-[8px]"
+        class="border-2 border-solid border-[var(--soft-brown)] lg:w-[70%] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:w-[80%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] w-[94%] text-[20px] py-[8px] px-[18px] rounded-[8px]"
         type="search"
         placeholder="喝一杯靜謐的午後時光"
       />
@@ -311,7 +311,7 @@
 
   .filter {
     display: flex;
-    padding: 0 10px;
+    padding: 0 16px;
     padding-top: 12px;
     width: 70%;
   }
@@ -441,8 +441,20 @@
   }
 
   @media (768px <= width < 1024px) {
+    .filter {
+      width: 80%;
+    }
+
+    .sort {
+      margin-left: 6%;
+      margin-right: 6%;
+    }
   }
 
   @media (width < 768px) {
+    .sort {
+      margin-left: 6%;
+      margin-right: 6%;
+    }
   }
 </style>

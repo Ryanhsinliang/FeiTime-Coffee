@@ -49,28 +49,41 @@
             id="quantity"
             value="1"
             min="1"
-            class="border border-gray-300 px-3 py-2 rounded w-1/2"
+            class="border border-gray-300 px-3 py-2 rounded w-1/3"
           />
         </div>
 
         <div class="pb-4">
           <label for="weight" class="block">重量</label>
-          <select name="weight" id="weight" class="border border-gray-300 px-3 py-2 rounded w-1/2">
+          <select name="weight" id="weight" class="border border-gray-300 px-3 py-2 rounded w-1/3">
             <option value="">100g</option>
             <option value="">250g</option>
             <option value="">500g</option>
           </select>
         </div>
 
-        <p class="py-4">
-          烘焙方式: 淺中焙｜保留花果香與自然甜感
-          <br />
-          豆種組合: 100% 原生種 Arabica
-          <br />
-          風味特性: 果酸 / 花香 / 清爽 / 平衡 / 細緻
-          <br />
-          處理方式: 水洗處理｜風味乾淨、澄澈
-        </p>
+        <div>
+          <button type="button" @click="toggleRoast" class="w-1/2 py-2 block text-left">
+            烘焙方式
+            <i class="fa-solid fa-plus"></i>
+            <p v-show="showRoast" class="py-2">淺中焙｜保留花果香與自然甜感</p>
+          </button>
+          <button type="button" @click="toggleBeans" class="w-1/2 py-2 block text-left">
+            豆種組合
+            <i class="fa-solid fa-plus"></i>
+            <p v-show="showBeans" class="py-2">100% 原生種 Arabica</p>
+          </button>
+          <button type="button" @click="toggleProcess" class="w-1/2 py-2 block text-left">
+            處理方式
+            <i class="fa-solid fa-plus"></i>
+            <p v-show="showProcess" class="py-2">水洗處理｜風味乾淨、澄澈</p>
+          </button>
+          <button type="button" @click="toggleFlavor" class="w-1/2 py-2 block text-left">
+            風味特性
+            <i class="fa-solid fa-plus"></i>
+            <p v-show="showFlavor" class="py-2">果酸 / 花香 / 清爽 / 平衡 / 細緻</p>
+          </button>
+        </div>
 
         <div>
           <button
@@ -263,13 +276,23 @@
           },
         ],
         isheartOpen: true,
-        activeTab: 'roast',
 
-        menuData: {
-          roast: { title: '烘焙方式', content: '淺中焙｜保留花果香與自然甜感' },
-          beans: { title: '豆種組合', content: '100% 原生種 Arabica' },
-          flavor: { title: '風味特性', content: '果酸 / 花香 / 清爽 / 平衡 / 細緻' },
-          Process: { title: '處理方式', content: '水洗處理｜風味乾淨、澄澈' },
+        showRoast: false,
+        showFlavor: false,
+        showBeans: false,
+        showProcess: false,
+        roast: {
+          title: '烘焙方式',
+          content: '淺中焙｜保留花果香與自然甜感',
+        },
+        beans: { title: '豆種組合', content: '100% 原生種 Arabica' },
+        process: {
+          title: '處理方式',
+          content: '水洗處理｜風味乾淨、澄澈',
+        },
+        flavor: {
+          title: '風味特性',
+          content: '果酸 / 花香 / 清爽 / 平衡 / 細緻',
         },
       };
     },
@@ -293,6 +316,19 @@
       },
       addtoCart() {
         alert('已加入購物車');
+      },
+
+      toggleRoast() {
+        this.showRoast = !this.showRoast;
+      },
+      toggleFlavor() {
+        this.showFlavor = !this.showFlavor;
+      },
+      toggleBeans() {
+        this.showBeans = !this.showBeans;
+      },
+      toggleProcess() {
+        this.showProcess = !this.showProcess;
       },
     },
   };

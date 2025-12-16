@@ -4,7 +4,9 @@
   >
     Coffee ID TEST
   </h2>
-  <main class="font-wenkai min-h-screen bg-cover bg-center bg-no-repeat bg-fixed w-1/2 float-right">
+  <main
+    class="w-full lg:w-1/2 min-h-screen bg-[url('./assets/img/bgImage.jpg')] bg-cover bg-center lg:bg-none flex flex-col float-right p-5 font-wenkai"
+  >
     <section class="mx-auto py-10 w-2/3">
       <!-- 動畫背景 -->
       <div class="w-[80%] mx-auto flex justify-center rounded-2xl bg-cover bg-bottom bg-slide mt-8">

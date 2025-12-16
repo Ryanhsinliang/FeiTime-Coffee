@@ -1,14 +1,12 @@
 <template>
-  <!-- 標題 -->
   <h2
     class="w-2/3 mx-auto my-8 relative text-center font-shizuru text-3xl font-bold p-6 bg-[rgb(238,238,238)] rounded-2xl ]"
   >
     Coffee ID TEST
   </h2>
   <main
-    class="min-h-screen w-1/2 float-right flex flex-col font-wenkai bg-[url(./assets/img/bgImage.jpg)]"
+    class="w-full lg:w-1/2 min-h-screen bg-[url('./assets/img/bgImage.jpg')] bg-cover bg-center lg:bg-none flex flex-col float-right p-5 font-wenkai"
   >
-    <!-- 進度條第一版 -->
     <div class="w-2/3 h-8 rounded-lg mx-auto mb-10 bg-[rgba(238,238,238,0.2)]">
       <div
         class="h-full bg-[#79916e] transition-all duration-500 rounded-lg bg-gradient-to-r from-[#dccfc0] to-[#a2af9b] relative"
@@ -39,7 +37,7 @@
     <section v-if="!quizData.showResult" id="questionCard" class="flex flex-wrap justify-center">
       <div
         v-if="quizData.questions[quizData.currentIndex]"
-        class="bg-[rgba(238,238,238,0.3)] w-2/3 p-5 rounded-2xl mb-5"
+        class="bg-[rgba(238,238,238,0.8)] w-2/3 p-5 rounded-2xl mb-5"
       >
         <!-- img放logo -->
         <button
@@ -60,8 +58,8 @@
             v-for="option in quizData.questions[quizData.currentIndex]?.options"
             :key="option.option"
             :class="[
-              'text-center leading-normal p-5 rounded-2xl hover:cursor-pointer',
-              isSelected(option) ? 'border-[#a2af9b]' : 'border-[#dccfc0] hover:border-[#b0c4a0]',
+              'text-center leading-normal p-5 rounded-2xl bg-[rgba(220,207,192,0.8)] hover:bg-[#a2af9b] hover:cursor-pointer',
+              isSelected(option) ? 'border-[#a2af9b]' : 'border-[#b0c4a0] ',
             ]"
             @click="selectOption(option)"
           >
@@ -79,7 +77,12 @@
         </button>
       </div>
     </section>
-    <CoffeeID v-if="quizData.showResult" :scores="quizData.scores" :answers="quizData.answers" />
+    <CoffeeID
+      v-if="quizData.showResult"
+      :scores="quizData.scores"
+      :answers="quizData.answers"
+      :maxScores="maxScores"
+    />
   </main>
 </template>
 
@@ -624,6 +627,40 @@
   const isLastQuestionAnswered = computed(() => {
     const lastIndex = quizData.questions.length - 1;
     return quizData.currentIndex === lastIndex && quizData.answers[lastIndex] !== undefined;
+  });
+
+  // 計算總分
+  const maxScores = computed(() => {
+    const result = {
+      acidity: 0,
+      sweetness: 0,
+      body: 0,
+      aftertaste: 0,
+      clarity: 0,
+    };
+
+    quizData.questions.forEach((question) => {
+      const max = {
+        acidity: 0,
+        sweetness: 0,
+        body: 0,
+        aftertaste: 0,
+        clarity: 0,
+      };
+      question.options.forEach((option) => {
+        max.acidity = Math.max(max.acidity, option.score.acidity);
+        max.sweetness = Math.max(max.sweetness, option.score.sweetness);
+        max.body = Math.max(max.body, option.score.body);
+        max.aftertaste = Math.max(max.aftertaste, option.score.aftertaste);
+        max.clarity = Math.max(max.clarity, option.score.clarity);
+      });
+      result.acidity += max.acidity;
+      result.sweetness += max.sweetness;
+      result.body += max.body;
+      result.aftertaste += max.aftertaste;
+      result.clarity += max.clarity;
+    });
+    return result;
   });
 </script>
 

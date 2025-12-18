@@ -158,6 +158,17 @@ FEITIME-COFFEE/
 2. 各自開自己的分支出去做，不要在 main 上做 commit
 3. 最後專案要準備收尾時，將所有分支合併回主線 (由一人做即可)
 
+### 如何開 issue
+
+1. 開 issue 接票
+2. 右下角 create branch（名稱 issue/編號）
+3. git fetch origin 　　 git checkout issue/4
+4. 更新檔案
+5. git add .
+6. git commit
+7. git push origin issue/編號
+8. git
+
 ---
 
 ## ▶️ 如何開始
@@ -191,8 +202,6 @@ Pinia store 就像是一個 **全局抽屜**：
 任何組件都可以打開抽屜，拿資料或修改，修改後，抽屜裡的資料自動更新給所有使用它的組件。
 
 ## 組員資料
-
-## [柔柔不哭](https://github.com/Ryanhsinliang)
 
 詳細規格請看：  
 ➡ `/PROJECT_GUIDE.md`

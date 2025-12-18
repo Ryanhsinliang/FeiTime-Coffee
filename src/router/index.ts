@@ -24,6 +24,7 @@ const routes = [
     name: 'Product',
     component: Product,
   },
+
   {
     path: '/product-detail',
     name: 'ProductDetail',

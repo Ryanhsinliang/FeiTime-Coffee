@@ -1,9 +1,534 @@
-<template lang="">
-  <div></div>
+<template>
+  <div class="font-wenkai text-[#222222]">
+    <div class="top-find-bar">
+      <div class="mb-[12px] mx-[3%] flex justify-center relative">
+        <div class="relative lg:w-[70%] md:w-[80%] w-[94%] flex justify-center">
+          <input
+            class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[100%]"
+            type="search"
+            placeholder="喝一杯靜謐的午後時光"
+          />
+          <div class="sort">
+            <img class="IC-sort" src="./assets/sort.svg" alt="" />
+            <select id="sort-page">
+              <option value="">排序</option>
+              <option value="">價錢</option>
+              <option value="">熱門度</option>
+              <option value="">甜味</option>
+              <option value="">酸味</option>
+              <option value="">口感</option>
+              <option value="">餘韻</option>
+              <option value="">澄澈度</option>
+            </select>
+            <div class="line-hako">
+              <div class="line">
+                <label for="circle">
+                  <input type="checkbox" id="circle" />
+                  <div class="maru" @click="sortChange"></div>
+                </label>
+                <span v-if="sortHe" class="oriru">↓高到低</span>
+                <span v-else class="noboru">↑低到高</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="find">
+        <div class="filter">
+          <div class="filter-type">
+            <p class="filter-word" tabindex="0">類別</p>
+            <div class="type-list">
+              <p class="list" tabindex="0">咖啡豆</p>
+              <p class="list" tabindex="0">濾掛包</p>
+              <p class="list" tabindex="0">器具</p>
+            </div>
+          </div>
+          <div class="filter-type">
+            <p class="filter-word" tabindex="0">焙度</p>
+            <div class="type-list">
+              <p class="list" tabindex="0">淺焙</p>
+              <p class="list" tabindex="0">中焙</p>
+              <p class="list" tabindex="0">深焙</p>
+            </div>
+          </div>
+          <div class="filter-type">
+            <p class="filter-word" tabindex="0">風格</p>
+            <div class="type-list">
+              <p class="list" tabindex="0">果香明亮</p>
+              <p class="list" tabindex="0">清爽茶感</p>
+              <p class="list" tabindex="0">甜感平衡</p>
+              <p class="list" tabindex="0">可可堅果</p>
+              <p class="list" tabindex="0">濃厚飽滿</p>
+              <p class="list" tabindex="0">酒香發酵</p>
+            </div>
+          </div>
+          <div class="filter-type">
+            <p class="filter-word" tabindex="0">產地</p>
+            <div class="type-list">
+              <p class="list" tabindex="0">肯亞</p>
+              <p class="list" tabindex="0">哥倫比亞</p>
+              <p class="list" tabindex="0">瓜地馬拉</p>
+              <p class="list" tabindex="0">巴西</p>
+              <p class="list" tabindex="0">哥斯大黎加</p>
+              <p class="list" tabindex="0">印尼</p>
+              <p class="list" tabindex="0">薩爾瓦多</p>
+              <p class="list" tabindex="0">衣索比亞</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[300px]"
+    >
+      <!-- card start -->
+      <a href="#" target="_blank">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>USA USA</p>
+            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
+            <p>$ 70</p>
+          </div>
+        </div>
+      </a>
+      <!-- card end -->
+
+      <!-- card start -->
+      <a href="#" target="_blank">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img class="w-[100%]" src="./assets/ex.2.png" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>臺灣</p>
+            <h3 class="text-[28px] font-bold">阿里山好喝咖啡</h3>
+            <p>$ 599</p>
+          </div>
+        </div>
+      </a>
+      <!-- card end -->
+
+      <!-- card start -->
+      <a href="#" target="_blank">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img class="w-[100%]" src="./assets/ex.3.png" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>日本</p>
+            <h3 class="text-[28px] font-bold">茶の凪</h3>
+            <p>¥ 9800</p>
+          </div>
+        </div>
+      </a>
+      <!-- card end -->
+
+      <!-- card start -->
+      <a href="#" target="_blank">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img class="w-[100%]" src="./assets/ex.2.png" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>臺灣</p>
+            <h3 class="text-[28px] font-bold">阿里山好喝咖啡</h3>
+            <p>$ 599</p>
+          </div>
+        </div>
+      </a>
+      <!-- card end -->
+
+      <!-- card start -->
+      <a href="#" target="_blank">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img class="w-[100%]" src="./assets/ex.3.png" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>茶の凪</p>
+            <h3 class="text-[28px] font-bold">日本</h3>
+            <p>¥ 9800</p>
+          </div>
+        </div>
+      </a>
+      <!-- card end -->
+
+      <!-- card start -->
+      <a href="#" target="_blank">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>USA USA</p>
+            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
+            <p>$ 70</p>
+          </div>
+        </div>
+      </a>
+      <!-- card end -->
+
+      <!-- card start -->
+      <a href="#" target="_blank">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>USA USA</p>
+            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
+            <p>$ 70</p>
+          </div>
+        </div>
+      </a>
+      <!-- card end -->
+
+      <!-- card start -->
+      <a href="#" target="_blank">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>USA USA</p>
+            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
+            <p>$ 70</p>
+          </div>
+        </div>
+      </a>
+      <!-- card end -->
+
+      <!-- card start -->
+      <a href="#" target="_blank">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>USA USA</p>
+            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
+            <p>$ 70</p>
+          </div>
+        </div>
+      </a>
+      <!-- card end -->
+
+      <!-- card start -->
+      <a href="#" target="_blank">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img class="w-[100%]" src="./assets/ex.3.png" alt="圖片加載中..." />
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+          >
+            <p>日本</p>
+            <h3 class="text-[28px] font-bold">茶の凪</h3>
+            <p>¥ 9800</p>
+          </div>
+        </div>
+      </a>
+      <!-- card end -->
+    </div>
+  </div>
 </template>
 
 <script>
-  export default {};
+  export default {
+    data() {
+      return {
+        sortHe: true, // 調整【排序】高到低 還是 低到高 按鈕的參數
+      };
+    },
+    methods: {
+      sortChange() {
+        // 切換【排序】高到低 還是 低到高
+        this.sortHe = !this.sortHe;
+      },
+    },
+  };
 </script>
 
-<style lang=""></style>
+<style>
+  /* Tailwind 3.4 官網 */
+  /* https://v3.tailwindcss.com/ */
+
+  /* Font-awesome */
+  /* https://fontawesome.com/search?ic=free-collection */
+
+  /* 
+先寫不會變動的樣式
+再用lg: 寫電腦版
+再用md: 寫平板
+手機版 不用特別寫 
+*/
+
+  :root {
+    --main-color: #faf9ee;
+    /* 淡黃 */
+    --green-gray: #a2af9b;
+    /* 抹茶綠 */
+    --soft-brown: #dccfc0;
+    /* 亮咖啡 */
+    --heavy-brown: #b49e89;
+    /* 深咖啡 */
+    --light-gray: #eeeeee;
+    /* 淡灰 */
+  }
+
+  body {
+    background-color: var(--main-color);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+  }
+
+  select:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  select {
+    /* 移除原生的箭頭和外觀  */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  input:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .top-find-bar {
+    background-image: url(./assets/find-bg2.png);
+    background-position: right center;
+    padding-top: 40px;
+    padding-bottom: 24px;
+    width: 100%;
+    position: fixed;
+    z-index: 2;
+  }
+
+  .find {
+    margin-left: 16.95%;
+    margin-right: 16.95%;
+    width: 70%;
+    display: flex;
+    white-space: nowrap;
+  }
+
+  .filter {
+    display: flex;
+    padding: 0 16px;
+    width: 70%;
+  }
+
+  .filter-type {
+    font-size: 20px;
+    padding: 4px 12px;
+    background-color: var(--soft-brown);
+    border-radius: 12px;
+    margin-left: 8px;
+    margin-right: 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .type-list {
+    display: none;
+  }
+
+  .filter-type:focus-within {
+    background-color: var(--heavy-brown);
+  }
+
+  .filter-type:focus-within .type-list {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--soft-brown);
+    border-radius: 16px;
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    padding: 0px 24px;
+    z-index: 2;
+  }
+
+  .list {
+    margin: 12px;
+    padding: 12px 24px;
+    border-bottom: 2px solid transparent;
+  }
+
+  .list:hover {
+    border-bottom: 2px solid var(--heavy-brown);
+    color: var(--heavy-brown);
+  }
+
+  .list:focus {
+    background-color: var(--heavy-brown);
+    border-bottom: 2px solid transparent;
+    color: #222222;
+    border-radius: 16px;
+    box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.35);
+  }
+
+  .sort {
+    display: flex;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    transform: translateX(-80%);
+  }
+
+  .IC-sort {
+    width: 32px;
+    background-color: var(--main-color);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    padding-left: 12px;
+  }
+
+  #sort-page {
+    background-color: var(--main-color);
+    padding: 0 8px;
+    margin-right: 12px;
+    cursor: pointer;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+
+  .maru {
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    background-color: #a4e9e2;
+    box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+  }
+
+  .line-hako {
+    display: flex;
+    align-items: center;
+  }
+
+  .line {
+    width: 40px;
+    height: 10px;
+    background-color: var(--main-color);
+    border-radius: 60px;
+    position: relative;
+  }
+
+  .maru {
+    position: absolute;
+    top: -50%;
+    left: 0;
+  }
+
+  .oriru {
+    display: block;
+    position: absolute;
+    left: calc(100% + 16px);
+    top: -8px;
+    white-space: nowrap;
+    padding: 0 4px;
+    border-radius: 4px;
+    background-color: #a4e9e2;
+  }
+
+  .noboru {
+    display: block;
+    position: absolute;
+    left: calc(100% + 16px);
+    top: -8px;
+    white-space: nowrap;
+    padding: 0 4px;
+    border-radius: 4px;
+    background-color: #bdeda4;
+  }
+
+  #circle {
+    display: none;
+  }
+
+  #circle:checked + .maru {
+    left: 20px;
+    background-color: #bdeda4;
+  }
+
+  @media (768px <= width < 1024px) {
+    .filter {
+      width: 80%;
+    }
+
+    .find {
+      margin-left: 12.4%;
+      margin-right: 12.4%;
+    }
+
+    .sort {
+      top: calc(100% + 72px);
+      right: calc(100% - 24px);
+      transform: translateX(100%);
+    }
+
+    .top-find-bar {
+      padding-bottom: 72px;
+    }
+  }
+
+  @media (width < 768px) {
+    .find {
+      width: 88%;
+      margin-left: 6%;
+      margin-right: 6%;
+      margin-top: 28px;
+    }
+
+    .filter {
+      /* background-color: #bdeda4; */
+      width: 100%;
+      padding: 0;
+      display: block;
+      border-radius: 8px;
+      /* overflow: hidden; */
+    }
+
+    .filter-type {
+      margin: 0;
+      border-radius: 0px;
+    }
+
+    .sort {
+      top: calc(100% + 72px);
+      right: calc(100% - 24px);
+      transform: translateX(100%);
+    }
+
+    .top-find-bar {
+      padding-bottom: 72px;
+    }
+  }
+</style>

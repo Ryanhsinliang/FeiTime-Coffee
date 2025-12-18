@@ -314,7 +314,8 @@
   }
 
   .top-find-bar {
-    background-color: #73cf41;
+    background-image: url(./assets/find-bg2.png);
+
     padding-top: 40px;
     padding-bottom: 24px;
     width: 100%;
@@ -328,8 +329,6 @@
     width: 70%;
     display: flex;
     white-space: nowrap;
-    /* justify-content: space-between; */
-    align-items: center;
   }
 
   .filter {

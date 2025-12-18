@@ -1,14 +1,10 @@
 <template>
   <main class="relative">
     <!-- Product Guide Section -->
-    <section class="flex flex-col lg:flex-row justify-center relative min-h-[600px]">
+    <section class="flex flex-col lg:flex-row justify-center relative min-h-[42vw]">
       <!-- Photo Gallery -->
-      <div class="w-full lg:w-1/2 bg-[#f3eeea] relative max-h-[800px]">
-        <img
-          :src="currentPhoto.image"
-          alt=""
-          class="object-cover aspect-square w-full max-h-[800px]"
-        />
+      <div class="w-full lg:w-1/2 bg-[#f3eeea] relative">
+        <img :src="currentPhoto.image" alt="" class="object-cover aspect-[4/3] w-full h-full" />
 
         <!-- Navigation Buttons -->
         <button @click="prevPhoto" type="button" class="absolute top-1/2 left-2.5 -translate-y-1/2">
@@ -29,14 +25,14 @@
           <div
             v-for="(dot, index) in photos"
             :key="index"
-            class="w-2 h-2 rounded-full transition-colors"
+            class="w-2 h-2 rounded-full"
             :class="index === currentIndex ? 'bg-[#141e0e]' : 'bg-[#a2af9b]'"
           ></div>
         </div>
       </div>
 
       <!-- Product Form -->
-      <form class="p-[5vw] bg-[#f9f8f6] w-full lg:w-1/2 text-[#6d654f]">
+      <form class="p-24 bg-[#f9f8f6] w-full lg:w-1/2 text-[#6d654f]">
         <p id="origin">衣索比亞(產地)</p>
         <h2 class="text-4xl py-4 font-semibold">阿拉比卡．Arabica Classic</h2>
         <p id="price" class="text-lg font-semibold">$400(價格)</p>
@@ -135,7 +131,7 @@
     <!-- Banner Image -->
     <section>
       <img
-        class="w-full aspect-[2/1] object-cover h-[750px]"
+        class="w-full aspect-[2/1] object-cover"
         src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         alt=""
       />
@@ -151,8 +147,8 @@
     <!-- Product Details -->
     <section class="bg-[#eeeeee]">
       <!-- First Detail Block -->
-      <div class="flex flex-col lg:flex-row min-h-[400px]">
-        <div class="w-full lg:w-[55%] px-[8vw] pb-[5vw] lg:pb-0 pt-8 lg:pt-0">
+      <div class="flex flex-col lg:flex-row">
+        <div class="w-full lg:w-[55%] px-20 pb-12 lg:py-0">
           <h3 class="text-3xl text-[#6d654f]">阿拉比卡 Classic</h3>
           <p class="text-lg text-[#808080] pt-10">
             阿拉比卡 Classic
@@ -166,24 +162,24 @@
       </div>
 
       <!-- Second Detail Block -->
-      <div class="mt-28 flex flex-col lg:flex-row min-h-[400px]">
+      <div class="mt-28 flex flex-col lg:flex-row">
         <img
           class="object-cover w-full lg:w-[45%]"
           src="./assets/coffee_bean.jpg"
           alt="coffee_bean"
         />
         <div class="w-full lg:w-[55%] p-[10vw]">
-          <img src="./assets/Flavor_Wheel.png" alt="" />
+          <img src="" alt="" />
         </div>
       </div>
     </section>
 
-    <!-- Hot Products Section -->
-    <section class="bg-[#eeeeee] py-[100px] h-[600px]">
-      <h2 class="p-10 text-center text-3xl text-[#6d654f]">推薦商品</h2>
-      <div class="flex gap-[2vw] mx-auto px-2vw">
+    <!-- Recommend Products Section -->
+    <section class="bg-[#eeeeee] py-[100px] min-h-[750px]">
+      <h2 class="py-10 text-center text-3xl text-[#6d654f]">推薦商品</h2>
+      <div class="flex gap-[2vw] px-2vw">
         <div
-          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
@@ -197,7 +193,7 @@
           />
         </div>
         <div
-          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
@@ -211,7 +207,7 @@
           />
         </div>
         <div
-          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
@@ -225,7 +221,7 @@
           />
         </div>
         <div
-          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
@@ -239,7 +235,7 @@
           />
         </div>
         <div
-          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
@@ -253,7 +249,7 @@
           />
         </div>
         <div
-          class="max-h-[450px] w-full max-w-[300px] mx-auto relative flex justify-center items-center group"
+          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
         >
           <img
             src="./assets/orange.png"
@@ -301,19 +297,6 @@
         showFlavor: false,
         showBeans: false,
         showProcess: false,
-        roast: {
-          title: '烘焙方式',
-          content: '淺中焙｜保留花果香與自然甜感',
-        },
-        beans: { title: '豆種組合', content: '100% 原生種 Arabica' },
-        process: {
-          title: '處理方式',
-          content: '水洗處理｜風味乾淨、澄澈',
-        },
-        flavor: {
-          title: '風味特性',
-          content: '果酸 / 花香 / 清爽 / 平衡 / 細緻',
-        },
       };
     },
 

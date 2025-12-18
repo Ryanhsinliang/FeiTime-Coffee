@@ -3,9 +3,8 @@ import HomePage from '@/views/HomePage/HomePage.vue';
 import Product from '@/views/Product/Product.vue';
 import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
 import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
-import CoffeeSimulator from '@/views/CoffeeSimulator/CoffeeSimulator.vue';
-import Login from '@/views/Login/Login.vue';
-import Member from '@/views/Member/Member.vue';
+import CoffeeSimulatorT1T from '@/views/CoffeeLabT1-T/CoffeeSimulatorT1T.vue';
+import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.vue';
 
 const routes = [
   {
@@ -29,19 +28,14 @@ const routes = [
     component: CoffeeIdTest,
   },
   {
-    path: '/coffee-simulator',
-    name: 'CoffeeSimulator',
-    component: CoffeeSimulator,
+    path: '/coffeeLabT1-T',
+    name: 'CoffeeLabT1-T',
+    component: CoffeeSimulatorT1T,
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: Login,
-  },
-  {
-    path: '/member',
-    name: 'Member',
-    component: Member,
+    path: '/coffeeLabT1-T-P1',
+    name: 'CoffeeLabT1-T-P1',
+    component: CoffeeSimulatorT1TP1,
   },
 ];
 

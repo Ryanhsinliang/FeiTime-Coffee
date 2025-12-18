@@ -1,13 +1,39 @@
 <template>
   <div class="font-wenkai text-[#222222]">
     <div class="top-find-bar">
-      <div class="mb-[12px] mx-[3%] flex flex-col items-center">
-        <input
-          class="border-2 border-solid border-[#8f745c] lg:w-[70%] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:w-[80%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] w-[94%] text-[20px] py-[8px] px-[18px] rounded-[8px]"
-          type="search"
-          placeholder="喝一杯靜謐的午後時光"
-        />
+      <div class="mb-[12px] mx-[3%] flex justify-center relative">
+        <div class="relative lg:w-[70%] md:w-[80%] w-[94%] flex justify-center">
+          <input
+            class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[100%]"
+            type="search"
+            placeholder="喝一杯靜謐的午後時光"
+          />
+          <div class="sort">
+            <img class="IC-sort" src="./assets/sort.svg" alt="" />
+            <select id="sort-page">
+              <option value="">排序</option>
+              <option value="">價錢</option>
+              <option value="">熱門度</option>
+              <option value="">甜味</option>
+              <option value="">酸味</option>
+              <option value="">口感</option>
+              <option value="">餘韻</option>
+              <option value="">澄澈度</option>
+            </select>
+            <div class="line-hako">
+              <div class="line">
+                <label for="circle">
+                  <input type="checkbox" id="circle" />
+                  <div class="maru" @click="sortChange"></div>
+                </label>
+                <span v-if="sortHe" class="oriru">↓高到低</span>
+                <span v-else class="noboru">↑低到高</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
       <div class="find">
         <div class="filter">
           <div class="filter-type">
@@ -48,29 +74,6 @@
               <p class="list" tabindex="0">印尼</p>
               <p class="list" tabindex="0">薩爾瓦多</p>
               <p class="list" tabindex="0">衣索比亞</p>
-            </div>
-          </div>
-        </div>
-        <div class="sort">
-          <img class="IC-sort" src="./assets/sort.svg" alt="" />
-          <select id="sort-page">
-            <option value="">排序</option>
-            <option value="">價錢</option>
-            <option value="">熱門度</option>
-            <option value="">甜味</option>
-            <option value="">酸味</option>
-            <option value="">口感</option>
-            <option value="">餘韻</option>
-            <option value="">澄澈度</option>
-          </select>
-          <div class="line-hako">
-            <div class="line">
-              <label for="circle">
-                <input type="checkbox" id="circle" />
-                <div class="maru" @click="sortChange"></div>
-              </label>
-              <span v-if="sortHe" class="oriru">↓高到低</span>
-              <span v-else class="noboru">↑低到高</span>
             </div>
           </div>
         </div>
@@ -392,10 +395,12 @@
   }
 
   .sort {
-    margin-left: 3%;
-    margin-right: 3%;
     margin-bottom: 12px;
     display: flex;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    transform: translateX(-80%);
   }
 
   .IC-sort {

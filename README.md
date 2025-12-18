@@ -167,7 +167,13 @@ FEITIME-COFFEE/
 5. git add .
 6. git commit
 7. git push origin issue/編號
-8. git
+8. 去 github 上面點選 compare & pull request
+9. Add a description，寫 close #選擇 issue
+10. create pull request
+11. 等大家 review（去 files changed）
+12. 等大家看完就可以 Rebase and merge
+13. 按完記得去按 git graph 有沒有
+14. 最後 git fetch
 
 ---
 

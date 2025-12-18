@@ -158,6 +158,29 @@ FEITIME-COFFEE/
 2. 各自開自己的分支出去做，不要在 main 上做 commit
 3. 最後專案要準備收尾時，將所有分支合併回主線 (由一人做即可)
 
+### 如何開 issue
+
+1. 開 issue 接票
+2. 右下角 create branch（名稱 issue/編號）
+3. git fetch origin 　　 git checkout issue/4
+4. 更新檔案
+5. git add .
+6. git commit
+7. git push origin issue/編號
+8. 去 github 上面點選 compare & pull request
+9. Add a description，寫 close #選擇 issue
+10. create pull request
+11. 等大家 review（去 files changed）
+12. 等大家看完就可以 Rebase and merge
+13. 按完記得去按 git graph 有沒有
+14. 最後 git fetch
+
+### 如何把自己的分支接回 main
+
+1. 切回 main
+2. 對自己的分支右鍵 Merge current into branch
+3. 解衝突，解完再 commit
+
 ---
 
 ## ▶️ 如何開始
@@ -190,7 +213,7 @@ Pinia store 就像是一個 **全局抽屜**：
 你把需要共用的資料（token、購物車）放在裡面，  
 任何組件都可以打開抽屜，拿資料或修改，修改後，抽屜裡的資料自動更新給所有使用它的組件。
 
----
+## 組員資料
 
 詳細規格請看：  
 ➡ `/PROJECT_GUIDE.md`

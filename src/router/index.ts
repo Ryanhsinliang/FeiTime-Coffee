@@ -4,6 +4,7 @@ import Product from '@/views/Product/Product.vue';
 import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
 import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
 import CoffeeSimulatorT1T from '@/views/CoffeeLabT1-T/CoffeeSimulatorT1T.vue';
+import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.vue';
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/coffeeLabT1-T',
     name: 'CoffeeLabT1-T',
     component: CoffeeSimulatorT1T,
+  },
+  {
+    path: '/coffeeLabT1-T-P1',
+    name: 'CoffeeLabT1-T-P1',
+    component: CoffeeSimulatorT1TP1,
   },
 ];
 

@@ -4,6 +4,7 @@ import HomePage from '@/views/HomePage/HomePage.vue';
 import Product from '@/views/Product/Product.vue';
 import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
 import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
+import CoffeeIdTestCard from '@/views/CoffeeIdTest/CoffeeIdTestCard.vue';
 import CoffeeSimulatorT1T from '@/views/CoffeeLabT1-T/CoffeeSimulatorT1T.vue';
 import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.vue';
 
@@ -32,6 +33,11 @@ const routes = [
     path: '/coffee-id-test',
     name: 'CoffeeIdTest',
     component: CoffeeIdTest,
+  },
+  {
+    path: '/coffee-id-test-card',
+    name: 'CoffeeIdTestCard',
+    component: CoffeeIdTestCard,
   },
   {
     path: '/coffeeLabT1-T',

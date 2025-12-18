@@ -81,7 +81,7 @@
     </div>
 
     <div
-      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[300px] mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[178px]"
+      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[300px]"
     >
       <!-- card start -->
       <a href="#" target="_blank">
@@ -489,16 +489,46 @@
     }
 
     .sort {
-      top: calc(100% + 64px);
+      top: calc(100% + 72px);
       right: calc(100% - 24px);
       transform: translateX(100%);
     }
 
     .top-find-bar {
-      padding-bottom: 64px;
+      padding-bottom: 72px;
     }
   }
 
   @media (width < 768px) {
+    .find {
+      width: 88%;
+      margin-left: 6%;
+      margin-right: 6%;
+      margin-top: 28px;
+    }
+
+    .filter {
+      /* background-color: #bdeda4; */
+      width: 100%;
+      padding: 0;
+      display: block;
+      border-radius: 8px;
+      /* overflow: hidden; */
+    }
+
+    .filter-type {
+      margin: 0;
+      border-radius: 0px;
+    }
+
+    .sort {
+      top: calc(100% + 72px);
+      right: calc(100% - 24px);
+      transform: translateX(100%);
+    }
+
+    .top-find-bar {
+      padding-bottom: 72px;
+    }
   }
 </style>

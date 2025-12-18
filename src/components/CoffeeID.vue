@@ -5,15 +5,26 @@
     >
       <div class="p-5">
         <img class="h-10" src="" alt="" />
-        <h2 class="text-2xl text-center">您的Coffee ID card</h2>
+        <h2 class="text-3xl text-center">您的Coffee ID card</h2>
       </div>
       <div class="w-full max-w-sm mx-auto aspect-square">
         <canvas ref="radarCanvas" class="mx-auto"></canvas>
       </div>
-      <h3 class="text-center">您的風味測試結果屬於：</h3>
-      <p></p>
-      <h3 class="text-center">推薦商品：</h3>
-      <a href="" 　class="mx-auto p-2 rounded-md bg-[rgb(162,175,155)] hover:bg-[#dccfc0]">OOO</a>
+      <h3 class="mx-auto text-2xl">您的風味測試結果屬於：</h3>
+      <h4 class="mx-auto text-2xl">{{ persona.name }}</h4>
+      <p class="mx-auto">{{ persona.description }}</p>
+      <h3 class="mx-auto">推薦商品：</h3>
+
+      <div class="mx-auto flex justify-between gap-3">
+        <a
+          href=""
+          v-for="bean in persona.beans"
+          :key="bean"
+          　class="p-2 rounded-md bg-[rgb(162,175,155)] hover:bg-[#dccfc0]"
+        >
+          {{ bean }}
+        </a>
+      </div>
     </section>
   </div>
 </template>
@@ -57,7 +68,6 @@
   function renderRadar() {
     if (!radarCanvas.value) return;
 
-    // 如果已經有 chart → 先銷毀，再重畫
     if (radarChart) {
       radarChart.destroy();
     }
@@ -110,6 +120,10 @@
   watch(() => normalizedScores, renderRadar, { deep: true });
 
   onMounted(renderRadar);
+
+  //拿到風味測試角色
+  import { getPersona } from '@/utils/getPersona';
+  const persona = computed(() => getPersona(normalizedScores)!);
 </script>
 
 <style scoped></style>

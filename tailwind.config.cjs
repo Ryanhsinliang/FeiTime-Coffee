@@ -6,6 +6,7 @@ module.exports = {
       fontFamily: {
         wenkai: ['LXGW WenKai TC', 'sans-serif'], // 使用 class: font-wenkai
         sans: ['Poppins', 'ui-sans-serif', 'system-ui'],
+        shizuru: ['Shizuru'],
       },
     },
   },

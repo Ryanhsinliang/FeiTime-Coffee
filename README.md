@@ -175,6 +175,12 @@ FEITIME-COFFEE/
 13. 按完記得去按 git graph 有沒有
 14. 最後 git fetch
 
+### 如何把自己的分支接回 main
+
+1. 切回 main
+2. 對自己的分支右鍵 Merge current into branch
+3. 解衝突，解完再 commit
+
 ---
 
 ## ▶️ 如何開始

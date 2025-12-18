@@ -81,7 +81,7 @@
     </div>
 
     <div
-      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[178px]"
+      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[300px] mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[178px]"
     >
       <!-- card start -->
       <a href="#" target="_blank">
@@ -395,7 +395,6 @@
   }
 
   .sort {
-    margin-bottom: 12px;
     display: flex;
     position: absolute;
     top: calc(100% + 8px);
@@ -484,16 +483,22 @@
       width: 80%;
     }
 
+    .find {
+      margin-left: 12.4%;
+      margin-right: 12.4%;
+    }
+
     .sort {
-      margin-left: 6%;
-      margin-right: 6%;
+      top: calc(100% + 64px);
+      right: calc(100% - 24px);
+      transform: translateX(100%);
+    }
+
+    .top-find-bar {
+      padding-bottom: 64px;
     }
   }
 
   @media (width < 768px) {
-    .sort {
-      margin-left: 6%;
-      margin-right: 6%;
-    }
   }
 </style>

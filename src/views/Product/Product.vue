@@ -3,7 +3,7 @@
     <div class="top-find-bar">
       <div class="mb-[12px] mx-[3%] flex flex-col items-center">
         <input
-          class="border-2 border-solid border-[var(--soft-brown)] lg:w-[70%] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:w-[80%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] w-[94%] text-[20px] py-[8px] px-[18px] rounded-[8px]"
+          class="border-2 border-solid border-[#8f745c] lg:w-[70%] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:w-[80%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] w-[94%] text-[20px] py-[8px] px-[18px] rounded-[8px]"
           type="search"
           placeholder="喝一杯靜謐的午後時光"
         />
@@ -70,7 +70,7 @@
                 <div class="maru" @click="sortChange"></div>
               </label>
               <span v-if="sortHe" class="oriru">↓高到低</span>
-              <span v-else class="oriru">↑低到高</span>
+              <span v-else class="noboru">↑低到高</span>
             </div>
           </div>
         </div>
@@ -78,7 +78,7 @@
     </div>
 
     <div
-      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[184px]"
+      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[178px]"
     >
       <!-- card start -->
       <a href="#" target="_blank">
@@ -315,7 +315,7 @@
 
   .top-find-bar {
     background-image: url(./assets/find-bg2.png);
-
+    background-position: right center;
     padding-top: 40px;
     padding-bottom: 24px;
     width: 100%;
@@ -400,19 +400,26 @@
 
   .IC-sort {
     width: 32px;
+    background-color: var(--main-color);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    padding-left: 12px;
   }
 
   #sort-page {
     background-color: var(--main-color);
     padding: 0 8px;
+    margin-right: 12px;
     cursor: pointer;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
   }
 
   .maru {
     width: 20px;
     height: 20px;
     border-radius: 100%;
-    background-color: #eeeeee;
+    background-color: #a4e9e2;
     box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.35);
     cursor: pointer;
   }
@@ -425,7 +432,7 @@
   .line {
     width: 40px;
     height: 10px;
-    background-color: var(--soft-brown);
+    background-color: var(--main-color);
     border-radius: 60px;
     position: relative;
   }
@@ -442,6 +449,9 @@
     left: calc(100% + 16px);
     top: -8px;
     white-space: nowrap;
+    padding: 0 4px;
+    border-radius: 4px;
+    background-color: #a4e9e2;
   }
 
   .noboru {
@@ -450,6 +460,9 @@
     left: calc(100% + 16px);
     top: -8px;
     white-space: nowrap;
+    padding: 0 4px;
+    border-radius: 4px;
+    background-color: #bdeda4;
   }
 
   #circle {
@@ -458,7 +471,7 @@
 
   #circle:checked + .maru {
     left: 20px;
-    background-color: #eeeeee;
+    background-color: #bdeda4;
   }
 
   @media (768px <= width < 1024px) {

@@ -37,7 +37,7 @@
       <div class="find">
         <div class="filter">
           <div class="filter-type">
-            <p class="filter-word" tabindex="0">類別</p>
+            <p class="filter-word" tabindex="0" id="first-noline">類別</p>
             <div class="type-list">
               <p class="list" tabindex="0">咖啡豆</p>
               <p class="list" tabindex="0">濾掛包</p>
@@ -270,11 +270,11 @@
   /* https://fontawesome.com/search?ic=free-collection */
 
   /* 
-先寫不會變動的樣式
-再用lg: 寫電腦版
-再用md: 寫平板
-手機版 不用特別寫 
-*/
+    先寫不會變動的樣式
+    再用lg: 寫電腦版
+    再用md: 寫平板
+    手機版 不用特別寫 
+  */
 
   :root {
     --main-color: #faf9ee;
@@ -351,6 +351,7 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+    line-height: 48px;
   }
 
   .type-list {
@@ -508,7 +509,6 @@
     }
 
     .filter {
-      /* background-color: #bdeda4; */
       width: 100%;
       padding: 0;
       display: block;
@@ -519,6 +519,21 @@
     .filter-type {
       margin: 0;
       border-radius: 0px;
+      padding: 0 12px;
+      flex-direction: column;
+    }
+
+    /* .type-list {
+      display: block;
+    } */
+
+    .filter-word {
+      width: 100%;
+      border-top: 2px solid var(--heavy-brown);
+    }
+
+    #first-noline {
+      border-top: 2px solid transparent;
     }
 
     .sort {

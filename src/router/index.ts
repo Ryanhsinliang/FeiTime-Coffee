@@ -7,6 +7,11 @@ import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
 import CoffeeIdTestCard from '@/views/CoffeeIdTest/CoffeeIdTestCard.vue';
 import CoffeeSimulatorT1T from '@/views/CoffeeLabT1-T/CoffeeSimulatorT1T.vue';
 import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.vue';
+import Login from '@/views/Login/Login.vue';
+import Register from '@/views/Login/Register.vue';
+
+//後端串接測試用
+import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
 
 const routes = [
   {
@@ -49,6 +54,23 @@ const routes = [
     path: '/coffeeLabT1-T-P1',
     name: 'CoffeeLabT1-T-P1',
     component: CoffeeSimulatorT1TP1,
+  },
+  {
+    path: '/Login',
+    name: 'Login',
+    component: Login,
+  },
+  {
+    path: '/Register',
+    name: 'Register',
+    component: Register,
+  },
+
+  //測試用
+  {
+    path: '/CTest',
+    name: 'CTest',
+    component: CTest,
   },
 ];
 

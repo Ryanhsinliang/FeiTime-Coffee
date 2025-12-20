@@ -81,7 +81,7 @@
     </div>
 
     <div
-      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[300px]"
+      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[400px]"
     >
       <!-- card start -->
       <a href="#" target="_blank">
@@ -319,6 +319,8 @@
   .top-find-bar {
     background-image: url(./assets/find-bg2.png);
     background-position: right center;
+    background-repeat: no-repeat;
+    background-size: cover;
     padding-top: 40px;
     padding-bottom: 24px;
     width: 100%;
@@ -351,7 +353,6 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    line-height: 48px;
   }
 
   .type-list {
@@ -513,7 +514,7 @@
       padding: 0;
       display: block;
       border-radius: 8px;
-      /* overflow: hidden; */
+      overflow: hidden;
     }
 
     .filter-type {
@@ -521,11 +522,21 @@
       border-radius: 0px;
       padding: 0 12px;
       flex-direction: column;
+      line-height: 48px;
     }
 
-    /* .type-list {
-      display: block;
-    } */
+    .filter-type:focus-within .type-list {
+      width: 100%;
+      position: static;
+      left: 0;
+      transform: translateX(0);
+      margin-bottom: 8px;
+    }
+
+    .list {
+      padding: 0 24px;
+      margin: 0;
+    }
 
     .filter-word {
       width: 100%;

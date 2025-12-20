@@ -76,12 +76,13 @@
       </div>
     </div>
 
-    <div class="somaho-up" @click="sortBarSwitch">
+    <div class="somaho-up" :class="rotation" @click="sortBarSwitch">
       <i class="fa-solid fa-angle-up"></i>
     </div>
 
     <div
-      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[500px]"
+      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
+      :class="topBarSapce"
     >
       <!-- card start -->
       <a href="#" target="_blank">
@@ -251,7 +252,9 @@
     data() {
       return {
         sortHe: true, // 調整【排序】高到低 還是 低到高 按鈕的參數
-        sortTopbar: true,
+        sortTopbar: true, // 手機板 控制topbar是否顯示的參數
+        rotation: null, // 手機板 旋轉開合按鈕的參數
+        topBarSapce: 'pt-[500px]', // 手機板 更改商品卡 grid 的上距的參數
       };
     },
     methods: {
@@ -260,7 +263,17 @@
         this.sortHe = !this.sortHe;
       },
       sortBarSwitch() {
+        // 手機板 切換topbar
+        // 附加旋轉按鈕
+        // 附加更改商品卡 grid 的上距 避免留白
         this.sortTopbar = !this.sortTopbar;
+        if (!this.sortTopbar) {
+          this.rotation = 'rotate-180';
+          this.topBarSapce = 'pt-[50px]';
+        } else {
+          this.rotation = null;
+          this.topBarSapce = 'pt-[500px]';
+        }
       },
     },
   };
@@ -566,6 +579,7 @@
       background-color: var(--green-gray);
       border-radius: 100%;
       cursor: pointer;
+      /* transform: rotate(180deg); */
     }
   }
 </style>

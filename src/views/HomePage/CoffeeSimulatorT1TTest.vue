@@ -419,8 +419,13 @@
         assistantText.value = '小助手思考中...';
 
         try {
-          const prompt = `請根據目前手沖參數，給出建議。烘焙度：${roastLabel.value}、粉水比：1:${config.ratio}、沖煮時間：${config.brewTimeSec} 秒、研磨度：${grindLabel.value}、注水段數：${config.pours}`;
-          const res = await callGemini(prompt);
+          const res = await callGemini({
+            roast: roastLabel.value,
+            ratio: config.ratio,
+            brewTimeSec: config.brewTimeSec,
+            grind: grindLabel.value,
+            pours: config.pours,
+          });
 
           // 更新小助手文字
           assistantText.value = res.text;

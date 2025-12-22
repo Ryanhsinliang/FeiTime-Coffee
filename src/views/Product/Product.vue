@@ -11,9 +11,14 @@
             placeholder="喝一杯靜謐的午後時光"
           />
           <div class="sort flex absolute top-[calc(100%+8px)] right-[24px] whitespace-nowrap">
-            <div class="sort-list">
-              <img class="IC-sort" src="./assets/sort.svg" alt="" />
-              <select id="sort-page">
+            <div
+              class="sort-list flex bg-[var(--main-color)] px-[12px] rounded-[8px] overflow-hidden mr-[8px]"
+            >
+              <img class="IC-sort w-[32px] bg-[var(--main-color)]" src="./assets/sort.svg" alt="" />
+              <select
+                id="sort-page"
+                class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
+              >
                 <option value="">排序</option>
                 <option value="">價錢</option>
                 <option value="">熱門度</option>
@@ -453,27 +458,27 @@
     white-space: nowrap;
   } */
 
-  .sort-list {
+  /* .sort-list {
     display: flex;
     background-color: var(--main-color);
     padding: 0 12px;
     border-radius: 8px;
     overflow: hidden;
     margin-right: 8px;
-  }
+  } */
 
-  .IC-sort {
+  /* .IC-sort {
     width: 32px;
     background-color: var(--main-color);
-  }
+  } */
 
-  #sort-page {
+  /* #sort-page {
     background-color: var(--main-color);
     padding-left: 16px;
     padding-right: 8px;
     cursor: pointer;
     flex-shrink: 0;
-  }
+  } */
 
   .noboru {
     border-radius: 4px;

@@ -10,7 +10,7 @@
             type="search"
             placeholder="喝一杯靜謐的午後時光"
           />
-          <div class="sort">
+          <div class="sort flex absolute top-[calc(100%+8px)] right-[24px] whitespace-nowrap">
             <div class="sort-list">
               <img class="IC-sort" src="./assets/sort.svg" alt="" />
               <select id="sort-page">
@@ -49,27 +49,41 @@
             </div>
           </div>
           <div class="filter-type">
-            <p class="filter-word" tabindex="0">風格</p>
+            <p class="filter-word" tabindex="0">風味</p>
             <div class="type-list">
-              <p class="list" tabindex="0">果香明亮</p>
-              <p class="list" tabindex="0">清爽茶感</p>
-              <p class="list" tabindex="0">甜感平衡</p>
-              <p class="list" tabindex="0">可可堅果</p>
-              <p class="list" tabindex="0">濃厚飽滿</p>
-              <p class="list" tabindex="0">酒香發酵</p>
+              <p class="list" tabindex="0">果香清爽</p>
+              <p class="list" tabindex="0">堅果巧克力</p>
+              <p class="list" tabindex="0">濃郁厚實</p>
+              <p class="list" tabindex="0">花香明亮</p>
+            </div>
+          </div>
+          <div class="filter-type">
+            <p class="filter-word" tabindex="0">工法</p>
+            <div class="type-list">
+              <p class="list" tabindex="0">水洗</p>
+              <p class="list" tabindex="0">日曬</p>
+              <p class="list" tabindex="0">蜜處理</p>
+              <p class="list" tabindex="0">厭氧</p>
             </div>
           </div>
           <div class="filter-type">
             <p class="filter-word" tabindex="0">產地</p>
-            <div class="type-list">
-              <p class="list" tabindex="0">肯亞</p>
-              <p class="list" tabindex="0">哥倫比亞</p>
-              <p class="list" tabindex="0">瓜地馬拉</p>
-              <p class="list" tabindex="0">巴西</p>
-              <p class="list" tabindex="0">哥斯大黎加</p>
-              <p class="list" tabindex="0">印尼</p>
-              <p class="list" tabindex="0">薩爾瓦多</p>
+            <div class="big-list">
               <p class="list" tabindex="0">衣索比亞</p>
+              <p class="list" tabindex="0">肯亞</p>
+              <p class="list" tabindex="0">盧安達</p>
+              <p class="list" tabindex="0">布隆迪</p>
+              <p class="list" tabindex="0">哥倫比亞</p>
+              <p class="list" tabindex="0">巴西</p>
+              <p class="list" tabindex="0">瓜地馬拉</p>
+              <p class="list" tabindex="0">哥斯大黎加</p>
+              <p class="list" tabindex="0">薩爾瓦多</p>
+              <p class="list" tabindex="0">巴拿馬</p>
+              <p class="list" tabindex="0">印尼</p>
+              <p class="list" tabindex="0">越南</p>
+              <p class="list" tabindex="0">印度</p>
+              <p class="list" tabindex="0">泰國</p>
+              <p class="list" tabindex="0">巴布亞紐幾內亞</p>
             </div>
           </div>
         </div>
@@ -272,7 +286,7 @@
           this.topBarSapce = 'pt-[50px]';
         } else {
           this.rotation = null;
-          this.topBarSapce = 'pt-[500px]';
+          this.topBarSapce = 'pt-[550px]';
         }
       },
     },
@@ -394,6 +408,24 @@
     z-index: 2;
   }
 
+  .big-list {
+    display: none;
+  }
+
+  .filter-type:focus-within .big-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background-color: var(--soft-brown);
+    border-radius: 16px;
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    padding: 0px 24px;
+    z-index: 2;
+  }
+
   .list {
     margin: 12px;
     padding: 12px 24px;
@@ -413,13 +445,13 @@
     box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.35);
   }
 
-  .sort {
+  /* .sort {
     display: flex;
     position: absolute;
     top: calc(100% + 8px);
     right: 24px;
     white-space: nowrap;
-  }
+  } */
 
   .sort-list {
     display: flex;
@@ -516,6 +548,14 @@
 
     .filter-type:focus-within .type-list {
       width: 100%;
+      position: static;
+      left: 0;
+      transform: translateX(0);
+      margin-bottom: 8px;
+    }
+
+    .filter-type:focus-within .big-list {
+      grid-template-columns: repeat(4, 1fr);
       position: static;
       left: 0;
       transform: translateX(0);

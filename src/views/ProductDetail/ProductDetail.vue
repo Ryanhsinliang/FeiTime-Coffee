@@ -132,7 +132,7 @@
     <section>
       <img
         class="w-full aspect-[2/1] object-cover"
-        src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        src="https://images.unsplash.com/assets-1495474472287-4d71bcdd2085?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         alt=""
       />
     </section>
@@ -175,11 +175,13 @@
     </section>
 
     <!-- Recommend Products Section -->
-    <section class="bg-[#eeeeee] py-[100px] min-h-[750px]">
+    <section class="bg-[#eeeeee] py-[100px] min-h-[750px] overflow-hidden w-full">
       <h2 class="py-10 text-center text-3xl text-[#6d654f]">推薦商品</h2>
-      <div class="flex gap-[2vw] px-2vw">
-        <div
-          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
+      <div
+        class="flex gap-7 w-max animate-[scroll_30s_linear_infinite] [will-change:transform] hover:[animation-play-state:paused]"
+      >
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
             src="./assets/orange.png"
@@ -191,9 +193,9 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
-        </div>
-        <div
-          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
             src="./assets/orange.png"
@@ -205,9 +207,9 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
-        </div>
-        <div
-          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
             src="./assets/orange.png"
@@ -219,9 +221,9 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
-        </div>
-        <div
-          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
             src="./assets/orange.png"
@@ -233,9 +235,9 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
-        </div>
-        <div
-          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
             src="./assets/orange.png"
@@ -247,9 +249,23 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
-        </div>
-        <div
-          class="max-h-[450px] w-full max-w-[300px] relative flex justify-center items-center group"
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/coffee_bag.png"
+            alt="coffee_bag"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
             src="./assets/orange.png"
@@ -261,7 +277,77 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
-        </div>
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/orange.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/orange.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/orange.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/orange.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+        </a>
+        <a
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/coffee_bag.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+        </a>
       </div>
     </section>
 
@@ -283,7 +369,7 @@
           { name: 'bag', image: '/src/views/ProductDetail/assets/coffee_bag2.png' },
           {
             name: 'beans',
-            image: 'https://images.unsplash.com/photo-1675306408031-a9aad9f23308',
+            image: 'https://images.unsplash.com/assets-1675306408031-a9aad9f23308',
           },
           {
             name: 'cup',
@@ -336,3 +422,14 @@
     },
   };
 </script>
+
+<style>
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+</style>

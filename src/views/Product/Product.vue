@@ -10,7 +10,9 @@
             type="search"
             placeholder="喝一杯靜謐的午後時光"
           />
-          <div class="sort flex absolute top-[calc(100%+8px)] right-[24px] whitespace-nowrap">
+          <div
+            class="sort flex absolute md:top-[calc(100%+64px)] md:left-[24px] whitespace-nowrap lg:top-[calc(100%+8px)] lg:right-[24px] lg:left-auto"
+          >
             <div
               class="sort-list flex bg-[var(--main-color)] px-[12px] rounded-[8px] overflow-hidden mr-[8px]"
             >
@@ -29,14 +31,26 @@
                 <option value="">澄澈度</option>
               </select>
             </div>
-            <p v-if="sortHe" class="oriru" @click="sortChange">↓高到低</p>
-            <p v-else class="noboru" @click="sortChange">↑低到高</p>
+            <p
+              v-if="sortHe"
+              class="oriru rounded-[4px] bg-[#bdeda4] leading-8 px-[6px]"
+              @click="sortChange"
+            >
+              ↓高到低
+            </p>
+            <p
+              v-else
+              class="noboru rounded-[4px] bg-[#a4e9e2] leading-8 px-[6px]"
+              @click="sortChange"
+            >
+              ↑低到高
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="find">
-        <div class="filter">
+      <div class="find lg:mx-[16.95%] md:mx-[12.4%] w-[70%] flex whitespace-nowrap">
+        <div class="filter px-[16px] flex lg:w-[70%] md:w-[80%]">
           <div class="filter-type">
             <p class="filter-word" tabindex="0" id="first-noline">類別</p>
             <div class="type-list">
@@ -95,7 +109,7 @@
       </div>
     </div>
 
-    <div class="somaho-up" :class="rotation" @click="sortBarSwitch">
+    <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
       <i class="fa-solid fa-angle-up"></i>
     </div>
 
@@ -364,19 +378,19 @@
     z-index: 2;
   }
 
-  .find {
+  /* .find {
     margin-left: 16.95%;
     margin-right: 16.95%;
     width: 70%;
     display: flex;
     white-space: nowrap;
-  }
+  } */
 
-  .filter {
+  /* .filter {
     display: flex;
     padding: 0 16px;
     width: 70%;
-  }
+  } */
 
   .filter-type {
     font-size: 20px;
@@ -480,47 +494,38 @@
     flex-shrink: 0;
   } */
 
-  .noboru {
+  /* .noboru {
     border-radius: 4px;
     background-color: #bdeda4;
     line-height: 32px;
     padding: 0 6px;
-  }
+  } */
 
-  .oriru {
+  /* .oriru {
     border-radius: 4px;
     background-color: #a4e9e2;
     line-height: 32px;
     padding: 0 6px;
-  }
+  } */
 
-  #circle {
+  /* .somaho-up {
     display: none;
-  }
-
-  #circle:checked + .maru {
-    left: 20px;
-    background-color: #bdeda4;
-  }
-
-  .somaho-up {
-    display: none;
-  }
+  } */
 
   @media (768px <= width < 1024px) {
-    .filter {
+    /* .filter {
       width: 80%;
-    }
+    } */
 
-    .find {
+    /* .find {
       margin-left: 12.4%;
       margin-right: 12.4%;
-    }
+    } */
 
-    .sort {
+    /* .sort {
       top: calc(100% + 64px);
       left: 24px;
-    }
+    } */
 
     .top-find-bar {
       padding-bottom: 72px;

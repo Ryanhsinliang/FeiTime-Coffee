@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <DEFAULT_MIN_VERSION>
     <section
       class="w-full max-w-3xl mx-auto bg-[rgba(238,238,238,0.8)] rounded-2xl p-5 min-h-[60vh] md:min-h-[70vh] shadow-lg flex flex-col gap-6"
     >
@@ -13,6 +13,7 @@
       <h3 class="mx-auto text-2xl">您的風味測試結果屬於：</h3>
       <h4 class="mx-auto text-2xl">{{ persona.name }}</h4>
       <p class="mx-auto">{{ persona.description }}</p>
+      <img :src="persona.image" alt="" class="w-1/2 mx-auto" />
       <h3 class="mx-auto">推薦商品：</h3>
 
       <div class="mx-auto flex justify-between gap-3">
@@ -26,7 +27,7 @@
         </a>
       </div>
     </section>
-  </div>
+  </DEFAULT_MIN_VERSION>
 </template>
 
 <script lang="ts" setup>

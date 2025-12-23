@@ -285,7 +285,7 @@
 </template>
 
 <script>
-  import { getProducts } from '../../services/api';
+  import { getProducts } from '../../services/product';
 
   export default {
     data() {
@@ -306,16 +306,20 @@
     methods: {
       async getapi() {
         try {
-          this.loading = true; // 即將載入頁面 將參數改成true
-          // 呼叫封裝好的 getProducts
-          const data = await getProducts();
+          this.loading = true;
+          this.err = null; // 每次重新請求前清空錯誤
 
-          // 賦值給 data 中的 products
-          this.products = data;
+          const res = await getProducts();
+
+          // Strapi 的資料結構通常在 res.data.data (如果是使用 axios)
+          // 或是 res.data (如果你在 service 層已經 return res.data.data)
+          this.products = res.data.data || res.data;
+
           console.log('成功拿到資料：', this.products);
-        } catch {
-          this.error = err.message;
-          console.error('API 串接出錯：', err);
+        } catch (error) {
+          // 這裡一定要定義 error
+          this.err = error.message;
+          console.error('API 串接出錯：', error);
         } finally {
           this.loading = false;
         }

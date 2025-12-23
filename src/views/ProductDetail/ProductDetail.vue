@@ -68,7 +68,7 @@
             <i class="fa-solid fa-plus"></i>
           </button>
           <p v-show="showRoast" class="py-2">淺中焙｜保留花果香與自然甜感</p>
-          <button
+          <!-- <button
             type="button"
             @click="toggleBeans"
             class="w-1/2 py-2 flex justify-between font-semibold"
@@ -76,7 +76,7 @@
             豆種組合
             <i class="fa-solid fa-plus"></i>
           </button>
-          <p v-show="showBeans" class="py-2">100% 原生種 Arabica</p>
+          <p v-show="showBeans" class="py-2">100% 原生種 Arabica</p> -->
           <button
             type="button"
             @click="toggleProcess"
@@ -130,16 +130,12 @@
 
     <!-- Banner Image -->
     <section>
-      <img
-        class="w-full aspect-[2/1] object-cover"
-        src="https://images.unsplash.com/assets-1495474472287-4d71bcdd2085?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        alt=""
-      />
+      <img class="w-full aspect-[9/4] object-cover" src="./assets/coffee_banner.jpg" alt="" />
     </section>
 
     <!-- Quote Section -->
     <section>
-      <p class="bg-[#eeeeee] text-[#6d654f] text-3xl text-center py-44">
+      <p class="bg-[#eeeeee] text-[#6d654f] text-3xl text-center py-48">
         品味高海拔的清新果香,讓每一口都回到自然的純粹
       </p>
     </section>
@@ -148,7 +144,7 @@
     <section class="bg-[#eeeeee]">
       <!-- First Detail Block -->
       <div class="flex flex-col lg:flex-row">
-        <div class="w-full lg:w-[55%] px-20 pb-12 lg:py-0">
+        <div class="w-full lg:w-1/2 px-20 pb-12 lg:py-0">
           <h3 class="text-3xl text-[#6d654f]">阿拉比卡 Classic</h3>
           <p class="text-lg text-[#808080] pt-10">
             阿拉比卡 Classic
@@ -158,19 +154,7 @@
             無論手沖還是義式沖煮,都能呈現均衡香氣與圓潤口感,特別適合喜歡酸度柔和、香氣明亮且口感平衡的咖啡愛好者。
           </p>
         </div>
-        <video src="./assets/video.mp4" autoplay muted loop class="w-full lg:w-[45%]"></video>
-      </div>
-
-      <!-- Second Detail Block -->
-      <div class="mt-28 flex flex-col lg:flex-row">
-        <img
-          class="object-cover w-full lg:w-[45%]"
-          src="./assets/coffee_bean.jpg"
-          alt="coffee_bean"
-        />
-        <div class="w-full lg:w-[55%] p-[10vw]">
-          <img src="" alt="" />
-        </div>
+        <video src="./assets/video.mp4" autoplay muted loop class="w-full lg:w-1/2"></video>
       </div>
     </section>
 
@@ -178,9 +162,30 @@
     <section class="bg-[#eeeeee] py-[100px] min-h-[750px] overflow-hidden w-full">
       <h2 class="py-10 text-center text-3xl text-[#6d654f]">推薦商品</h2>
       <div
-        class="flex gap-7 w-max animate-[scroll_30s_linear_infinite] [will-change:transform] hover:[animation-play-state:paused]"
+        class="cursor-pointer flex gap-12 w-max animate-[scroll_80s_linear_infinite] [will-change:transform] hover:[animation-play-state:paused]"
       >
         <a
+          href="#"
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/coffee_bag.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
+        </a>
+        <a
+          href="#"
           class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
@@ -193,8 +198,14 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
         </a>
         <a
+          href="#"
           class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
@@ -207,8 +218,14 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
         </a>
         <a
+          href="#"
           class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
@@ -221,8 +238,14 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
         </a>
         <a
+          href="#"
           class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
@@ -235,22 +258,14 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
         </a>
         <a
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-        </a>
-        <a
+          href="#"
           class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
@@ -263,78 +278,15 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
         </a>
+
         <a
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-        </a>
-        <a
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-        </a>
-        <a
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-        </a>
-        <a
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-        </a>
-        <a
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-        </a>
-        <a
+          href="#"
           class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
@@ -347,6 +299,111 @@
             alt="coffee_cup"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
+        </a>
+        <a
+          href="#"
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/orange.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
+        </a>
+        <a
+          href="#"
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/orange.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
+        </a>
+        <a
+          href="#"
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/orange.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
+        </a>
+        <a
+          href="#"
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/orange.png"
+            alt="orange"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
+        </a>
+        <a
+          href="#"
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+        >
+          <img
+            src="./assets/coffee_bag.png"
+            alt="coffee_bag"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
+          />
+          <img
+            src="./assets/coffee_cup.png"
+            alt="coffee_cup"
+            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          />
+          <p
+            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+          >
+            阿拉比卡．Arabica
+          </p>
         </a>
       </div>
     </section>
@@ -369,7 +426,7 @@
           { name: 'bag', image: '/src/views/ProductDetail/assets/coffee_bag2.png' },
           {
             name: 'beans',
-            image: 'https://images.unsplash.com/assets-1675306408031-a9aad9f23308',
+            image: '/src/views/ProductDetail/assets/coffee_beans.png',
           },
           {
             name: 'cup',

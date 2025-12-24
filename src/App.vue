@@ -12,7 +12,7 @@
     <Footer v-if="showHeaderFooter"></Footer>
 
     <!-- AI Chat Ball -->
-    <AIChatBall />
+    <AIChatBall v-if="showHeaderFooter" />
   </div>
 </template>
 

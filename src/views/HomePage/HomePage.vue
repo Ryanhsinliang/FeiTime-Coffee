@@ -500,21 +500,19 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref } from 'vue';
 
   // 可選心情列表
-  const moods = ['Relaxed', 'Focused', 'Adventurous', 'Tired'];
+  const moods: string[] = ['Relaxed', 'Focused', 'Adventurous', 'Tired'];
 
   // 當前選擇的心情
-  const selectedMood = ref(null);
+  const selectedMood = ref<string | null>(null);
 
   // 選擇心情函數
-  const selectMood = (mood) => {
+  const selectMood = (mood: string): void => {
     selectedMood.value = mood;
   };
 </script>
 
-<style scoped>
-  /* 你可以保留原本的 TailwindCSS class，不需要額外 CSS */
-</style>
+<style scoped></style>

@@ -93,14 +93,22 @@
   </nav>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted } from 'vue';
   import { useRoute } from 'vue-router';
 
   const route = useRoute();
 
+  /* ===== 型別定義 ===== */
+  interface NavLink {
+    name: string;
+    zh: string;
+    max: string;
+    to: string;
+  }
+
   /* ===== Menu Data ===== */
-  const links = [
+  const links: NavLink[] = [
     { name: 'Shop', zh: '商店', max: '商店', to: '/product' },
     { name: 'Story', zh: '故事', max: '故事', to: '/about' },
     {
@@ -118,20 +126,20 @@
   ];
 
   /* ===== State ===== */
-  const hoveredLink = ref(null);
-  const mobileOpen = ref(false);
+  const hoveredLink = ref<string | null>(null);
+  const mobileOpen = ref<boolean>(false);
 
   /* ===== Scroll Effect ===== */
-  const scrollY = ref(0);
-  const bannerHeight = ref(0);
+  const scrollY = ref<number>(0);
+  const bannerHeight = ref<number>(0);
 
   const onScroll = () => {
     scrollY.value = window.scrollY;
   };
 
   onMounted(() => {
-    const banner = document.querySelector('header');
-    bannerHeight.value = banner?.offsetHeight || 0;
+    const banner = document.querySelector<HTMLElement>('header');
+    bannerHeight.value = banner?.offsetHeight ?? 0;
     window.addEventListener('scroll', onScroll);
   });
 
@@ -141,7 +149,7 @@
 
   /* ===== Styles ===== */
 
-  // 文字顏色（你原本的邏輯）
+  // 文字顏色
   const textColorStyle = computed(() => {
     const t = Math.min(scrollY.value / (bannerHeight.value || 1), 1);
     const r = Math.round(26 + (250 - 26) * t);
@@ -155,9 +163,8 @@
     scrollY.value < bannerHeight.value ? 'bg-[#A2AF9B]/40' : 'bg-[#A2AF9B]/90',
   ]);
 
-  // ✅ 底線顏色控制（你要的重點）
+  // 底線顏色
   const underlineStyle = computed(() => {
-    // banner 前（綠底）
     if (scrollY.value < bannerHeight.value) {
       return {
         backgroundColor: '#CDBE9A',
@@ -166,7 +173,6 @@
       };
     }
 
-    // banner 後（淺底）
     return {
       backgroundColor: '#FAF9EE',
       height: '1px',
@@ -174,7 +180,8 @@
     };
   });
 
-  const isActive = (link) => route.path === link.to;
+  /* ===== Utils ===== */
+  const isActive = (link: NavLink): boolean => route.path === link.to;
   const activeStyle = { fontWeight: '700' };
 </script>
 

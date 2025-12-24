@@ -39,12 +39,12 @@
     <div class="relative w-16 h-16">
       <!-- 底部明顯陰影 -->
       <span
-        class="absolute w-24 h-6 bg-black/30 rounded-full bottom-1 left-1/2 -translate-x-1/2 blur-xl"
+        class="absolute w-24 h-6 bg-black/15 rounded-full bottom-1 left-1/2 -translate-x-1/2 blur-lg"
       ></span>
 
       <button
         @click="showChat = !showChat"
-        class="w-16 h-16 rounded-full overflow-hidden hover:scale-105 transition transform shadow-[0_4px_16px_rgba(0,0,0,0.8)]"
+        class="w-16 h-16 rounded-full overflow-hidden hover:scale-105 transition transform shadow-[0_6px_18px_rgba(0,0,0,0.25)]"
       >
         <img src="@/assets/ai_agent_icon.png" alt="AI Agent" class="w-full h-full object-cover" />
       </button>

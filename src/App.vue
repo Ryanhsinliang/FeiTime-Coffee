@@ -10,6 +10,9 @@
 
     <!-- Footer 只有非 Intro 頁面顯示 -->
     <Footer v-if="showHeaderFooter"></Footer>
+
+    <!-- AI Chat Ball -->
+    <AIChatBall />
   </div>
 </template>
 

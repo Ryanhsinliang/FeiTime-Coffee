@@ -63,7 +63,8 @@
               v-for="sub in shopSubLinks"
               :key="sub.name"
               :to="sub.to"
-              class="block px-4 py-2 text-sm hover:bg-[#FAF9EE]/20 text-left transition-colors duration-200"
+              class="block px-4 py-2 text-sm text-left transition-colors duration-200 rounded hover:bg-white/20"
+              :style="{ color: textColorStyle.color }"
               @click="mobileOpen = false"
             >
               {{ sub.name }}
@@ -209,13 +210,10 @@
     return { backgroundColor: '#FAF9EE', height: '1px', opacity: 1 };
   });
 
-  /* ===== Dropdown 背景動態同步 navbar ===== */
   const dropdownBgStyle = computed(() => {
     if (scrollY.value < bannerHeight.value) {
-      // 初始在 banner 區域，不透明
       return { backgroundColor: `rgba(162, 175, 155, 1)` };
     } else {
-      // 滾動後與 navbar 同步透明度
       return { backgroundColor: `rgba(162, 175, 155, 0.9)` };
     }
   });

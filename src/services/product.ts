@@ -1,18 +1,12 @@
 import api from '@/services/api';
 
-/*呼叫 後端 Express 的 Gemini API
-export async function callGemini(params: GeminiRequest): Promise<GeminiResponse> {
-  const res = await api.post<GeminiResponse>('/api/gemini', params);
-  return res.data;
-}
-*/
-
-// export async function getProducts(): Promise<GeminiResponse> {
-//   const res = await api.get<GeminiResponse>('/api/');
-//   return res.data;
-// }
-
 export async function getProducts() {
-  const res = await api.get('/api/products');
-  return res.data;
+  try {
+    const res = await api.get('/api/products');
+    console.log('Products:', res.data); // debug 用
+    return res.data;
+  } catch (err: any) {
+    console.error('API 串接出錯：', err.message);
+    throw err;
+  }
 }

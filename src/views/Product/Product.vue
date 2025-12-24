@@ -311,9 +311,8 @@
 
           const res = await getProducts();
 
-          // Strapi 的資料結構通常在 res.data.data (如果是使用 axios)
-          // 或是 res.data (如果你在 service 層已經 return res.data.data)
-          this.products = res.data.data || res.data;
+          // 直接把回傳陣列給 products
+          this.products = res;
 
           console.log('成功拿到資料：', this.products);
         } catch (error) {

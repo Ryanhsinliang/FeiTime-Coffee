@@ -284,63 +284,32 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
   import { getProducts } from '../../services/product';
+  import { ref, reactive } from 'vue';
+  const product = reactive([]); // 放資料的容器
+  const loading = ref(false); // API載入狀況參數
+  const err = ref(null); // 放錯誤訊息的容易
 
-  export default {
-    data() {
-      return {
-        products: [], // 放資料的容器
-        loading: false, // API載入狀況參數
-        err: null, // 放錯誤訊息的容易
-        sortHe: true, // 調整【排序】高到低 還是 低到高 按鈕的參數
-        sortTopbar: true, // 手機板 控制topbar是否顯示的參數
-        rotation: null, // 手機板 旋轉開合按鈕的參數
-        topBarSapce: 'pt-[500px]', // 手機板 更改商品卡 grid 的上距的參數
-      };
-    },
-    async mounted() {
-      await this.getapi();
-      // console.log(this.products);
-    },
-    methods: {
-      async getapi() {
-        try {
-          this.loading = true;
-          this.err = null; // 每次重新請求前清空錯誤
+  // 調整【排序】高到低 還是 低到高 按鈕
+  const sortHe = ref(true);
+  const sortChange = () => {
+    sortHe.value = !sortHe.value;
+  };
 
-          const res = await getProducts();
-
-          // 直接把回傳陣列給 products
-          this.products = res;
-
-          console.log('成功拿到資料：', this.products);
-        } catch (error) {
-          // 這裡一定要定義 error
-          this.err = error.message;
-          console.error('API 串接出錯：', error);
-        } finally {
-          this.loading = false;
-        }
-      },
-      sortChange() {
-        // 切換【排序】高到低 還是 低到高
-        this.sortHe = !this.sortHe;
-      },
-      sortBarSwitch() {
-        // 手機板 切換topbar
-        // 附加旋轉按鈕
-        // 附加更改商品卡 grid 的上距 避免留白
-        this.sortTopbar = !this.sortTopbar;
-        if (!this.sortTopbar) {
-          this.rotation = 'rotate-180';
-          this.topBarSapce = 'pt-[50px]';
-        } else {
-          this.rotation = null;
-          this.topBarSapce = 'pt-[550px]';
-        }
-      },
-    },
+  // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
+  const sortTopbar = ref(true);
+  const rotation = ref('');
+  const topBarSapce = ref('pt-[500px]');
+  const sortBarSwitch = () => {
+    sortTopbar.value = !sortTopbar.value;
+    if (!sortTopbar.value) {
+      rotation.value = 'rotate-180';
+      topBarSapce.value = 'pt-[50px]';
+    } else {
+      rotation.value = '';
+      topBarSapce.value = 'pt-[550px]';
+    }
   };
 </script>
 

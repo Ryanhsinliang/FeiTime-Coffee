@@ -117,10 +117,12 @@
     </div>
     <div v-else>
       <div
+        v-for="p in product"
         class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
         :class="topBarSapce"
       >
         <!-- card start -->
+        <!-- {{ p.img[0].formats.large.url }} -->
         <a href="#" target="_blank">
           <!-- 待放網址 -->
           <div class="relative">
@@ -128,153 +130,9 @@
             <div
               class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
             >
-              <p>USA USA</p>
-              <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
-              <p>$ 70</p>
-            </div>
-          </div>
-        </a>
-        <!-- card end -->
-
-        <!-- card start -->
-        <a href="#" target="_blank">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img class="w-[100%]" src="./assets/ex.2.png" alt="圖片加載中..." />
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-            >
-              <p>臺灣</p>
-              <h3 class="text-[28px] font-bold">阿里山好喝咖啡</h3>
-              <p>$ 599</p>
-            </div>
-          </div>
-        </a>
-        <!-- card end -->
-
-        <!-- card start -->
-        <a href="#" target="_blank">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img class="w-[100%]" src="./assets/ex.3.png" alt="圖片加載中..." />
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-            >
-              <p>日本</p>
-              <h3 class="text-[28px] font-bold">茶の凪</h3>
-              <p>¥ 9800</p>
-            </div>
-          </div>
-        </a>
-        <!-- card end -->
-
-        <!-- card start -->
-        <a href="#" target="_blank">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img class="w-[100%]" src="./assets/ex.2.png" alt="圖片加載中..." />
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-            >
-              <p>臺灣</p>
-              <h3 class="text-[28px] font-bold">阿里山好喝咖啡</h3>
-              <p>$ 599</p>
-            </div>
-          </div>
-        </a>
-        <!-- card end -->
-
-        <!-- card start -->
-        <a href="#" target="_blank">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img class="w-[100%]" src="./assets/ex.3.png" alt="圖片加載中..." />
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-            >
-              <p>茶の凪</p>
-              <h3 class="text-[28px] font-bold">日本</h3>
-              <p>¥ 9800</p>
-            </div>
-          </div>
-        </a>
-        <!-- card end -->
-
-        <!-- card start -->
-        <a href="#" target="_blank">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-            >
-              <p>USA USA</p>
-              <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
-              <p>$ 70</p>
-            </div>
-          </div>
-        </a>
-        <!-- card end -->
-
-        <!-- card start -->
-        <a href="#" target="_blank">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-            >
-              <p>USA USA</p>
-              <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
-              <p>$ 70</p>
-            </div>
-          </div>
-        </a>
-        <!-- card end -->
-
-        <!-- card start -->
-        <a href="#" target="_blank">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-            >
-              <p>USA USA</p>
-              <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
-              <p>$ 70</p>
-            </div>
-          </div>
-        </a>
-        <!-- card end -->
-
-        <!-- card start -->
-        <a href="#" target="_blank">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-            >
-              <p>USA USA</p>
-              <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
-              <p>$ 70</p>
-            </div>
-          </div>
-        </a>
-        <!-- card end -->
-
-        <!-- card start -->
-        <a href="#" target="_blank">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img class="w-[100%]" src="./assets/ex.3.png" alt="圖片加載中..." />
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-            >
-              <p>日本</p>
-              <h3 class="text-[28px] font-bold">茶の凪</h3>
-              <p>¥ 9800</p>
+              <p>{{ p.origin }}</p>
+              <h3 class="text-[28px] font-bold">{{ p.name }}</h3>
+              <p>$ {{ p.price }}</p>
             </div>
           </div>
         </a>
@@ -286,10 +144,7 @@
 
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
-  import { ref, reactive } from 'vue';
-  const product = reactive([]); // 放資料的容器
-  const loading = ref(false); // API載入狀況參數
-  const err = ref(null); // 放錯誤訊息的容易
+  import { ref, reactive, onMounted } from 'vue';
 
   // 調整【排序】高到低 還是 低到高 按鈕
   const sortHe = ref(true);
@@ -311,6 +166,29 @@
       topBarSapce.value = 'pt-[550px]';
     }
   };
+
+  const product = ref([]); // 放資料的容器
+  const loading = ref(false); // API載入狀況參數
+  const err = ref(''); // 放錯誤訊息的容易
+
+  const getcoffee = async () => {
+    try {
+      loading.value = true;
+      err.value = ''; // 每次重新請求前清空錯誤
+      product.value = await getProducts(); // 直接把回傳陣列給 product
+    } catch (error) {
+      err.value = (error as Error).message;
+      console.error('API 串接出錯：', error);
+    } finally {
+      loading.value = false;
+    }
+  };
+  // product.value[0].name
+
+  onMounted(async () => {
+    await getcoffee();
+    // console.log(product.value[0].name);
+  });
 </script>
 
 <style>

@@ -117,22 +117,33 @@
     </div>
     <div v-else>
       <div
-        v-for="p in product"
         class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
         :class="topBarSapce"
       >
         <!-- card start -->
         <!-- {{ p.img[0].formats.large.url }} -->
-        <a href="#" target="_blank">
+        <a href="#" target="_blank" v-for="p in product" :key="p.pid">
           <!-- 待放網址 -->
           <div class="relative">
-            <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
+            <img
+              v-if="p.img && p.img.length > 0"
+              class="w-[100%] aspect-[1/1.2] object-cover object-center"
+              :src="p.img[0].formats.large.url"
+              :alt="p.name"
+            />
+
+            <img v-else src="" alt="暫無圖片" />
+
             <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
+              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
             >
-              <p>{{ p.origin }}</p>
-              <h3 class="text-[28px] font-bold">{{ p.name }}</h3>
-              <p>$ {{ p.price }}</p>
+              <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
+              <h3
+                class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
+              >
+                {{ p.name }}
+              </h3>
+              <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
             </div>
           </div>
         </a>
@@ -171,6 +182,7 @@
   const loading = ref(false); // API載入狀況參數
   const err = ref(''); // 放錯誤訊息的容易
 
+  // API(get) 取得所有咖啡豆data
   const getcoffee = async () => {
     try {
       loading.value = true;
@@ -183,11 +195,9 @@
       loading.value = false;
     }
   };
-  // product.value[0].name
 
   onMounted(async () => {
     await getcoffee();
-    // console.log(product.value[0].name);
   });
 </script>
 

@@ -10,12 +10,16 @@
 
     <!-- Footer 只有非 Intro 頁面顯示 -->
     <Footer v-if="showHeaderFooter"></Footer>
+
+    <!-- AI Chat Ball -->
+    <AIChatBall v-if="showHeaderFooter" />
   </div>
 </template>
 
 <script setup>
   import Header from './components/Header.vue';
   import Footer from './components/Footer.vue';
+  import AIChatBall from './components/common/AIChatBall.vue';
   import { useRoute } from 'vue-router';
   import { computed } from 'vue';
 

@@ -22,13 +22,13 @@
                 class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
               >
                 <option value="">排序</option>
-                <option value="">價錢</option>
-                <option value="">熱門度</option>
-                <option value="">甜味</option>
-                <option value="">酸味</option>
-                <option value="">口感</option>
-                <option value="">餘韻</option>
-                <option value="">澄澈度</option>
+                <option value="price">價錢</option>
+                <option value="popularity">熱門度</option>
+                <option value="sweetness">甜味</option>
+                <option value="acidity">酸味</option>
+                <option value="body">口感</option>
+                <option value="aftertaste">餘韻</option>
+                <option value="clarity">澄澈度</option>
               </select>
             </div>
             <p
@@ -62,47 +62,47 @@
           <div class="filter-type">
             <p class="filter-word" tabindex="0">焙度</p>
             <div class="type-list">
-              <p class="list" tabindex="0">淺焙</p>
-              <p class="list" tabindex="0">中焙</p>
-              <p class="list" tabindex="0">深焙</p>
+              <p class="list" tabindex="0" value="Light">淺焙</p>
+              <p class="list" tabindex="0" value="Medium">中焙</p>
+              <p class="list" tabindex="0" value="Dark">深焙</p>
             </div>
           </div>
           <div class="filter-type">
             <p class="filter-word" tabindex="0">風味</p>
             <div class="type-list">
-              <p class="list" tabindex="0">果香清爽</p>
-              <p class="list" tabindex="0">堅果巧克力</p>
-              <p class="list" tabindex="0">濃郁厚實</p>
-              <p class="list" tabindex="0">花香明亮</p>
+              <p class="list" tabindex="0" value="">果香清爽</p>
+              <p class="list" tabindex="0" value="">堅果巧克力</p>
+              <p class="list" tabindex="0" value="">濃郁厚實</p>
+              <p class="list" tabindex="0" value="">花香明亮</p>
             </div>
           </div>
           <div class="filter-type">
             <p class="filter-word" tabindex="0">工法</p>
             <div class="type-list">
-              <p class="list" tabindex="0">水洗</p>
-              <p class="list" tabindex="0">日曬</p>
-              <p class="list" tabindex="0">蜜處理</p>
-              <p class="list" tabindex="0">厭氧</p>
+              <p class="list" tabindex="0" value="Washed">水洗</p>
+              <p class="list" tabindex="0" value="Natural">日曬</p>
+              <p class="list" tabindex="0" value="Honey">蜜處理</p>
+              <p class="list" tabindex="0" value="Wet-Hulled">厭氧</p>
             </div>
           </div>
           <div class="filter-type">
             <p class="filter-word" tabindex="0">產地</p>
             <div class="big-list">
-              <p class="list" tabindex="0">衣索比亞</p>
-              <p class="list" tabindex="0">肯亞</p>
-              <p class="list" tabindex="0">盧安達</p>
-              <p class="list" tabindex="0">布隆迪</p>
-              <p class="list" tabindex="0">哥倫比亞</p>
-              <p class="list" tabindex="0">巴西</p>
-              <p class="list" tabindex="0">瓜地馬拉</p>
-              <p class="list" tabindex="0">哥斯大黎加</p>
-              <p class="list" tabindex="0">薩爾瓦多</p>
-              <p class="list" tabindex="0">巴拿馬</p>
-              <p class="list" tabindex="0">印尼</p>
-              <p class="list" tabindex="0">越南</p>
-              <p class="list" tabindex="0">印度</p>
-              <p class="list" tabindex="0">泰國</p>
-              <p class="list" tabindex="0">巴布亞紐幾內亞</p>
+              <p class="list" tabindex="0" value="Ethiopia">衣索比亞</p>
+              <p class="list" tabindex="0" value="Kenya">肯亞</p>
+              <p class="list" tabindex="0" value="Rwanda">盧安達</p>
+              <p class="list" tabindex="0" value="Burundi">布隆迪</p>
+              <p class="list" tabindex="0" value="Colombia">哥倫比亞</p>
+              <p class="list" tabindex="0" value="Brazil">巴西</p>
+              <p class="list" tabindex="0" value="Guatemala">瓜地馬拉</p>
+              <p class="list" tabindex="0" value="Costa Rica">哥斯大黎加</p>
+              <p class="list" tabindex="0" value="El Salvador">薩爾瓦多</p>
+              <p class="list" tabindex="0" value="Panama">巴拿馬</p>
+              <p class="list" tabindex="0" value="Indonesia">印尼</p>
+              <p class="list" tabindex="0" value="Vietnam">越南</p>
+              <p class="list" tabindex="0" value="India">印度</p>
+              <p class="list" tabindex="0" value="Thailand">泰國</p>
+              <p class="list" tabindex="0" value="Papua New Guinea">巴布亞紐幾內亞</p>
             </div>
           </div>
         </div>

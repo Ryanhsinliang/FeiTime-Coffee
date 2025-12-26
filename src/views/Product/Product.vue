@@ -187,7 +187,14 @@
     try {
       loading.value = true;
       err.value = ''; // 每次重新請求前清空錯誤
-      product.value = await getProducts(); // 直接把回傳陣列給 product
+      const res = await getProducts();
+
+      if (res && res.data) {
+        product.value = res.data;
+      } else {
+        product.value = res;
+      }
+      // product.value = await getProducts();
     } catch (error) {
       err.value = (error as Error).message;
       console.error('API 串接出錯：', error);

@@ -62,9 +62,9 @@
           <div class="filter-type">
             <p class="filter-word" tabindex="0">焙度</p>
             <div class="type-list">
-              <p class="list" tabindex="0" value="Light">淺焙</p>
-              <p class="list" tabindex="0" value="Medium">中焙</p>
-              <p class="list" tabindex="0" value="Dark">深焙</p>
+              <p @click="getcoffee('Light')" class="list" tabindex="0" value="Light">淺焙</p>
+              <p @click="getcoffee('Medium')" class="list" tabindex="0" value="Medium">中焙</p>
+              <p @click="getcoffee('Dark')" class="list" tabindex="0" value="Dark">深焙</p>
             </div>
           </div>
           <div class="filter-type">
@@ -182,19 +182,21 @@
   const loading = ref(false); // API載入狀況參數
   const err = ref(''); // 放錯誤訊息的容易
 
-  // API(get) 取得所有咖啡豆data
-  const getcoffee = async () => {
+  // API(get)函數
+  const getcoffee = async (roastType?: string) => {
+    // roastType 參數
+    // ? 可帶可不帶
+    // : string  TS的規範 規定roastType要是字串
     try {
       loading.value = true;
       err.value = ''; // 每次重新請求前清空錯誤
-      const res = await getProducts();
+      const res = await getProducts(roastType);
 
       if (res && res.data) {
         product.value = res.data;
       } else {
         product.value = res;
       }
-      // product.value = await getProducts();
     } catch (error) {
       err.value = (error as Error).message;
       console.error('API 串接出錯：', error);

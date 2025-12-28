@@ -62,18 +62,24 @@
           <div class="filter-type">
             <p class="filter-word" tabindex="0">焙度</p>
             <div class="type-list">
-              <p @click="getcoffee('Light')" class="list" tabindex="0" value="Light">淺焙</p>
-              <p @click="getcoffee('Medium')" class="list" tabindex="0" value="Medium">中焙</p>
-              <p @click="getcoffee('Dark')" class="list" tabindex="0" value="Dark">深焙</p>
+              <p @click="getcoffee({ roast: 'Light' })" class="list" tabindex="0" value="Light">
+                淺焙
+              </p>
+              <p @click="getcoffee({ roast: 'Medium' })" class="list" tabindex="0" value="Medium">
+                中焙
+              </p>
+              <p @click="getcoffee({ roast: 'Dark' })" class="list" tabindex="0" value="Dark">
+                深焙
+              </p>
             </div>
           </div>
           <div class="filter-type">
             <p class="filter-word" tabindex="0">風味</p>
             <div class="type-list">
-              <p class="list" tabindex="0" value="">果香清爽</p>
-              <p class="list" tabindex="0" value="">堅果巧克力</p>
-              <p class="list" tabindex="0" value="">濃郁厚實</p>
-              <p class="list" tabindex="0" value="">花香明亮</p>
+              <p class="list" tabindex="0" value="Fruity">果香清爽</p>
+              <p class="list" tabindex="0" value="Nutty">堅果巧克力</p>
+              <p class="list" tabindex="0" value="Bold">濃郁厚實</p>
+              <p class="list" tabindex="0" value="Floral">花香明亮</p>
             </div>
           </div>
           <div class="filter-type">
@@ -155,7 +161,7 @@
 
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, onMounted } from 'vue';
 
   // 調整【排序】高到低 還是 低到高 按鈕
   const sortHe = ref(true);
@@ -178,19 +184,27 @@
     }
   };
 
-  const product = ref([]); // 放資料的容器
+  interface product {
+    id: number;
+    pid: number;
+    name: string;
+    price: number;
+    origin: string;
+    img: any[];
+  }
+
+  const product = ref<product[]>([]);
   const loading = ref(false); // API載入狀況參數
   const err = ref(''); // 放錯誤訊息的容易
 
   // API(get)函數
-  const getcoffee = async (roastType?: string) => {
-    // roastType 參數
-    // ? 可帶可不帶
-    // : string  TS的規範 規定roastType要是字串
+  const getcoffee = async (filterData: any = {}) => {
+    // filterData是參數 它是一個物件
+    // : any  TS的規範 代表不限制物件裡面的型別
     try {
       loading.value = true;
       err.value = ''; // 每次重新請求前清空錯誤
-      const res = await getProducts(roastType);
+      const res = await getProducts(filterData);
 
       if (res && res.data) {
         product.value = res.data;
@@ -206,7 +220,7 @@
   };
 
   onMounted(async () => {
-    await getcoffee();
+    await getcoffee({});
   });
 </script>
 

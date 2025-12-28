@@ -76,39 +76,170 @@
           <div class="filter-type">
             <p class="filter-word" tabindex="0">風味</p>
             <div class="type-list">
-              <p class="list" tabindex="0" value="Fruity">果香清爽</p>
-              <p class="list" tabindex="0" value="Nutty">堅果巧克力</p>
-              <p class="list" tabindex="0" value="Bold">濃郁厚實</p>
-              <p class="list" tabindex="0" value="Floral">花香明亮</p>
+              <p
+                @click="getcoffee({ flavor_type: 'Fruity' })"
+                class="list"
+                tabindex="0"
+                value="Fruity"
+              >
+                果香清爽
+              </p>
+              <p
+                @click="getcoffee({ flavor_type: 'Nutty' })"
+                class="list"
+                tabindex="0"
+                value="Nutty"
+              >
+                堅果巧克力
+              </p>
+              <p @click="getcoffee({ flavor_type: 'Bold' })" class="list" tabindex="0" value="Bold">
+                濃郁厚實
+              </p>
+              <p
+                @click="getcoffee({ flavor_type: 'Floral' })"
+                class="list"
+                tabindex="0"
+                value="Floral"
+              >
+                花香明亮
+              </p>
             </div>
           </div>
           <div class="filter-type">
             <p class="filter-word" tabindex="0">工法</p>
             <div class="type-list">
-              <p class="list" tabindex="0" value="Washed">水洗</p>
-              <p class="list" tabindex="0" value="Natural">日曬</p>
-              <p class="list" tabindex="0" value="Honey">蜜處理</p>
-              <p class="list" tabindex="0" value="Wet-Hulled">厭氧</p>
+              <p
+                @click="getcoffee({ processing: 'Washed' })"
+                class="list"
+                tabindex="0"
+                value="Washed"
+              >
+                水洗
+              </p>
+              <p
+                @click="getcoffee({ processing: 'Natural' })"
+                class="list"
+                tabindex="0"
+                value="Natural"
+              >
+                日曬
+              </p>
+              <p
+                @click="getcoffee({ processing: 'Honey' })"
+                class="list"
+                tabindex="0"
+                value="Honey"
+              >
+                蜜處理
+              </p>
+              <p
+                @click="getcoffee({ processing: 'Wet-Hulled' })"
+                class="list"
+                tabindex="0"
+                value="Wet-Hulled"
+              >
+                厭氧
+              </p>
             </div>
           </div>
           <div class="filter-type">
             <p class="filter-word" tabindex="0">產地</p>
             <div class="big-list">
-              <p class="list" tabindex="0" value="Ethiopia">衣索比亞</p>
-              <p class="list" tabindex="0" value="Kenya">肯亞</p>
-              <p class="list" tabindex="0" value="Rwanda">盧安達</p>
-              <p class="list" tabindex="0" value="Burundi">布隆迪</p>
-              <p class="list" tabindex="0" value="Colombia">哥倫比亞</p>
-              <p class="list" tabindex="0" value="Brazil">巴西</p>
-              <p class="list" tabindex="0" value="Guatemala">瓜地馬拉</p>
-              <p class="list" tabindex="0" value="Costa Rica">哥斯大黎加</p>
-              <p class="list" tabindex="0" value="El Salvador">薩爾瓦多</p>
-              <p class="list" tabindex="0" value="Panama">巴拿馬</p>
-              <p class="list" tabindex="0" value="Indonesia">印尼</p>
-              <p class="list" tabindex="0" value="Vietnam">越南</p>
-              <p class="list" tabindex="0" value="India">印度</p>
-              <p class="list" tabindex="0" value="Thailand">泰國</p>
-              <p class="list" tabindex="0" value="Papua New Guinea">巴布亞紐幾內亞</p>
+              <p
+                @click="getcoffee({ origin: 'Ethiopia' })"
+                class="list"
+                tabindex="0"
+                value="Ethiopia"
+              >
+                衣索比亞
+              </p>
+              <p @click="getcoffee({ origin: 'Kenya' })" class="list" tabindex="0" value="Kenya">
+                肯亞
+              </p>
+              <p @click="getcoffee({ origin: 'Rwanda' })" class="list" tabindex="0" value="Rwanda">
+                盧安達
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Burundi' })"
+                class="list"
+                tabindex="0"
+                value="Burundi"
+              >
+                布隆迪
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Colombia' })"
+                class="list"
+                tabindex="0"
+                value="Colombia"
+              >
+                哥倫比亞
+              </p>
+              <p @click="getcoffee({ origin: 'Brazil' })" class="list" tabindex="0" value="Brazil">
+                巴西
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Guatemala' })"
+                class="list"
+                tabindex="0"
+                value="Guatemala"
+              >
+                瓜地馬拉
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Costa Rica' })"
+                class="list"
+                tabindex="0"
+                value="Costa Rica"
+              >
+                哥斯大黎加
+              </p>
+              <p
+                @click="getcoffee({ origin: 'El Salvador' })"
+                class="list"
+                tabindex="0"
+                value="El Salvador"
+              >
+                薩爾瓦多
+              </p>
+              <p @click="getcoffee({ origin: 'Panama' })" class="list" tabindex="0" value="Panama">
+                巴拿馬
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Indonesia' })"
+                class="list"
+                tabindex="0"
+                value="Indonesia"
+              >
+                印尼
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Vietnam' })"
+                class="list"
+                tabindex="0"
+                value="Vietnam"
+              >
+                越南
+              </p>
+              <p @click="getcoffee({ origin: 'India' })" class="list" tabindex="0" value="India">
+                印度
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Thailand' })"
+                class="list"
+                tabindex="0"
+                value="Thailand"
+              >
+                泰國
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Papua New Guinea' })"
+                class="list"
+                tabindex="0"
+                value="Papua New Guinea"
+              >
+                巴布亞紐幾內亞
+              </p>
             </div>
           </div>
         </div>
@@ -184,7 +315,8 @@
     }
   };
 
-  interface product {
+  interface DataRule {
+    // 設定TS規格
     id: number;
     pid: number;
     name: string;
@@ -193,7 +325,8 @@
     img: any[];
   }
 
-  const product = ref<product[]>([]);
+  const product = ref<DataRule[]>([]);
+  // <DataRule[]>	TS語法 規範 product 是符合 DataRule 規格的陣列
   const loading = ref(false); // API載入狀況參數
   const err = ref(''); // 放錯誤訊息的容易
 

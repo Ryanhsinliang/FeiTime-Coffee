@@ -35,7 +35,7 @@
       <form class="p-24 bg-[#f9f8f6] w-full lg:w-1/2 text-[#6d654f]">
         <p id="origin">衣索比亞(產地)</p>
         <h2 class="text-4xl py-4 font-semibold">阿拉比卡．Arabica Classic</h2>
-        <p id="price" class="text-lg font-semibold">$400(價格)</p>
+        <p id="price" class="text-lg font-semibold">{{ `$${price}` }}</p>
 
         <div class="py-4">
           <label for="quantity" class="block font-semibold">數量</label>
@@ -51,10 +51,15 @@
 
         <div>
           <label for="weight" class="block font-semibold">重量</label>
-          <select name="weight" id="weight" class="border border-gray-300 px-3 py-2 rounded w-1/2">
-            <option value="">100g</option>
-            <option value="">250g</option>
-            <option value="">500g</option>
+          <select
+            v-model.number="weight"
+            name="weight"
+            id="weight"
+            class="border border-gray-300 px-3 py-2 rounded w-1/2"
+          >
+            <option value="100">100g</option>
+            <option value="250">250g</option>
+            <option value="500">500g</option>
           </select>
         </div>
 
@@ -115,7 +120,7 @@
             <i class="fa-solid fa-heart"></i>
           </button>
           <button
-            @click="addtoCart"
+            @click="addToCart"
             type="button"
             class="bg-[#6d654f] text-white text-sm p-3.5 mx-2 rounded"
           >
@@ -409,74 +414,83 @@
     </section>
 
     <!-- Question Button -->
-    <div>
+    <!-- <div>
       <i
         class="fa-solid fa-comment-dots fixed bottom-[30px] right-[30px] text-[30px] text-[#dccfc0] bg-white rounded-full p-5 shadow-lg cursor-pointer"
       ></i>
-    </div>
+    </div> -->
   </main>
 </template>
 
-<script>
-  export default {
-    data() {
-      return {
-        currentIndex: 0,
-        photos: [
-          { name: 'bag', image: '/src/views/ProductDetail/assets/coffee_bag2.png' },
-          {
-            name: 'beans',
-            image: '/src/views/ProductDetail/assets/coffee_beans.png',
-          },
-          {
-            name: 'cup',
-            image:
-              'https://plus.unsplash.com/premium_photo-1675435644687-562e8042b9db?q=80&w=749&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-          },
-        ],
-        isheartOpen: true,
+<script setup>
+  import { ref, computed } from 'vue';
 
-        showRoast: false,
-        showFlavor: false,
-        showBeans: false,
-        showProcess: false,
-      };
+  // 圖片點擊輪播
+  const currentIndex = ref(0);
+  const photos = ref([
+    { name: 'bag', image: '/src/views/ProductDetail/assets/coffee_bag2.png' },
+    {
+      name: 'beans',
+      image: '/src/views/ProductDetail/assets/coffee_beans.png',
     },
-
-    computed: {
-      currentPhoto() {
-        return this.photos[this.currentIndex];
-      },
+    {
+      name: 'cup',
+      image:
+        'https://plus.unsplash.com/premium_photo-1675435644687-562e8042b9db?q=80&w=749&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     },
+  ]);
+  const currentPhoto = computed(() => {
+    return photos.value[currentIndex.value];
+  });
 
-    methods: {
-      prevPhoto() {
-        this.currentIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.photos.length - 1;
-      },
-      nextPhoto() {
-        this.currentIndex = this.currentIndex < this.photos.length - 1 ? this.currentIndex + 1 : 0;
-      },
-      toggleHeart() {
-        this.isheartOpen = !this.isheartOpen;
-        alert(this.isheartOpen ? '已從收藏移除' : '已加入收藏');
-      },
-      addtoCart() {
-        alert('已加入購物車');
-      },
+  const prevPhoto = () => {
+    currentIndex.value = currentIndex.value > 0 ? currentIndex.value - 1 : photos.value.length - 1;
+  };
+  const nextPhoto = () => {
+    currentIndex.value = currentIndex.value < photos.value.length - 1 ? currentIndex.value + 1 : 0;
+  };
 
-      toggleRoast() {
-        this.showRoast = !this.showRoast;
-      },
-      toggleFlavor() {
-        this.showFlavor = !this.showFlavor;
-      },
-      toggleBeans() {
-        this.showBeans = !this.showBeans;
-      },
-      toggleProcess() {
-        this.showProcess = !this.showProcess;
-      },
-    },
+  // 重量對應價格
+  const weight = ref(250);
+  const price = computed(() => {
+    if (weight.value === 100) {
+      return 400 / 2;
+    } else if (weight.value === 250) {
+      return 400;
+    } else if (weight.value === 500) {
+      return 400 * 2;
+    } else {
+      return 0;
+    }
+  });
+
+  // 加入收藏與購物車提示
+  const isheartOpen = ref(true);
+  const toggleHeart = () => {
+    isheartOpen.value = !isheartOpen.value;
+    alert(isheartOpen.value ? '已從收藏移除' : '已加入收藏');
+  };
+
+  const addToCart = () => {
+    alert('已加入購物車');
+  };
+
+  // 商品資訊欄位展開
+  const showRoast = ref(false);
+  const showFlavor = ref(false);
+  const showBeans = ref(false);
+  const showProcess = ref(false);
+  const toggleRoast = () => {
+    showRoast.value = !showRoast.value;
+  };
+  const toggleFlavor = () => {
+    showFlavor.value = !showFlavor.value;
+  };
+  const toggleBeans = () => {
+    showBeans.value = !showBeans.value;
+  };
+  const toggleProcess = () => {
+    showProcess.value = !showProcess.value;
   };
 </script>
 

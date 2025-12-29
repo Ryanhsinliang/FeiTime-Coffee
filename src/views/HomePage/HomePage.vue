@@ -1,6 +1,6 @@
 <template>
   <!-- Hero Section -->
-  <header class="relative w-full h-[85vh] min-h-[600px] overflow-hidden">
+  <header class="relative w-full h-[94vh] min-h-[600px] overflow-hidden">
     <div
       class="absolute inset-0 w-full h-full bg-cover bg-center"
       style="
@@ -60,14 +60,14 @@
   </header>
 
   <!-- 推薦商品區塊-->
-  <section class="w-full py-24 bg-white dark:bg-background-dark">
+  <section class="w-full py-24 bg-white">
     <div class="max-w-[1600px] mx-auto px-6 md:px-12">
       <!-- 標題區 -->
       <div class="flex flex-col items-center justify-center mb-16 text-center">
         <span class="text-sage tracking-[0.3em] text-xs uppercase mb-4 font-jp">
           FeiTime Selection
         </span>
-        <h2 class="text-3xl font-serif text-text-main dark:text-white tracking-widest">推薦商品</h2>
+        <h2 class="text-3xl font-serif text-text-main tracking-widest">推薦商品</h2>
         <div class="w-12 h-px bg-latte mt-6 mb-4"></div>
       </div>
 
@@ -117,7 +117,7 @@
           <div class="flex flex-col gap-2 items-center text-center">
             <!-- 產品名稱 -->
             <h3
-              class="text-base font-medium text-text-main dark:text-white tracking-wide group-hover:text-sage transition-colors font-serif"
+              class="text-base font-medium text-text-main tracking-wide group-hover:text-sage transition-colors font-serif"
             >
               {{ product.name }}
             </h3>
@@ -132,9 +132,7 @@
             </span>
 
             <!-- 產品價格 -->
-            <span class="text-lg font-semibold text-text-main dark:text-white">
-              ${{ product.price }}
-            </span>
+            <span class="text-lg font-semibold text-text-main">${{ product.price }}</span>
           </div>
         </div>
       </div>
@@ -288,7 +286,7 @@
                   v-if="!musicError && !musicLoading"
                   class="absolute inset-0 rounded-full bg-sage animate-ping opacity-20"
                 ></span>
-                <span class="material-symbols-outlined text-xl">
+                <span class="material-symbols-outlined text-xl text-[#171412]">
                   {{ musicError ? 'error' : 'smart_toy' }}
                 </span>
               </div>
@@ -383,7 +381,7 @@
   </section>
 
   <!-- FeiTime Story 區塊 -->
-  <section class="w-full py-24 bg-white dark:bg-background-dark relative overflow-hidden">
+  <section class="w-full py-24 bg-white relative overflow-hidden">
     <!-- 裝飾背景 -->
     <div
       class="absolute top-0 right-0 w-1/3 h-full bg-latte/10 -skew-x-12 translate-x-12 z-0 pointer-events-none"
@@ -409,7 +407,7 @@
           <!-- 標題區 -->
           <div class="flex flex-col gap-4">
             <span class="text-sage tracking-[0.2em] uppercase text-xs font-jp">FeiTime Story</span>
-            <h2 class="text-4xl font-serif text-text-main dark:text-white leading-tight">
+            <h2 class="text-4xl font-serif text-text-main leading-tight">
               Quiet Moments,
               <br />
               Crafted with

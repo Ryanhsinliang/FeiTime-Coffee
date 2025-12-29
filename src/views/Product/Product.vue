@@ -18,6 +18,7 @@
             >
               <img class="IC-sort w-[32px] bg-[var(--main-color)]" src="./assets/sort.svg" alt="" />
               <select
+                v-model="sortWhich"
                 id="sort-page"
                 class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
               >
@@ -370,7 +371,7 @@
       }
       return result;
     });
-    product.value = sorted; // 把第一次排序的陣列 放到product 讓它來渲染畫面
+    product.value = sorted; // 把這一次排序的陣列 放到product 讓它來渲染畫面
   };
 
   watch(sortWhich, async (newVal) => {
@@ -382,6 +383,7 @@
       sortCopy.value = res.data || res; // 用 sortCopy 取得這筆排序資料
       product.value = [...sortCopy.value]; // 把資料丟給 product 來渲染畫面 雖然 doSort()有用 [...sortCopy.value] 了 保險起見這邊還是也用 [...sortCopy.value]
       sortHe.value = true; // 預設抓完後 一律由 高到低 先呈現
+      console.log(res.data || res);
     } catch (err) {
       console.error('排序抓取失敗', err);
     }

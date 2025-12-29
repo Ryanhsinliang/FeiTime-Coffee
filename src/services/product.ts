@@ -12,7 +12,7 @@ export async function getProducts(obj: any = {}) {
     // axios 會把 params 物件的內容以【 ?key=value 】形式轉成網址
     // 若有 key 的值是 undefined 或 null，它通常會忽略這個 key
 
-    console.log('Products:', res.data); // debug 用
+    // console.log('Products:', res.data); // debug 用
     return res.data;
   } catch (err: any) {
     console.error('API 串接出錯：', err.message);

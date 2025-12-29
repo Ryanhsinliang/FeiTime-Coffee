@@ -292,13 +292,7 @@
 
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
-  import { ref, onMounted } from 'vue';
-
-  // 調整【排序】高到低 還是 低到高 按鈕
-  const sortHe = ref(true);
-  const sortChange = () => {
-    sortHe.value = !sortHe.value;
-  };
+  import { ref, onMounted, watch } from 'vue';
 
   // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
   const sortTopbar = ref(true);
@@ -350,6 +344,53 @@
     } finally {
       loading.value = false;
     }
+  };
+
+  // 排序相關
+  const sortCopy = ref([]); // 備份抓回來的排序資料 例: 抓了一筆按照【價錢高到低排序】的產品資料陣列
+  const sortWhich = ref(''); // 雙向綁定下拉式選單用的變數 依據它來決定現在要依什麼排序
+  const sortHe = ref(true); // 決定高到低 還是 低到高 的參數 預設true是 高到低
+  const doSort = () => {
+    if (!sortWhich.value) return; // 如果沒有sortWhich.value 就不做以下的事 相當於if(sortWhich.value){...} 但這樣比較簡潔
+
+    const field = sortWhich.value; // 取出這次要排序的東西 例如價錢
+
+    const sorted = [...sortCopy.value].sort((a, b) => {
+      // [...sortCopy.value] 是把元陣列炸開再裝進另一個陣列 這樣不會修改到初始資料
+
+      // 在JS sort()中的callback 可帶兩個參數a b 表示JS取樣時的那兩個元素
+      let vA = a[field] || 0; // a為陣列中的其中一個元素 也就是其中一包商品的物件 a[field] 就像object.price的意思
+      let vB = b[field] || 0; // b同理a
+      let result;
+      if (sortHe.value === true) {
+        // 依據 sortHe 來調整是 高到低 還是 低到高
+        result = vB - vA; // 高到低
+      } else {
+        result = vA - vB; // 低到高
+      }
+      return result;
+    });
+    product.value = sorted; // 把第一次排序的陣列 放到product 讓它來渲染畫面
+  };
+
+  watch(sortWhich, async (newVal) => {
+    // 持續監聽 sortWhich 當它有新值時 打API.get
+    if (!newVal) return;
+
+    try {
+      const res = await getProducts({ sort: [`${newVal}:desc`] }); // 打API 帶入Strapi規定格式 desc表示高到低
+      sortCopy.value = res.data || res; // 用 sortCopy 取得這筆排序資料
+      product.value = [...sortCopy.value]; // 把資料丟給 product 來渲染畫面 雖然 doSort()有用 [...sortCopy.value] 了 保險起見這邊還是也用 [...sortCopy.value]
+      sortHe.value = true; // 預設抓完後 一律由 高到低 先呈現
+    } catch (err) {
+      console.error('排序抓取失敗', err);
+    }
+  });
+
+  const sortChange = () => {
+    // 切換頁面 高到低 低到高 的函數
+    sortHe.value = !sortHe.value;
+    doSort();
   };
 
   onMounted(async () => {

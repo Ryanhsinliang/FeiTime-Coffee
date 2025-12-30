@@ -1,9 +1,30 @@
+import A1Img from '../img/CoffeeID-animals/BrightRaccoon.webp';
+import A2Img from '../img/CoffeeID-animals/BerryFox.webp';
+import A3Img from '../img/CoffeeID-animals/AdventureCat.webp';
+import A4Img from '../img/CoffeeID-animals/CitrusTanukiThinker.webp';
+import B1Img from '../img/CoffeeID-animals/CitrusFawn.webp';
+import B2Img from '../img/CoffeeID-animals/CaramelHippo.webp';
+import B3Img from '../img/CoffeeID-animals/HoneyBear.webp';
+import B4Img from '../img/CoffeeID-animals/GlowingDolphin.webp';
+import C1Img from '../img/CoffeeID-animals/PantherRunner.webp';
+import C2Img from '../img/CoffeeID-animals/CreamyBuffalo.webp';
+import C3Img from '../img/CoffeeID-animals/DeepwoodBear.webp';
+import C4Img from '../img/CoffeeID-animals/GreyWolfAnalyst.webp';
+import D1Img from '../img/CoffeeID-animals/IndieOwl.webp';
+import D2Img from '../img/CoffeeID-animals/CocoaSloth.webp';
+import D3Img from '../img/CoffeeID-animals/OldSoulBlackBear.webp';
+import D4Img from '../img/CoffeeID-animals/MistDeer.webp';
+import E1Img from '../img/CoffeeID-animals/DawnlightFox.webp';
+import E2Img from '../img/CoffeeID-animals/CloudglowRabbit.webp';
+import E3Img from '../img/CoffeeID-animals/MistwoodHound.webp';
+import E4Img from '../img/CoffeeID-animals/HazeplumeCrane.webp';
+
 export const coffeePersonas = [
   {
     id: 'A1',
     name: '果香浣熊',
     en: 'Bright Raccoon',
-    image: '',
+    image: A1Img,
     flavor1: '酸',
     flavor2: '澄澈',
     roasting: '淺焙',
@@ -16,7 +37,7 @@ export const coffeePersonas = [
     id: 'A2',
     name: '莓果狐狸',
     en: 'Berry Fox',
-    image: '',
+    image: A2Img,
     flavor1: '酸',
     flavor2: '甜',
     roasting: '淺焙',
@@ -29,7 +50,7 @@ export const coffeePersonas = [
     id: 'A3',
     name: '探險野貓',
     en: 'Adventure Cat',
-    image: '',
+    image: A3Img,
     flavor1: '酸',
     flavor2: '醇厚',
     roasting: '中淺焙',
@@ -42,7 +63,7 @@ export const coffeePersonas = [
     id: 'A4',
     name: '沉思貍貓',
     en: 'Citrus Tanuki Thinker',
-    image: '',
+    image: A4Img,
     flavor1: '酸',
     flavor2: '餘韻',
     roasting: '中焙',
@@ -55,7 +76,7 @@ export const coffeePersonas = [
     id: 'B1',
     name: '柑橘小鹿',
     en: 'Citrus Fawn',
-    image: '',
+    image: B1Img,
     flavor1: '甜',
     flavor2: '酸',
     roasting: '淺焙',
@@ -68,7 +89,7 @@ export const coffeePersonas = [
     id: 'B2',
     name: '焦糖河馬',
     en: 'Caramel Hippo',
-    image: '',
+    image: B2Img,
     flavor1: '甜',
     flavor2: '醇厚',
     roasting: '中〜中深焙',
@@ -81,7 +102,7 @@ export const coffeePersonas = [
     id: 'B3',
     name: '蜂蜜熊',
     en: 'Honey Bear',
-    image: '',
+    image: B3Img,
     flavor1: '甜',
     flavor2: '餘韻',
     roasting: '中淺〜中焙',
@@ -94,7 +115,7 @@ export const coffeePersonas = [
     id: 'B4',
     name: '微光海豚',
     en: 'Glowing Dolphin',
-    image: '',
+    image: B4Img,
     flavor1: '甜',
     flavor2: '澄澈',
     roasting: '淺焙',
@@ -107,7 +128,7 @@ export const coffeePersonas = [
     id: 'C1',
     name: '黑豹衝鋒者',
     en: 'Panther Runner',
-    image: '',
+    image: C1Img,
     flavor1: '醇厚',
     flavor2: '酸',
     roasting: '中深焙',
@@ -120,7 +141,7 @@ export const coffeePersonas = [
     id: 'C2',
     name: '奶油水牛',
     en: 'Creamy Buffalo',
-    image: '',
+    image: C2Img,
     flavor1: '醇厚',
     flavor2: '甜',
     roasting: '中深焙',
@@ -133,7 +154,7 @@ export const coffeePersonas = [
     id: 'C3',
     name: '深森棕熊',
     en: 'Deepwood Bear',
-    image: '',
+    image: C3Img,
     flavor1: '醇厚',
     flavor2: '餘韻',
     roasting: '中深〜深焙',
@@ -146,7 +167,7 @@ export const coffeePersonas = [
     id: 'C4',
     name: '冷靜灰狼',
     en: 'Grey Wolf Analyst',
-    image: '',
+    image: C4Img,
     flavor1: '醇厚',
     flavor2: '澄澈',
     roasting: '中焙',
@@ -159,7 +180,7 @@ export const coffeePersonas = [
     id: 'D1',
     name: '文青貓頭鷹',
     en: 'Indie Owl',
-    image: '',
+    image: D1Img,
     flavor1: '餘韻',
     flavor2: '酸',
     roasting: '中焙',
@@ -172,7 +193,7 @@ export const coffeePersonas = [
     id: 'D2',
     name: '可可樹懶',
     en: 'Cocoa Sloth',
-    image: '',
+    image: D2Img,
     flavor1: '餘韻',
     flavor2: '甜',
     roasting: '中焙',
@@ -185,7 +206,7 @@ export const coffeePersonas = [
     id: 'D3',
     name: '老靈魂黑熊',
     en: 'Old Soul Black Bear',
-    image: '',
+    image: D3Img,
     flavor1: '餘韻',
     flavor2: '醇厚',
     roasting: '中深焙',
@@ -198,7 +219,7 @@ export const coffeePersonas = [
     id: 'D4',
     name: '山嵐白鹿',
     en: 'Mist Deer',
-    image: '',
+    image: D4Img,
     flavor1: '餘韻',
     flavor2: '澄澈',
     roasting: '中淺焙',
@@ -210,7 +231,7 @@ export const coffeePersonas = [
     id: 'E1',
     name: '晨光白狐',
     en: 'Dawnlight Fox',
-    image: '',
+    image: E1Img,
     flavor1: '澄澈',
     flavor2: '酸',
     roasting: '淺焙',
@@ -223,7 +244,7 @@ export const coffeePersonas = [
     id: 'E2',
     name: '雲光小兔',
     en: 'Cloudglow Rabbit',
-    image: '',
+    image: E2Img,
     flavor1: '澄澈',
     flavor2: '甜',
     roasting: '淺〜中淺焙',
@@ -236,7 +257,7 @@ export const coffeePersonas = [
     id: 'E3',
     name: '玄霧山犬',
     en: 'Mistwood Hound',
-    image: '',
+    image: E3Img,
     flavor1: '澄澈',
     flavor2: '醇厚',
     roasting: '中焙',
@@ -249,7 +270,7 @@ export const coffeePersonas = [
     id: 'E4',
     name: '霧羽白鶴',
     en: 'Hazeplume Crane',
-    image: '',
+    image: E4Img,
     flavor1: '澄澈',
     flavor2: '餘韻',
     roasting: '中淺焙',

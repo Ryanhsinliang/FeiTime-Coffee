@@ -4,17 +4,24 @@
   >
     Coffee ID TEST
   </h2>
-  <main
-    class="w-full lg:w-1/2 min-h-screen bg-[url('./assets/img/bgImage.jpg')] bg-cover bg-center lg:bg-none flex flex-col float-right p-5 font-wenkai"
-  >
-    <section class="mx-auto py-10 w-2/3">
+  <main class="w-full min-h-screen relative font-wenkai">
+    <div class="absolute inset-0 -z-10">
+      <img :src="currentBg" class="w-full h-full object-cover" alt="背景" />
+      <img
+        :src="nextBg"
+        class="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500"
+        :style="{ opacity: nextBgOpacity }"
+        alt="背景"
+      />
+    </div>
+    <section class="mx-auto py-10 w-2/3 relative z-10">
       <!-- 動畫背景 -->
-      <div class="w-[80%] mx-auto flex justify-center rounded-2xl bg-cover bg-bottom bg-slide mt-8">
-        <img src=".\assets\img\coffeeWalk.gif" class="invert" alt="Coffee Walk Animation" />
+      <div class="w-[80%] mx-auto flex justify-center rounded-2xl bg-cover bg-bottom mt-8">
+        <img :src="coffeeWalk" class="invert" alt="Coffee Walk Animation" />
       </div>
-
-      <!-- Intro Text -->
-      <div class="flex flex-col items-center gap-8 mt-8">
+    </section>
+    <section>
+      <div class="flex flex-col items-center gap-8 mt-8 bg-[rgba(220,207,192,1)] p-5">
         <p class="text-center leading-relaxed">
           每一杯咖啡，
           <br />
@@ -27,7 +34,6 @@
           現在，就從這裡開始。
         </p>
 
-        <!-- Button -->
         <button
           @click="startTest"
           class="relative bg-[#a2af9b] text-2xl py-2 px-8 rounded-full hover:cursor-pointer"
@@ -39,52 +45,57 @@
   </main>
 </template>
 
-<script>
-  export default {
-    name: 'CoffeeIDTest',
-    methods: {
-      startTest() {
-        // 添加開始測驗的邏輯
-        this.$router.push('/coffee-id-test-card');
-      },
-    },
-  };
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
+
+  // 匯入背景圖與動畫圖
+  import bgImage from './assets/img/bgImage.jpg';
+  import coffeeWalk from './assets/img/coffeeWalk.gif';
+  import cafe from './assets/img/cafe.jpg';
+  import mountain from './assets/img/mountain.jpg';
+  import escalator from './assets/img/escalator.png';
+  import campus from './assets/img/campus.jpg';
+
+  // 取得 router
+  const router = useRouter();
+
+  // 開始測驗函式
+  function startTest() {
+    router.push('/coffee-id-test-card');
+  } // 控制動畫背景切換
+  const currentBg = ref(bgImage);
+  const bgSequence = [cafe, cafe, mountain, mountain, escalator, escalator, campus, campus, cafe];
+
+  let index = 0;
+  const nextBg = ref(bgSequence[0]);
+  const nextBgOpacity = ref(0);
+  onMounted(() => {
+    function changeBg() {
+      const newBg = bgSequence[index % bgSequence.length];
+      nextBg.value = newBg;
+      nextBgOpacity.value = 1; // 觸發淡入
+
+      setTimeout(() => {
+        currentBg.value = newBg; // 完成切換
+        nextBgOpacity.value = 0; // 淡出下一張
+        index++;
+        setTimeout(changeBg, 1500); // 調整每張持續時間
+      }, 500); // 500ms 淡入淡出時間
+    }
+
+    changeBg();
+  });
 </script>
 
 <style scoped>
-  /* 動畫背景 */
-  @keyframes bgSlide {
-    0% {
-      background-image: url('.\assets\img\cafe.jpg');
-    }
-    20% {
-      background-image: url('.\assets\img\cafe.jpg');
-    }
-    23% {
-      background-image: url('.\assets\img\mountain.jpg');
-    }
-    43% {
-      background-image: url('.\assets\img\mountain.jpg');
-    }
-    56% {
-      background-image: url('.\assets\img\escalator.png');
-    }
-    73% {
-      background-image: url('.\assets\img\escalator.png');
-    }
-    77% {
-      background-image: url('.\assets\img\campus.jpg');
-    }
-    93% {
-      background-image: url('.\assets\img\campus.jpg');
-    }
-    100% {
-      background-image: url('.\assets\img\cafe.jpg');
-    }
-  }
-
-  .bg-slide {
-    animation: bgSlide 12s infinite;
+  main > div > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 </style>
 

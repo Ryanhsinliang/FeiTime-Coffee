@@ -73,15 +73,6 @@
             <i class="fa-solid fa-plus"></i>
           </button>
           <p v-show="showRoast" class="py-2">淺中焙｜保留花果香與自然甜感</p>
-          <!-- <button
-            type="button"
-            @click="toggleBeans"
-            class="w-1/2 py-2 flex justify-between font-semibold"
-          >
-            豆種組合
-            <i class="fa-solid fa-plus"></i>
-          </button>
-          <p v-show="showBeans" class="py-2">100% 原生種 Arabica</p> -->
           <button
             type="button"
             @click="toggleProcess"
@@ -412,18 +403,25 @@
         </a>
       </div>
     </section>
-
-    <!-- Question Button -->
-    <!-- <div>
-      <i
-        class="fa-solid fa-comment-dots fixed bottom-[30px] right-[30px] text-[30px] text-[#dccfc0] bg-white rounded-full p-5 shadow-lg cursor-pointer"
-      ></i>
-    </div> -->
   </main>
 </template>
 
-<script setup>
-  import { ref, computed } from 'vue';
+<script setup lang="ts">
+  import { ref, computed, onMounted } from 'vue';
+  import { callProducts } from '@/services/ProductDetail';
+  import type { ProductRequest } from '@/services/ProductDetail';
+
+  const coffeeBeans = ref<ProductRequest[]>([]);
+
+  onMounted(async () => {
+    try {
+      const res = await callProducts();
+      coffeeBeans.value = res.data;
+      console.log('API載入成功', coffeeBeans.value);
+    } catch (err) {
+      console.error('API載入失敗', err);
+    }
+  });
 
   // 圖片點擊輪播
   const currentIndex = ref(0);
@@ -478,16 +476,12 @@
   // 商品資訊欄位展開
   const showRoast = ref(false);
   const showFlavor = ref(false);
-  const showBeans = ref(false);
   const showProcess = ref(false);
   const toggleRoast = () => {
     showRoast.value = !showRoast.value;
   };
   const toggleFlavor = () => {
     showFlavor.value = !showFlavor.value;
-  };
-  const toggleBeans = () => {
-    showBeans.value = !showBeans.value;
   };
   const toggleProcess = () => {
     showProcess.value = !showProcess.value;

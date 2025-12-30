@@ -1,7 +1,7 @@
 import api from '@/services/api';
 
 // 定義商品型別
-export interface BeansRequest {
+export interface ProductRequest {
   id: string; // 產品 ID
   name: string; // 產品名稱
   origin: string; // 產地
@@ -15,7 +15,7 @@ export interface BeansRequest {
 }
 
 export interface ProductListResponse {
-  data: Product[];
+  data: ProductRequest[];
   pagination: {
     page: number;
     pageSize: number;

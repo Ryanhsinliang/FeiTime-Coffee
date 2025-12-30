@@ -295,7 +295,7 @@
 
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
-  import { ref, onMounted, watch } from 'vue';
+  import { ref, onMounted } from 'vue';
 
   // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
   const sortTopbar = ref(true);
@@ -313,25 +313,32 @@
   };
 
   interface DataRule {
-    // 設定TS規格
+    // 設定data規格
     id: number;
     pid: number;
     name: string;
     price: number;
     origin: string;
     img: any[];
+    popularity: number;
+    sweetness: number;
+    acidity: number;
+    body: number;
+    aftertaste: number;
+    clarity: number;
   }
 
-  const sortCopy = ref([]); // 備份資料 之後排序用
+  const sortCopy = ref<DataRule[]>([]); // 備份資料 之後排序用
   const product = ref<DataRule[]>([]);
-  // <DataRule[]>	TS語法 規範 product 是符合 DataRule 規格的陣列
+  // <DataRule[]>	為TS語法 規範 sortCopy 、product 是符合 DataRule 規格的陣列
+
   const loading = ref(false); // API載入狀況參數
-  const err = ref(''); // 放錯誤訊息的容易
+  const err = ref(''); // 放錯誤訊息
 
   // API(get)函數
   const getcoffee = async (filterData: any = {}) => {
     // filterData是參數 它是一個物件
-    // : any  TS的規範 代表不限制物件裡面的型別
+    // : any  為TS的語法 代表不限制物件裡面的型別
     try {
       loading.value = true;
       err.value = ''; // 每次重新請求前清空錯誤
@@ -341,12 +348,6 @@
 
       product.value = apikaraData;
       sortCopy.value = [...apikaraData]; // 預先準備一個備份資料 之後排序時使用
-
-      // if (res && res.data) {
-      //   product.value = res.data;
-      // } else {
-      //   product.value = res;
-      // }
     } catch (error) {
       err.value = (error as Error).message;
       console.error('API 串接出錯：', error);
@@ -356,20 +357,20 @@
   };
 
   // 排序相關
-  const sortWhich = ref(''); // 雙向綁定下拉式選單用的變數 依據它來決定現在要依什麼排序
+  const sortWhich = ref(''); // 雙向綁定下拉式選單用的變數 依據它來決定現在要排序什麼
   const sortHe = ref(true); // 決定高到低 還是 低到高 的參數 預設true是 高到低
   const doSort = () => {
     // 切換 高到低 低到高 的函數 我選擇在前端做
     if (!sortWhich.value) return; // 如果沒有sortWhich.value 就不做以下的事 相當於if(sortWhich.value){...} 但這樣比較簡潔
 
-    const field = sortWhich.value; // 取出這次要排序的東西 例如價錢
-
+    const field = sortWhich.value as keyof DataRule; // 取出這次要排序的東西 例如價錢
+    // as keyof DataRule  保證 field 一定是 DataRule 裡的其中一個 並且用對應的型別
     const sorted = [...sortCopy.value].sort((a, b) => {
       // [...sortCopy.value] 是把元陣列炸開再裝進另一個陣列 這樣不會修改到初始資料
 
-      // 在JS sort()中的callback 可帶兩個參數a b 表示JS取樣時的那兩個元素
-      let vA = a[field] || 0; // a為陣列中的其中一個元素 也就是其中一包商品的物件 a[field] 就像object.price的意思
-      let vB = b[field] || 0; // b同理a
+      // 在JS sort()中的callback 可帶兩個參數a b 表示隨機取樣比對時的那兩個元素
+      let vA = Number(a[field]) || 0; // a 為陣列中的其中一個元素 在這就是其中一包商品的物件 a[field] 就像object.price的意思
+      let vB = Number(b[field]) || 0; // b 同理 a
       let result;
       if (sortHe.value === true) {
         // 依據 sortHe 來調整是 高到低 還是 低到高
@@ -389,7 +390,7 @@
     try {
       await getcoffee({ sort: [`${sortWhich.value}:desc`] }); // 抓取一個依照 sortWhich 高到低排序的產品陣列 sortWhich可能是 價錢、人氣度...
       // 依照 getcoffee () 抓到的資料會丟進 product 這個ref()變數
-      sortCopy.value = [...product.value]; // 用 sortCopy 抓取 product 但怕共享同一個陣列 所以先炸開再用[] 卻把它是新的陣列
+      sortCopy.value = [...product.value]; // 用 sortCopy 抓取 product 但怕共享同一個陣列 所以先炸開再用[] 確保它是新的陣列
       sortHe.value = true; // 預設抓完後是 高到低
       doSort(); // 執行一次排序來渲染頁面
       console.log('選單觸發成功，目前資料類別：', sortWhich.value);

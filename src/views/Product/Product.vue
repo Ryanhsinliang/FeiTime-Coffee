@@ -1,43 +1,61 @@
 <template>
   <div class="font-wenkai text-[#222222]">
-    <div class="top-find-bar">
+    <div v-show="sortTopbar" class="top-find-bar">
       <div class="mb-[12px] mx-[3%] flex justify-center relative">
-        <div class="relative lg:w-[70%] md:w-[80%] w-[94%] flex justify-center">
+        <div
+          class="relative lg:justify-center lg:w-[70%] md:w-[80%] md:justify-center w-[94%] flex justify-start"
+        >
           <input
-            class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[100%]"
+            class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] lg:w-[100%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] md:w-[100%] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[90%]"
             type="search"
             placeholder="喝一杯靜謐的午後時光"
           />
-          <div class="sort">
-            <img class="IC-sort" src="./assets/sort.svg" alt="" />
-            <select id="sort-page">
-              <option value="">排序</option>
-              <option value="">價錢</option>
-              <option value="">熱門度</option>
-              <option value="">甜味</option>
-              <option value="">酸味</option>
-              <option value="">口感</option>
-              <option value="">餘韻</option>
-              <option value="">澄澈度</option>
-            </select>
-            <div class="line-hako">
-              <div class="line">
-                <label for="circle">
-                  <input type="checkbox" id="circle" />
-                  <div class="maru" @click="sortChange"></div>
-                </label>
-                <span v-if="sortHe" class="oriru">↓高到低</span>
-                <span v-else class="noboru">↑低到高</span>
-              </div>
+          <div
+            class="sort flex absolute md:top-[calc(100%+64px)] md:left-[24px] whitespace-nowrap lg:top-[calc(100%+8px)] lg:right-[24px] lg:left-auto"
+          >
+            <div
+              class="sort-list flex bg-[var(--main-color)] px-[12px] rounded-[8px] overflow-hidden mr-[8px]"
+            >
+              <img class="IC-sort w-[32px] bg-[var(--main-color)]" src="./assets/sort.svg" alt="" />
+              <select
+                v-model="sortWhich"
+                @change="takeSort"
+                id="sort-page"
+                class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
+              >
+                <!-- change 是DOM原生事件 當 <select> 中的 <option> 更動時觸發  -->
+                <option value="">排序</option>
+                <option value="price">價錢</option>
+                <option value="popularity">熱門度</option>
+                <option value="sweetness">甜味</option>
+                <option value="acidity">酸味</option>
+                <option value="body">口感</option>
+                <option value="aftertaste">餘韻</option>
+                <option value="clarity">澄澈度</option>
+              </select>
             </div>
+            <p
+              v-if="sortHe"
+              class="oriru rounded-[4px] bg-[#bdeda4] leading-8 px-[6px]"
+              @click="sortChange"
+            >
+              ↓高到低
+            </p>
+            <p
+              v-else
+              class="noboru rounded-[4px] bg-[#a4e9e2] leading-8 px-[6px]"
+              @click="sortChange"
+            >
+              ↑低到高
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="find">
-        <div class="filter">
+      <div class="find lg:mx-[16.95%] md:mx-[12.4%] w-[70%] flex whitespace-nowrap">
+        <div class="filter px-[16px] flex lg:w-[70%] md:w-[80%]">
           <div class="filter-type">
-            <p class="filter-word" tabindex="0">類別</p>
+            <p class="filter-word" tabindex="0" id="first-noline">類別</p>
             <div class="type-list">
               <p class="list" tabindex="0">咖啡豆</p>
               <p class="list" tabindex="0">濾掛包</p>
@@ -47,219 +65,349 @@
           <div class="filter-type">
             <p class="filter-word" tabindex="0">焙度</p>
             <div class="type-list">
-              <p class="list" tabindex="0">淺焙</p>
-              <p class="list" tabindex="0">中焙</p>
-              <p class="list" tabindex="0">深焙</p>
+              <p @click="getcoffee({ roast: 'Light' })" class="list" tabindex="0" value="Light">
+                淺焙
+              </p>
+              <p @click="getcoffee({ roast: 'Medium' })" class="list" tabindex="0" value="Medium">
+                中焙
+              </p>
+              <p @click="getcoffee({ roast: 'Dark' })" class="list" tabindex="0" value="Dark">
+                深焙
+              </p>
             </div>
           </div>
           <div class="filter-type">
-            <p class="filter-word" tabindex="0">風格</p>
+            <p class="filter-word" tabindex="0">風味</p>
             <div class="type-list">
-              <p class="list" tabindex="0">果香明亮</p>
-              <p class="list" tabindex="0">清爽茶感</p>
-              <p class="list" tabindex="0">甜感平衡</p>
-              <p class="list" tabindex="0">可可堅果</p>
-              <p class="list" tabindex="0">濃厚飽滿</p>
-              <p class="list" tabindex="0">酒香發酵</p>
+              <p
+                @click="getcoffee({ flavor_type: 'Fruity' })"
+                class="list"
+                tabindex="0"
+                value="Fruity"
+              >
+                果香清爽
+              </p>
+              <p
+                @click="getcoffee({ flavor_type: 'Nutty' })"
+                class="list"
+                tabindex="0"
+                value="Nutty"
+              >
+                堅果巧克力
+              </p>
+              <p @click="getcoffee({ flavor_type: 'Bold' })" class="list" tabindex="0" value="Bold">
+                濃郁厚實
+              </p>
+              <p
+                @click="getcoffee({ flavor_type: 'Floral' })"
+                class="list"
+                tabindex="0"
+                value="Floral"
+              >
+                花香明亮
+              </p>
+            </div>
+          </div>
+          <div class="filter-type">
+            <p class="filter-word" tabindex="0">工法</p>
+            <div class="type-list">
+              <p
+                @click="getcoffee({ processing: 'Washed' })"
+                class="list"
+                tabindex="0"
+                value="Washed"
+              >
+                水洗
+              </p>
+              <p
+                @click="getcoffee({ processing: 'Natural' })"
+                class="list"
+                tabindex="0"
+                value="Natural"
+              >
+                日曬
+              </p>
+              <p
+                @click="getcoffee({ processing: 'Honey' })"
+                class="list"
+                tabindex="0"
+                value="Honey"
+              >
+                蜜處理
+              </p>
+              <p
+                @click="getcoffee({ processing: 'Wet-Hulled' })"
+                class="list"
+                tabindex="0"
+                value="Wet-Hulled"
+              >
+                厭氧
+              </p>
             </div>
           </div>
           <div class="filter-type">
             <p class="filter-word" tabindex="0">產地</p>
-            <div class="type-list">
-              <p class="list" tabindex="0">肯亞</p>
-              <p class="list" tabindex="0">哥倫比亞</p>
-              <p class="list" tabindex="0">瓜地馬拉</p>
-              <p class="list" tabindex="0">巴西</p>
-              <p class="list" tabindex="0">哥斯大黎加</p>
-              <p class="list" tabindex="0">印尼</p>
-              <p class="list" tabindex="0">薩爾瓦多</p>
-              <p class="list" tabindex="0">衣索比亞</p>
+            <div class="big-list">
+              <p
+                @click="getcoffee({ origin: 'Ethiopia' })"
+                class="list"
+                tabindex="0"
+                value="Ethiopia"
+              >
+                衣索比亞
+              </p>
+              <p @click="getcoffee({ origin: 'Kenya' })" class="list" tabindex="0" value="Kenya">
+                肯亞
+              </p>
+              <p @click="getcoffee({ origin: 'Rwanda' })" class="list" tabindex="0" value="Rwanda">
+                盧安達
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Burundi' })"
+                class="list"
+                tabindex="0"
+                value="Burundi"
+              >
+                布隆迪
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Colombia' })"
+                class="list"
+                tabindex="0"
+                value="Colombia"
+              >
+                哥倫比亞
+              </p>
+              <p @click="getcoffee({ origin: 'Brazil' })" class="list" tabindex="0" value="Brazil">
+                巴西
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Guatemala' })"
+                class="list"
+                tabindex="0"
+                value="Guatemala"
+              >
+                瓜地馬拉
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Costa Rica' })"
+                class="list"
+                tabindex="0"
+                value="Costa Rica"
+              >
+                哥斯大黎加
+              </p>
+              <p
+                @click="getcoffee({ origin: 'El Salvador' })"
+                class="list"
+                tabindex="0"
+                value="El Salvador"
+              >
+                薩爾瓦多
+              </p>
+              <p @click="getcoffee({ origin: 'Panama' })" class="list" tabindex="0" value="Panama">
+                巴拿馬
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Indonesia' })"
+                class="list"
+                tabindex="0"
+                value="Indonesia"
+              >
+                印尼
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Vietnam' })"
+                class="list"
+                tabindex="0"
+                value="Vietnam"
+              >
+                越南
+              </p>
+              <p @click="getcoffee({ origin: 'India' })" class="list" tabindex="0" value="India">
+                印度
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Thailand' })"
+                class="list"
+                tabindex="0"
+                value="Thailand"
+              >
+                泰國
+              </p>
+              <p
+                @click="getcoffee({ origin: 'Papua New Guinea' })"
+                class="list"
+                tabindex="0"
+                value="Papua New Guinea"
+              >
+                巴布亞紐幾內亞
+              </p>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div
-      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1 pt-[300px]"
-    >
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="relative">
-          <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-          >
-            <p>USA USA</p>
-            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
-            <p>$ 70</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
+    <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
+      <i class="fa-solid fa-angle-up"></i>
+    </div>
+    <div v-if="loading">
+      <p>正在為您準備咖啡清單...</p>
+    </div>
+    <div v-else>
+      <div
+        class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
+        :class="topBarSapce"
+      >
+        <!-- card start -->
+        <!-- {{ p.img[0].formats.large.url }} -->
+        <a href="#" target="_blank" v-for="p in product" :key="p.pid">
+          <!-- 待放網址 -->
+          <div class="relative">
+            <img
+              v-if="p.img && p.img.length > 0"
+              class="w-[100%] aspect-[1/1.2] object-cover object-center"
+              :src="p.img[0].formats.large.url"
+              :alt="p.name"
+            />
 
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="relative">
-          <img class="w-[100%]" src="./assets/ex.2.png" alt="圖片加載中..." />
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-          >
-            <p>臺灣</p>
-            <h3 class="text-[28px] font-bold">阿里山好喝咖啡</h3>
-            <p>$ 599</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
+            <img v-else src="" alt="暫無圖片" />
 
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="relative">
-          <img class="w-[100%]" src="./assets/ex.3.png" alt="圖片加載中..." />
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-          >
-            <p>日本</p>
-            <h3 class="text-[28px] font-bold">茶の凪</h3>
-            <p>¥ 9800</p>
+            <div
+              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
+            >
+              <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
+              <h3
+                class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
+              >
+                {{ p.name }}
+              </h3>
+              <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
+            </div>
           </div>
-        </div>
-      </a>
-      <!-- card end -->
-
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="relative">
-          <img class="w-[100%]" src="./assets/ex.2.png" alt="圖片加載中..." />
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-          >
-            <p>臺灣</p>
-            <h3 class="text-[28px] font-bold">阿里山好喝咖啡</h3>
-            <p>$ 599</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
-
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="relative">
-          <img class="w-[100%]" src="./assets/ex.3.png" alt="圖片加載中..." />
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-          >
-            <p>茶の凪</p>
-            <h3 class="text-[28px] font-bold">日本</h3>
-            <p>¥ 9800</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
-
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="relative">
-          <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-          >
-            <p>USA USA</p>
-            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
-            <p>$ 70</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
-
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="relative">
-          <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-          >
-            <p>USA USA</p>
-            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
-            <p>$ 70</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
-
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="relative">
-          <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-          >
-            <p>USA USA</p>
-            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
-            <p>$ 70</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
-
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="relative">
-          <img class="w-[100%]" src="./assets/ex.png" alt="圖片加載中..." />
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-          >
-            <p>USA USA</p>
-            <h3 class="text-[28px] font-bold">CoffeeCoffeeCoffee</h3>
-            <p>$ 70</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
-
-      <!-- card start -->
-      <a href="#" target="_blank">
-        <!-- 待放網址 -->
-        <div class="relative">
-          <img class="w-[100%]" src="./assets/ex.3.png" alt="圖片加載中..." />
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%]"
-          >
-            <p>日本</p>
-            <h3 class="text-[28px] font-bold">茶の凪</h3>
-            <p>¥ 9800</p>
-          </div>
-        </div>
-      </a>
-      <!-- card end -->
+        </a>
+        <!-- card end -->
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-  export default {
-    data() {
-      return {
-        sortHe: true, // 調整【排序】高到低 還是 低到高 按鈕的參數
-      };
-    },
-    methods: {
-      sortChange() {
-        // 切換【排序】高到低 還是 低到高
-        this.sortHe = !this.sortHe;
-      },
-    },
+<script setup lang="ts">
+  import { getProducts } from '../../services/product';
+  import { ref, onMounted } from 'vue';
+
+  // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
+  const sortTopbar = ref(true);
+  const rotation = ref('');
+  const topBarSapce = ref('pt-[500px]');
+  const sortBarSwitch = () => {
+    sortTopbar.value = !sortTopbar.value;
+    if (!sortTopbar.value) {
+      rotation.value = 'rotate-180';
+      topBarSapce.value = 'pt-[50px]';
+    } else {
+      rotation.value = '';
+      topBarSapce.value = 'pt-[550px]';
+    }
   };
+
+  interface DataRule {
+    // 設定data規格
+    id: number;
+    pid: number;
+    name: string;
+    price: number;
+    origin: string;
+    img: any[];
+    popularity: number;
+    sweetness: number;
+    acidity: number;
+    body: number;
+    aftertaste: number;
+    clarity: number;
+  }
+
+  const sortCopy = ref<DataRule[]>([]); // 備份資料 之後排序用
+  const product = ref<DataRule[]>([]);
+  // <DataRule[]>	為TS語法 規範 sortCopy 、product 是符合 DataRule 規格的陣列
+
+  const loading = ref(false); // API載入狀況參數
+  const err = ref(''); // 放錯誤訊息
+
+  // API(get)函數
+  const getcoffee = async (filterData: any = {}) => {
+    // filterData是參數 它是一個物件
+    // : any  為TS的語法 代表不限制物件裡面的型別
+    try {
+      loading.value = true;
+      err.value = ''; // 每次重新請求前清空錯誤
+      const res = await getProducts(filterData);
+
+      const apikaraData = res.data || res;
+
+      product.value = apikaraData;
+      sortCopy.value = [...apikaraData]; // 預先準備一個備份資料 之後排序時使用
+    } catch (error) {
+      err.value = (error as Error).message;
+      console.error('API 串接出錯：', error);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // 排序相關
+  const sortWhich = ref(''); // 雙向綁定下拉式選單用的變數 依據它來決定現在要排序什麼
+  const sortHe = ref(true); // 決定高到低 還是 低到高 的參數 預設true是 高到低
+  const doSort = () => {
+    // 切換 高到低 低到高 的函數 我選擇在前端做
+    if (!sortWhich.value) return; // 如果沒有sortWhich.value 就不做以下的事 相當於if(sortWhich.value){...} 但這樣比較簡潔
+
+    const field = sortWhich.value as keyof DataRule; // 取出這次要排序的東西 例如價錢
+    // as keyof DataRule  保證 field 一定是 DataRule 裡的其中一個 並且用對應的型別
+    const sorted = [...sortCopy.value].sort((a, b) => {
+      // [...sortCopy.value] 是把元陣列炸開再裝進另一個陣列 這樣不會修改到初始資料
+
+      // 在JS sort()中的callback 可帶兩個參數a b 表示隨機取樣比對時的那兩個元素
+      let vA = Number(a[field]) || 0; // a 為陣列中的其中一個元素 在這就是其中一包商品的物件 a[field] 就像object.price的意思
+      let vB = Number(b[field]) || 0; // b 同理 a
+      let result;
+      if (sortHe.value === true) {
+        // 依據 sortHe 來調整是 高到低 還是 低到高
+        result = vB - vA; // 高到低
+      } else {
+        result = vA - vB; // 低到高
+      }
+      return result;
+    });
+    product.value = sorted; // 把這一次排序的陣列 放到product 讓它來渲染畫面
+  };
+
+  const takeSort = async () => {
+    // 當使用下拉式選單 執行排序的函數
+    if (!sortWhich.value) return;
+
+    try {
+      await getcoffee({ sort: [`${sortWhich.value}:desc`] }); // 抓取一個依照 sortWhich 高到低排序的產品陣列 sortWhich可能是 價錢、人氣度...
+      // 依照 getcoffee () 抓到的資料會丟進 product 這個ref()變數
+      sortCopy.value = [...product.value]; // 用 sortCopy 抓取 product 但怕共享同一個陣列 所以先炸開再用[] 確保它是新的陣列
+      sortHe.value = true; // 預設抓完後是 高到低
+      doSort(); // 執行一次排序來渲染頁面
+      console.log('選單觸發成功，目前資料類別：', sortWhich.value);
+    } catch (err) {
+      console.error('選單排序失敗', err);
+    }
+  };
+
+  const sortChange = () => {
+    // 切換頁面 高到低 低到高 的函數
+    sortHe.value = !sortHe.value;
+    doSort();
+  };
+
+  onMounted(async () => {
+    await getcoffee({});
+  });
 </script>
 
 <style>
@@ -269,12 +417,12 @@
   /* Font-awesome */
   /* https://fontawesome.com/search?ic=free-collection */
 
-  /* 
-先寫不會變動的樣式
-再用lg: 寫電腦版
-再用md: 寫平板
-手機版 不用特別寫 
-*/
+  /*
+    先寫不會變動的樣式
+    再用lg: 寫電腦版
+    再用md: 寫平板
+    手機版 不用特別寫
+  */
 
   :root {
     --main-color: #faf9ee;
@@ -319,6 +467,8 @@
   .top-find-bar {
     background-image: url(./assets/find-bg2.png);
     background-position: right center;
+    background-repeat: no-repeat;
+    background-size: cover;
     padding-top: 40px;
     padding-bottom: 24px;
     width: 100%;
@@ -326,19 +476,19 @@
     z-index: 2;
   }
 
-  .find {
+  /* .find {
     margin-left: 16.95%;
     margin-right: 16.95%;
     width: 70%;
     display: flex;
     white-space: nowrap;
-  }
+  } */
 
-  .filter {
+  /* .filter {
     display: flex;
     padding: 0 16px;
     width: 70%;
-  }
+  } */
 
   .filter-type {
     font-size: 20px;
@@ -375,6 +525,24 @@
     z-index: 2;
   }
 
+  .big-list {
+    display: none;
+  }
+
+  .filter-type:focus-within .big-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background-color: var(--soft-brown);
+    border-radius: 16px;
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    padding: 0px 24px;
+    z-index: 2;
+  }
+
   .list {
     margin: 12px;
     padding: 12px 24px;
@@ -394,105 +562,68 @@
     box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.35);
   }
 
-  .sort {
+  /* .sort {
     display: flex;
     position: absolute;
     top: calc(100% + 8px);
-    right: 0;
-    transform: translateX(-80%);
-  }
+    right: 24px;
+    white-space: nowrap;
+  } */
 
-  .IC-sort {
+  /* .sort-list {
+    display: flex;
+    background-color: var(--main-color);
+    padding: 0 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 8px;
+  } */
+
+  /* .IC-sort {
     width: 32px;
     background-color: var(--main-color);
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-    padding-left: 12px;
-  }
+  } */
 
-  #sort-page {
+  /* #sort-page {
     background-color: var(--main-color);
-    padding: 0 8px;
-    margin-right: 12px;
+    padding-left: 16px;
+    padding-right: 8px;
     cursor: pointer;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-  }
+    flex-shrink: 0;
+  } */
 
-  .maru {
-    width: 20px;
-    height: 20px;
-    border-radius: 100%;
-    background-color: #a4e9e2;
-    box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.35);
-    cursor: pointer;
-  }
-
-  .line-hako {
-    display: flex;
-    align-items: center;
-  }
-
-  .line {
-    width: 40px;
-    height: 10px;
-    background-color: var(--main-color);
-    border-radius: 60px;
-    position: relative;
-  }
-
-  .maru {
-    position: absolute;
-    top: -50%;
-    left: 0;
-  }
-
-  .oriru {
-    display: block;
-    position: absolute;
-    left: calc(100% + 16px);
-    top: -8px;
-    white-space: nowrap;
-    padding: 0 4px;
-    border-radius: 4px;
-    background-color: #a4e9e2;
-  }
-
-  .noboru {
-    display: block;
-    position: absolute;
-    left: calc(100% + 16px);
-    top: -8px;
-    white-space: nowrap;
-    padding: 0 4px;
+  /* .noboru {
     border-radius: 4px;
     background-color: #bdeda4;
-  }
+    line-height: 32px;
+    padding: 0 6px;
+  } */
 
-  #circle {
+  /* .oriru {
+    border-radius: 4px;
+    background-color: #a4e9e2;
+    line-height: 32px;
+    padding: 0 6px;
+  } */
+
+  /* .somaho-up {
     display: none;
-  }
-
-  #circle:checked + .maru {
-    left: 20px;
-    background-color: #bdeda4;
-  }
+  } */
 
   @media (768px <= width < 1024px) {
-    .filter {
+    /* .filter {
       width: 80%;
-    }
+    } */
 
-    .find {
+    /* .find {
       margin-left: 12.4%;
       margin-right: 12.4%;
-    }
+    } */
 
-    .sort {
-      top: calc(100% + 72px);
-      right: calc(100% - 24px);
-      transform: translateX(100%);
-    }
+    /* .sort {
+      top: calc(100% + 64px);
+      left: 24px;
+    } */
 
     .top-find-bar {
       padding-bottom: 72px;
@@ -504,31 +635,99 @@
       width: 88%;
       margin-left: 6%;
       margin-right: 6%;
-      margin-top: 28px;
+      margin-top: 100px;
     }
 
     .filter {
-      /* background-color: #bdeda4; */
       width: 100%;
       padding: 0;
       display: block;
       border-radius: 8px;
-      /* overflow: hidden; */
+      overflow: hidden;
     }
 
     .filter-type {
       margin: 0;
       border-radius: 0px;
+      padding: 0 12px;
+      flex-direction: column;
+      line-height: 48px;
+    }
+
+    .filter-type:focus-within .type-list {
+      width: 100%;
+      position: static;
+      left: 0;
+      transform: translateX(0);
+      margin-bottom: 8px;
+    }
+
+    .filter-type:focus-within .big-list {
+      grid-template-columns: repeat(4, 1fr);
+      position: static;
+      left: 0;
+      transform: translateX(0);
+      margin-bottom: 8px;
+    }
+
+    .list {
+      padding: 0 24px;
+      margin: 0;
+    }
+
+    .filter-word {
+      width: 100%;
+      border-top: 2px solid var(--heavy-brown);
+    }
+
+    #first-noline {
+      border-top: 2px solid transparent;
     }
 
     .sort {
-      top: calc(100% + 72px);
-      right: calc(100% - 24px);
-      transform: translateX(100%);
+      top: calc(100% + 20px);
+      left: 0;
     }
 
     .top-find-bar {
-      padding-bottom: 72px;
+      padding-bottom: 60px;
+    }
+
+    #sort-page {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      font-size: 20px;
+    }
+
+    .sort-list {
+      margin-right: 24px;
+    }
+
+    .noboru {
+      font-size: 20px;
+      line-height: 54px;
+      padding: 0 8px;
+    }
+
+    .oriru {
+      font-size: 20px;
+      line-height: 54px;
+      padding: 0 8px;
+    }
+
+    .somaho-up {
+      display: inline-block;
+      position: fixed;
+      top: 72px;
+      right: 8px;
+      z-index: 3;
+      font-size: 32px;
+      line-height: 32px;
+      padding: 12px 14px;
+      background-color: var(--green-gray);
+      border-radius: 100%;
+      cursor: pointer;
+      /* transform: rotate(180deg); */
     }
   }
 </style>

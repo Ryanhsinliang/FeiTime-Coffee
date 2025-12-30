@@ -19,6 +19,7 @@
               <img class="IC-sort w-[32px] bg-[var(--main-color)]" src="./assets/sort.svg" alt="" />
               <select
                 v-model="sortWhich"
+                @change="takeSort"
                 id="sort-page"
                 class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
               >
@@ -320,6 +321,7 @@
     img: any[];
   }
 
+  const sortCopy = ref([]); // 備份抓回來的排序資料 例: 抓了一筆按照【價錢高到低排序】的產品資料陣列
   const product = ref<DataRule[]>([]);
   // <DataRule[]>	TS語法 規範 product 是符合 DataRule 規格的陣列
   const loading = ref(false); // API載入狀況參數
@@ -334,11 +336,16 @@
       err.value = ''; // 每次重新請求前清空錯誤
       const res = await getProducts(filterData);
 
-      if (res && res.data) {
-        product.value = res.data;
-      } else {
-        product.value = res;
-      }
+      const finalData = res.data || res;
+
+      product.value = finalData;
+      sortCopy.value = [...finalData];
+
+      // if (res && res.data) {
+      //   product.value = res.data;
+      // } else {
+      //   product.value = res;
+      // }
     } catch (error) {
       err.value = (error as Error).message;
       console.error('API 串接出錯：', error);
@@ -348,10 +355,10 @@
   };
 
   // 排序相關
-  const sortCopy = ref([]); // 備份抓回來的排序資料 例: 抓了一筆按照【價錢高到低排序】的產品資料陣列
   const sortWhich = ref(''); // 雙向綁定下拉式選單用的變數 依據它來決定現在要依什麼排序
   const sortHe = ref(true); // 決定高到低 還是 低到高 的參數 預設true是 高到低
   const doSort = () => {
+    // 切換 高到低 低到高 的函數 我選擇在前端做
     if (!sortWhich.value) return; // 如果沒有sortWhich.value 就不做以下的事 相當於if(sortWhich.value){...} 但這樣比較簡潔
 
     const field = sortWhich.value; // 取出這次要排序的東西 例如價錢
@@ -374,20 +381,20 @@
     product.value = sorted; // 把這一次排序的陣列 放到product 讓它來渲染畫面
   };
 
-  watch(sortWhich, async (newVal) => {
-    // 持續監聽 sortWhich 當它有新值時 打API.get
-    if (!newVal) return;
+  const takeSort = async () => {
+    if (!sortWhich.value) return;
 
     try {
-      const res = await getProducts({ sort: [`${newVal}:desc`] }); // 打API 帶入Strapi規定格式 desc表示高到低
-      sortCopy.value = res.data || res; // 用 sortCopy 取得這筆排序資料
-      product.value = [...sortCopy.value]; // 把資料丟給 product 來渲染畫面 雖然 doSort()有用 [...sortCopy.value] 了 保險起見這邊還是也用 [...sortCopy.value]
-      sortHe.value = true; // 預設抓完後 一律由 高到低 先呈現
-      console.log(res.data || res);
+      await getcoffee({ sort: [`${sortWhich.value}:desc`] }); // 抓取一個依照 sortWhich 高到低排序的產品陣列 sortWhich可能是 價錢、人氣度...
+      // 依照 getcoffee () 抓到的資料會丟進 product 這個ref()變數
+      sortCopy.value = [...product.value]; // 用 sortCopy 抓取 product 但怕共享同一個陣列 所以先炸開再用[] 卻把它是新的陣列
+      sortHe.value = true; // 預設抓完後是 高到低
+      doSort(); // 執行一次排序來渲染頁面
+      console.log('選單觸發成功，目前資料類別：', sortWhich.value);
     } catch (err) {
-      console.error('排序抓取失敗', err);
+      console.error('選單排序失敗', err);
     }
-  });
+  };
 
   const sortChange = () => {
     // 切換頁面 高到低 低到高 的函數

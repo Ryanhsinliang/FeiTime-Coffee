@@ -75,11 +75,13 @@
 
         <div class="flex-1 p-3 overflow-y-auto space-y-3 bg-gray-50" ref="chatBody">
           <div v-for="(msg, idx) in messages" :key="idx" class="flex">
+            <!-- AI 訊息：使用 v-html 渲染 HTML -->
             <div v-if="msg.user === 'ai'" class="bg-white p-3 rounded-lg max-w-[75%] shadow-sm">
-              <div class="text-sm text-gray-800 whitespace-pre-wrap">{{ msg.text }}</div>
+              <div class="text-sm text-gray-800 ai-message" v-html="msg.text"></div>
             </div>
+            <!-- 使用者訊息：保持純文字 -->
             <div v-else class="ml-auto bg-[#A2AF9B] text-white p-3 rounded-lg max-w-[75%]">
-              <div class="text-sm">{{ msg.text }}</div>
+              <div class="text-sm whitespace-pre-wrap">{{ msg.text }}</div>
             </div>
           </div>
 
@@ -134,10 +136,7 @@
       >
         <!-- 咖啡豆機器人 SVG 圖標 -->
         <svg viewBox="0 0 100 100" class="w-full h-full">
-          <!-- 機器人身體 - 咖啡豆形狀 -->
           <ellipse cx="50" cy="55" rx="28" ry="35" fill="#6F4E37" />
-
-          <!-- 咖啡豆中線 -->
           <path
             d="M 50 25 Q 45 55 50 85"
             stroke="#8B6F47"
@@ -145,11 +144,7 @@
             fill="none"
             stroke-linecap="round"
           />
-
-          <!-- 機器人頭部 -->
           <circle cx="50" cy="25" r="15" fill="#A0826D" />
-
-          <!-- 天線 -->
           <line
             x1="50"
             y1="10"
@@ -160,14 +155,10 @@
             stroke-linecap="round"
           />
           <circle cx="50" cy="8" r="3" fill="#FF6B6B" />
-
-          <!-- 眼睛 -->
           <circle cx="44" cy="24" r="2.5" fill="#FFF" />
           <circle cx="56" cy="24" r="2.5" fill="#FFF" />
           <circle cx="44.5" cy="24.5" r="1.5" fill="#333" />
           <circle cx="56.5" cy="24.5" r="1.5" fill="#333" />
-
-          <!-- 微笑 -->
           <path
             d="M 43 28 Q 50 31 57 28"
             stroke="#FFF"
@@ -175,16 +166,10 @@
             fill="none"
             stroke-linecap="round"
           />
-
-          <!-- 機器人手臂 -->
           <rect x="20" y="50" width="8" height="20" rx="4" fill="#8B6F47" />
           <rect x="72" y="50" width="8" height="20" rx="4" fill="#8B6F47" />
-
-          <!-- 手掌 - 小圓 -->
           <circle cx="24" cy="72" r="4" fill="#A0826D" />
           <circle cx="76" cy="72" r="4" fill="#A0826D" />
-
-          <!-- 蒸氣效果 -->
           <path
             d="M 40 15 Q 38 10 40 5"
             stroke="#E8E8E8"
@@ -216,7 +201,7 @@
   const isLoading = ref(false);
   const hasUnread = ref(false);
   const chatBody = ref<HTMLElement | null>(null);
-  const chatHeight = ref(384); // 預設高度 (h-96 = 384px)
+  const chatHeight = ref(384);
   const isResizing = ref(false);
   const startY = ref(0);
   const startHeight = ref(0);
@@ -229,11 +214,10 @@
   const messages = ref<Message[]>([
     {
       user: 'ai',
-      text: '嗨！我是你的咖啡小助手 ☕\n有什麼咖啡問題想問我嗎？',
+      text: '嗨！我是你的咖啡小助手 ☕<br>有什麼咖啡問題想問我嗎？',
     },
   ]);
 
-  // 滾動到底部
   const scrollToBottom = () => {
     if (chatBody.value) {
       nextTick(() => {
@@ -242,7 +226,6 @@
     }
   };
 
-  // 切換聊天視窗
   const toggleChat = () => {
     showChat.value = !showChat.value;
     if (showChat.value) {
@@ -251,7 +234,6 @@
     }
   };
 
-  // 開始調整大小
   const startResize = (e: MouseEvent) => {
     isResizing.value = true;
     startY.value = e.clientY;
@@ -262,27 +244,23 @@
     e.preventDefault();
   };
 
-  // 調整大小中
   const handleResize = (e: MouseEvent) => {
     if (!isResizing.value) return;
 
-    const deltaY = startY.value - e.clientY; // 注意：向上拖是增加高度
+    const deltaY = startY.value - e.clientY;
     const newHeight = startHeight.value + deltaY;
 
-    // 限制高度範圍
     if (newHeight >= 300 && newHeight <= 700) {
       chatHeight.value = newHeight;
     }
   };
 
-  // 停止調整大小
   const stopResize = () => {
     isResizing.value = false;
     document.removeEventListener('mousemove', handleResize);
     document.removeEventListener('mouseup', stopResize);
   };
 
-  // 傳送訊息
   const sendMessage = async () => {
     if (!inputText.value.trim() || isLoading.value) return;
 
@@ -296,18 +274,16 @@
     isLoading.value = true;
 
     try {
-      // 準備對話歷史（最近 5 輪對話）
-      const conversationHistory = messages.value
-        .slice(-10) // 取最近 10 則訊息（5 輪對話）
-        .map((msg) => ({
-          role: msg.user === 'ai' ? ('assistant' as const) : ('user' as const),
-          content: msg.text,
-        }));
+      const conversationHistory = messages.value.slice(-10).map((msg) => ({
+        role: msg.user === 'ai' ? ('assistant' as const) : ('user' as const),
+        content: msg.text,
+      }));
 
       const response = await askCoffeeAssistant(question, conversationHistory);
+
+      // 直接存儲 HTML 格式的回應
       messages.value.push({ user: 'ai', text: response.answer });
 
-      // 如果視窗關閉，顯示未讀提示
       if (!showChat.value) {
         hasUnread.value = true;
       }
@@ -315,7 +291,7 @@
       console.error('AI 回應錯誤:', error);
       messages.value.push({
         user: 'ai',
-        text: '抱歉，目前遇到一些技術問題 😅\n請稍後再試，或直接聯繫我們的客服團隊！',
+        text: '抱歉，目前遇到一些技術問題 😅<br>請稍後再試，或直接聯繫我們的客服團隊！',
       });
     } finally {
       isLoading.value = false;
@@ -358,8 +334,54 @@
     animation: bounce 1s infinite;
   }
 
-  /* 防止拖拉時選取文字 */
   .cursor-ns-resize {
     user-select: none;
+  }
+
+  /* AI 訊息 HTML 樣式 */
+  .ai-message :deep(strong) {
+    font-weight: 700;
+    color: #8b4513; /* 咖啡色 */
+  }
+
+  .ai-message :deep(em) {
+    font-style: italic;
+    color: #6b5b52;
+  }
+
+  .ai-message :deep(br) {
+    display: block;
+    content: '';
+    margin: 0.3em 0;
+  }
+
+  .ai-message :deep(h1),
+  .ai-message :deep(h2),
+  .ai-message :deep(h3) {
+    font-weight: 600;
+    margin: 0.5em 0 0.3em 0;
+    color: #6f4e37;
+  }
+
+  .ai-message :deep(h1) {
+    font-size: 1.2em;
+  }
+
+  .ai-message :deep(h2) {
+    font-size: 1.1em;
+  }
+
+  .ai-message :deep(h3) {
+    font-size: 1em;
+  }
+
+  .ai-message :deep(ul),
+  .ai-message :deep(ol) {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+  }
+
+  .ai-message :deep(li) {
+    margin: 0.2em 0;
   }
 </style>

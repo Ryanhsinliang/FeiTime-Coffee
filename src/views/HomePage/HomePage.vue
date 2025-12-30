@@ -1,11 +1,496 @@
+<script setup lang="ts">
+  import { ref, onMounted, computed, watch, onBeforeUnmount } from 'vue';
+  import { PackageOpen } from 'lucide-vue-next';
+  import banner from '@/views/HomePage/assets/banner.webp';
+  import defaultAlbum from '@/views/HomePage/assets/default-album-cover.webp';
+  import flavorFloral from '@/views/HomePage/assets/flavor-floral.webp';
+  import flavorChocolate from '@/views/HomePage/assets/flavor-chocolate.webp';
+  import flavorFruity from '@/views/HomePage/assets/flavor-fruity.webp';
+  import flavorNutty from '@/views/HomePage/assets/flavor-nutty.webp';
+  import defaultProductImg from '@/views/HomePage/assets/default-product.webp';
+
+  // ============================================
+  // 1. 型別定義
+  // ============================================
+  interface Flavor {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    image: string;
+  }
+
+  interface Product {
+    id: number;
+    name: string;
+    price: number;
+    flavor_type?: string;
+    img?: {
+      id: number;
+      url: string;
+    }[];
+  }
+
+  interface YouTubeVideo {
+    videoId: string;
+    title: string;
+    channelTitle: string;
+    thumbnail: string;
+    embedUrl: string;
+  }
+
+  interface RecommendationResponse {
+    success: boolean;
+    flavor: string;
+    recommendation: string;
+    videos: YouTubeVideo[];
+    message?: string;
+  }
+
+  // ============================================
+  // 2. 推薦產品相關 - 狀態
+  // ============================================
+  const products = ref<Product[]>([]);
+  const loading = ref(true);
+  const error = ref<string | null>(null);
+
+  // 風味對照表
+  const flavorMap: Record<string, string> = {
+    Fruity: '果香清爽',
+    Floral: '花香明亮',
+    Nutty: '堅果巧克力',
+    Bold: '濃郁厚實',
+  };
+
+  // 風味顏色對照表
+  const flavorStyles: Record<string, string> = {
+    Fruity: 'bg-orange-100 text-orange-700 border border-orange-200',
+    Floral: 'bg-purple-100 text-purple-700 border border-purple-200',
+    Nutty: 'bg-amber-100 text-amber-800 border border-amber-200',
+    Bold: 'bg-stone-600 text-stone-200 border border-stone-300',
+  };
+
+  // ============================================
+  // 3. 推薦產品相關 - 方法
+  // ============================================
+  const fetchProducts = async () => {
+    try {
+      loading.value = true;
+      error.value = null;
+
+      const response = await fetch('/api/featured/products');
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+
+      const data = await response.json();
+      products.value = data;
+
+      console.log('✅ 成功載入精選產品:', products.value);
+    } catch (err: any) {
+      console.error('❌ 載入產品失敗:', err);
+      error.value = '載入產品失敗，請稍後再試';
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const getImageUrl = (product: Product): string => {
+    if (product.img && product.img.length > 0 && product.img[0]?.url) {
+      return product.img[0].url;
+    }
+    return defaultProductImg;
+  };
+
+  const getFlavorLabel = (flavorType: string): string => {
+    return flavorMap[flavorType] || flavorType;
+  };
+
+  const getFlavorStyle = (flavorType: string): string => {
+    return flavorStyles[flavorType] || 'bg-gray-100 text-gray-700 border border-gray-200';
+  };
+
+  // ============================================
+  // 4. 風味歌曲相關 - 狀態
+  // ============================================
+  const selectedFlavor = ref<Flavor | null>(null);
+
+  // 音樂推薦狀態
+  const currentVideos = ref<YouTubeVideo[]>([]);
+  const currentVideoIndex = ref<number>(0);
+  const musicLoading = ref<boolean>(false);
+  const musicError = ref<string | null>(null);
+  const aiRecommendation = ref<string>('選擇風味，開始音樂之旅');
+
+  // YouTube 播放器狀態
+  const isPlaying = ref<boolean>(false);
+  const vinylRotation = ref<number>(0); // 黑膠當前旋轉角度
+  const lastPlaybackTime = ref<number>(0); // 記錄上次的播放時間
+  let animationFrameId: number | null = null; // requestAnimationFrame ID
+  let youtubePlayer: any = null; // YouTube 播放器實例
+  let progressCheckInterval: number | null = null; // 進度檢查定時器
+
+  console.log('🎵 isPlaying initialized:', isPlaying.value);
+
+  // 黑膠旋轉動畫
+  const rotateVinyl = () => {
+    if (isPlaying.value) {
+      // 每幀增加角度 (假設60fps，12秒一圈 = 360度/12秒/60fps ≈ 0.5度/幀)
+      vinylRotation.value = (vinylRotation.value + 0.5) % 360;
+      animationFrameId = requestAnimationFrame(rotateVinyl);
+    }
+  };
+
+  // 監聽播放狀態變化
+  watch(isPlaying, (newValue) => {
+    if (newValue) {
+      // 開始旋轉
+      if (!animationFrameId) {
+        rotateVinyl();
+      }
+    } else {
+      // 暫停旋轉
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    }
+  });
+
+  // 檢查播放進度並更新黑膠旋轉角度
+  const checkPlaybackProgress = () => {
+    if (!youtubePlayer || !youtubePlayer.getCurrentTime) return;
+
+    try {
+      const currentTime = youtubePlayer.getCurrentTime();
+      const duration = youtubePlayer.getDuration();
+
+      if (currentTime && duration && currentTime !== lastPlaybackTime.value) {
+        // 計算時間差（秒）
+        const timeDiff = Math.abs(currentTime - lastPlaybackTime.value);
+
+        // 如果時間差大於 2 秒，表示使用者快轉或倒轉了
+        if (timeDiff > 2) {
+          console.log(
+            `⏩ User seeked: ${lastPlaybackTime.value.toFixed(1)}s → ${currentTime.toFixed(1)}s`
+          );
+
+          // 根據時間變化計算應旋轉的角度
+          // 假設 12 秒一圈（360度），則每秒 30 度
+          const rotationPerSecond = 30;
+          const angleDiff = timeDiff * rotationPerSecond;
+
+          // 快轉：順時針旋轉
+          if (currentTime > lastPlaybackTime.value) {
+            vinylRotation.value = (vinylRotation.value + angleDiff) % 360;
+            console.log(
+              `↻ Rotated clockwise by ${angleDiff.toFixed(1)}° to ${vinylRotation.value.toFixed(
+                1
+              )}°`
+            );
+          }
+          // 倒轉：逆時針旋轉
+          else {
+            vinylRotation.value = (vinylRotation.value - angleDiff + 360) % 360;
+            console.log(
+              `↺ Rotated counter-clockwise by ${angleDiff.toFixed(
+                1
+              )}° to ${vinylRotation.value.toFixed(1)}°`
+            );
+          }
+        }
+
+        lastPlaybackTime.value = currentTime;
+      }
+    } catch (err) {
+      console.warn('⚠️ Error checking playback progress:', err);
+    }
+  };
+
+  // 計算屬性
+  const currentVideo = computed(() => {
+    if (currentVideos.value.length === 0) return null;
+    return currentVideos.value[currentVideoIndex.value];
+  });
+
+  const embedUrl = computed(() => {
+    if (!currentVideo.value) {
+      console.log('🎵 embedUrl: no video');
+      return '';
+    }
+    const videoId = currentVideo.value.videoId;
+    const url = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=${window.location.origin}`;
+    console.log('🎵 embedUrl computed:', url);
+    return url;
+  });
+
+  const flavors = ref<Flavor[]>([
+    {
+      id: 'fruity',
+      name: '果香',
+      description: '明亮活潑',
+      icon: 'nutrition',
+      image: flavorFruity,
+    },
+    {
+      id: 'floral',
+      name: '花香',
+      description: '優雅細緻',
+      icon: 'local_florist',
+      image: flavorFloral,
+    },
+    {
+      id: 'nutty',
+      name: '堅果',
+      description: '溫暖醇厚',
+      icon: 'grain',
+      image: flavorNutty,
+    },
+    {
+      id: 'chocolate',
+      name: '巧克力',
+      description: '濃郁深沉',
+      icon: 'cake',
+      image: flavorChocolate,
+    },
+  ]);
+
+  // ============================================
+  // 5. 風味歌曲相關 - 方法
+  // ============================================
+
+  /**
+   * 選擇風味並取得音樂推薦
+   */
+  const selectFlavor = async (flavor: Flavor): Promise<void> => {
+    selectedFlavor.value = flavor;
+    console.log('🎵 Selected flavor:', flavor.name);
+
+    try {
+      musicLoading.value = true;
+      musicError.value = null;
+      isPlaying.value = false; // 重置播放狀態
+      lastPlaybackTime.value = 0; // 重置播放時間
+
+      console.log('🎵 Requesting music for flavor:', flavor.name);
+
+      const response = await fetch('/api/music/flavor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          flavorId: flavor.id,
+          flavorName: flavor.name,
+          description: flavor.description,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch music recommendations');
+      }
+
+      const data: RecommendationResponse = await response.json();
+      console.log('✅ Received music response:', data);
+
+      if (data.success && data.videos.length > 0) {
+        currentVideos.value = data.videos;
+        currentVideoIndex.value = 0;
+        aiRecommendation.value = data.recommendation;
+        console.log('✅ Set currentVideo:', currentVideos.value[0]);
+      } else {
+        throw new Error(data.message || '暫時無法找到相關音樂');
+      }
+    } catch (err: any) {
+      console.error('❌ Music recommendation error:', err);
+      musicError.value = err.message || '無法取得推薦，請稍後再試';
+
+      // 清空影片列表
+      currentVideos.value = [];
+      aiRecommendation.value = '選擇風味，開始音樂之旅';
+    } finally {
+      musicLoading.value = false;
+    }
+  };
+
+  /**
+   * 取得下一個推薦（Next 按鈕）
+   */
+  const nextRecommendation = async (): Promise<void> => {
+    // 先切換到下一個影片（如果有的話）
+    if (currentVideoIndex.value < currentVideos.value.length - 1) {
+      currentVideoIndex.value++;
+      isPlaying.value = false; // 切換影片時重置播放狀態
+      lastPlaybackTime.value = 0; // 重置播放時間
+      console.log(
+        `⏭️ Switching to next video (${currentVideoIndex.value + 1}/${currentVideos.value.length})`
+      );
+      return;
+    }
+
+    // 如果已經是最後一個，則向後端請求新的推薦
+    if (!selectedFlavor.value) {
+      console.warn('⚠️ No flavor selected');
+      return;
+    }
+
+    try {
+      musicLoading.value = true;
+      musicError.value = null;
+
+      console.log('🔄 Requesting random music for:', selectedFlavor.value.name);
+
+      const response = await fetch('/api/music/random', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          currentFlavorName: selectedFlavor.value.name,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch random recommendations');
+      }
+
+      const data: RecommendationResponse = await response.json();
+      console.log('✅ Received random music:', data);
+
+      if (data.success && data.videos.length > 0) {
+        currentVideos.value = data.videos;
+        currentVideoIndex.value = 0;
+        isPlaying.value = false; // 重置播放狀態
+        lastPlaybackTime.value = 0; // 重置播放時間
+        aiRecommendation.value = data.recommendation || aiRecommendation.value;
+      } else {
+        throw new Error(data.message || '暫時無法找到更多音樂');
+      }
+    } catch (err: any) {
+      console.error('❌ Next recommendation error:', err);
+      musicError.value = '無法取得更多推薦';
+    } finally {
+      musicLoading.value = false;
+    }
+  };
+
+  /**
+   * 初始化 YouTube IFrame API
+   */
+  const initYouTubeAPI = () => {
+    console.log('🎬 Component mounted, loading YouTube API...');
+
+    // 載入 YouTube IFrame API
+    if (!(window as any).YT) {
+      console.log('📥 Loading YouTube IFrame API script...');
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+
+      // 設置 API ready 回調
+      (window as any).onYouTubeIframeAPIReady = () => {
+        console.log('✅ YouTube IFrame API ready');
+      };
+    } else {
+      console.log('✅ YouTube API already loaded');
+    }
+  };
+
+  /**
+   * 監聽 YouTube 播放器狀態變化
+   */
+  watch(embedUrl, (newUrl) => {
+    console.log('🎵 embedUrl changed:', newUrl);
+
+    // 清理舊的定時器
+    if (progressCheckInterval) {
+      clearInterval(progressCheckInterval);
+      progressCheckInterval = null;
+    }
+
+    if (newUrl) {
+      // 重置播放狀態
+      isPlaying.value = false;
+      lastPlaybackTime.value = 0;
+
+      // 等待 iframe 載入後初始化播放器
+      setTimeout(() => {
+        const iframe = document.querySelector('iframe');
+        console.log('🎵 iframe found:', !!iframe);
+
+        if (iframe && (window as any).YT && (window as any).YT.Player) {
+          try {
+            youtubePlayer = new (window as any).YT.Player(iframe, {
+              events: {
+                onStateChange: (event: any) => {
+                  // YouTube Player States:
+                  // -1 = unstarted
+                  // 0 = ended
+                  // 1 = playing
+                  // 2 = paused
+                  // 3 = buffering
+                  // 5 = video cued
+                  console.log('🎵 YouTube state changed:', event.data);
+                  const wasPlaying = isPlaying.value;
+                  isPlaying.value = event.data === 1;
+                  console.log('🎵 isPlaying updated to:', isPlaying.value);
+
+                  // 當開始播放時，重置上次播放時間
+                  if (isPlaying.value && !wasPlaying) {
+                    lastPlaybackTime.value = youtubePlayer.getCurrentTime() || 0;
+                  }
+                },
+                onReady: () => {
+                  console.log('✅ YouTube player ready');
+
+                  // 開始定期檢查播放進度（每 500ms 檢查一次）
+                  progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
+                },
+              },
+            });
+          } catch (err) {
+            console.error('❌ Failed to initialize YouTube player:', err);
+          }
+        } else {
+          console.warn('⚠️ YouTube API not ready');
+          if (!(window as any).YT) {
+            console.warn('⚠️ window.YT not found');
+          }
+          if (!iframe) {
+            console.warn('⚠️ iframe not found');
+          }
+        }
+      }, 1000); // 給 iframe 時間載入
+    }
+  });
+
+  // ============================================
+  // 6. 生命週期
+  // ============================================
+  onMounted(() => {
+    fetchProducts();
+    initYouTubeAPI();
+  });
+
+  // 組件卸載時清理
+  onBeforeUnmount(() => {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+    }
+    if (progressCheckInterval) {
+      clearInterval(progressCheckInterval);
+    }
+  });
+</script>
+
 <template>
   <!-- Hero Section -->
   <header class="relative w-full h-[85vh] min-h-[600px] overflow-hidden">
     <div
       class="absolute inset-0 w-full h-full bg-cover bg-center"
-      style="
-        background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuByFTzzJ81p7RzkNWZOaoxxB24NpVW0UPgbPrSQfcMZN-auzDFNc15BUoryqmXvz1WcGUNtOoLfvikXYFnwbkbZ26wLGz3CLkO0PvhjoEkOllEd9SiuIb5oeysjFF6-EnVLildq_HzWbECJzB5BDoz8JXRVjFkODz4bt7VXrQYGGagCnUf8CaPtWXw-tx2AEeFgpE6nYKpdNBB7BHcs2H4ixzdoAPlDNb5V0_ytM9mX8bJfQgfP9ccmTT9xwhYinqz8uS8dY340RJfT');
-      "
+      :style="{ backgroundImage: `url(${banner})` }"
     >
       <div class="absolute inset-0 bg-black/30"></div>
     </div>
@@ -24,11 +509,18 @@
         </div>
 
         <!-- 標題 -->
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif leading-[1.1] tracking-wide mb-6">
+        <!-- <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif leading-[1.1] tracking-wide mb-6">
           Your Moment,
           <br />
           Perfectly
           <span class="italic">Brewed</span>
+        </h1> -->
+        <h1 class="text-4xl md:text-5xl lg:text-6xl leading-[1.1] tracking-wide mb-6">
+          <span class="font-cactus">
+            為每一刻，
+            <br />
+            沖一杯好時光。
+          </span>
         </h1>
 
         <!-- 文字描述 -->
@@ -84,7 +576,7 @@
       <!-- Error 狀態 -->
       <div v-else-if="error" class="flex items-center justify-center min-h-[400px]">
         <div class="flex flex-col items-center gap-4 text-center">
-          <span class="text-4xl">⚠️</span>
+          <PackageOpen :size="64" class="text-gray-400" />
           <p class="text-text-sub">{{ error }}</p>
           <button
             @click="fetchProducts"
@@ -171,7 +663,8 @@
         <div class="flex-shrink-0 flex items-center justify-center relative p-8 lg:p-12">
           <div class="relative animate-float">
             <div
-              class="relative w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] lg:w-[280px] lg:h-[280px] rounded-full vinyl-grooves shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-spin-slow border-[4px] border-[#171412] flex items-center justify-center"
+              class="relative w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] lg:w-[280px] lg:h-[280px] rounded-full vinyl-grooves shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-[4px] border-[#171412] flex items-center justify-center"
+              :style="{ transform: `rotate(${vinylRotation}deg)` }"
             >
               <div
                 class="absolute inset-0 rounded-full bg-gradient-to-br from-white/10 via-transparent to-black/20 pointer-events-none"
@@ -180,14 +673,14 @@
                 class="w-1/3 h-1/3 bg-[#FAF9EE] rounded-full flex items-center justify-center border-[10px] lg:border-[12px] border-[#DCCFC0] shadow-inner relative overflow-hidden"
               >
                 <div
-                  class="absolute inset-0 bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuDBteaN7aB0pLpMDyJk4fzaQtafUJ7ahpVwP8inuf8EjmBmRXGRBJWWGZjdMNLZxg4phgC4Yv76T6YX5YwT0SERj4j5T3x1xM6YQRe5YbaQbAe5z8y-e4-hVp2vtV8vxcA6wrRoUYD8-aREdpDo22IcK6PGN2WZeVuJmKy1v22FETrjKYzx8FraKQ8LlrauHPsXfRiR0oAp_jQ2Kji9YaWcXzJW11CoB8OOJ1F6FEgDOs1lilPufqqWrWtSrw0dteT4Mp5lHt-Kf_Su')] bg-cover bg-center opacity-40 mix-blend-multiply"
+                  class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-multiply"
+                  :style="{
+                    backgroundImage: currentVideo?.thumbnail
+                      ? `url('${currentVideo.thumbnail}')`
+                      : `url('${defaultAlbum}')`,
+                  }"
                 ></div>
                 <div class="w-3 h-3 bg-[#171412] rounded-full z-10"></div>
-                <span
-                  class="absolute bottom-1.5 text-[5px] lg:text-[7px] uppercase font-bold tracking-widest text-[#171412]"
-                >
-                  {{ currentVideo?.title || '' }}
-                </span>
               </div>
             </div>
             <div
@@ -212,15 +705,39 @@
               allowfullscreen
             ></iframe>
 
-            <!-- Loading State -->
+            <!-- Loading State with ECG effect -->
             <div
               v-else-if="musicLoading"
               class="absolute inset-0 flex items-center justify-center bg-gray-900"
             >
-              <div class="flex flex-col items-center gap-4">
-                <div
-                  class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"
-                ></div>
+              <div class="flex flex-col items-center gap-6">
+                <!-- ECG Line Animation -->
+                <div class="relative w-48 h-16 overflow-hidden">
+                  <svg
+                    class="w-full h-full"
+                    viewBox="0 0 200 60"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <defs>
+                      <linearGradient id="ecgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color: #4ade80; stop-opacity: 0" />
+                        <stop offset="50%" style="stop-color: #4ade80; stop-opacity: 1" />
+                        <stop offset="100%" style="stop-color: #4ade80; stop-opacity: 0" />
+                      </linearGradient>
+                    </defs>
+
+                    <!-- ECG Line Path -->
+                    <path
+                      class="ecg-line"
+                      d="M0,30 L40,30 L45,10 L50,50 L55,30 L60,30 L65,25 L70,35 L75,30 L200,30"
+                      fill="none"
+                      stroke="url(#ecgGradient)"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+
                 <p class="text-white text-sm">正在為您尋找音樂...</p>
               </div>
             </div>
@@ -246,7 +763,10 @@
             <!-- Default State - 原本的預設畫面 -->
             <div v-else class="group">
               <div
-                class="absolute inset-0 bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuDBteaN7aB0pLpMDyJk4fzaQtafUJ7ahpVwP8inuf8EjmBmRXGRBJWWGZjdMNLZxg4phgC4Yv76T6YX5YwT0SERj4j5T3x1xM6YQRe5YbaQbAe5z8y-e4-hVp2vtV8vxcA6wrRoUYD8-aREdpDo22IcK6PGN2WZeVuJmKy1v22FETrjKYzx8FraKQ8LlrauHPsXfRiR0oAp_jQ2Kji9YaWcXzJW11CoB8OOJ1F6FEgDOs1lilPufqqWrWtSrw0dteT4Mp5lHt-Kf_Su')] bg-cover bg-center opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                class="absolute inset-0 bg-cover bg-center opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                :style="{
+                  backgroundImage: `url('${currentVideo?.thumbnail || defaultAlbum}')`,
+                }"
               ></div>
               <div
                 class="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none p-4"
@@ -408,70 +928,40 @@
         <div class="w-full md:w-1/2 flex flex-col gap-8">
           <!-- 標題區 -->
           <div class="flex flex-col gap-4">
-            <span class="text-sage tracking-[0.2em] uppercase text-xs font-jp">FeiTime Story</span>
+            <span class="text-sage tracking-[0.2em] uppercase text-xs font-jp">FeiTime 故事</span>
             <h2 class="text-4xl font-serif text-text-main dark:text-white leading-tight">
-              Quiet Moments,
+              靜謐時光，
               <br />
-              Crafted with
-              <span class="italic text-sage">Care</span>
+              用心釀造
+              <span class="italic text-sage">咖啡體驗</span>
             </h2>
           </div>
 
           <div class="w-16 h-px bg-latte"></div>
 
-          <!-- 文字段落 -->
+          <!-- 中文段落（文案2）-->
           <p class="text-text-sub font-light leading-relaxed text-sm md:text-base">
-            In the hustle of modern life, we believe coffee is more than just caffeine—it's a
-            ritual, a pause, a moment of connection with oneself. FeiTime began with a simple
-            desire: to bring the tranquility of a Japanese tea house to the world of specialty
-            coffee.
-          </p>
-          <p class="text-text-sub font-light leading-relaxed text-sm md:text-base">
-            We meticulously source beans that tell a story of their origin, roasting them to
-            highlight their natural elegance rather than masking it.
+            我們走遍咖啡產地，細心挑選每一顆豆子，帶回原始的風味。回到工作室，親手烘焙、調整火候，只為保留它最自然的香氣。FeiTime
+            的咖啡，是我們對每一段時光的用心詮釋。
           </p>
 
-          <!-- 最新文章列表 -->
-          <div class="flex flex-col gap-4 mt-4">
-            <h4 class="text-sm font-medium uppercase tracking-widest text-text-main">
-              Latest Journals
-            </h4>
-            <ul class="space-y-4">
-              <li>
-                <a
-                  class="group flex items-center justify-between border-b border-mist pb-2 hover:border-sage transition-colors"
-                  href="#"
-                >
-                  <span
-                    class="text-sm font-light text-text-sub group-hover:text-text-main transition-colors"
-                  >
-                    The Art of Pour Over: A Beginner's Guide
-                  </span>
-                  <span
-                    class="material-symbols-outlined text-sage text-sm opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"
-                  >
-                    arrow_forward
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a
-                  class="group flex items-center justify-between border-b border-mist pb-2 hover:border-sage transition-colors"
-                  href="#"
-                >
-                  <span
-                    class="text-sm font-light text-text-sub group-hover:text-text-main transition-colors"
-                  >
-                    Understanding Roast Profiles
-                  </span>
-                  <span
-                    class="material-symbols-outlined text-sage text-sm opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"
-                  >
-                    arrow_forward
-                  </span>
-                </a>
-              </li>
-            </ul>
+          <!-- 互動體驗區 -->
+          <div class="flex flex-col md:flex-row gap-6 mt-6">
+            <router-link
+              to="/coffeeLabT1-T-P1"
+              class="flex-1 px-6 py-4 border border-sage rounded-md text-center text-sage font-medium hover:bg-sage hover:text-white transition-colors"
+            >
+              ☕ 咖啡沖煮模擬器
+              <div class="text-xs mt-1 font-light">搭配你的咖啡豆，生成專屬沖煮配方</div>
+            </router-link>
+
+            <router-link
+              to="/coffee-id-test"
+              class="flex-1 px-6 py-4 border border-latte rounded-md text-center text-text-main font-medium hover:bg-latte hover:text-text-dark transition-colors"
+            >
+              🐾 咖啡小測驗
+              <div class="text-xs mt-1 font-light">探索你的咖啡動物，找到專屬風格</div>
+            </router-link>
           </div>
 
           <!-- 閱讀完整故事按鈕 -->
@@ -479,7 +969,7 @@
             class="inline-flex items-center gap-2 text-sage text-xs tracking-[0.2em] uppercase font-medium mt-6 hover:text-secondary transition-colors"
             href="#"
           >
-            Read Full Story
+            閱讀完整故事
             <span class="material-symbols-outlined text-sm">arrow_right_alt</span>
           </a>
         </div>
@@ -488,293 +978,8 @@
   </section>
 </template>
 
-<script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue';
-
-  // ============================================
-  // 1. 型別定義
-  // ============================================
-  interface Track {
-    title: string;
-  }
-
-  interface Flavor {
-    id: string;
-    name: string;
-    description: string;
-    icon: string;
-    image: string;
-  }
-
-  interface Product {
-    id: number;
-    name: string;
-    price: number;
-    flavor_type?: string;
-    img?: {
-      id: number;
-      url: string;
-    }[];
-  }
-
-  interface YouTubeVideo {
-    videoId: string;
-    title: string;
-    channelTitle: string;
-    thumbnail: string;
-    embedUrl: string;
-  }
-
-  interface RecommendationResponse {
-    success: boolean;
-    flavor: string;
-    recommendation: string;
-    videos: YouTubeVideo[];
-    message?: string;
-  }
-
-  // ============================================
-  // 2. 推薦產品相關 - 狀態
-  // ============================================
-  const products = ref<Product[]>([]);
-  const loading = ref(true);
-  const error = ref<string | null>(null);
-
-  // 風味對照表
-  const flavorMap: Record<string, string> = {
-    Fruity: '果香清爽',
-    Floral: '花香明亮',
-    Nutty: '堅果巧克力',
-    Bold: '濃郁厚實',
-  };
-
-  // 風味顏色對照表
-  const flavorStyles: Record<string, string> = {
-    Fruity: 'bg-orange-100 text-orange-700 border border-orange-200',
-    Floral: 'bg-purple-100 text-purple-700 border border-purple-200',
-    Nutty: 'bg-amber-100 text-amber-800 border border-amber-200',
-    Bold: 'bg-stone-600 text-stone-200 border border-stone-300',
-  };
-
-  // ============================================
-  // 3. 推薦產品相關 - 方法
-  // ============================================
-  const fetchProducts = async () => {
-    try {
-      loading.value = true;
-      error.value = null;
-
-      const response = await fetch('/api/featured/products');
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
-      }
-
-      const data = await response.json();
-      products.value = data;
-
-      console.log('✅ 成功載入精選產品:', products.value);
-    } catch (err: any) {
-      console.error('❌ 載入產品失敗:', err);
-      error.value = '載入產品失敗，請稍後再試';
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  const getImageUrl = (product: Product): string => {
-    if (product.img && product.img.length > 0 && product.img[0]?.url) {
-      return product.img[0].url;
-    }
-    return 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400';
-  };
-
-  const getFlavorLabel = (flavorType: string): string => {
-    return flavorMap[flavorType] || flavorType;
-  };
-
-  const getFlavorStyle = (flavorType: string): string => {
-    return flavorStyles[flavorType] || 'bg-gray-100 text-gray-700 border border-gray-200';
-  };
-
-  // ============================================
-  // 4. 風味歌曲相關 - 狀態
-  // ============================================
-  const selectedFlavor = ref<Flavor | null>(null);
-
-  // 音樂推薦狀態
-  const currentVideos = ref<YouTubeVideo[]>([]);
-  const currentVideoIndex = ref<number>(0);
-  const musicLoading = ref<boolean>(false);
-  const musicError = ref<string | null>(null);
-  const aiRecommendation = ref<string>('選擇風味，開始音樂之旅');
-
-  // 計算屬性
-  const currentVideo = computed(() => {
-    if (currentVideos.value.length === 0) return null;
-    return currentVideos.value[currentVideoIndex.value];
-  });
-
-  const embedUrl = computed(() => {
-    return currentVideo.value?.embedUrl || '';
-  });
-
-  const flavors = ref<Flavor[]>([
-    {
-      id: 'fruity',
-      name: '果香',
-      description: '明亮活潑',
-      icon: 'nutrition',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAs5_eiBULKYULpv6uIa5YmjBvpy4GXwjEw_ZnQWzQJ3OK2SYZFpIQAML2Q3MApz1Cgj9DiU60i91ih_2jx8gqlpYQV7sk8jJX5lsq_wtFIF5QekdCNpxEw_M5ayWBGWd8GoME6z4rWZ07J5BnM7M_4ubH-P_e4M075-G2P-lReIoCsS9CuAagShZVZKSPD3HVSDyAGi0PgRZb0_fl1EGjyYEHRIpjo6pcI49CYM6dL0DMyA6SI2eeYyOJWkEDvLcw3ZZJY--j9kplC',
-    },
-    {
-      id: 'floral',
-      name: '花香',
-      description: '優雅細緻',
-      icon: 'local_florist',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuByQDN_KK0xVafJKgQ3pjv95oWg8wTfjwiA8c7zWpFvZwujBraPIxaL1B_4gjLbAfXwfKvZD1xLWf_CjJqPpTSVCcp7tcrrS9BXEtdB6Fom2stufzC9TR-9XUq7CgVhsLdWiMHNDaxH_FjA39QcO68qboOiM8yFta4fPnM9xS1AJ55uBr2r_nxyPfXmVNM_fCiO5pBtyyF35Lqouu41sOIW0pFv85lT0LG3eX4PJKeoWhq19XzTYEVzAJkgpF-gr9M1cW8reLWeDcUD',
-    },
-    {
-      id: 'nutty',
-      name: '堅果',
-      description: '溫暖醇厚',
-      icon: 'grain',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuDjBmSF9hipLOW2XFeAglDRn-e8_r0rvnR5hdOyrdbHORbsiyRxY6CW-eAEFvcIPBLywdixvGvYhiCIrZtmz_BADv5aODFqu8x6al8oj4MzQS4QzzglVjzr24UXfYHOtZIuKgoWMzeMtnQ9qsL5cP5YCXPi6DIYvnNA7ECe9-Qf--Chq1iyz2Ii5E9ZSIIrw_amiYzC3wErLRc7n9q9FcQBE5udYr312CxoCiXWKotYhOH11AQ3mJ71Fv-Exckl3jqzOwQJ7TrKrOWl',
-    },
-    {
-      id: 'chocolate',
-      name: '巧克力',
-      description: '濃郁深沉',
-      icon: 'cake',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuC9Uxgwhq-w3KtqGHgQsjam8og3F4G3jWee7zqGGj_hvA9EfnJTj6FO9VHomGAEMIBI1c__hZOuEDHNS_xkWIdsLqdsOjdjcLpUsfmwQ87c_euolvkMaMasBHqPvJAXS_6HK6-2kYPG9uTksDhSt8DcDxHx9ZkKyvBLgLhQApB1tY0PKBese6FdEmc7TWGkVsTkpf4Zv744h5CFEQhgWBgmoklztEecT4nhEI_FeA7STklAy6KKAT8lQhf5LIe0TanYz0hvCidBkb9l',
-    },
-  ]);
-
-  // ============================================
-  // 5. 風味歌曲相關 - 方法
-  // ============================================
-
-  /**
-   * 選擇風味並取得音樂推薦
-   */
-  const selectFlavor = async (flavor: Flavor): Promise<void> => {
-    selectedFlavor.value = flavor;
-    console.log('🎵 Selected flavor:', flavor.name);
-
-    try {
-      musicLoading.value = true;
-      musicError.value = null;
-
-      console.log('🎵 Requesting music for flavor:', flavor.name);
-
-      const response = await fetch('/api/music/flavor', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          flavorId: flavor.id,
-          flavorName: flavor.name,
-          description: flavor.description,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch music recommendations');
-      }
-
-      const data: RecommendationResponse = await response.json();
-      console.log('✅ Received music response:', data);
-
-      if (data.success && data.videos.length > 0) {
-        currentVideos.value = data.videos;
-        currentVideoIndex.value = 0;
-        aiRecommendation.value = data.recommendation;
-      } else {
-        throw new Error(data.message || '暫時無法找到相關音樂');
-      }
-    } catch (err: any) {
-      console.error('❌ Music recommendation error:', err);
-      musicError.value = err.message || '無法取得推薦，請稍後再試';
-
-      // 清空影片列表
-      currentVideos.value = [];
-      aiRecommendation.value = '選擇風味，開始音樂之旅';
-    } finally {
-      musicLoading.value = false;
-    }
-  };
-
-  /**
-   * 取得下一個推薦（Next 按鈕）
-   */
-  const nextRecommendation = async (): Promise<void> => {
-    // 先切換到下一個影片（如果有的話）
-    if (currentVideoIndex.value < currentVideos.value.length - 1) {
-      currentVideoIndex.value++;
-      console.log(
-        `⏭️ Switching to next video (${currentVideoIndex.value + 1}/${currentVideos.value.length})`
-      );
-      return;
-    }
-
-    // 如果已經是最後一個，則向後端請求新的推薦
-    if (!selectedFlavor.value) {
-      console.warn('⚠️ No flavor selected');
-      return;
-    }
-
-    try {
-      musicLoading.value = true;
-      musicError.value = null;
-
-      console.log('🔄 Requesting random music for:', selectedFlavor.value.name);
-
-      const response = await fetch('/api/music/random', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          currentFlavorName: selectedFlavor.value.name,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch random recommendations');
-      }
-
-      const data: RecommendationResponse = await response.json();
-      console.log('✅ Received random music:', data);
-
-      if (data.success && data.videos.length > 0) {
-        currentVideos.value = data.videos;
-        currentVideoIndex.value = 0;
-        aiRecommendation.value = data.recommendation || aiRecommendation.value;
-      } else {
-        throw new Error(data.message || '暫時無法找到更多音樂');
-      }
-    } catch (err: any) {
-      console.error('❌ Next recommendation error:', err);
-      musicError.value = '無法取得更多推薦';
-    } finally {
-      musicLoading.value = false;
-    }
-  };
-
-  // ============================================
-  // 6. 生命週期
-  // ============================================
-  onMounted(() => {
-    fetchProducts();
-  });
-</script>
-
 <style scoped>
+  /* 複雜的徑向漸變背景 */
   .vinyl-grooves {
     background: repeating-radial-gradient(#1c1816, #1c1816 2px, #2a2624 3px, #2a2624 4px);
   }
@@ -786,30 +991,9 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
   }
 
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-20px);
-    }
-  }
-
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-spin-slow {
-    animation: spin 12s linear infinite;
-  }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+  .ecg-line {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 400;
+    animation: ecg-pulse 1.5s ease-in-out infinite;
   }
 </style>

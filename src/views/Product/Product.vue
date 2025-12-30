@@ -23,6 +23,7 @@
                 id="sort-page"
                 class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
               >
+                <!-- change 是DOM原生事件 當 <select> 中的 <option> 更動時觸發  -->
                 <option value="">排序</option>
                 <option value="price">價錢</option>
                 <option value="popularity">熱門度</option>
@@ -321,7 +322,7 @@
     img: any[];
   }
 
-  const sortCopy = ref([]); // 備份抓回來的排序資料 例: 抓了一筆按照【價錢高到低排序】的產品資料陣列
+  const sortCopy = ref([]); // 備份資料 之後排序用
   const product = ref<DataRule[]>([]);
   // <DataRule[]>	TS語法 規範 product 是符合 DataRule 規格的陣列
   const loading = ref(false); // API載入狀況參數
@@ -336,10 +337,10 @@
       err.value = ''; // 每次重新請求前清空錯誤
       const res = await getProducts(filterData);
 
-      const finalData = res.data || res;
+      const apikaraData = res.data || res;
 
-      product.value = finalData;
-      sortCopy.value = [...finalData];
+      product.value = apikaraData;
+      sortCopy.value = [...apikaraData]; // 預先準備一個備份資料 之後排序時使用
 
       // if (res && res.data) {
       //   product.value = res.data;
@@ -382,6 +383,7 @@
   };
 
   const takeSort = async () => {
+    // 當使用下拉式選單 執行排序的函數
     if (!sortWhich.value) return;
 
     try {

@@ -6,6 +6,8 @@
           class="relative lg:justify-center lg:w-[70%] md:w-[80%] md:justify-center w-[94%] flex justify-start"
         >
           <input
+            v-model="kaita"
+            @keyup.enter="sagasu(kaita)"
             class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] lg:w-[100%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] md:w-[100%] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[90%]"
             type="search"
             placeholder="喝一杯靜謐的午後時光"
@@ -328,9 +330,9 @@
     clarity: number;
   }
 
-  const sortCopy = ref<DataRule[]>([]); // 備份資料 之後排序用
+  const productCopy = ref<DataRule[]>([]); // 備份資料 【排序】功能使用
   const product = ref<DataRule[]>([]);
-  // <DataRule[]>	為TS語法 規範 sortCopy 、product 是符合 DataRule 規格的陣列
+  // <DataRule[]>	為TS語法 規範 productCopy 、product 是符合 DataRule 規格的陣列
 
   const loading = ref(false); // API載入狀況參數
   const err = ref(''); // 放錯誤訊息
@@ -347,7 +349,7 @@
       const apikaraData = res.data || res;
 
       product.value = apikaraData;
-      sortCopy.value = [...apikaraData]; // 預先準備一個備份資料 之後排序時使用
+      productCopy.value = [...apikaraData]; // 預先準備一個備份資料 之後排序、搜尋時使用
     } catch (error) {
       err.value = (error as Error).message;
       console.error('API 串接出錯：', error);
@@ -365,8 +367,8 @@
 
     const field = sortWhich.value as keyof DataRule; // 取出這次要排序的東西 例如價錢
     // as keyof DataRule  保證 field 一定是 DataRule 裡的其中一個 並且用對應的型別
-    const sorted = [...sortCopy.value].sort((a, b) => {
-      // [...sortCopy.value] 是把元陣列炸開再裝進另一個陣列 這樣不會修改到初始資料
+    const sorted = [...productCopy.value].sort((a, b) => {
+      // [...productCopy.value] 是把元陣列炸開再裝進另一個陣列 這樣不會修改到初始資料
 
       // 在JS sort()中的callback 可帶兩個參數a b 表示隨機取樣比對時的那兩個元素
       let vA = Number(a[field]) || 0; // a 為陣列中的其中一個元素 在這就是其中一包商品的物件 a[field] 就像object.price的意思
@@ -390,7 +392,7 @@
     try {
       await getcoffee({ sort: [`${sortWhich.value}:desc`] }); // 抓取一個依照 sortWhich 高到低排序的產品陣列 sortWhich可能是 價錢、人氣度...
       // 依照 getcoffee () 抓到的資料會丟進 product 這個ref()變數
-      sortCopy.value = [...product.value]; // 用 sortCopy 抓取 product 但怕共享同一個陣列 所以先炸開再用[] 確保它是新的陣列
+      productCopy.value = [...product.value]; // 用 productCopy 抓取 product 但怕共享同一個陣列 所以先炸開再用[] 確保它是新的陣列
       sortHe.value = true; // 預設抓完後是 高到低
       doSort(); // 執行一次排序來渲染頁面
       console.log('選單觸發成功，目前資料類別：', sortWhich.value);
@@ -403,6 +405,18 @@
     // 切換頁面 高到低 低到高 的函數
     sortHe.value = !sortHe.value;
     doSort();
+  };
+
+  // 搜尋相關
+  const kaita = ref(''); // 雙向綁定輸入框的變數
+  const sagasu = (s: string) => {
+    product.value = [...productCopy.value];
+    const allCoffee = [...product.value]; // 複製一份全部產品的陣列
+    const sagashita = allCoffee.filter((obj) => {
+      return obj.name.includes(s);
+    });
+    product.value = sagashita;
+    console.log('OK');
   };
 
   onMounted(async () => {

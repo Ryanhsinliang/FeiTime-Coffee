@@ -1,3 +1,4 @@
+import { Answer } from '@/views/CoffeeIdTest/type';
 import axios from 'axios';
 
 const api = axios.create({
@@ -16,5 +17,15 @@ api.interceptors.response.use(
     return Promise.reject(new Error(message));
   }
 );
-
+export const questionAPI = {
+  // 獲取所有問題
+  getQuestions() {
+    return api.get('/api/questions');
+  },
+};
+export const quizAPI = {
+  calculateScores(answers: Answer[]) {
+    return api.post('/api/quiz/calculate', { answers });
+  },
+};
 export default api;

@@ -32,17 +32,19 @@ export interface Scores {
 }
 
 export interface Option {
+  key: string;
   option: string;
   label: string;
   helper: string;
-  acidity: number;
-  sweetness: number;
-  body: number;
-  aftertaste: number;
-  clarity: number;
+  // acidity: number;
+  // sweetness: number;
+  // body: number;
+  // aftertaste: number;
+  // clarity: number;
 }
 export interface Question {
-  id: string;
+  quizKey: string;
+  order: string;
   title: string;
   subtitle: string;
   options: Option[];
@@ -53,3 +55,7 @@ export interface QuizMethods {
   toPreviousQuestion(): void;
   resetTest(): void;
 }
+export type Answer = {
+  questionOrder: number;
+  optionKey: string;
+};

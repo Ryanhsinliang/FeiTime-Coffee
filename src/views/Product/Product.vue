@@ -293,6 +293,9 @@
       </div>
     </div>
   </div>
+  <div v-show="sagasanai" class="flex w-full justify-center">
+    <img class="w-[35%]" src="./assets/sagashinai.png" alt="找不到符合的商品" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -409,6 +412,7 @@
 
   // 搜尋相關
   const kaita = ref(''); // 雙向綁定輸入框的變數
+  const sagasanai = ref(false); // 製作變數來控制【搜尋不到】的CSS樣式是否生成 預設先不要出現
   const sagasu = (s: string) => {
     product.value = [...productCopy.value];
     const allCoffee = [...product.value]; // 複製一份全部產品的陣列
@@ -416,7 +420,11 @@
       return obj.name.includes(s);
     });
     product.value = sagashita;
-    console.log('OK');
+    if (sagashita.length == 0) {
+      sagasanai.value = true;
+    } else {
+      sagasanai.value = false;
+    }
   };
 
   onMounted(async () => {

@@ -1,13 +1,5 @@
 <template lang="">
   <div class="member-box">
-    <h2>會員中心</h2>
-
-    <!-- 會員等級 -->
-    <div class="section">
-      <h3>會員等級</h3>
-      <p>一般會員</p>
-    </div>
-
     <!-- 會員資料 -->
     <div class="section">
       <h3>會員資料</h3>
@@ -17,7 +9,6 @@
       <p><strong>性別：</strong></p>
       <p><strong>生日：</strong></p>
     </div>
-
     <!-- 資訊管理 -->
     <div class="section">
       <h3>密碼管理</h3>
@@ -45,7 +36,5 @@
     </div>
   </div>
 </template>
-<script>
-  export default {};
-</script>
+<script setup></script>
 <style lang=""></style>

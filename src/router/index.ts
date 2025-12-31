@@ -9,6 +9,7 @@ import CoffeeSimulatorT1T from '@/views/CoffeeLabT1-T/CoffeeSimulatorT1T.vue';
 import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.vue';
 import Login from '@/views/Login/Login.vue';
 import Register from '@/views/Login/Register.vue';
+import Member from '@/views/Member/Member.vue';
 
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
@@ -65,7 +66,11 @@ const routes = [
     name: 'Register',
     component: Register,
   },
-
+  {
+    path: '/Member',
+    name: 'Memberr',
+    component: Member,
+  },
   //測試用
   {
     path: '/CTest',

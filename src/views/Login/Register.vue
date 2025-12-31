@@ -1,21 +1,31 @@
 <template>
   <!-- Body 等級的排版 -->
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 font-sans">
+  <div class="relative min-h-screen font-wenkai overflow-hidden">
     <!-- Container -->
-    <div class="w-[420px] bg-white p-8 rounded-xl shadow-md">
-      <h2 class="text-center text-2xl font-semibold mb-5 text-gray-800">會員註冊</h2>
-
+    <video
+      src="./assets/latte_art.mp4"
+      autoplay
+      loop
+      muted
+      playsinline
+      class="absolute inset-0 w-full h-full object-cover -z-10"
+    ></video>
+    <div class="absolute inset-0 bg-black/30 -z-10"></div>
+    <div
+      class="w-1/3 my-3 mx-auto backdrop-blur-md bg-background-light/90 py-6 px-8 rounded-xl shadow-md"
+    >
+      <h2 class="text-center text-2xl font-semibold mb-5 text-[#F3F3F3]">會員註冊</h2>
       <form @submit.prevent="handleSubmit">
-        <label class="block text-sm text-gray-700">帳號（Email）</label>
+        <label class="block text-sm text-[#F3F3F3]">帳號（Email）</label>
         <input
           v-model="form.email"
           type="email"
           placeholder="請輸入帳號"
           required
-          class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4 focus:outline-none focus:ring-2 focus:[ring-blue-500]"
         />
 
-        <label class="block text-sm text-gray-700">設定密碼</label>
+        <label class="block text-sm text-[#F3F3F3]">設定密碼</label>
         <input
           v-model="form.password"
           type="password"
@@ -24,7 +34,7 @@
           class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        <label class="block text-sm text-gray-700">確認密碼</label>
+        <label class="block text-sm text-[#F3F3F3]">確認密碼</label>
         <input
           v-model="form.confirmPassword"
           type="password"
@@ -33,7 +43,7 @@
           class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        <label class="block text-sm text-gray-700">姓名</label>
+        <label class="block text-sm text-[#F3F3F3]">姓名</label>
         <input
           v-model="form.name"
           type="text"
@@ -42,7 +52,7 @@
           class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        <label class="block text-sm text-gray-700">電話</label>
+        <label class="block text-sm text-[#F3F3F3]">電話</label>
         <input
           v-model="form.phone"
           type="tel"
@@ -51,7 +61,7 @@
           class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        <label class="block text-sm text-gray-700">郵遞區號</label>
+        <label class="block text-sm text-[#F3F3F3]">郵遞區號</label>
         <input
           v-model="form.zipcode"
           type="text"
@@ -60,7 +70,7 @@
           class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        <label class="block text-sm text-gray-700">地址</label>
+        <label class="block text-sm text-[#F3F3F3]">地址</label>
         <input
           v-model="form.address"
           type="text"
@@ -71,15 +81,15 @@
 
         <button
           type="submit"
-          class="w-full py-3 bg-blue-600 text-white rounded-md text-base font-medium hover:bg-blue-700 transition"
+          class="w-full py-3 bg-[#ABB7A5] text-white rounded-md text-base font-medium hover:bg-[#DCCFC0] transition"
         >
           註冊
         </button>
       </form>
 
-      <div class="text-center mt-4 text-sm">
+      <div class="text-center mt-4 text-sm text-[#F3F3F3]">
         已有帳號？
-        <RouterLink to="/login" class="text-blue-600 hover:underline">前往登入</RouterLink>
+        <RouterLink to="/login" class="text-[#ABB7A5] hover:underline">前往登入</RouterLink>
       </div>
     </div>
   </div>

@@ -403,6 +403,23 @@
         </a>
       </div>
     </section>
+
+    <!-- <div v-for="bean in product" :key="bean.id">
+      <h3>{{ bean.name }}</h3>
+      <p>產品編號: {{ bean.pid }}</p>
+      <p>產地: {{ bean.origin }}</p>
+      <p>處理法: {{ bean.processing }}</p>
+      <p>烘焙度: {{ bean.roast }}</p>
+      <p>風味: {{ bean.flavor_type }}</p>
+      <p>價格: ${{ bean.price }}</p>
+      <p>庫存: {{ bean.stock }}</p>
+      <p>{{ bean.description }}</p>
+      <img
+        v-if="bean.img && bean.img.length > 0"
+        :src="bean.img[0].formats.large.url"
+        :alt="bean.name"
+      />
+    </div> -->
   </main>
 </template>
 
@@ -411,15 +428,23 @@
   import { callProducts } from '@/services/ProductDetail';
   import type { ProductRequest } from '@/services/ProductDetail';
 
-  const coffeeBeans = ref<ProductRequest[]>([]);
+  const product = ref<ProductRequest[]>([]);
+  const loading = ref(false);
+  const error = ref<string>('');
 
   onMounted(async () => {
+    loading.value = true;
     try {
       const res = await callProducts();
-      coffeeBeans.value = res.data;
-      console.log('API載入成功', coffeeBeans.value);
-    } catch (err) {
-      console.error('API載入失敗', err);
+      product.value = res.data;
+
+      console.log('✅ 成功載入', product.value.length, '筆資料');
+      console.log('✅ 第一筆資料:', product.value[0]);
+    } catch (err: any) {
+      console.error('❌ API載入失敗', err);
+      error.value = err.message || '載入失敗';
+    } finally {
+      loading.value = false;
     }
   });
 

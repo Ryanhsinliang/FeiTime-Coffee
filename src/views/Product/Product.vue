@@ -254,46 +254,50 @@
     <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
       <i class="fa-solid fa-angle-up"></i>
     </div>
-    <div v-if="loading">
-      <p>正在為您準備咖啡清單...</p>
-    </div>
-    <div v-else>
-      <div
-        class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
-        :class="topBarSapce"
-      >
-        <!-- card start -->
-        <!-- {{ p.img[0].formats.large.url }} -->
-        <a href="#" target="_blank" v-for="p in product" :key="p.pid">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img
-              v-if="p.img && p.img.length > 0"
-              class="w-[100%] aspect-[1/1.2] object-cover object-center"
-              :src="p.img[0].formats.large.url"
-              :alt="p.name"
-            />
 
-            <img v-else src="" alt="暫無圖片" />
+    <div
+      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
+      :class="topBarSapce"
+    >
+      <!-- card start -->
+      <!-- {{ p.img[0].formats.large.url }} -->
+      <a href="#" target="_blank" v-for="p in product" :key="p.pid">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img
+            v-if="p.img && p.img.length > 0"
+            class="w-[100%] aspect-[1/1.2] object-cover object-center"
+            :src="p.img[0].formats.large.url"
+            :alt="p.name"
+          />
 
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
+          <img v-else src="" alt="暫無圖片" />
+
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
+          >
+            <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
+            <h3
+              class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
             >
-              <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
-              <h3
-                class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
-              >
-                {{ p.name }}
-              </h3>
-              <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
-            </div>
+              {{ p.name }}
+            </h3>
+            <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
           </div>
-        </a>
-        <!-- card end -->
-      </div>
+        </div>
+      </a>
+      <!-- card end -->
     </div>
   </div>
-  <div v-show="sagasanai" class="flex w-full justify-center">
+
+  <!-- 等API.get時顯示 -->
+
+  <div v-show="loading" class="flex w-full justify-center mb-[100px]">
+    <img class="w-[35%]" src="./assets/w.png" alt="正在為您準備咖啡清單..." />
+  </div>
+
+  <!-- input搜尋不到才顯示 -->
+  <div v-show="sagasanai" class="flex w-full justify-center mb-[100px]">
     <img class="w-[35%]" src="./assets/sagashinai.png" alt="找不到符合的商品" />
   </div>
 </template>
@@ -337,7 +341,7 @@
   const product = ref<DataRule[]>([]);
   // <DataRule[]>	為TS語法 規範 productCopy 、product 是符合 DataRule 規格的陣列
 
-  const loading = ref(false); // API載入狀況參數
+  const loading = ref(true); // 用來調整讀取中圖片是否呈現
   const err = ref(''); // 放錯誤訊息
 
   // API(get)函數
@@ -345,19 +349,18 @@
     // filterData是參數 它是一個物件
     // : any  為TS的語法 代表不限制物件裡面的型別
     try {
-      loading.value = true;
       err.value = ''; // 每次重新請求前清空錯誤
       const res = await getProducts(filterData);
-
       const apikaraData = res.data || res;
 
       product.value = apikaraData;
       productCopy.value = [...apikaraData]; // 預先準備一個備份資料 之後排序、搜尋時使用
+      if (productCopy.value) {
+        loading.value = false;
+      }
     } catch (error) {
       err.value = (error as Error).message;
       console.error('API 串接出錯：', error);
-    } finally {
-      loading.value = false;
     }
   };
 

@@ -3,21 +3,28 @@
     :class="navClasses"
     class="sticky top-0 z-50 w-full border-b border-[#DCCFC0]/40 backdrop-blur-lg transition-colors duration-300"
   >
-    <div class="px-6 md:px-12 flex items-center justify-between max-w-[1600px] mx-auto h-16">
+    <div class="px-6 xl:px-12 flex items-center justify-between max-w-[1600px] mx-auto h-16">
       <!-- Logo -->
-      <router-link to="/home" class="flex items-center gap-3">
-        <img src="/icons/feitime-logo.png" alt="FeiTime Logo" class="w-16 h-16 object-cover" />
-        <h2 class="text-2xl font-serif font-medium tracking-wide" :style="textColorStyle">
+      <router-link to="/home" class="flex items-center gap-2 flex-shrink-0">
+        <img
+          src="/icons/feitime-logo.png"
+          alt="FeiTime Logo"
+          class="w-12 h-12 lg:w-16 lg:h-16 object-cover"
+        />
+        <h2
+          class="text-xl lg:text-2xl font-serif font-medium tracking-wide"
+          :style="textColorStyle"
+        >
           FeiTime
         </h2>
       </router-link>
 
       <!-- Desktop Menu -->
-      <div class="hidden md:flex flex-1 justify-center gap-12 relative">
+      <div class="hidden lg:flex flex-1 justify-center gap-6 xl:gap-12 relative px-4">
         <div
           v-for="link in links"
           :key="link.name"
-          class="relative group text-base tracking-widest uppercase font-jp whitespace-nowrap"
+          class="relative group text-sm xl:text-base tracking-widest uppercase font-jp whitespace-nowrap"
         >
           <!-- 主連結 -->
           <RouterLink
@@ -74,16 +81,16 @@
       </div>
 
       <!-- Icons + Mobile Toggle -->
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
         <!-- Desktop Icons -->
-        <div class="hidden md:flex items-center gap-4">
+        <div class="hidden lg:flex items-center gap-4">
           <span class="material-symbols-outlined" :style="textColorStyle">shopping_bag</span>
           <span class="material-symbols-outlined" :style="textColorStyle">person</span>
         </div>
 
         <!-- Mobile Hamburger -->
         <button
-          class="md:hidden material-symbols-outlined text-3xl"
+          class="lg:hidden material-symbols-outlined text-3xl"
           :style="textColorStyle"
           @click="mobileOpen = !mobileOpen"
         >
@@ -96,7 +103,7 @@
     <transition name="slide-fade">
       <div
         v-if="mobileOpen"
-        class="md:hidden backdrop-blur-xl border-t border-[#DCCFC0]/50"
+        class="lg:hidden backdrop-blur-xl border-t border-[#DCCFC0]/50"
         :style="dropdownBgStyle"
       >
         <div v-for="link in links" :key="link.name">

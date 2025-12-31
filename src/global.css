@@ -13,3 +13,8 @@ body {
 .card {
   @apply border p-4 rounded shadow-md bg-white;
 } */
+
+/* 隱藏原生游標（全站生效） */
+* {
+  cursor: none !important;
+}

@@ -6,8 +6,8 @@
           class="relative lg:justify-center lg:w-[70%] md:w-[80%] md:justify-center w-[94%] flex justify-start"
         >
           <input
-            v-model="kaita"
-            @keyup.enter="sagasu(kaita)"
+            v-model="findWord"
+            @keyup.enter="find(findWord)"
             class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] lg:w-[100%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] md:w-[100%] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[90%]"
             type="search"
             placeholder="喝一杯靜謐的午後時光"
@@ -297,7 +297,7 @@
   </div>
 
   <!-- input搜尋不到才顯示 -->
-  <div v-show="sagasanai" class="flex w-full justify-center mb-[100px]">
+  <div v-show="cannotFind" class="flex w-full justify-center mb-[100px]">
     <img class="w-[35%]" src="./assets/sagashinai.png" alt="找不到符合的商品" />
   </div>
 </template>
@@ -351,10 +351,10 @@
     try {
       err.value = ''; // 每次重新請求前清空錯誤
       const res = await getProducts(filterData);
-      const apikaraData = res.data || res;
+      const apiFormData = res.data || res;
 
-      product.value = apikaraData;
-      productCopy.value = [...apikaraData]; // 預先準備一個備份資料 之後排序、搜尋時使用
+      product.value = apiFormData;
+      productCopy.value = [...apiFormData]; // 預先準備一個備份資料 之後排序、搜尋時使用
       if (productCopy.value) {
         loading.value = false;
       }
@@ -414,19 +414,19 @@
   };
 
   // 搜尋相關
-  const kaita = ref(''); // 雙向綁定輸入框的變數
-  const sagasanai = ref(false); // 製作變數來控制【搜尋不到】的CSS樣式是否生成 預設先不要出現
-  const sagasu = (s: string) => {
+  const findWord = ref(''); // 雙向綁定輸入框的變數
+  const cannotFind = ref(false); // 製作變數來控制【搜尋不到】的CSS樣式是否生成 預設先不要出現
+  const find = (word: string) => {
     product.value = [...productCopy.value];
     const allCoffee = [...product.value]; // 複製一份全部產品的陣列
-    const sagashita = allCoffee.filter((obj) => {
-      return obj.name.includes(s);
+    const found = allCoffee.filter((obj) => {
+      return obj.name.includes(word);
     });
-    product.value = sagashita;
-    if (sagashita.length == 0) {
-      sagasanai.value = true;
+    product.value = found;
+    if (found.length == 0) {
+      cannotFind.value = true;
     } else {
-      sagasanai.value = false;
+      cannotFind.value = false;
     }
   };
 

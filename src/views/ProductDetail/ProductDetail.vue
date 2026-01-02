@@ -47,7 +47,7 @@
 
       <!-- Product Form -->
       <form class="py-24 px-28 bg-[#f9f8f6] w-full lg:w-1/2 text-[#6d654f]">
-        <p id="origin">{{ product.origin }}</p>
+        <p id="origin">{{ originText }}</p>
         <h2 class="text-4xl py-4 font-semibold">{{ product.name }}</h2>
         <p id="price" class="text-lg font-semibold">{{ `$${price}` }}</p>
 
@@ -105,6 +105,8 @@
             <i class="fa-solid fa-plus"></i>
           </button>
           <p v-show="showFlavor" class="py-2">
+            {{ descriptionFlavor }}
+            <br />
             {{ product.flavor_type }}+{{ product.flavor_tags.map((tag) => tag.name).join('、') }}
           </p>
         </div>
@@ -159,11 +161,11 @@
         <div class="w-full lg:w-1/2 px-20 pb-12 lg:py-0">
           <h3 class="text-3xl text-[#6d654f]">{{ product.name }}</h3>
           <p class="text-lg text-[#808080] pt-10">
-            {{ product.description }}
+            {{ descriptionBody }}
           </p>
-          <!-- <p class="text-lg text-[#808080] pt-4">
-            無論手沖還是義式沖煮,都能呈現均衡香氣與圓潤口感,特別適合喜歡酸度柔和、香氣明亮且口感平衡的咖啡愛好者。
-          </p> -->
+          <p class="text-lg text-[#808080] pt-4">
+            {{ descriptionBody2 }}
+          </p>
         </div>
         <video src="./assets/video.mp4" autoplay muted loop class="w-full lg:w-1/2"></video>
       </div>
@@ -419,14 +421,12 @@
       </div>
     </section>
 
+    <!-- 檢查用請忽略 -->
     <!-- <div v-if="loading">載入中...</div>
     <div v-else-if="error">{{ error }}</div>
     <div v-else-if="product">
       <h3>{{ product.name }}</h3>
       <p>產品編號: {{ product.pid }}</p>
-      <p>產地: {{ product.origin }}</p>
-      <p>處理法: {{ product.processing }}</p>
-      <p>烘焙度: {{ product.roast }}</p>
       <p>風味: {{ product.flavor_type }}</p>
       <p>
         風味標籤：
@@ -434,13 +434,15 @@
       </p>
       <p>價格: ${{ product.price }}</p>
       <p>庫存: {{ product.stock }}</p>
-      <p>{{ product.description }}</p>
-    </div> -->
-    <!-- 確認 product 有 img 陣列且至少有一張圖片才顯示輪播區塊。 -->
-    <!-- <div v-if="product.img && product.img.length > 0">
-      <img :src="product.img[currentIndex].formats.large.url" :alt="product.name" />
-      <button @click="prevPhoto" class="nav-btn prev-btn" v-if="product.img.length > 1">◀</button>
-      <button @click="nextPhoto" class="nav-btn next-btn" v-if="product.img.length > 1">▶</button>
+      <h4>{{ descriptionFlavor }}</h4>
+      <p>{{ descriptionBody }}</p>
+      <p>{{ descriptionBody2 }}</p>
+      <img
+        v-for="(img, index) in product.img"
+        :key="index"
+        :src="img.formats.medium.url"
+        :alt="`${product.name} - ${index + 1}`"
+      />
     </div> -->
   </main>
 </template>
@@ -454,7 +456,6 @@
 
   const route = useRoute();
 
-  // product.value 可以是 ProductRequest 型別，也可以是 null，還沒拿到商品資料時，先設為空
   const product = ref<ProductRequest | null>(null);
   const loading = ref(false);
   const error = ref<string>('');
@@ -484,10 +485,12 @@
   // 圖片點擊輪播
   const currentIndex = ref(0);
   const prevPhoto = () => {
+    if (!product.value?.img?.length) return;
     currentIndex.value =
       currentIndex.value > 0 ? currentIndex.value - 1 : product.value.img.length - 1;
   };
   const nextPhoto = () => {
+    if (!product.value?.img?.length) return;
     currentIndex.value =
       currentIndex.value < product.value.img.length - 1 ? currentIndex.value + 1 : 0;
   };
@@ -547,6 +550,74 @@
       Anaerobic: '厭氧發酵',
     };
     return product.value ? processingMap[product.value.processing] || product.value.processing : '';
+  });
+  const originText = computed(() => {
+    const originMap: Record<string, string> = {
+      Ethiopia: '衣索比亞',
+      Kenya: '肯亞',
+      Rwanda: '盧安達',
+      Burundi: '布隆迪',
+      Colombia: '哥倫比亞',
+      Brazil: '巴西',
+      Guatemala: '瓜地馬拉',
+      'Costa Rica': '哥斯大黎加',
+      'El Salvador': '薩爾瓦多',
+      Panama: '巴拿馬',
+      Indonesia: '印尼',
+      Vietnam: '越南',
+      India: '印度',
+      Thailand: '泰國',
+      'Papua New Guinea': '巴布亞紐幾內亞',
+    };
+    return product.value ? originMap[product.value.origin] || product.value.origin : '';
+  });
+  // const flavorTagsText = computed(() => {
+  //   const flavorTagsMap: Record<string, string> = {
+  //     Fruity: '果香',
+  //     Berry: '莓果',
+  //     Tropical: '熱帶水果',
+  //     Citrus: '柑橘',
+  //     Sweet: '甜感',
+  //     Fermented: '發酵',
+  //     Winey: '酒香',
+  //     Balanced: '平衡',
+  //     Wild: '野性',
+  //     Nutty: '堅果',
+  //     Chocolate: '巧克力',
+  //     Cocoa: '可可',
+  //     Caramel: '焦糖',
+  //     Smooth: '滑順',
+  //     Heavy: '厚重',
+  //     Earthy: '土壤',
+  //     Woody: '木質',
+  //     Spice: '香料',
+  //     Herbal: '草本',
+  //     Bitter: '苦感',
+  //     Rich: '濃郁',
+  //     Floral: '花香',
+  //     Jasmine: '茉莉',
+  //     // Tea-like: '茶感',
+  //     // Clean: '乾淨',
+  //     // Bright: '明亮酸質',
+  //   };
+  //   return product.value
+  //     ? flavorTagsMap[product.value.flavor_tags] || product.value.flavor_tags
+  //     : '';
+  // });
+
+  // 產品描述分段
+  const descriptionLines = computed(() => {
+    if (!product.value?.description) return [];
+    return product.value.description.split('\n');
+  });
+  const descriptionFlavor = computed(() => {
+    return descriptionLines.value[0] || '';
+  });
+  const descriptionBody = computed(() => {
+    return descriptionLines.value.slice(1, 2).join('\n');
+  });
+  const descriptionBody2 = computed(() => {
+    return descriptionLines.value.slice(2).join('\n');
   });
 </script>
 

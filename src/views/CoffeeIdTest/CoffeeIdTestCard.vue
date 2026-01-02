@@ -36,7 +36,7 @@
         @mousemove="handleMove"
         @mouseleave="reset"
         :style="style"
-        class="group relative w-2/3 rounded-2xl bg-white/10 backdrop-blur-md shadow-lg transform-gpu transition-transform duration-300 ease-out"
+        class="group relative w-2/3 rounded-2xl bg-white/20 backdrop-blur-md shadow-lg transform-gpu transition-transform duration-300 ease-out"
       >
         <!-- ✨ 亮光層 -->
         <div class="pointer-events-none absolute inset-0 rounded-2xl z-20" :style="glowStyle"></div>
@@ -52,9 +52,13 @@
           >
             <
           </button>
-          <h3 class="text-center">{{ quizData.questions[quizData.currentIndex]?.quizKey }}</h3>
-          <p class="text-center mt-3">{{ quizData.questions[quizData.currentIndex]?.title }}</p>
-          <p class="text-center text-xs text-[#875e2f]">
+          <h3 class="text-center font-bold">
+            {{ quizData.questions[quizData.currentIndex]?.quizKey }}
+          </h3>
+          <p class="text-center mt-3 font-bold text-xl">
+            {{ quizData.questions[quizData.currentIndex]?.title }}
+          </p>
+          <p class="text-center text-md font-medium text-[#090909]">
             {{ quizData.questions[quizData.currentIndex]?.subtitle }}
           </p>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-9">
@@ -65,9 +69,9 @@
               class="group/option relative overflow-hidden text-center leading-normal p-5 rounded-2xl bg-white/60 backdrop-blur-sm hover:bg-white/30 cursor-pointer transition-all duration-300"
             >
               <!-- 內容 -->
-              <div class="relative z-10 text-[#2f2f2f]">
+              <div class="relative z-10 font-bold text-[#2f2f2f]">
                 {{ option.label }}
-                <p class="text-[#ffffff] text-sm">{{ option.helper }}</p>
+                <p class="text-[#2f2f2f] font-normal text-sm">{{ option.helper }}</p>
               </div>
               <!-- 描邊動畫 -->
               <span

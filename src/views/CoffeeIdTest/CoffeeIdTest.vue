@@ -1,10 +1,5 @@
 <template>
-  <h2
-    class="w-2/3 mx-auto my-8 relative text-center font-shizuru text-3xl font-bold p-6 bg-[rgb(238,238,238)] rounded-2xl ]"
-  >
-    Coffee ID TEST
-  </h2>
-  <main class="w-full min-h-screen relative font-wenkai">
+  <section class="w-full min-h-screen relative font-cactus flex items-center justify-center">
     <div class="absolute inset-0 -z-10">
       <img :src="currentBg" class="w-full h-full object-cover" alt="背景" />
       <img
@@ -14,35 +9,48 @@
         alt="背景"
       />
     </div>
-    <section class="mx-auto py-10 w-2/3 relative z-10">
-      <!-- 動畫背景 -->
-      <div class="w-[80%] mx-auto flex justify-center rounded-2xl bg-cover bg-bottom mt-8">
-        <img :src="coffeeWalk" class="invert" alt="Coffee Walk Animation" />
-      </div>
-    </section>
-    <section>
-      <div class="flex flex-col items-center gap-8 mt-8 bg-[rgba(220,207,192,1)] p-5">
-        <p class="text-center leading-relaxed">
-          每一杯咖啡，
-          <br />
-          都藏著你的生活節奏、情緒與偏好。
-          <br />
-          Coffee ID 不是標籤，
-          <br />
-          而是一張屬於你的風味名片。
-          <br />
-          現在，就從這裡開始。
-        </p>
+    <div
+      ref="card"
+      @mousemove="handleMove"
+      @mouseleave="reset"
+      class="group mx-auto py-6 px-6 w-2/3 md:w-1/2 lg:w-1/3 relative z-10 rounded-xl bg-white/10 backdrop-blur-md shadow-lg transform-gpu transition-transform duration-300 ease-out"
+      :style="style"
+    >
+      <div class="pointer-events-none absolute inset-0 rounded-xl z-20" :style="glowStyle"></div>
+      <div class="flex-col bg-background-light/90 backdrop-blur-md shadow-lg border-sage z-10">
+        <!-- 動畫背景 -->
+        <div class="w-[80%] mx-auto flex justify-center rounded-2xl bg-cover bg-bottom mt-8">
+          <img :src="coffeeWalk" class="invert" alt="Coffee Walk Animation" />
+        </div>
+        <div class="flex flex-col items-center gap-8 mt-8 p-5">
+          <p class="text-center leading-relaxed text-white">
+            每一杯咖啡，
+            <br />
+            都藏著你的生活節奏、情緒與偏好。
+            <br />
+            Coffee ID 不是標籤，
+            <br />
+            而是一張屬於你的風味名片。
+            <br />
+            現在，就從這裡開始。
+          </p>
 
-        <button
-          @click="startTest"
-          class="relative bg-[#a2af9b] text-2xl py-2 px-8 rounded-full hover:cursor-pointer"
-        >
-          開始測驗
-        </button>
+          <button
+            @click="startTest"
+            class="group/option relative overflow-hidden text-center leading-normal p-5 rounded-2xl bg-white/20 backdrop-blur-sm hover:bg-white/30 cursor-pointer transition-all duration-300"
+          >
+            開始測驗
+            <span
+              class="pointer-events-none absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-white scale-0 origin-top-left transition-transform duration-300 group-hover:scale-100"
+            ></span>
+            <span
+              class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover:scale-100"
+            ></span>
+          </button>
+        </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -86,6 +94,54 @@
 
     changeBg();
   });
+
+  // 卡片效果
+  const card = ref<HTMLElement | null>(null);
+  const style = ref('');
+
+  const glowStyle = ref('');
+
+  function handleMove(e: MouseEvent) {
+    if (!card.value) return;
+
+    const rect = card.value.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateY = ((x - centerX) / centerX) * 6;
+    const rotateX = -((y - centerY) / centerY) * 4;
+
+    style.value = `
+    transform:
+      perspective(1000px)
+      rotateY(${rotateY}deg)
+      rotateX(${rotateX}deg)
+      translateY(-4px);
+  `;
+
+    glowStyle.value = `
+    background:
+      radial-gradient(
+        600px circle at ${x}px ${y}px,
+        rgba(255,255,255,0.28),
+        transparent 45%
+      );
+  `;
+  }
+
+  function reset() {
+    style.value = `
+    transform:
+      perspective(1000px)
+      rotateY(0deg)
+      rotateX(0deg)
+      translateY(0);
+  `;
+    glowStyle.value = '';
+  }
 </script>
 
 <style scoped>

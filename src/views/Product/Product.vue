@@ -20,7 +20,7 @@
             >
               <img class="IC-sort w-[32px] bg-[var(--main-color)]" src="./assets/sort.svg" alt="" />
               <select
-                v-model="findWord"
+                v-model="sortWhich"
                 @change="takeSort"
                 id="sort-page"
                 class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"

@@ -1,29 +1,43 @@
 <template>
-  <main class="relative">
+  <div v-if="loading">載入中...</div>
+  <div v-else-if="error">{{ error }}</div>
+  <main class="relative" v-else-if="product">
     <!-- Product Guide Section -->
     <section class="flex flex-col lg:flex-row justify-center relative min-h-[42vw]">
       <!-- Photo Gallery -->
-      <div class="w-full lg:w-1/2 bg-[#f3eeea] relative">
-        <img :src="currentPhoto.image" alt="" class="object-cover aspect-[4/3] w-full h-full" />
+      <div
+        class="w-full lg:w-1/2 bg-[#f3eeea] relative"
+        v-if="product.img && product.img.length > 0"
+      >
+        <img
+          :src="product.img[currentIndex].formats.large.url"
+          :alt="product.name"
+          class="object-cover aspect-[4/3] w-full h-full"
+        />
 
         <!-- Navigation Buttons -->
-        <button @click="prevPhoto" type="button" class="absolute top-1/2 left-2.5 -translate-y-1/2">
+        <button
+          @click="prevPhoto"
+          v-if="product.img.length > 1"
+          type="button"
+          class="absolute top-1/2 left-2.5 -translate-y-1/2"
+        >
           <i class="fa-solid fa-chevron-left text-[#d4b396] text-[45px] opacity-50"></i>
         </button>
         <button
           @click="nextPhoto"
+          v-if="product.img.length > 1"
           type="button"
           class="absolute top-1/2 right-2.5 -translate-y-1/2"
         >
           <i class="fa-solid fa-chevron-right text-[#d4b396] text-[45px] opacity-50"></i>
         </button>
 
-        <!-- Image Dots -->
         <div
           class="w-[60px] h-5 bg-[#d9cfc7] absolute bottom-2.5 left-1/2 -translate-x-1/2 rounded-[20px] opacity-50 flex justify-center items-center gap-2"
         >
           <div
-            v-for="(dot, index) in photos"
+            v-for="(dot, index) in product.img"
             :key="index"
             class="w-2 h-2 rounded-full"
             :class="index === currentIndex ? 'bg-[#141e0e]' : 'bg-[#a2af9b]'"
@@ -32,9 +46,9 @@
       </div>
 
       <!-- Product Form -->
-      <form class="p-24 bg-[#f9f8f6] w-full lg:w-1/2 text-[#6d654f]">
-        <p id="origin">衣索比亞(產地)</p>
-        <h2 class="text-4xl py-4 font-semibold">阿拉比卡．Arabica Classic</h2>
+      <form class="py-24 px-28 bg-[#f9f8f6] w-full lg:w-1/2 text-[#6d654f]">
+        <p id="origin">{{ product.origin }}</p>
+        <h2 class="text-4xl py-4 font-semibold">{{ product.name }}</h2>
         <p id="price" class="text-lg font-semibold">{{ `$${price}` }}</p>
 
         <div class="py-4">
@@ -72,7 +86,7 @@
             烘焙度
             <i class="fa-solid fa-plus"></i>
           </button>
-          <p v-show="showRoast" class="py-2">淺中焙｜保留花果香與自然甜感</p>
+          <p v-show="showRoast" class="py-2">{{ roastText }}</p>
           <button
             type="button"
             @click="toggleProcess"
@@ -81,7 +95,7 @@
             處理方式
             <i class="fa-solid fa-plus"></i>
           </button>
-          <p v-show="showProcess" class="py-2">水洗處理｜風味乾淨、澄澈</p>
+          <p v-show="showProcess" class="py-2">{{ processingText }}</p>
           <button
             type="button"
             @click="toggleFlavor"
@@ -90,7 +104,9 @@
             風味特性
             <i class="fa-solid fa-plus"></i>
           </button>
-          <p v-show="showFlavor" class="py-2">果酸 / 花香 / 清爽 / 平衡 / 細緻</p>
+          <p v-show="showFlavor" class="py-2">
+            {{ product.flavor_type }}+{{ product.flavor_tags.map((tag) => tag.name).join('、') }}
+          </p>
         </div>
 
         <div>
@@ -141,14 +157,13 @@
       <!-- First Detail Block -->
       <div class="flex flex-col lg:flex-row">
         <div class="w-full lg:w-1/2 px-20 pb-12 lg:py-0">
-          <h3 class="text-3xl text-[#6d654f]">阿拉比卡 Classic</h3>
+          <h3 class="text-3xl text-[#6d654f]">{{ product.name }}</h3>
           <p class="text-lg text-[#808080] pt-10">
-            阿拉比卡 Classic
-            產自高海拔精品產區,酸度適中、口感圓潤,帶有柔和果香與花香。經過水洗處理,淺中焙烘焙方式,完美保留豆子的清新與細膩層次。
+            {{ product.description }}
           </p>
-          <p class="text-lg text-[#808080] pt-4">
+          <!-- <p class="text-lg text-[#808080] pt-4">
             無論手沖還是義式沖煮,都能呈現均衡香氣與圓潤口感,特別適合喜歡酸度柔和、香氣明亮且口感平衡的咖啡愛好者。
-          </p>
+          </p> -->
         </div>
         <video src="./assets/video.mp4" autoplay muted loop class="w-full lg:w-1/2"></video>
       </div>
@@ -404,21 +419,28 @@
       </div>
     </section>
 
-    <!-- <div v-for="bean in product" :key="bean.id">
-      <h3>{{ bean.name }}</h3>
-      <p>產品編號: {{ bean.pid }}</p>
-      <p>產地: {{ bean.origin }}</p>
-      <p>處理法: {{ bean.processing }}</p>
-      <p>烘焙度: {{ bean.roast }}</p>
-      <p>風味: {{ bean.flavor_type }}</p>
-      <p>價格: ${{ bean.price }}</p>
-      <p>庫存: {{ bean.stock }}</p>
-      <p>{{ bean.description }}</p>
-      <img
-        v-if="bean.img && bean.img.length > 0"
-        :src="bean.img[0].formats.large.url"
-        :alt="bean.name"
-      />
+    <!-- <div v-if="loading">載入中...</div>
+    <div v-else-if="error">{{ error }}</div>
+    <div v-else-if="product">
+      <h3>{{ product.name }}</h3>
+      <p>產品編號: {{ product.pid }}</p>
+      <p>產地: {{ product.origin }}</p>
+      <p>處理法: {{ product.processing }}</p>
+      <p>烘焙度: {{ product.roast }}</p>
+      <p>風味: {{ product.flavor_type }}</p>
+      <p>
+        風味標籤：
+        {{ product.flavor_tags.map((tag) => tag.name).join('、') }}
+      </p>
+      <p>價格: ${{ product.price }}</p>
+      <p>庫存: {{ product.stock }}</p>
+      <p>{{ product.description }}</p>
+    </div> -->
+    <!-- 確認 product 有 img 陣列且至少有一張圖片才顯示輪播區塊。 -->
+    <!-- <div v-if="product.img && product.img.length > 0">
+      <img :src="product.img[currentIndex].formats.large.url" :alt="product.name" />
+      <button @click="prevPhoto" class="nav-btn prev-btn" v-if="product.img.length > 1">◀</button>
+      <button @click="nextPhoto" class="nav-btn next-btn" v-if="product.img.length > 1">▶</button>
     </div> -->
   </main>
 </template>
@@ -427,19 +449,30 @@
   import { ref, computed, onMounted } from 'vue';
   import { callProducts } from '@/services/ProductDetail';
   import type { ProductRequest } from '@/services/ProductDetail';
+  import { callSingleProduct } from '@/services/ProductDetail';
+  import { useRoute } from 'vue-router';
 
-  const product = ref<ProductRequest[]>([]);
+  const route = useRoute();
+
+  // product.value 可以是 ProductRequest 型別，也可以是 null，還沒拿到商品資料時，先設為空
+  const product = ref<ProductRequest | null>(null);
   const loading = ref(false);
   const error = ref<string>('');
 
   onMounted(async () => {
     loading.value = true;
     try {
-      const res = await callProducts();
-      product.value = res.data;
+      const pid = route.params.pid as string; // 從路由取得 pid
+      const res = await callSingleProduct(pid);
 
-      console.log('✅ 成功載入', product.value.length, '筆資料');
-      console.log('✅ 第一筆資料:', product.value[0]);
+      // 判斷回傳的是陣列還是物件
+      if (Array.isArray(res.data)) {
+        product.value = res.data[0]; // 如果是陣列，取第一筆
+      } else {
+        product.value = res.data; // 如果是物件，直接使用
+      }
+
+      console.log('✅ 成功載入商品:', product.value);
     } catch (err: any) {
       console.error('❌ API載入失敗', err);
       error.value = err.message || '載入失敗';
@@ -450,38 +483,24 @@
 
   // 圖片點擊輪播
   const currentIndex = ref(0);
-  const photos = ref([
-    { name: 'bag', image: '/src/views/ProductDetail/assets/coffee_bag2.png' },
-    {
-      name: 'beans',
-      image: '/src/views/ProductDetail/assets/coffee_beans.png',
-    },
-    {
-      name: 'cup',
-      image:
-        'https://plus.unsplash.com/premium_photo-1675435644687-562e8042b9db?q=80&w=749&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-  ]);
-  const currentPhoto = computed(() => {
-    return photos.value[currentIndex.value];
-  });
-
   const prevPhoto = () => {
-    currentIndex.value = currentIndex.value > 0 ? currentIndex.value - 1 : photos.value.length - 1;
+    currentIndex.value =
+      currentIndex.value > 0 ? currentIndex.value - 1 : product.value.img.length - 1;
   };
   const nextPhoto = () => {
-    currentIndex.value = currentIndex.value < photos.value.length - 1 ? currentIndex.value + 1 : 0;
+    currentIndex.value =
+      currentIndex.value < product.value.img.length - 1 ? currentIndex.value + 1 : 0;
   };
 
   // 重量對應價格
   const weight = ref(250);
   const price = computed(() => {
     if (weight.value === 100) {
-      return 400 / 2;
+      return product.value.price / 2;
     } else if (weight.value === 250) {
-      return 400;
+      return product.value.price;
     } else if (weight.value === 500) {
-      return 400 * 2;
+      return product.value.price * 2;
     } else {
       return 0;
     }
@@ -493,7 +512,6 @@
     isheartOpen.value = !isheartOpen.value;
     alert(isheartOpen.value ? '已從收藏移除' : '已加入收藏');
   };
-
   const addToCart = () => {
     alert('已加入購物車');
   };
@@ -511,6 +529,25 @@
   const toggleProcess = () => {
     showProcess.value = !showProcess.value;
   };
+
+  // 資料庫中英切換
+  const roastText = computed(() => {
+    const roastMap: Record<string, string> = {
+      Light: '淺焙 | 口感輕盈，香氣明亮清爽',
+      Medium: '中焙 | 口感平衡，香氣溫潤適中',
+      Dark: '深焙 | 口感濃郁，香氣深沉厚重',
+    };
+    return product.value ? roastMap[product.value.roast] || product.value.roast : '';
+  });
+  const processingText = computed(() => {
+    const processingMap: Record<string, string> = {
+      Washed: '水洗處理',
+      Natural: '日曬處理',
+      Honey: '蜜處理',
+      Anaerobic: '厭氧發酵',
+    };
+    return product.value ? processingMap[product.value.processing] || product.value.processing : '';
+  });
 </script>
 
 <style>

@@ -466,17 +466,12 @@
       const pid = route.params.pid as string; // 從路由取得 pid
       const res = await callSingleProduct(pid);
 
-      // 判斷回傳的是陣列還是物件
-      if (Array.isArray(res.data)) {
-        product.value = res.data[0]; // 如果是陣列，取第一筆
-      } else {
-        product.value = res.data; // 如果是物件，直接使用
-      }
+      product.value = res.data;
 
       console.log('✅ 成功載入商品:', product.value);
-    } catch (err: any) {
+    } catch (err) {
       console.error('❌ API載入失敗', err);
-      error.value = err.message || '載入失敗';
+      error.value = '商品載入失敗';
     } finally {
       loading.value = false;
     }
@@ -498,6 +493,9 @@
   // 重量對應價格
   const weight = ref(250);
   const price = computed(() => {
+    if (!product.value) {
+      return 0;
+    }
     if (weight.value === 100) {
       return product.value.price / 2;
     } else if (weight.value === 250) {

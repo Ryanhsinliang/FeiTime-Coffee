@@ -8,7 +8,7 @@ export interface ProductRequest {
   processing: string; // 處理法
   roast: string; // 烘焙度
   flavor_type: string; // 風味類型
-  flavor_tags: any[]; // 風味標籤
+  flavor_tags: { name: string }[]; // 風味標籤
   description: string; // 產品描述
   price: number; // 價格
   stock: number; // 庫存量
@@ -26,7 +26,7 @@ export interface ProductListResponse {
 }
 
 export interface SingleProductResponse {
-  data: ProductRequest[];
+  data: ProductRequest;
 }
 
 // 取得單筆商品

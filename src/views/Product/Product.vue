@@ -6,6 +6,8 @@
           class="relative lg:justify-center lg:w-[70%] md:w-[80%] md:justify-center w-[94%] flex justify-start"
         >
           <input
+            v-model="findWord"
+            @keyup.enter="find(findWord)"
             class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] lg:w-[100%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] md:w-[100%] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[90%]"
             type="search"
             placeholder="喝一杯靜謐的午後時光"
@@ -252,44 +254,51 @@
     <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
       <i class="fa-solid fa-angle-up"></i>
     </div>
-    <div v-if="loading">
-      <p>正在為您準備咖啡清單...</p>
-    </div>
-    <div v-else>
-      <div
-        class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
-        :class="topBarSapce"
-      >
-        <!-- card start -->
-        <!-- {{ p.img[0].formats.large.url }} -->
-        <a href="#" target="_blank" v-for="p in product" :key="p.pid">
-          <!-- 待放網址 -->
-          <div class="relative">
-            <img
-              v-if="p.img && p.img.length > 0"
-              class="w-[100%] aspect-[1/1.2] object-cover object-center"
-              :src="p.img[0].formats.large.url"
-              :alt="p.name"
-            />
 
-            <img v-else src="" alt="暫無圖片" />
+    <div
+      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
+      :class="topBarSapce"
+    >
+      <!-- card start -->
+      <!-- {{ p.img[0].formats.large.url }} -->
+      <a href="#" target="_blank" v-for="p in product" :key="p.pid">
+        <!-- 待放網址 -->
+        <div class="relative">
+          <img
+            v-if="p.img && p.img.length > 0"
+            class="w-[100%] aspect-[1/1.2] object-cover object-center"
+            :src="p.img[0].formats.large.url"
+            :alt="p.name"
+          />
 
-            <div
-              class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
+          <img v-else src="" alt="暫無圖片" />
+
+          <div
+            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
+          >
+            <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
+            <h3
+              class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
             >
-              <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
-              <h3
-                class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
-              >
-                {{ p.name }}
-              </h3>
-              <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
-            </div>
+              {{ p.name }}
+            </h3>
+            <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
           </div>
-        </a>
-        <!-- card end -->
-      </div>
+        </div>
+      </a>
+      <!-- card end -->
     </div>
+  </div>
+
+  <!-- 等API.get時顯示 -->
+
+  <div v-show="loading" class="flex w-full justify-center mb-[100px]">
+    <img class="w-[35%]" src="./assets/w.png" alt="正在為您準備咖啡清單..." />
+  </div>
+
+  <!-- input搜尋不到才顯示 -->
+  <div v-show="cannotFind" class="flex w-full justify-center mb-[100px]">
+    <img class="w-[35%]" src="./assets/sagashinai.png" alt="找不到符合的商品" />
   </div>
 </template>
 
@@ -328,11 +337,11 @@
     clarity: number;
   }
 
-  const sortCopy = ref<DataRule[]>([]); // 備份資料 之後排序用
+  const productCopy = ref<DataRule[]>([]); // 備份資料 【排序】功能使用
   const product = ref<DataRule[]>([]);
-  // <DataRule[]>	為TS語法 規範 sortCopy 、product 是符合 DataRule 規格的陣列
+  // <DataRule[]>	為TS語法 規範 productCopy 、product 是符合 DataRule 規格的陣列
 
-  const loading = ref(false); // API載入狀況參數
+  const loading = ref(true); // 用來調整讀取中圖片是否呈現
   const err = ref(''); // 放錯誤訊息
 
   // API(get)函數
@@ -340,19 +349,18 @@
     // filterData是參數 它是一個物件
     // : any  為TS的語法 代表不限制物件裡面的型別
     try {
-      loading.value = true;
       err.value = ''; // 每次重新請求前清空錯誤
       const res = await getProducts(filterData);
+      const apiFormData = res.data || res;
 
-      const apikaraData = res.data || res;
-
-      product.value = apikaraData;
-      sortCopy.value = [...apikaraData]; // 預先準備一個備份資料 之後排序時使用
+      product.value = apiFormData;
+      productCopy.value = [...apiFormData]; // 預先準備一個備份資料 之後排序、搜尋時使用
+      if (productCopy.value) {
+        loading.value = false;
+      }
     } catch (error) {
       err.value = (error as Error).message;
       console.error('API 串接出錯：', error);
-    } finally {
-      loading.value = false;
     }
   };
 
@@ -365,8 +373,8 @@
 
     const field = sortWhich.value as keyof DataRule; // 取出這次要排序的東西 例如價錢
     // as keyof DataRule  保證 field 一定是 DataRule 裡的其中一個 並且用對應的型別
-    const sorted = [...sortCopy.value].sort((a, b) => {
-      // [...sortCopy.value] 是把元陣列炸開再裝進另一個陣列 這樣不會修改到初始資料
+    const sorted = [...productCopy.value].sort((a, b) => {
+      // [...productCopy.value] 是把元陣列炸開再裝進另一個陣列 這樣不會修改到初始資料
 
       // 在JS sort()中的callback 可帶兩個參數a b 表示隨機取樣比對時的那兩個元素
       let vA = Number(a[field]) || 0; // a 為陣列中的其中一個元素 在這就是其中一包商品的物件 a[field] 就像object.price的意思
@@ -390,7 +398,7 @@
     try {
       await getcoffee({ sort: [`${sortWhich.value}:desc`] }); // 抓取一個依照 sortWhich 高到低排序的產品陣列 sortWhich可能是 價錢、人氣度...
       // 依照 getcoffee () 抓到的資料會丟進 product 這個ref()變數
-      sortCopy.value = [...product.value]; // 用 sortCopy 抓取 product 但怕共享同一個陣列 所以先炸開再用[] 確保它是新的陣列
+      productCopy.value = [...product.value]; // 用 productCopy 抓取 product 但怕共享同一個陣列 所以先炸開再用[] 確保它是新的陣列
       sortHe.value = true; // 預設抓完後是 高到低
       doSort(); // 執行一次排序來渲染頁面
       console.log('選單觸發成功，目前資料類別：', sortWhich.value);
@@ -403,6 +411,23 @@
     // 切換頁面 高到低 低到高 的函數
     sortHe.value = !sortHe.value;
     doSort();
+  };
+
+  // 搜尋相關
+  const findWord = ref(''); // 雙向綁定輸入框的變數
+  const cannotFind = ref(false); // 製作變數來控制【搜尋不到】的CSS樣式是否生成 預設先不要出現
+  const find = (word: string) => {
+    product.value = [...productCopy.value];
+    const allCoffee = [...product.value]; // 複製一份全部產品的陣列
+    const found = allCoffee.filter((obj) => {
+      return obj.name.includes(word);
+    });
+    product.value = found;
+    if (found.length == 0) {
+      cannotFind.value = true;
+    } else {
+      cannotFind.value = false;
+    }
   };
 
   onMounted(async () => {

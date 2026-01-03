@@ -3,7 +3,7 @@
   <div v-else-if="error">{{ error }}</div>
   <main class="relative" v-else-if="product">
     <!-- Product Guide Section -->
-    <section class="flex flex-col lg:flex-row justify-center relative min-h-[42vw]">
+    <section class="flex flex-col lg:flex-row justify-center relative min-h-[53vw]">
       <!-- Photo Gallery -->
       <div
         class="w-full lg:w-1/2 bg-[#f3eeea] relative"
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Product Form -->
-      <form class="py-24 px-28 bg-[#f9f8f6] w-full lg:w-1/2 text-[#6d654f]">
+      <form class="py-24 px-32 bg-[#f9f8f6] w-full lg:w-1/2 text-[#6d654f]">
         <p id="origin">{{ originText }}</p>
         <h2 class="text-4xl py-4 font-semibold">{{ product.name }}</h2>
         <p id="price" class="text-lg font-semibold">{{ `$${price}` }}</p>
@@ -87,7 +87,7 @@
             烘焙度
             <i class="fa-solid fa-plus"></i>
           </button>
-          <p v-show="showRoast" class="py-2">{{ roastText }}</p>
+          <p v-show="showRoast" class="pb-2">{{ roastText }}</p>
           <button
             type="button"
             @click="toggleProcess"
@@ -96,7 +96,7 @@
             處理方式
             <i class="fa-solid fa-plus"></i>
           </button>
-          <p v-show="showProcess" class="py-2">{{ processingText }}</p>
+          <p v-show="showProcess" class="pb-2">{{ processingText }}</p>
           <button
             type="button"
             @click="toggleFlavor"
@@ -105,7 +105,7 @@
             風味特性
             <i class="fa-solid fa-plus"></i>
           </button>
-          <p v-show="showFlavor" class="py-2">
+          <p v-show="showFlavor" class="pb-2">
             {{ descriptionFlavor }}
             <br />
             {{ product.flavor_type }}+{{ product.flavor_tags.map((tag) => tag.name).join('、') }}
@@ -115,7 +115,7 @@
         <div>
           <button
             @click="toggleHeart"
-            v-show="isheartOpen"
+            v-show="!heartBtn"
             type="button"
             class="bg-[#6d654f] text-white text-sm p-3.5 rounded"
           >
@@ -123,7 +123,7 @@
           </button>
           <button
             @click="toggleHeart"
-            v-show="!isheartOpen"
+            v-show="heartBtn"
             type="button"
             class="bg-[#6d654f] text-white text-sm p-3.5 rounded"
           >
@@ -510,10 +510,10 @@
   });
 
   // 加入收藏與購物車提示
-  const isheartOpen = ref(true);
+  const heartBtn = ref(false);
   const toggleHeart = () => {
-    isheartOpen.value = !isheartOpen.value;
-    alert(isheartOpen.value ? '已從收藏移除' : '已加入收藏');
+    heartBtn.value = !heartBtn.value;
+    alert(heartBtn.value ? '已加入收藏' : '已從收藏移除');
   };
   const addToCart = () => {
     alert('已加入購物車');
@@ -536,9 +536,9 @@
   // 資料庫中英切換
   const roastText = computed(() => {
     const roastMap: Record<string, string> = {
-      Light: '淺焙 | 口感輕盈，香氣明亮清爽',
-      Medium: '中焙 | 口感平衡，香氣溫潤適中',
-      Dark: '深焙 | 口感濃郁，香氣深沉厚重',
+      Light: '淺焙 ︱ 口感輕盈，香氣明亮清爽',
+      Medium: '中焙 ︱ 口感平衡，香氣溫潤適中',
+      Dark: '深焙 ︱ 口感濃郁，香氣深沉厚重',
     };
     return product.value ? roastMap[product.value.roast] || product.value.roast : '';
   });

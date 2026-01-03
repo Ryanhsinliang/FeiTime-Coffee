@@ -3,7 +3,7 @@
   <div v-else-if="error">{{ error }}</div>
   <main class="relative" v-else-if="product">
     <!-- Product Guide Section -->
-    <section class="flex flex-col lg:flex-row justify-center relative min-h-[53vw]">
+    <section class="flex flex-col lg:flex-row justify-center relative min-h-[50vw]">
       <!-- Photo Gallery -->
       <div
         class="w-full lg:w-1/2 bg-[#f3eeea] relative"
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Product Form -->
-      <form class="py-24 px-32 bg-[#f9f8f6] w-full lg:w-1/2 text-[#6d654f]">
+      <form class="py-24 px-32 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-16 text-[#6d654f]">
         <p id="origin">{{ originText }}</p>
         <h2 class="text-4xl py-4 font-semibold">{{ product.name }}</h2>
         <p id="price" class="text-lg font-semibold">{{ `$${price}` }}</p>

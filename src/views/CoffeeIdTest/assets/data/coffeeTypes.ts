@@ -29,10 +29,9 @@ export const coffeePersonas = [
     flavor2: '澄澈',
     roasting: '淺焙',
     description: '清新敏捷，觀察力強，擁有旺盛好奇心，是天生的探索者與創作者。',
-    beans: ['耶加雪菲', '肯亞', '水洗豆'],
+    beans: ['淺焙', '果香清爽', '水洗'],
     brew: ['V60', 'Kalita', '冰手沖'],
   },
-
   {
     id: 'A2',
     name: '莓果狐狸',
@@ -42,10 +41,9 @@ export const coffeePersonas = [
     flavor2: '甜',
     roasting: '淺焙',
     description: '活潑直覺、魅力高，是走到哪都能帶來能量與笑容的人。',
-    beans: ['衣索比亞果香', '日曬豆'],
+    beans: ['淺焙', '果香清爽', '日曬'],
     brew: ['手沖', '艾樂壓'],
   },
-
   {
     id: 'A3',
     name: '探險野貓',
@@ -55,10 +53,9 @@ export const coffeePersonas = [
     flavor2: '醇厚',
     roasting: '中淺焙',
     description: '果斷行動派，在創意與現實之間切換自如，是領導者類型。',
-    beans: ['哥倫比亞蜜處理', '肯亞 AA'],
+    beans: ['中淺焙', '果香清爽', '蜜處理'],
     brew: ['錐形濾杯', '摩卡壺'],
   },
-
   {
     id: 'A4',
     name: '沉思貍貓',
@@ -68,7 +65,7 @@ export const coffeePersonas = [
     flavor2: '餘韻',
     roasting: '中焙',
     description: '感性與理性並存的深度思考者，擅長品味生活的細節。',
-    beans: ['水洗耶加', '瓜地馬拉'],
+    beans: ['中焙', '花香明亮', '水洗'],
     brew: ['蒂莫西', '手沖'],
   },
 
@@ -81,10 +78,9 @@ export const coffeePersonas = [
     flavor2: '酸',
     roasting: '淺焙',
     description: '溫柔可愛又帶點靈氣，能讓人放鬆與感到安心。',
-    beans: ['日曬豆', '水洗果香'],
+    beans: ['衣索比亞', '花香明亮', '日曬'],
     brew: ['手沖', '冷萃'],
   },
-
   {
     id: 'B2',
     name: '焦糖河馬',
@@ -94,10 +90,9 @@ export const coffeePersonas = [
     flavor2: '醇厚',
     roasting: '中〜中深焙',
     description: '慢活療癒型人格，穩定可靠，是朋友的心靈靠山。',
-    beans: ['巴西', '哥倫比亞', '甜感豆'],
+    beans: ['巴西', '堅果巧克力', '水洗'],
     brew: ['義式', '美式', '奶咖'],
   },
-
   {
     id: 'B3',
     name: '蜂蜜熊',
@@ -107,10 +102,9 @@ export const coffeePersonas = [
     flavor2: '餘韻',
     roasting: '中淺〜中焙',
     description: '柔和內斂，感性豐富，是讓人安心的暖心存在。',
-    beans: ['蜜處理', '衣索比亞', '瓜地馬拉'],
+    beans: ['瓜地馬拉', '堅果巧克力', '蜜處理'],
     brew: ['手沖', '浸泡式'],
   },
-
   {
     id: 'B4',
     name: '微光海豚',
@@ -120,7 +114,7 @@ export const coffeePersonas = [
     flavor2: '澄澈',
     roasting: '淺焙',
     description: '自由清爽、感受力強，像海風一般柔軟與靈動。',
-    beans: ['水洗豆', '肯亞'],
+    beans: ['肯亞', '果香清爽', '水洗'],
     brew: ['手沖', '冰釀'],
   },
 
@@ -133,10 +127,9 @@ export const coffeePersonas = [
     flavor2: '酸',
     roasting: '中深焙',
     description: '衝勁十足的行動者，遇到事情總是第一個跳下去做。',
-    beans: ['印尼系列', '曼特寧', '蘇門答臘'],
+    beans: ['印尼', '中深焙', '水洗'],
     brew: ['摩卡壺', '義式'],
   },
-
   {
     id: 'C2',
     name: '奶油水牛',
@@ -146,10 +139,9 @@ export const coffeePersonas = [
     flavor2: '甜',
     roasting: '中深焙',
     description: '厚實可靠，節奏穩定，是朋友群中的安全感來源。',
-    beans: ['巴西', '哥倫比亞'],
+    beans: ['巴西', '中深焙', '日曬'],
     brew: ['法壓', '義式', '美式'],
   },
-
   {
     id: 'C3',
     name: '深森棕熊',
@@ -159,10 +151,9 @@ export const coffeePersonas = [
     flavor2: '餘韻',
     roasting: '中深〜深焙',
     description: '哲學系人格，喜歡深思、沉靜且有內在力量。',
-    beans: ['曼特寧', '蘇門答臘', '印尼深焙'],
+    beans: ['印尼', '深焙', '蜜處理'],
     brew: ['義式', '浸泡式'],
   },
-
   {
     id: 'C4',
     name: '冷靜灰狼',
@@ -172,7 +163,7 @@ export const coffeePersonas = [
     flavor2: '澄澈',
     roasting: '中焙',
     description: '策略高手，專注理性，喜歡精準與效率。',
-    beans: ['哥倫比亞水洗', '中焙豆'],
+    beans: ['哥倫比亞', '中焙', '水洗'],
     brew: ['金屬濾杯', '手沖'],
   },
 
@@ -185,10 +176,9 @@ export const coffeePersonas = [
     flavor2: '酸',
     roasting: '中焙',
     description: '節奏慢、觀察細膩、具有深度的文青型人格。',
-    beans: ['水洗耶加', '衣索比亞', '肯亞'],
+    beans: ['衣索比亞', '中焙', '花香明亮'],
     brew: ['手沖', '浸泡式', '冷萃'],
   },
-
   {
     id: 'D2',
     name: '可可樹懶',
@@ -198,10 +188,9 @@ export const coffeePersonas = [
     flavor2: '甜',
     roasting: '中焙',
     description: '放鬆療癒型，感性深沉，喜歡慢慢體驗生活。',
-    beans: ['蜜處理豆', '巴西甜感豆', '中淺焙豆'],
+    beans: ['巴西', '中焙', '堅果巧克力'],
     brew: ['手沖', '法壓', '冷萃'],
   },
-
   {
     id: 'D3',
     name: '老靈魂黑熊',
@@ -211,10 +200,9 @@ export const coffeePersonas = [
     flavor2: '醇厚',
     roasting: '中深焙',
     description: '內斂、有故事感、智慧型人格。',
-    beans: ['曼特寧', '蘇門答臘', '印尼深焙'],
+    beans: ['印尼', '中深焙', '濃郁厚實'],
     brew: ['義式', '摩卡壺', '浸泡式'],
   },
-
   {
     id: 'D4',
     name: '山嵐白鹿',
@@ -224,9 +212,10 @@ export const coffeePersonas = [
     flavor2: '澄澈',
     roasting: '中淺焙',
     description: '靜謐冷靜、安定感強，如山林間的白鹿。',
-    beans: ['水洗豆', '瓜地馬拉', '肯亞'],
+    beans: ['瓜地馬拉', '中淺焙', '果香清爽'],
     brew: ['手沖', 'V60', '冰手沖'],
   },
+
   {
     id: 'E1',
     name: '晨光白狐',
@@ -236,10 +225,9 @@ export const coffeePersonas = [
     flavor2: '酸',
     roasting: '淺焙',
     description: '思緒敏捷、清晰明亮，如晨光般帶著冷靜與靈巧的氣質。',
-    beans: ['水洗耶加', '肯亞', '中南美水洗豆'],
+    beans: ['淺焙', '花香明亮', '水洗'],
     brew: ['V60', 'Kalita', '冰手沖'],
   },
-
   {
     id: 'E2',
     name: '雲光小兔',
@@ -249,10 +237,9 @@ export const coffeePersonas = [
     flavor2: '甜',
     roasting: '淺〜中淺焙',
     description: '溫柔細膩，感受力敏銳，喜歡純粹自然的甜感與乾淨風味。',
-    beans: ['日曬豆', '瓜地馬拉', '水洗甜香豆'],
+    beans: ['淺～中淺焙', '果香清爽', '日曬'],
     brew: ['手沖', '冰釀', '浸泡式'],
   },
-
   {
     id: 'E3',
     name: '玄霧山犬',
@@ -262,10 +249,9 @@ export const coffeePersonas = [
     flavor2: '醇厚',
     roasting: '中焙',
     description: '踏實冷靜、專注理性，喜歡兼具厚度與透明度的均衡風味。',
-    beans: ['哥倫比亞水洗', '印尼豆（輕深焙）', '中焙均衡豆'],
+    beans: ['中焙', '堅果巧克力', '水洗'],
     brew: ['金屬濾杯', '手沖', '法壓'],
   },
-
   {
     id: 'E4',
     name: '霧羽白鶴',
@@ -275,7 +261,7 @@ export const coffeePersonas = [
     flavor2: '餘韻',
     roasting: '中淺焙',
     description: '寧靜沉著，喜歡乾淨透明且帶有優雅延伸感的風味。',
-    beans: ['瓜地馬拉', '水洗耶加', '肯亞'],
+    beans: ['中淺焙', '花香明亮', '水洗'],
     brew: ['手沖', '冰手沖', '浸泡式'],
   },
 ];

@@ -12,7 +12,7 @@ export interface ProductRequest {
   description: string; // 產品描述
   price: number; // 價格
   stock: number; // 庫存量
-  img: any[]; // 產品圖片
+  img: { formats: { large: { url: string }; medium?: { url: string } } }[]; // 產品圖片
   weight: number; // 重量（克）
 }
 

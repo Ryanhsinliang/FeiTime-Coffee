@@ -60,6 +60,7 @@
             value="1"
             min="1"
             class="border border-gray-300 px-3 py-2 rounded w-1/2"
+            v-model.number="quantity"
           />
         </div>
 
@@ -491,17 +492,18 @@
   };
 
   // 重量對應價格
+  const quantity = ref(1);
   const weight = ref(250);
   const price = computed(() => {
     if (!product.value) {
       return 0;
     }
     if (weight.value === 100) {
-      return product.value.price / 2;
+      return (product.value.price * quantity.value) / 2;
     } else if (weight.value === 250) {
-      return product.value.price;
+      return product.value.price * quantity.value;
     } else if (weight.value === 500) {
-      return product.value.price * 2;
+      return product.value.price * quantity.value * 2;
     } else {
       return 0;
     }
@@ -546,6 +548,10 @@
       Natural: '日曬處理',
       Honey: '蜜處理',
       Anaerobic: '厭氧發酵',
+      'Wet-Hulled': '濕剝法（半水洗）',
+      'Anaerobic Natural': '厭氧日曬',
+      'Anaerobic Washed': '厭氧水洗',
+      Monsooned: '季風處理',
     };
     return product.value ? processingMap[product.value.processing] || product.value.processing : '';
   });

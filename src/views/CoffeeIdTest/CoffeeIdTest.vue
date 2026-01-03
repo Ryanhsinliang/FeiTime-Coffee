@@ -51,6 +51,15 @@
       </div>
     </div>
   </section>
+  <!-- 柔柔不哭からの  -->
+  <!-- 測試用 -->
+  <p
+    @click="goProduct('flavor_type', 'Fruity')"
+    class="text-10 inline-block px-3 py-3 mx-3 my-3 bg-lime-400"
+  >
+    點擊測試
+  </p>
+  <!-- 柔柔不哭終わった  -->
 </template>
 
 <script setup lang="ts">
@@ -142,6 +151,19 @@
   `;
     glowStyle.value = '';
   }
+
+  // 柔柔不哭からの
+  // 根據你的問題結果 需提供兩個變數到以下函數來製作路由
+  // 第一個參數丟類別 比如說國家就丟origin、風味就丟flavor_type
+  // 第二個參數丟值 比如說巴西就丟Brazil、濃郁厚實就丟Bold
+  // 參數的英文需和資料庫一樣
+  const goProduct = (type: string, val: string) => {
+    router.push({
+      path: '/product',
+      query: { [type]: val }, // 把網址變成 ?origin=Brazil 類似這樣的型式
+    });
+  };
+  // 柔柔不哭終わった
 </script>
 
 <style scoped>
@@ -154,5 +176,3 @@
     object-fit: cover;
   }
 </style>
-
-<style></style>

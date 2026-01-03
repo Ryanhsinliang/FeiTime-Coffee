@@ -304,7 +304,8 @@
 
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, watch } from 'vue';
+  import { useRoute } from 'vue-router';
 
   // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
   const sortTopbar = ref(true);
@@ -430,9 +431,25 @@
     }
   };
 
+  // 路由相關
+  const route = useRoute();
+  const first = () => {
+    // 把網址上的參數 (route.query) 帶到 API 函數
+    getcoffee(route.query);
+  };
+
   onMounted(async () => {
+    first(); // 頁面一打開，就檢查網址
     await getcoffee({});
   });
+
+  watch(
+    // 如果網址變了 (按了新按鈕)  也要重新抓資料
+    () => route.query,
+    () => {
+      first();
+    }
+  );
 </script>
 
 <style>

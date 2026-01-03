@@ -67,13 +67,28 @@
           <div class="filter-type">
             <p class="filter-word" tabindex="0">焙度</p>
             <div class="type-list">
-              <p @click="getcoffee({ roast: 'Light' })" class="list" tabindex="0" value="Light">
+              <p
+                @click="getcoffee({ roast: 'Light' }), goProduct('roast', 'Light')"
+                class="list"
+                tabindex="0"
+                value="Light"
+              >
                 淺焙
               </p>
-              <p @click="getcoffee({ roast: 'Medium' })" class="list" tabindex="0" value="Medium">
+              <p
+                @click="getcoffee({ roast: 'Medium' }), goProduct('roast', 'Medium')"
+                class="list"
+                tabindex="0"
+                value="Medium"
+              >
                 中焙
               </p>
-              <p @click="getcoffee({ roast: 'Dark' })" class="list" tabindex="0" value="Dark">
+              <p
+                @click="getcoffee({ roast: 'Dark' }), goProduct('roast', 'Dark')"
+                class="list"
+                tabindex="0"
+                value="Dark"
+              >
                 深焙
               </p>
             </div>
@@ -82,7 +97,7 @@
             <p class="filter-word" tabindex="0">風味</p>
             <div class="type-list">
               <p
-                @click="getcoffee({ flavor_type: 'Fruity' })"
+                @click="getcoffee({ flavor_type: 'Fruity' }), goProduct('flavor_type', 'Fruity')"
                 class="list"
                 tabindex="0"
                 value="Fruity"
@@ -90,18 +105,23 @@
                 果香清爽
               </p>
               <p
-                @click="getcoffee({ flavor_type: 'Nutty' })"
+                @click="getcoffee({ flavor_type: 'Nutty' }), goProduct('flavor_type', 'Nutty')"
                 class="list"
                 tabindex="0"
                 value="Nutty"
               >
                 堅果巧克力
               </p>
-              <p @click="getcoffee({ flavor_type: 'Bold' })" class="list" tabindex="0" value="Bold">
+              <p
+                @click="getcoffee({ flavor_type: 'Bold' }), goProduct('flavor_type', 'Bold')"
+                class="list"
+                tabindex="0"
+                value="Bold"
+              >
                 濃郁厚實
               </p>
               <p
-                @click="getcoffee({ flavor_type: 'Floral' })"
+                @click="getcoffee({ flavor_type: 'Floral' }), goProduct('flavor_type', 'Floral')"
                 class="list"
                 tabindex="0"
                 value="Floral"
@@ -114,7 +134,7 @@
             <p class="filter-word" tabindex="0">工法</p>
             <div class="type-list">
               <p
-                @click="getcoffee({ processing: 'Washed' })"
+                @click="getcoffee({ processing: 'Washed' }), goProduct('processing', 'Washed')"
                 class="list"
                 tabindex="0"
                 value="Washed"
@@ -122,7 +142,7 @@
                 水洗
               </p>
               <p
-                @click="getcoffee({ processing: 'Natural' })"
+                @click="getcoffee({ processing: 'Natural' }), goProduct('processing', 'Natural')"
                 class="list"
                 tabindex="0"
                 value="Natural"
@@ -151,7 +171,7 @@
             <p class="filter-word" tabindex="0">產地</p>
             <div class="big-list">
               <p
-                @click="getcoffee({ origin: 'Ethiopia' })"
+                @click="getcoffee({ origin: 'Ethiopia' }), goProduct('origin', 'Ethiopia')"
                 class="list"
                 tabindex="0"
                 value="Ethiopia"
@@ -305,7 +325,7 @@
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
   import { ref, onMounted, watch } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRouter, useRoute } from 'vue-router';
 
   // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
   const sortTopbar = ref(true);
@@ -431,7 +451,15 @@
     }
   };
 
-  // 路由相關
+  // 前端路由
+  const router = useRouter();
+  const goProduct = (type: string, val: string) => {
+    router.push({
+      path: '/product',
+      query: { [type]: val }, // 把網址變成類似 ?origin=Brazil 這樣的型式
+    });
+  };
+
   const route = useRoute();
   const first = () => {
     // 把網址上的參數 (route.query) 帶到 API 函數

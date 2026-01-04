@@ -3,13 +3,10 @@
     ref="card"
     @mousemove="handleMove"
     @mouseleave="reset"
-    :style="style"
+    :style="cardStyle"
     class="group relative mx-auto w-full max-w-3xl transform-gpu transition-transform duration-300 ease-out"
   >
-    <!-- 亮光層 -->
     <div class="pointer-events-none absolute inset-0 rounded-2xl z-20" :style="glowStyle"></div>
-
-    <!-- 卡片內容 -->
     <div
       class="relative z-10 w-full bg-[#DCCFC0]/60 backdrop-blur-md rounded-2xl p-5 min-h-[60vh] md:min-h-[70vh] shadow-lg flex flex-col gap-1"
     >
@@ -58,6 +55,8 @@
   >
     <button
       type="button"
+      @click="shareIdCard"
+      :disabled="isSharing"
       class="group/option relative flex items-center justify-center h-14 px-10 bg-white/20 text-white tracking-widest uppercase rounded-xl shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300 mt-3"
     >
       分享我的 Coffee ID
@@ -196,11 +195,13 @@
 
   //拿到風味測試角色
   import { getPersona } from '@/utils/getPersona';
+  import html2canvas from 'html2canvas';
+  // import { blob } from 'stream/consumers';
   const persona = computed(() => getPersona(normalizedScores)!);
 
   // 卡片效果
   const card = ref<HTMLElement | null>(null);
-  const style = ref('');
+  const cardStyle = ref('');
   const glowStyle = ref('');
 
   function handleMove(e: MouseEvent) {
@@ -216,33 +217,117 @@
     const rotateY = ((x - centerX) / centerX) * 6;
     const rotateX = -((y - centerY) / centerY) * 4;
 
-    style.value = `
-    transform:
-      perspective(1000px)
-      rotateY(${rotateY}deg)
-      rotateX(${rotateX}deg)
-      translateY(-4px);
-  `;
+    cardStyle.value = `
+        transform:
+          perspective(1000px)
+          rotateY(${rotateY}deg)
+          rotateX(${rotateX}deg)
+          translateY(-4px);
+      `;
 
     glowStyle.value = `
-    background:
-      radial-gradient(
-        600px circle at ${x}px ${y}px,
-        rgba(255,255,255,0.25),
-        transparent 45%
-      );
-  `;
+        background:
+          radial-gradient(
+            600px circle at ${x}px ${y}px,
+            rgba(255,255,255,0.25),
+            transparent 45%
+          );
+      `;
   }
 
   function reset() {
-    style.value = `
-    transform:
-      perspective(1000px)
-      rotateY(0deg)
-      rotateX(0deg)
-      translateY(0);
-  `;
+    cardStyle.value = `
+        transform:
+          perspective(1000px)
+          rotateY(0deg)
+          rotateX(0deg)
+          translateY(0);
+      `;
     glowStyle.value = '';
+  }
+
+  // 分享功能
+  const isSharing = ref(false);
+  const isSaving = ref(false);
+  const showMenu = ref(false);
+  const hint = ref({ show: true, message: '' });
+
+  function showHint(message: string) {
+    hint.value.message = message;
+    hint.value.show = true;
+    setTimeout(() => {
+      hint.value.show = false;
+    }, 2000);
+  }
+
+  const shareText = computed(() => {
+    return `我的 Coffee ID 是 ${persona.value.name}！來看看你的風味測試結果吧！
+       風味分數：
+      酸味: ${normalizedScores.value.acidity}
+      甜味: ${normalizedScores.value.sweetness}
+      醇厚度: ${normalizedScores.value.body}
+      餘韻: ${normalizedScores.value.aftertaste}
+      澄澈度: ${normalizedScores.value.clarity}
+      推薦商品: ${persona.value.beans.join(', ')}`;
+  });
+
+  async function cardToImage(): Promise<Blob | null> {
+    if (!card.value) return null;
+    try {
+      const originalStyle = cardStyle.value;
+      cardStyle.value = '';
+
+      const canvas = await html2canvas(card.value, {
+        backgroundColor: null,
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+      cardStyle.value = originalStyle;
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+          resolve(blob);
+        }, 'image/png');
+      });
+    } catch (error) {
+      console.log('CoffeeID截圖失敗', error);
+      return null;
+    }
+  }
+
+  async function shareIdCard() {
+    isSharing.value = true;
+    try {
+      if (navigator.share) {
+        const imageblob = await cardToImage();
+        if (imageblob && navigator.canShare) {
+          const imageFile = new File([imageblob], 'coffee-id-card.png', { type: 'image/png' });
+          if (navigator.canShare({ files: [imageFile] })) {
+            await navigator.share({
+              title: '我的 Coffee ID 卡片',
+              text: shareText.value,
+              files: [imageFile],
+            });
+            showHint('分享成功！');
+            return;
+          }
+        }
+        await navigator.share({
+          title: '我的 Coffee ID 卡片',
+          text: shareText.value,
+          url: window.location.href,
+        });
+        showHint('分享成功！');
+      } else {
+        showMenu.value = true;
+      }
+    } catch (error) {
+      if ((error as Error).name !== 'AbortError') {
+        showHint('分享失敗，請稍後再試！');
+      }
+    } finally {
+      isSharing.value = false;
+    }
   }
 </script>
 

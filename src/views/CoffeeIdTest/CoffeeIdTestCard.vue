@@ -29,7 +29,6 @@
         重新測驗
       </button>
     </div>
-    <!-- 內容區塊（RWD 置中） -->
     <section v-if="!quizData.showResult" id="questionCard" class="flex flex-wrap justify-center">
       <div
         ref="card"
@@ -38,7 +37,6 @@
         :style="style"
         class="group relative w-2/3 rounded-2xl bg-white/20 backdrop-blur-md shadow-lg transform-gpu transition-transform duration-300 ease-out"
       >
-        <!-- ✨ 亮光層 -->
         <div class="pointer-events-none absolute inset-0 rounded-2xl z-20" :style="glowStyle"></div>
         <div
           v-if="quizData.questions[quizData.currentIndex]"
@@ -68,12 +66,10 @@
               @click="selectOption(option)"
               class="group/option relative overflow-hidden text-center leading-normal p-5 rounded-2xl bg-white/60 backdrop-blur-sm hover:bg-white/30 cursor-pointer transition-all duration-300"
             >
-              <!-- 內容 -->
               <div class="relative z-10 font-bold text-[#2f2f2f]">
                 {{ option.label }}
                 <p class="text-[#2f2f2f] font-normal text-sm">{{ option.helper }}</p>
               </div>
-              <!-- 描邊動畫 -->
               <span
                 class="pointer-events-none absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-white scale-0 origin-top-left transition-transform duration-300 group-hover/option:scale-100"
               ></span>
@@ -130,7 +126,7 @@
     questions: [],
   });
 
-  // ✅ 用於儲存後端計算的結果
+  //  儲存後端計算的結果
   const calculatedResult = ref<{
     scores: Scores;
     maxScores: Scores;
@@ -169,10 +165,6 @@
     }
   }
 
-  // function isSelected(option: Option) {
-  //   return quizData.answers[quizData.currentIndex]?.optionKey === option.key;
-  // }
-
   function toPreviousQuestion() {
     if (quizData.currentIndex > 0) {
       quizData.currentIndex--;
@@ -196,7 +188,6 @@
 
   const emit = defineEmits(['quiz-finished']);
 
-  // ✅ 改用後端計算
   async function showResultCard() {
     if (answered.value !== quizData.questions.length) {
       console.warn('尚未完成所有題目');
@@ -204,10 +195,8 @@
     }
 
     try {
-      // 過濾掉 undefined 的答案
       const validAnswers = quizData.answers.filter((a) => a !== undefined);
 
-      // 呼叫後端 API 計算分數
       const { data } = await quizAPI.calculateScores(validAnswers);
 
       if (data.success) {
@@ -226,7 +215,6 @@
     return quizData.currentIndex === lastIndex && quizData.answers[lastIndex] !== undefined;
   });
 
-  // ✅ 從後端結果取得 maxScores
   const maxScores = computed(() => {
     return (
       calculatedResult.value?.maxScores || {

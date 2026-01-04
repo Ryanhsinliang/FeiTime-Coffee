@@ -472,7 +472,7 @@
   };
 
   // 前端路由
-  const router = useRouter(); // router是一個動作 可以執行頁面跳轉 後面搭配函數來使用  .push() 跳轉 .replace() 替換  .back() 回上一頁
+  const router = useRouter();
   const goProduct = (type: string, val: string) => {
     router.push({
       path: '/product',
@@ -483,12 +483,13 @@
   const route = useRoute();
   const first = () => {
     // 把網址上的參數 (route.query) 帶到 API 函數
+    // 預留一個地方處理route.query (若之後需傳遞數字的話 要在這邊轉型)
     getcoffee(route.query);
   };
 
   watch(
-    // 如果網址變了 (按了新按鈕)  也要重新抓資料
-    () => route.query,
+    // 如果網址變了 (按了新按鈕)  要重新抓資料
+    () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值
     () => {
       first();
     },

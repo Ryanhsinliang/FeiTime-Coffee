@@ -7,6 +7,246 @@
 
 <template>
   <section class="feitime-story-section">
+    <!-- 心電圖 SVG - 固定線條 + 流動高光，沿著卡片邊框繞行 -->
+    <div class="ecg-background">
+      <svg
+        class="ecg-container"
+        viewBox="0 0 1920 400"
+        preserveAspectRatio="xMidYMid slice"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <!-- 流動高光漸層 -->
+          <linearGradient
+            id="flowing-highlight"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="0%"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0%" style="stop-color: #a2af9b; stop-opacity: 0">
+              <animate attributeName="offset" values="-0.2; 1" dur="5s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="5%" style="stop-color: #dccfc0; stop-opacity: 0.5">
+              <animate
+                attributeName="offset"
+                values="-0.15; 1.05"
+                dur="5s"
+                repeatCount="indefinite"
+              />
+            </stop>
+            <stop offset="10%" style="stop-color: #eeeeee; stop-opacity: 1">
+              <animate
+                attributeName="offset"
+                values="-0.1; 1.1"
+                dur="5s"
+                repeatCount="indefinite"
+              />
+            </stop>
+            <stop offset="15%" style="stop-color: #faf9ee; stop-opacity: 0.5">
+              <animate
+                attributeName="offset"
+                values="-0.05; 1.15"
+                dur="5s"
+                repeatCount="indefinite"
+              />
+            </stop>
+            <stop offset="20%" style="stop-color: #a2af9b; stop-opacity: 0">
+              <animate attributeName="offset" values="0; 1.2" dur="5s" repeatCount="indefinite" />
+            </stop>
+          </linearGradient>
+
+          <!-- 發光效果 -->
+          <filter id="glow-effect">
+            <feGaussianBlur stdDeviation="5" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- 底層心電圖線條（固定、半透明） -->
+        <g class="ecg-base">
+          <!-- 左側進入段 -->
+          <path
+            d="M 0 200 
+               L 150 200 
+               L 170 200 
+               L 185 140 
+               L 200 260 
+               L 215 180 
+               L 230 200 
+               L 270 200 
+               L 290 195 
+               L 330 205 
+               L 370 200
+               L 420 200"
+            stroke="#A2AF9B"
+            stroke-width="6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            opacity="0.3"
+          />
+
+          <!-- 上方繞卡片邊框線 - 跟著卡片上緣圓角 -->
+          <path
+            d="M 420 200 
+               L 450 200
+               Q 480 200 500 185
+               Q 520 170 540 160
+               L 600 140
+               L 700 120
+               L 1200 100
+               L 1300 120
+               L 1360 140
+               Q 1380 150 1400 165
+               Q 1420 180 1450 190
+               L 1480 195"
+            stroke="#A2AF9B"
+            stroke-width="6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            opacity="0.3"
+          />
+
+          <!-- 下方繞卡片邊框線 - 跟著卡片下緣圓角 -->
+          <path
+            d="M 420 200 
+               L 450 200
+               Q 480 200 500 215
+               Q 520 230 540 240
+               L 600 260
+               L 700 280
+               L 1200 300
+               L 1300 280
+               L 1360 260
+               Q 1380 250 1400 235
+               Q 1420 220 1450 210
+               L 1480 205"
+            stroke="#A2AF9B"
+            stroke-width="6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            opacity="0.3"
+          />
+
+          <!-- 右側匯合後繼續段 - 更平緩的波形 -->
+          <path
+            d="M 1480 200
+               L 1550 200
+               L 1570 195
+               L 1580 205
+               L 1590 198
+               L 1600 200
+               L 1670 200
+               L 1690 197
+               L 1700 203
+               L 1710 199
+               L 1720 200
+               L 1920 200"
+            stroke="#A2AF9B"
+            stroke-width="6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            opacity="0.3"
+          />
+        </g>
+
+        <!-- 高光層 -->
+        <g class="ecg-highlight" filter="url(#glow-effect)">
+          <!-- 左側進入段高光 -->
+          <path
+            d="M 0 200 
+               L 150 200 
+               L 170 200 
+               L 185 140 
+               L 200 260 
+               L 215 180 
+               L 230 200 
+               L 270 200 
+               L 290 195 
+               L 330 205 
+               L 370 200
+               L 420 200"
+            stroke="url(#flowing-highlight)"
+            stroke-width="6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <!-- 上方繞卡片邊框線高光 -->
+          <path
+            d="M 420 200 
+               L 450 200
+               Q 480 200 500 185
+               Q 520 170 540 160
+               L 600 140
+               L 700 120
+               L 1200 100
+               L 1300 120
+               L 1360 140
+               Q 1380 150 1400 165
+               Q 1420 180 1450 190
+               L 1480 195"
+            stroke="url(#flowing-highlight)"
+            stroke-width="6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <!-- 下方繞卡片邊框線高光 -->
+          <path
+            d="M 420 200 
+               L 450 200
+               Q 480 200 500 215
+               Q 520 230 540 240
+               L 600 260
+               L 700 280
+               L 1200 300
+               L 1300 280
+               L 1360 260
+               Q 1380 250 1400 235
+               Q 1420 220 1450 210
+               L 1480 205"
+            stroke="url(#flowing-highlight)"
+            stroke-width="6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <!-- 右側匯合後繼續段高光 - 更平緩的波形 -->
+          <path
+            d="M 1480 200
+               L 1550 200
+               L 1570 195
+               L 1580 205
+               L 1590 198
+               L 1600 200
+               L 1670 200
+               L 1690 197
+               L 1700 203
+               L 1710 199
+               L 1720 200
+               L 1920 200"
+            stroke="url(#flowing-highlight)"
+            stroke-width="6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </g>
+      </svg>
+    </div>
+
     <div class="max-w-[1200px] mx-auto px-6 md:px-12">
       <!-- 立體玻璃卡片 -->
       <div class="glass-card-3d">
@@ -361,16 +601,33 @@
 
 <style scoped>
   /* ============================================
-   FeiTime Story 區塊樣式 - 立體無框玻璃質感設計
+   FeiTime Story 區塊樣式 - 固定心電圖 + 流動高光
    ============================================ */
 
-  /* 整體區塊背景 - 使用較深的米色作為底色 */
+  /* 整體區塊背景 */
   .feitime-story-section {
     width: 100%;
     padding: 6rem 0;
     background-color: #fffefbcb;
     position: relative;
     overflow: hidden;
+  }
+
+  /* 心電圖背景容器 */
+  .ecg-background {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 400px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  /* SVG 容器 */
+  .ecg-container {
+    width: 100%;
+    height: 100%;
   }
 
   /* 立體玻璃卡片 - 無外框設計 */
@@ -380,6 +637,7 @@
     border-radius: 32px;
     padding: 3rem 2rem;
     overflow: hidden;
+    z-index: 1; /* 確保卡片在心電圖之上 */
 
     /* 半透明玻璃背景 - 內部漸變 */
     background: linear-gradient(
@@ -508,6 +766,11 @@
 
     .glass-card-3d {
       border-radius: 24px;
+    }
+
+    /* 手機版心電圖稍微調整 */
+    .ecg-background {
+      height: 300px;
     }
   }
 

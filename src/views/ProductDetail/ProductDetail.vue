@@ -3,7 +3,7 @@
   <div v-else-if="error">{{ error }}</div>
   <main class="relative" v-else-if="product">
     <!-- Product Guide Section -->
-    <section class="flex flex-col lg:flex-row justify-center relative min-h-[50vw]">
+    <section class="flex flex-col lg:flex-row justify-center relative min-h-[825px]">
       <!-- Photo Gallery -->
       <div
         class="w-full lg:w-1/2 bg-[#f3eeea] relative"
@@ -117,7 +117,7 @@
             @click="toggleHeart"
             v-show="!heartBtn"
             type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 rounded"
+            class="bg-[#6d654f] text-white text-sm p-3.5 rounded hover:bg-[#ABB7A5]"
           >
             <i class="fa-regular fa-heart"></i>
           </button>
@@ -125,18 +125,21 @@
             @click="toggleHeart"
             v-show="heartBtn"
             type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 rounded"
+            class="bg-[#6d654f] text-white text-sm p-3.5 rounded hover:bg-[#ABB7A5]"
           >
             <i class="fa-solid fa-heart"></i>
           </button>
           <button
             @click="addToCart"
             type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 mx-2 rounded"
+            class="bg-[#6d654f] text-white text-sm p-3.5 mx-2 rounded hover:bg-[#ABB7A5]"
           >
             加到購物車
           </button>
-          <button type="submit" class="bg-[#6d654f] text-white text-sm p-3.5 rounded w-24">
+          <button
+            type="submit"
+            class="bg-[#6d654f] text-white text-sm p-3.5 rounded w-24 hover:bg-[#ABB7A5]"
+          >
             立即購買
           </button>
         </div>

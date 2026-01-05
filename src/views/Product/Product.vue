@@ -57,23 +57,30 @@
       <div class="find lg:mx-[16.95%] md:mx-[12.4%] w-[70%] flex whitespace-nowrap">
         <div class="filter px-[16px] flex lg:w-[70%] md:w-[80%]">
           <div class="filter-type">
-            <p class="filter-word" tabindex="0" id="first-noline">類別</p>
-            <div class="type-list">
-              <p class="list" tabindex="0">咖啡豆</p>
-              <p class="list" tabindex="0">濾掛包</p>
-              <p class="list" tabindex="0">器具</p>
-            </div>
-          </div>
-          <div class="filter-type">
             <p class="filter-word" tabindex="0">焙度</p>
             <div class="type-list">
-              <p @click="getcoffee({ roast: 'Light' })" class="list" tabindex="0" value="Light">
+              <p
+                @click="getcoffee({ roast: 'Light' }), goProduct('roast', 'Light')"
+                class="list"
+                tabindex="0"
+                value="Light"
+              >
                 淺焙
               </p>
-              <p @click="getcoffee({ roast: 'Medium' })" class="list" tabindex="0" value="Medium">
+              <p
+                @click="getcoffee({ roast: 'Medium' }), goProduct('roast', 'Medium')"
+                class="list"
+                tabindex="0"
+                value="Medium"
+              >
                 中焙
               </p>
-              <p @click="getcoffee({ roast: 'Dark' })" class="list" tabindex="0" value="Dark">
+              <p
+                @click="getcoffee({ roast: 'Dark' }), goProduct('roast', 'Dark')"
+                class="list"
+                tabindex="0"
+                value="Dark"
+              >
                 深焙
               </p>
             </div>
@@ -82,7 +89,7 @@
             <p class="filter-word" tabindex="0">風味</p>
             <div class="type-list">
               <p
-                @click="getcoffee({ flavor_type: 'Fruity' })"
+                @click="getcoffee({ flavor_type: 'Fruity' }), goProduct('flavor_type', 'Fruity')"
                 class="list"
                 tabindex="0"
                 value="Fruity"
@@ -90,18 +97,23 @@
                 果香清爽
               </p>
               <p
-                @click="getcoffee({ flavor_type: 'Nutty' })"
+                @click="getcoffee({ flavor_type: 'Nutty' }), goProduct('flavor_type', 'Nutty')"
                 class="list"
                 tabindex="0"
                 value="Nutty"
               >
                 堅果巧克力
               </p>
-              <p @click="getcoffee({ flavor_type: 'Bold' })" class="list" tabindex="0" value="Bold">
+              <p
+                @click="getcoffee({ flavor_type: 'Bold' }), goProduct('flavor_type', 'Bold')"
+                class="list"
+                tabindex="0"
+                value="Bold"
+              >
                 濃郁厚實
               </p>
               <p
-                @click="getcoffee({ flavor_type: 'Floral' })"
+                @click="getcoffee({ flavor_type: 'Floral' }), goProduct('flavor_type', 'Floral')"
                 class="list"
                 tabindex="0"
                 value="Floral"
@@ -114,7 +126,7 @@
             <p class="filter-word" tabindex="0">工法</p>
             <div class="type-list">
               <p
-                @click="getcoffee({ processing: 'Washed' })"
+                @click="getcoffee({ processing: 'Washed' }), goProduct('processing', 'Washed')"
                 class="list"
                 tabindex="0"
                 value="Washed"
@@ -122,7 +134,7 @@
                 水洗
               </p>
               <p
-                @click="getcoffee({ processing: 'Natural' })"
+                @click="getcoffee({ processing: 'Natural' }), goProduct('processing', 'Natural')"
                 class="list"
                 tabindex="0"
                 value="Natural"
@@ -130,7 +142,7 @@
                 日曬
               </p>
               <p
-                @click="getcoffee({ processing: 'Honey' })"
+                @click="getcoffee({ processing: 'Honey' }), goProduct('processing', 'Honey')"
                 class="list"
                 tabindex="0"
                 value="Honey"
@@ -138,7 +150,9 @@
                 蜜處理
               </p>
               <p
-                @click="getcoffee({ processing: 'Wet-Hulled' })"
+                @click="
+                  getcoffee({ processing: 'Wet-Hulled' }), goProduct('processing', 'Wet-Hulled')
+                "
                 class="list"
                 tabindex="0"
                 value="Wet-Hulled"
@@ -151,21 +165,31 @@
             <p class="filter-word" tabindex="0">產地</p>
             <div class="big-list">
               <p
-                @click="getcoffee({ origin: 'Ethiopia' })"
+                @click="getcoffee({ origin: 'Ethiopia' }), goProduct('origin', 'Ethiopia')"
                 class="list"
                 tabindex="0"
                 value="Ethiopia"
               >
                 衣索比亞
               </p>
-              <p @click="getcoffee({ origin: 'Kenya' })" class="list" tabindex="0" value="Kenya">
+              <p
+                @click="getcoffee({ origin: 'Kenya' }), goProduct('origin', 'Kenya')"
+                class="list"
+                tabindex="0"
+                value="Kenya"
+              >
                 肯亞
               </p>
-              <p @click="getcoffee({ origin: 'Rwanda' })" class="list" tabindex="0" value="Rwanda">
+              <p
+                @click="getcoffee({ origin: 'Rwanda' }), goProduct('origin', 'Rwanda')"
+                class="list"
+                tabindex="0"
+                value="Rwanda"
+              >
                 盧安達
               </p>
               <p
-                @click="getcoffee({ origin: 'Burundi' })"
+                @click="getcoffee({ origin: 'Burundi' }), goProduct('origin', 'Burundi')"
                 class="list"
                 tabindex="0"
                 value="Burundi"
@@ -173,18 +197,23 @@
                 布隆迪
               </p>
               <p
-                @click="getcoffee({ origin: 'Colombia' })"
+                @click="getcoffee({ origin: 'Colombia' }), goProduct('origin', 'Colombia')"
                 class="list"
                 tabindex="0"
                 value="Colombia"
               >
                 哥倫比亞
               </p>
-              <p @click="getcoffee({ origin: 'Brazil' })" class="list" tabindex="0" value="Brazil">
+              <p
+                @click="getcoffee({ origin: 'Brazil' }), goProduct('origin', 'Brazil')"
+                class="list"
+                tabindex="0"
+                value="Brazil"
+              >
                 巴西
               </p>
               <p
-                @click="getcoffee({ origin: 'Guatemala' })"
+                @click="getcoffee({ origin: 'Guatemala' }), goProduct('origin', 'Guatemala')"
                 class="list"
                 tabindex="0"
                 value="Guatemala"
@@ -192,7 +221,7 @@
                 瓜地馬拉
               </p>
               <p
-                @click="getcoffee({ origin: 'Costa Rica' })"
+                @click="getcoffee({ origin: 'Costa Rica' }), goProduct('origin', 'Costa Rica')"
                 class="list"
                 tabindex="0"
                 value="Costa Rica"
@@ -200,18 +229,23 @@
                 哥斯大黎加
               </p>
               <p
-                @click="getcoffee({ origin: 'El Salvador' })"
+                @click="getcoffee({ origin: 'El Salvador' }), goProduct('origin', 'El Salvador')"
                 class="list"
                 tabindex="0"
                 value="El Salvador"
               >
                 薩爾瓦多
               </p>
-              <p @click="getcoffee({ origin: 'Panama' })" class="list" tabindex="0" value="Panama">
+              <p
+                @click="getcoffee({ origin: 'Panama' }), goProduct('origin', 'Panama')"
+                class="list"
+                tabindex="0"
+                value="Panama"
+              >
                 巴拿馬
               </p>
               <p
-                @click="getcoffee({ origin: 'Indonesia' })"
+                @click="getcoffee({ origin: 'Indonesia' }), goProduct('origin', 'Indonesia')"
                 class="list"
                 tabindex="0"
                 value="Indonesia"
@@ -219,18 +253,23 @@
                 印尼
               </p>
               <p
-                @click="getcoffee({ origin: 'Vietnam' })"
+                @click="getcoffee({ origin: 'Vietnam' }), goProduct('origin', 'Vietnam')"
                 class="list"
                 tabindex="0"
                 value="Vietnam"
               >
                 越南
               </p>
-              <p @click="getcoffee({ origin: 'India' })" class="list" tabindex="0" value="India">
+              <p
+                @click="getcoffee({ origin: 'India' }), goProduct('origin', 'India')"
+                class="list"
+                tabindex="0"
+                value="India"
+              >
                 印度
               </p>
               <p
-                @click="getcoffee({ origin: 'Thailand' })"
+                @click="getcoffee({ origin: 'Thailand' }), goProduct('origin', 'Thailand')"
                 class="list"
                 tabindex="0"
                 value="Thailand"
@@ -238,7 +277,9 @@
                 泰國
               </p>
               <p
-                @click="getcoffee({ origin: 'Papua New Guinea' })"
+                @click="
+                  getcoffee({ origin: 'Papua New Guinea' }), goProduct('origin', 'Papua New Guinea')
+                "
                 class="list"
                 tabindex="0"
                 value="Papua New Guinea"
@@ -260,7 +301,6 @@
       :class="topBarSapce"
     >
       <!-- card start -->
-      <!-- {{ p.img[0].formats.large.url }} -->
       <a href="#" target="_blank" v-for="p in product" :key="p.pid">
         <!-- 待放網址 -->
         <div class="relative">
@@ -304,7 +344,8 @@
 
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
-  import { ref, onMounted } from 'vue';
+  import { ref, watch } from 'vue';
+  import { useRouter, useRoute } from 'vue-router';
 
   // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
   const sortTopbar = ref(true);
@@ -430,9 +471,30 @@
     }
   };
 
-  onMounted(async () => {
-    await getcoffee({});
-  });
+  // 前端路由
+  const router = useRouter();
+  const goProduct = (type: string, val: string) => {
+    router.push({
+      path: '/product',
+      query: { [type]: val }, // 把網址變成類似 ?origin=Brazil 這樣的型式
+    });
+  };
+
+  const route = useRoute();
+  const first = () => {
+    // 把網址上的參數 (route.query) 帶到 API 函數
+    // 預留一個地方處理route.query (若之後需傳遞數字的話 要在這邊轉型)
+    getcoffee(route.query);
+  };
+
+  watch(
+    // 如果網址變了 (按了新按鈕)  要重新抓資料
+    () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值
+    () => {
+      first();
+    },
+    { immediate: true } // 載入頁面時 馬上執行一次來顯示全部產品
+  );
 </script>
 
 <style>

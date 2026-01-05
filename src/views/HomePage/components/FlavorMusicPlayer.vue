@@ -28,6 +28,7 @@
   const isPlaying = ref<boolean>(false);
   const vinylRotation = ref<number>(0);
   const lastPlaybackTime = ref<number>(0);
+  const shouldAutoPlay = ref<boolean>(false); // 新增：標記是否應自動播放
   let animationFrameId: number | null = null;
   let youtubePlayer: any = null;
   let progressCheckInterval: number | null = null;
@@ -173,8 +174,20 @@
                     lastPlaybackTime.value = youtubePlayer.getCurrentTime() || 0;
                   }
                 },
-                onReady: () => {
+                onReady: (event: any) => {
+                  console.log('✅ YouTube player ready');
                   progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
+
+                  // 如果標記為應自動播放，則自動播放
+                  if (shouldAutoPlay.value) {
+                    console.log('🎵 Auto-playing video...');
+                    try {
+                      event.target.playVideo();
+                      shouldAutoPlay.value = false; // 重置標記
+                    } catch (err) {
+                      console.warn('⚠️ Auto-play failed:', err);
+                    }
+                  }
                 },
               },
             });
@@ -197,6 +210,7 @@
       musicError.value = null;
       isPlaying.value = false;
       lastPlaybackTime.value = 0;
+      shouldAutoPlay.value = true; // 設定自動播放
 
       const data = await getMusicByFlavor({
         flavorId: flavor.id,
@@ -209,6 +223,7 @@
         currentVideoIndex.value = 0;
         aiRecommendation.value = data.recommendation;
       } else {
+        shouldAutoPlay.value = false; // 失敗時取消自動播放
         throw new Error(data.message || '暫時無法找到相關音樂');
       }
     } catch (err: any) {
@@ -216,24 +231,29 @@
       musicError.value = err.message || '無法取得推薦，請稍後再試';
       currentVideos.value = [];
       aiRecommendation.value = '選擇風味，開始音樂之旅';
+      shouldAutoPlay.value = false; // 失敗時取消自動播放
     } finally {
       musicLoading.value = false;
     }
   };
 
   const nextRecommendation = async (): Promise<void> => {
+    // 如果還有下一首歌曲在當前列表中
     if (currentVideoIndex.value < currentVideos.value.length - 1) {
       currentVideoIndex.value++;
       isPlaying.value = false;
       lastPlaybackTime.value = 0;
+      shouldAutoPlay.value = true; // 設定自動播放
       return;
     }
 
+    // 需要獲取新的音樂推薦
     if (!selectedFlavor.value) return;
 
     try {
       musicLoading.value = true;
       musicError.value = null;
+      shouldAutoPlay.value = true; // 設定自動播放
 
       const data = await getRandomMusic({
         currentFlavorName: selectedFlavor.value.name,
@@ -246,11 +266,13 @@
         lastPlaybackTime.value = 0;
         aiRecommendation.value = data.recommendation || aiRecommendation.value;
       } else {
+        shouldAutoPlay.value = false; // 失敗時取消自動播放
         throw new Error(data.message || '暫時無法找到更多音樂');
       }
     } catch (err: any) {
       console.error('❌ Next recommendation error:', err);
       musicError.value = '無法取得更多推薦';
+      shouldAutoPlay.value = false; // 失敗時取消自動播放
     } finally {
       musicLoading.value = false;
     }
@@ -288,15 +310,95 @@
         <div class="flex-shrink-0 flex items-center justify-center relative p-8 lg:p-12">
           <div class="relative animate-float">
             <div
-              class="relative w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] lg:w-[280px] lg:h-[280px] rounded-full vinyl-grooves shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-[4px] border-[#171412] flex items-center justify-center"
+              class="vinyl-disc relative w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] lg:w-[280px] lg:h-[280px] rounded-full shadow-[0_25px_60px_rgba(162,175,155,0.5)] border-[3px] border-[#A2AF9B]/40 flex items-center justify-center overflow-hidden bg-white/10 backdrop-blur-sm"
               :style="{ transform: `rotate(${vinylRotation}deg)` }"
             >
+              <!-- 黑膠容器背景 -->
               <div
-                class="absolute inset-0 rounded-full bg-gradient-to-br from-white/10 via-transparent to-black/20 pointer-events-none"
+                class="absolute inset-0 rounded-full bg-gradient-to-br from-[#E8F5E9]/30 via-transparent to-[#C8D6C5]/20"
               ></div>
+
+              <!-- 液體容器 - 反向旋轉保持水平 -->
               <div
-                class="w-1/3 h-1/3 bg-[#FAF9EE] rounded-full flex items-center justify-center border-[10px] lg:border-[12px] border-[#DCCFC0] shadow-inner relative overflow-hidden"
+                class="liquid-container absolute inset-0 rounded-full overflow-hidden"
+                :class="{ 'liquid-container-active': isPlaying }"
+                :style="{ transform: `rotate(-${vinylRotation}deg)` }"
               >
+                <!-- 液體本體 -->
+                <div class="liquid-body">
+                  <!-- 液體表面波動 -->
+                  <svg class="liquid-wave" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="liquidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop
+                          offset="0%"
+                          style="stop-color: rgba(162, 175, 155, 0.7); stop-opacity: 1"
+                        />
+                        <stop
+                          offset="50%"
+                          style="stop-color: rgba(182, 195, 175, 0.6); stop-opacity: 1"
+                        />
+                        <stop
+                          offset="100%"
+                          style="stop-color: rgba(139, 158, 135, 0.8); stop-opacity: 1"
+                        />
+                      </linearGradient>
+                    </defs>
+
+                    <!-- 液體主體 -->
+                    <path
+                      class="wave-path wave-back"
+                      d="M0,150 Q75,130 150,150 T300,150 L300,300 L0,300 Z"
+                      fill="url(#liquidGradient)"
+                      opacity="0.6"
+                    />
+                    <path
+                      class="wave-path wave-front"
+                      d="M0,150 Q75,170 150,150 T300,150 L300,300 L0,300 Z"
+                      fill="url(#liquidGradient)"
+                      opacity="0.8"
+                    />
+                  </svg>
+
+                  <!-- 液體光澤 -->
+                  <div class="liquid-shine"></div>
+
+                  <!-- 液體氣泡 -->
+                  <div class="bubble bubble-1"></div>
+                  <div class="bubble bubble-2"></div>
+                  <div class="bubble bubble-3"></div>
+                </div>
+              </div>
+
+              <!-- FeiTime 環繞文字 -->
+              <div class="absolute inset-0 pointer-events-none">
+                <svg viewBox="0 0 300 300" class="w-full h-full">
+                  <defs>
+                    <path
+                      id="circlePath"
+                      d="M 150, 150 m -120, 0 a 120,120 0 1,1 240,0 a 120,120 0 1,1 -240,0"
+                    />
+                  </defs>
+                  <text
+                    class="circular-text"
+                    fill="#A2AF9B"
+                    font-size="16"
+                    font-weight="bold"
+                    letter-spacing="8"
+                    font-family="serif"
+                  >
+                    <textPath href="#circlePath" startOffset="0%">
+                      FeiTime • It's Coffee Time •
+                    </textPath>
+                  </text>
+                </svg>
+              </div>
+
+              <!-- 中心標籤 -->
+              <div
+                class="w-1/3 h-1/3 rounded-full flex items-center justify-center border-[8px] lg:border-[10px] border-[#A2AF9B]/60 shadow-[0_0_20px_rgba(162,175,155,0.4),inset_0_2px_10px_rgba(0,0,0,0.1)] relative overflow-hidden backdrop-blur-sm z-10 bg-[#FAF9EE]/90"
+              >
+                <!-- 專輯封面背景 -->
                 <div
                   class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-multiply"
                   :style="{
@@ -305,11 +407,29 @@
                       : `url('${defaultAlbum}')`,
                   }"
                 ></div>
-                <div class="w-3 h-3 bg-[#171412] rounded-full z-10"></div>
+
+                <!-- 中心圓點 -->
+                <div class="relative z-10">
+                  <div class="w-3 h-3 lg:w-4 lg:h-4 bg-[#A2AF9B] rounded-full shadow-inner"></div>
+                </div>
+
+                <!-- 標籤紋理 -->
+                <div
+                  class="absolute inset-0 rounded-full opacity-30 mix-blend-overlay pointer-events-none"
+                  style="
+                    background: radial-gradient(
+                      circle at 30% 30%,
+                      rgba(255, 255, 255, 0.3) 0%,
+                      transparent 50%
+                    );
+                  "
+                ></div>
               </div>
             </div>
+
+            <!-- 唱針 -->
             <div
-              class="absolute -top-2 -right-6 w-14 h-36 border-l-8 border-t-8 border-[#171412]/20 rounded-tl-3xl pointer-events-none hidden lg:block origin-top-right rotate-12"
+              class="absolute -top-2 -right-6 w-14 h-36 border-l-8 border-t-8 border-[#A2AF9B]/40 rounded-tl-3xl pointer-events-none hidden lg:block origin-top-right rotate-12"
             ></div>
           </div>
         </div>
@@ -446,7 +566,7 @@
                   ></span>
                 </div>
                 <span class="text-sm font-bold text-[#171412] leading-tight truncate">
-                  推薦：{{ aiRecommendation }}
+                  推薦:{{ aiRecommendation }}
                 </span>
               </div>
             </div>
@@ -525,8 +645,179 @@
 </template>
 
 <style scoped>
-  .vinyl-grooves {
-    background: repeating-radial-gradient(#1c1816, #1c1816 2px, #2a2624 3px, #2a2624 4px);
+  /* 環繞文字樣式 */
+  .circular-text {
+    text-transform: uppercase;
+    fill: #a2af9b;
+    opacity: 0.8;
+  }
+
+  /* 液體容器 */
+  .liquid-container {
+    transition: transform 0.1s linear;
+  }
+
+  .liquid-body {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* 液體波浪 SVG */
+  .liquid-wave {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  /* 波浪路徑 - 預設靜止 */
+  .wave-path {
+    transition: d 0.3s ease;
+  }
+
+  /* 後層波浪動畫 - 只在播放時啟動 */
+  .liquid-container-active .wave-back {
+    animation: wave-back 3s ease-in-out infinite;
+  }
+
+  /* 前層波浪動畫 - 只在播放時啟動 */
+  .liquid-container-active .wave-front {
+    animation: wave-front 2.5s ease-in-out infinite;
+  }
+
+  @keyframes wave-back {
+    0%,
+    100% {
+      d: path('M0,150 Q75,130 150,150 T300,150 L300,300 L0,300 Z');
+    }
+    25% {
+      d: path('M0,150 Q75,145 150,135 T300,150 L300,300 L0,300 Z');
+    }
+    50% {
+      d: path('M0,150 Q75,155 150,165 T300,150 L300,300 L0,300 Z');
+    }
+    75% {
+      d: path('M0,150 Q75,140 150,145 T300,150 L300,300 L0,300 Z');
+    }
+  }
+
+  @keyframes wave-front {
+    0%,
+    100% {
+      d: path('M0,150 Q75,170 150,150 T300,150 L300,300 L0,300 Z');
+    }
+    25% {
+      d: path('M0,150 Q75,155 150,165 T300,150 L300,300 L0,300 Z');
+    }
+    50% {
+      d: path('M0,150 Q75,165 150,140 T300,150 L300,300 L0,300 Z');
+    }
+    75% {
+      d: path('M0,150 Q75,160 150,155 T300,150 L300,300 L0,300 Z');
+    }
+  }
+
+  /* 液體光澤效果 */
+  .liquid-shine {
+    position: absolute;
+    top: 45%;
+    left: -10%;
+    width: 120%;
+    height: 30%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 30%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.3) 70%,
+      transparent 100%
+    );
+    border-radius: 50%;
+    filter: blur(8px);
+    pointer-events: none;
+  }
+
+  /* 光澤動畫 - 只在播放時啟動 */
+  .liquid-container-active .liquid-shine {
+    animation: shine-move 4s ease-in-out infinite;
+  }
+
+  @keyframes shine-move {
+    0%,
+    100% {
+      transform: translateX(0) scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateX(10%) scale(1.1);
+      opacity: 0.8;
+    }
+  }
+
+  /* 液體氣泡 */
+  .bubble {
+    position: absolute;
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0.3)
+    );
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .bubble-1 {
+    width: 8px;
+    height: 8px;
+    left: 35%;
+    bottom: 10%;
+  }
+
+  .bubble-2 {
+    width: 6px;
+    height: 6px;
+    left: 55%;
+    bottom: 15%;
+  }
+
+  .bubble-3 {
+    width: 10px;
+    height: 10px;
+    left: 45%;
+    bottom: 5%;
+  }
+
+  /* 氣泡動畫 - 只在播放時啟動 */
+  .liquid-container-active .bubble-1 {
+    animation: bubble-rise 3s ease-in-out infinite;
+  }
+
+  .liquid-container-active .bubble-2 {
+    animation: bubble-rise 3.5s ease-in-out infinite 0.5s;
+  }
+
+  .liquid-container-active .bubble-3 {
+    animation: bubble-rise 4s ease-in-out infinite 1s;
+  }
+
+  @keyframes bubble-rise {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.7;
+    }
+    90% {
+      opacity: 0.3;
+    }
+    100% {
+      transform: translateY(-120px) scale(0.5);
+      opacity: 0;
+    }
   }
 
   .glass-panel {

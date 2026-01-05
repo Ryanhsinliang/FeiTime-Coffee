@@ -32,7 +32,7 @@ const routes = [
   },
 
   {
-    path: '/product-detail',
+    path: '/product-detail/:pid',
     name: 'ProductDetail',
     component: ProductDetail,
   },

@@ -613,7 +613,7 @@
               ]"
             >
               <div
-                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 rounded-xl"
                 :style="{ backgroundImage: `url('${flavor.image}')` }"
               ></div>
               <div

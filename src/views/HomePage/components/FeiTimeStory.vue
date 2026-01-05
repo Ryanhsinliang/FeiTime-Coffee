@@ -416,7 +416,7 @@
                     </g>
                   </svg>
                 </div>
-                <h3 class="text-[#6B7F6E] font-bold text-center mt-3">咖啡沖煮模擬器</h3>
+                <h3 class="text-[#8B6F4B] font-bold text-center mt-3">咖啡沖煮模擬器</h3>
               </router-link>
 
               <!-- 咖啡小測驗 - 液態氣泡 -->
@@ -547,7 +547,7 @@
                     </g>
                   </svg>
                 </div>
-                <h3 class="text-[#B8A07E] font-bold text-center mt-3">咖啡小測驗</h3>
+                <h3 class="text-[#7A9F75] font-bold text-center mt-3">咖啡小測驗</h3>
               </router-link>
             </div>
           </div>

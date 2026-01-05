@@ -17,7 +17,7 @@
             </h2>
           </div>
           <!-- 文楷 -->
-          <p class="text-[#B5A893] text-sm md:text-base leading-relaxed font-light font-wenkai">
+          <p class="text-[#B5A893] text-sm md:text-base leading-relaxed font-notoserif">
             簡單、誠實的咖啡。用心挑選豆子，精心烘焙，為你的每一個悠閒時刻帶來香醇。
           </p>
           <div class="flex gap-6 mt-2 text-[#8C7B5D] text-xl">

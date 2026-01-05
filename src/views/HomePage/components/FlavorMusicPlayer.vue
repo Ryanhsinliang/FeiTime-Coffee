@@ -13,6 +13,40 @@
   import type { Flavor } from '@/views/HomePage/type';
 
   // ============================================
+  // YouTube IFrame API 類型定義
+  // ============================================
+  interface YTPlayer {
+    playVideo(): void;
+    pauseVideo(): void;
+    getCurrentTime(): number;
+    getDuration(): number;
+    getPlayerState(): number;
+  }
+
+  interface YTPlayerEvent {
+    target: YTPlayer;
+    data: number;
+  }
+
+  interface YTPlayerOptions {
+    events: {
+      onStateChange?: (event: YTPlayerEvent) => void;
+      onReady?: (event: YTPlayerEvent) => void;
+    };
+  }
+
+  interface YT {
+    Player: new (element: HTMLIFrameElement, options: YTPlayerOptions) => YTPlayer;
+  }
+
+  interface WindowWithYT extends Window {
+    YT?: YT;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+
+  declare const window: WindowWithYT;
+
+  // ============================================
   // 狀態管理
   // ============================================
   const selectedFlavor = ref<Flavor | null>(null);
@@ -28,9 +62,9 @@
   const isPlaying = ref<boolean>(false);
   const vinylRotation = ref<number>(0);
   const lastPlaybackTime = ref<number>(0);
-  const shouldAutoPlay = ref<boolean>(false); // 新增：標記是否應自動播放
+  const shouldAutoPlay = ref<boolean>(false);
   let animationFrameId: number | null = null;
-  let youtubePlayer: any = null;
+  let youtubePlayer: YTPlayer | null = null;
   let progressCheckInterval: number | null = null;
 
   // 風味列表
@@ -84,7 +118,7 @@
   // ============================================
   const rotateVinyl = () => {
     if (isPlaying.value) {
-      vinylRotation.value = (vinylRotation.value + 0.5) % 360;
+      vinylRotation.value += 0.5; // 黑膠旋轉，液體會自動反向保持水平
       animationFrameId = requestAnimationFrame(rotateVinyl);
     }
   };
@@ -115,14 +149,18 @@
       if (currentTime && duration && currentTime !== lastPlaybackTime.value) {
         const timeDiff = Math.abs(currentTime - lastPlaybackTime.value);
 
+        // 如果時間差異大於2秒（快轉或倒退），同步黑膠旋轉角度
+        // 液體會自動通過 -vinylRotation 保持水平（地心引力效果）
         if (timeDiff > 2) {
           const rotationPerSecond = 30;
           const angleDiff = timeDiff * rotationPerSecond;
 
           if (currentTime > lastPlaybackTime.value) {
-            vinylRotation.value = (vinylRotation.value + angleDiff) % 360;
+            // 快轉：黑膠快速旋轉，液體保持水平
+            vinylRotation.value += angleDiff;
           } else {
-            vinylRotation.value = (vinylRotation.value - angleDiff + 360) % 360;
+            // 倒退：黑膠反向旋轉，液體保持水平
+            vinylRotation.value -= angleDiff;
           }
         }
 
@@ -137,13 +175,13 @@
   // YouTube API 初始化
   // ============================================
   const initYouTubeAPI = () => {
-    if (!(window as any).YT) {
+    if (!window.YT) {
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       const firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
-      (window as any).onYouTubeIframeAPIReady = () => {
+      window.onYouTubeIframeAPIReady = () => {
         console.log('✅ YouTube IFrame API ready');
       };
     }
@@ -156,25 +194,33 @@
     }
 
     if (newUrl) {
-      isPlaying.value = false;
       lastPlaybackTime.value = 0;
+
+      // loading 新歌時一律停止黑膠，等 YouTube player 開始播放才轉
+      isPlaying.value = false;
 
       setTimeout(() => {
         const iframe = document.querySelector('iframe');
 
-        if (iframe && (window as any).YT && (window as any).YT.Player) {
+        if (iframe && window.YT && window.YT.Player) {
           try {
-            youtubePlayer = new (window as any).YT.Player(iframe, {
+            youtubePlayer = new window.YT.Player(iframe, {
               events: {
-                onStateChange: (event: any) => {
+                onStateChange: (event: YTPlayerEvent) => {
                   const wasPlaying = isPlaying.value;
-                  isPlaying.value = event.data === 1;
+                  const newState = event.data;
+
+                  // YouTube 播放器狀態：1 = playing, 2 = paused, 0 = ended
+                  isPlaying.value = newState === 1;
 
                   if (isPlaying.value && !wasPlaying) {
-                    lastPlaybackTime.value = youtubePlayer.getCurrentTime() || 0;
+                    console.log('▶️ Video playing, vinyl rotating');
+                    lastPlaybackTime.value = youtubePlayer?.getCurrentTime() || 0;
+                  } else if (!isPlaying.value && wasPlaying) {
+                    console.log('⏸️ Video paused/stopped, vinyl stopped');
                   }
                 },
-                onReady: (event: any) => {
+                onReady: (event: YTPlayerEvent) => {
                   console.log('✅ YouTube player ready');
                   progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
 
@@ -183,9 +229,10 @@
                     console.log('🎵 Auto-playing video...');
                     try {
                       event.target.playVideo();
-                      shouldAutoPlay.value = false; // 重置標記
+                      shouldAutoPlay.value = false;
                     } catch (err) {
                       console.warn('⚠️ Auto-play failed:', err);
+                      shouldAutoPlay.value = false;
                     }
                   }
                 },
@@ -208,9 +255,11 @@
     try {
       musicLoading.value = true;
       musicError.value = null;
-      isPlaying.value = false;
       lastPlaybackTime.value = 0;
-      shouldAutoPlay.value = true; // 設定自動播放
+      shouldAutoPlay.value = true; // 標記為需要自動播放
+
+      // loading 時不轉黑膠，等歌曲真正播放時才轉
+      isPlaying.value = false;
 
       const data = await getMusicByFlavor({
         flavorId: flavor.id,
@@ -223,15 +272,17 @@
         currentVideoIndex.value = 0;
         aiRecommendation.value = data.recommendation;
       } else {
-        shouldAutoPlay.value = false; // 失敗時取消自動播放
+        shouldAutoPlay.value = false;
+        isPlaying.value = false;
         throw new Error(data.message || '暫時無法找到相關音樂');
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('❌ Music recommendation error:', err);
-      musicError.value = err.message || '無法取得推薦，請稍後再試';
+      musicError.value = err instanceof Error ? err.message : '無法取得推薦，請稍後再試';
       currentVideos.value = [];
       aiRecommendation.value = '選擇風味，開始音樂之旅';
-      shouldAutoPlay.value = false; // 失敗時取消自動播放
+      shouldAutoPlay.value = false;
+      isPlaying.value = false;
     } finally {
       musicLoading.value = false;
     }
@@ -241,9 +292,10 @@
     // 如果還有下一首歌曲在當前列表中
     if (currentVideoIndex.value < currentVideos.value.length - 1) {
       currentVideoIndex.value++;
-      isPlaying.value = false;
       lastPlaybackTime.value = 0;
-      shouldAutoPlay.value = true; // 設定自動播放
+      shouldAutoPlay.value = true;
+      // loading 時不轉黑膠，等歌曲真正播放時才轉
+      isPlaying.value = false;
       return;
     }
 
@@ -253,7 +305,10 @@
     try {
       musicLoading.value = true;
       musicError.value = null;
-      shouldAutoPlay.value = true; // 設定自動播放
+      shouldAutoPlay.value = true; // 切歌時也要自動播放
+
+      // loading 時不轉黑膠，等歌曲真正播放時才轉
+      isPlaying.value = false;
 
       const data = await getRandomMusic({
         currentFlavorName: selectedFlavor.value.name,
@@ -262,17 +317,18 @@
       if (data.success && data.videos.length > 0) {
         currentVideos.value = data.videos;
         currentVideoIndex.value = 0;
-        isPlaying.value = false;
         lastPlaybackTime.value = 0;
         aiRecommendation.value = data.recommendation || aiRecommendation.value;
       } else {
-        shouldAutoPlay.value = false; // 失敗時取消自動播放
+        shouldAutoPlay.value = false;
+        isPlaying.value = false;
         throw new Error(data.message || '暫時無法找到更多音樂');
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('❌ Next recommendation error:', err);
       musicError.value = '無法取得更多推薦';
-      shouldAutoPlay.value = false; // 失敗時取消自動播放
+      shouldAutoPlay.value = false;
+      isPlaying.value = false;
     } finally {
       musicLoading.value = false;
     }
@@ -318,7 +374,7 @@
                 class="absolute inset-0 rounded-full bg-gradient-to-br from-[#E8F5E9]/30 via-transparent to-[#C8D6C5]/20"
               ></div>
 
-              <!-- 液體容器 - 反向旋轉保持水平 -->
+              <!-- 液體容器 - 反向旋轉保持水平（受地心引力影響） -->
               <div
                 class="liquid-container absolute inset-0 rounded-full overflow-hidden"
                 :class="{ 'liquid-container-active': isPlaying }"
@@ -650,11 +706,6 @@
     text-transform: uppercase;
     fill: #a2af9b;
     opacity: 0.8;
-  }
-
-  /* 液體容器 */
-  .liquid-container {
-    transition: transform 0.1s linear;
   }
 
   .liquid-body {

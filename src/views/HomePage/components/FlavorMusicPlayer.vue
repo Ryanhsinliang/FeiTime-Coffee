@@ -10,6 +10,7 @@
     getRandomMusic,
     type YouTubeVideo,
   } from '@/services/homePage/flavorMusic';
+  import feiDJ from '@/views/HomePage/assets/fei-DJ.webp';
   import type { Flavor } from '@/views/HomePage/type';
 
   // ============================================
@@ -118,7 +119,7 @@
   // ============================================
   const rotateVinyl = () => {
     if (isPlaying.value) {
-      vinylRotation.value += 0.5; // 黑膠旋轉，液體會自動反向保持水平
+      vinylRotation.value = (vinylRotation.value + 0.5) % 360;
       animationFrameId = requestAnimationFrame(rotateVinyl);
     }
   };
@@ -149,18 +150,14 @@
       if (currentTime && duration && currentTime !== lastPlaybackTime.value) {
         const timeDiff = Math.abs(currentTime - lastPlaybackTime.value);
 
-        // 如果時間差異大於2秒（快轉或倒退），同步黑膠旋轉角度
-        // 液體會自動通過 -vinylRotation 保持水平（地心引力效果）
         if (timeDiff > 2) {
           const rotationPerSecond = 30;
           const angleDiff = timeDiff * rotationPerSecond;
 
           if (currentTime > lastPlaybackTime.value) {
-            // 快轉：黑膠快速旋轉，液體保持水平
-            vinylRotation.value += angleDiff;
+            vinylRotation.value = (vinylRotation.value + angleDiff) % 360;
           } else {
-            // 倒退：黑膠反向旋轉，液體保持水平
-            vinylRotation.value -= angleDiff;
+            vinylRotation.value = (vinylRotation.value - angleDiff + 360) % 360;
           }
         }
 
@@ -194,10 +191,8 @@
     }
 
     if (newUrl) {
-      lastPlaybackTime.value = 0;
-
-      // loading 新歌時一律停止黑膠，等 YouTube player 開始播放才轉
       isPlaying.value = false;
+      lastPlaybackTime.value = 0;
 
       setTimeout(() => {
         const iframe = document.querySelector('iframe');
@@ -208,16 +203,10 @@
               events: {
                 onStateChange: (event: YTPlayerEvent) => {
                   const wasPlaying = isPlaying.value;
-                  const newState = event.data;
-
-                  // YouTube 播放器狀態：1 = playing, 2 = paused, 0 = ended
-                  isPlaying.value = newState === 1;
+                  isPlaying.value = event.data === 1;
 
                   if (isPlaying.value && !wasPlaying) {
-                    console.log('▶️ Video playing, vinyl rotating');
                     lastPlaybackTime.value = youtubePlayer?.getCurrentTime() || 0;
-                  } else if (!isPlaying.value && wasPlaying) {
-                    console.log('⏸️ Video paused/stopped, vinyl stopped');
                   }
                 },
                 onReady: (event: YTPlayerEvent) => {
@@ -232,7 +221,6 @@
                       shouldAutoPlay.value = false;
                     } catch (err) {
                       console.warn('⚠️ Auto-play failed:', err);
-                      shouldAutoPlay.value = false;
                     }
                   }
                 },
@@ -255,11 +243,9 @@
     try {
       musicLoading.value = true;
       musicError.value = null;
-      lastPlaybackTime.value = 0;
-      shouldAutoPlay.value = true; // 標記為需要自動播放
-
-      // loading 時不轉黑膠，等歌曲真正播放時才轉
       isPlaying.value = false;
+      lastPlaybackTime.value = 0;
+      shouldAutoPlay.value = true;
 
       const data = await getMusicByFlavor({
         flavorId: flavor.id,
@@ -273,7 +259,6 @@
         aiRecommendation.value = data.recommendation;
       } else {
         shouldAutoPlay.value = false;
-        isPlaying.value = false;
         throw new Error(data.message || '暫時無法找到相關音樂');
       }
     } catch (err) {
@@ -282,7 +267,6 @@
       currentVideos.value = [];
       aiRecommendation.value = '選擇風味，開始音樂之旅';
       shouldAutoPlay.value = false;
-      isPlaying.value = false;
     } finally {
       musicLoading.value = false;
     }
@@ -292,10 +276,9 @@
     // 如果還有下一首歌曲在當前列表中
     if (currentVideoIndex.value < currentVideos.value.length - 1) {
       currentVideoIndex.value++;
+      isPlaying.value = false;
       lastPlaybackTime.value = 0;
       shouldAutoPlay.value = true;
-      // loading 時不轉黑膠，等歌曲真正播放時才轉
-      isPlaying.value = false;
       return;
     }
 
@@ -305,10 +288,7 @@
     try {
       musicLoading.value = true;
       musicError.value = null;
-      shouldAutoPlay.value = true; // 切歌時也要自動播放
-
-      // loading 時不轉黑膠，等歌曲真正播放時才轉
-      isPlaying.value = false;
+      shouldAutoPlay.value = true;
 
       const data = await getRandomMusic({
         currentFlavorName: selectedFlavor.value.name,
@@ -317,18 +297,17 @@
       if (data.success && data.videos.length > 0) {
         currentVideos.value = data.videos;
         currentVideoIndex.value = 0;
+        isPlaying.value = false;
         lastPlaybackTime.value = 0;
         aiRecommendation.value = data.recommendation || aiRecommendation.value;
       } else {
         shouldAutoPlay.value = false;
-        isPlaying.value = false;
         throw new Error(data.message || '暫時無法找到更多音樂');
       }
     } catch (err) {
       console.error('❌ Next recommendation error:', err);
       musicError.value = '無法取得更多推薦';
       shouldAutoPlay.value = false;
-      isPlaying.value = false;
     } finally {
       musicLoading.value = false;
     }
@@ -374,7 +353,7 @@
                 class="absolute inset-0 rounded-full bg-gradient-to-br from-[#E8F5E9]/30 via-transparent to-[#C8D6C5]/20"
               ></div>
 
-              <!-- 液體容器 - 反向旋轉保持水平（受地心引力影響） -->
+              <!-- 液體容器 - 反向旋轉保持水平 -->
               <div
                 class="liquid-container absolute inset-0 rounded-full overflow-hidden"
                 :class="{ 'liquid-container-active': isPlaying }"
@@ -605,16 +584,20 @@
                   v-if="!musicError && !musicLoading"
                   class="absolute inset-0 rounded-full bg-sage animate-ping opacity-20"
                 ></span>
-                <span class="material-symbols-outlined text-xl text-[#171412]">
-                  {{ musicError ? 'error' : 'smart_toy' }}
-                </span>
+                <img
+                  v-if="!musicError && !musicLoading"
+                  :src="feiDJ"
+                  class="w-6 h-6 object-contain"
+                  alt="Fei DJ"
+                />
+                <span v-else class="material-symbols-outlined text-xl text-[#171412]">error</span>
               </div>
               <div class="flex flex-col min-w-0 flex-1">
                 <div class="flex items-center gap-2">
                   <span
                     class="text-[10px] font-bold uppercase tracking-wider text-sage whitespace-nowrap"
                   >
-                    AI DJ
+                    FEI DJ
                   </span>
                   <span
                     v-if="!musicError && !musicLoading"
@@ -622,18 +605,18 @@
                   ></span>
                 </div>
                 <span class="text-sm font-bold text-[#171412] leading-tight truncate">
-                  推薦:{{ aiRecommendation }}
+                  推薦: {{ aiRecommendation }}
                 </span>
               </div>
             </div>
             <button
               @click="nextRecommendation"
               :disabled="musicLoading || !selectedFlavor || musicError !== null"
-              class="flex items-center justify-center gap-2 bg-[#171412] text-[#FAF9EE] px-4 py-2 rounded-lg hover:bg-[#DCCFC0] hover:text-[#171412] transition-all duration-300 shadow-md hover:shadow-lg group flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="flex items-center justify-center gap-2 bg-[#DCCFC0] text-[#171412] px-4 py-2 rounded-lg hover:bg-[#C4B5A0] hover:shadow-lg transition-all duration-300 shadow-md group flex-shrink-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none hover:disabled:bg-gray-200"
             >
               <span class="text-xs font-bold tracking-wide hidden sm:inline">Next</span>
               <span
-                class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform"
+                class="material-symbols-outlined text-lg group-hover:group-enabled:translate-x-1 transition-transform"
               >
                 skip_next
               </span>
@@ -653,7 +636,7 @@
             </h2>
             <div class="flex items-center gap-2">
               <span class="h-1 w-6 bg-[#A2AF9B] rounded-full"></span>
-              <p class="text-[#A2AF9B] text-xs font-medium">AI 將為您調配專屬歌單</p>
+              <p class="text-[#A2AF9B] text-xs font-medium">DJ 將為您調配專屬歌單</p>
             </div>
           </div>
 
@@ -669,7 +652,7 @@
               ]"
             >
               <div
-                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 rounded-xl"
+                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                 :style="{ backgroundImage: `url('${flavor.image}')` }"
               ></div>
               <div
@@ -706,6 +689,11 @@
     text-transform: uppercase;
     fill: #a2af9b;
     opacity: 0.8;
+  }
+
+  /* 液體容器 */
+  .liquid-container {
+    transition: transform 0.1s linear;
   }
 
   .liquid-body {

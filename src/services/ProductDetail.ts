@@ -29,10 +29,8 @@ export interface SingleProductResponse {
   data: ProductRequest;
 }
 
-// 取得單筆商品
-export async function callSingleProduct(pid: string): Promise<SingleProductResponse> {
-  const res = await api.get<SingleProductResponse>(`/api/product-detail/${pid}`);
-  return res.data;
+export interface RecommendationsResponse {
+  data: ProductRequest[];
 }
 
 //呼叫 後端 Express 的 API
@@ -43,5 +41,17 @@ export async function callProducts(page = 1, pageSize = 100): Promise<ProductLis
       pageSize,
     },
   });
+  return res.data;
+}
+
+// 取得單筆商品
+export async function callSingleProduct(pid: string): Promise<SingleProductResponse> {
+  const res = await api.get<SingleProductResponse>(`/api/product-detail/${pid}`);
+  return res.data;
+}
+
+// 取得推薦商品
+export async function callRecommendations(pid: string): Promise<RecommendationsResponse> {
+  const res = await api.get<RecommendationsResponse>(`/api/product-detail/${pid}/recommendations`);
   return res.data;
 }

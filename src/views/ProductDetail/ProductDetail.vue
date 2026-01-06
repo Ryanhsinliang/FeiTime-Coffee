@@ -187,12 +187,12 @@
           class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
-            :src="item.img[0]?.formats?.large?.url || item.img[0]?.url"
+            :src="item.img[0]?.formats?.large?.url"
             :alt="item.name"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
           />
           <img
-            :src="item.img[2]?.formats?.large?.url || item.img[2]?.url"
+            :src="item.img[2]?.formats?.large?.url"
             :alt="item.name"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
@@ -237,9 +237,8 @@
 
       // 重置圖片輪播索引
       currentIndex.value = 0;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ API載入失敗', err);
-      console.error('❌ 錯誤詳情:', err.response?.data || err.message);
       error.value = '商品載入失敗';
     } finally {
       loading.value = false;

@@ -32,12 +32,13 @@
       />
 
       <h3 class="mx-auto my-3">推薦商品：</h3>
-      <div class="mx-auto flex justify-between gap-3">
-        <a
-          v-for="bean in persona.beans"
+      <div class="mx-auto flex flex-wrap justify-center gap-3 max-w-xl">
+        <router-link
+          v-for="(bean, index) in persona.beans"
           :key="bean"
-          href=""
-          class="group/option relative flex items-center justify-center w-full sm:w-auto h-12 sm:h-14 px-4 sm:px-10 bg-white/20 text-white tracking-widest uppercase rounded-sm shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300"
+          :to="persona.productPaths[index]"
+          class="group/option relative inline-flex items-center justify-center h-12 sm:h-14 px-6 sm:px-8 bg-white/20 text-white text-sm sm:text-base tracking-wider uppercase rounded-sm shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300"
+          style="white-space: nowrap"
         >
           {{ bean }}
           <span
@@ -46,7 +47,7 @@
           <span
             class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover/option:scale-100"
           ></span>
-        </a>
+        </router-link>
       </div>
     </div>
   </section>
@@ -55,11 +56,11 @@
   >
     <button
       type="button"
-      @click="shareIdCard"
-      :disabled="isSharing"
+      @click="handleMainShare"
+      :disabled="isProcessing"
       class="group/option relative flex items-center justify-center h-14 px-10 bg-white/20 text-white tracking-widest uppercase rounded-xl shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300 mt-3"
     >
-      分享我的 Coffee ID
+      {{ isProcessing ? '準備中...' : '分享我的 Coffee ID' }}
       <span
         class="pointer-events-none absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-white scale-0 origin-top-left transition-transform duration-300 group-hover/option:scale-100"
       ></span>
@@ -69,10 +70,11 @@
     </button>
     <button
       @click="saveIdCard"
+      :disabled="isSaving"
       type="button"
       class="group/option relative flex items-center justify-center h-14 px-10 bg-white/20 text-white tracking-widest uppercase rounded-xl shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300 mt-3"
     >
-      儲存我的 Coffee ID
+      {{ isSaving ? '儲存中...' : '儲存我的Coffee ID' }}
       <span
         class="pointer-events-none absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-white scale-0 origin-top-left transition-transform duration-300 group-hover/option:scale-100"
       ></span>
@@ -93,61 +95,7 @@
       ></span>
     </a>
   </section>
-  <div
-    v-if="showMenu"
-    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-    @click.self="showMenu = false"
-  >
-    <div class="bg-white/90 backdrop-blur-md rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-      <h3 class="text-2xl font-bold text-center mb-4 text-gray-800">分享到</h3>
-      <div class="flex flex-col gap-3">
-        <button
-          @click="shareToFacebook"
-          class="w-full py-3 px-4 bg-[#1877F2] text-white rounded-lg hover:bg-[#166FE5] transition-colors"
-        >
-          Facebook
-        </button>
-        <button
-          @click="shareToLine"
-          class="w-full py-3 px-4 bg-[#00B900] text-white rounded-lg hover:bg-[#00A000] transition-colors"
-        >
-          LINE
-        </button>
-        <button
-          @click="shareToInstagram"
-          class="w-full py-3 px-4 bg-[#ec28dc] text-white rounded-lg hover:bg-[#e071d7] transition-colors"
-        >
-          Instagram
-        </button>
-        <button
-          @click="shareToX"
-          class="w-full py-3 px-4 bg-[#1DA1F2] text-white rounded-lg hover:bg-[#1A94DA] transition-colors"
-        >
-          X
-        </button>
-        <button
-          @click="copyLink"
-          class="w-full py-3 px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-        >
-          複製連結
-        </button>
-        <button
-          @click="showMenu = false"
-          class="w-full py-3 px-4 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors"
-        >
-          取消
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 提示訊息 -->
-  <div
-    v-if="hint.show"
-    class="fixed top-4 right-4 bg-white/90 backdrop-blur-md rounded-lg shadow-xl p-4 z-50 animate-fade-in"
-  >
-    <p class="text-gray-800">{{ hint.message }}</p>
-  </div>
+  <section class="flex justify-center flex-wrap gap-3 mt-6 mx-auto w-full max-w-3xl px-4"></section>
 </template>
 
 <script lang="ts" setup>
@@ -163,25 +111,39 @@
     Legend,
   } from 'chart.js';
   import type { Scores } from '../views/CoffeeIdTest/type';
+  import { useCoffeeResultStore } from '@/store/coffeeResult';
 
   const props = defineProps<{
     scores: Scores;
     answers?: any[];
     maxScores: Scores;
   }>();
-
-  // 計算標準化分數
+  const coffeeResultStore = useCoffeeResultStore();
+  const currentScores = computed(() => props.scores || coffeeResultStore.scores);
+  const currentMaxScores = computed(() => props.maxScores || coffeeResultStore.maxScores);
   const normalizedScores = computed(() => {
+    const scores = currentScores.value;
+    const maxScores = currentMaxScores.value;
+
+    if (!scores || !maxScores) {
+      return {
+        acidity: 0,
+        sweetness: 0,
+        body: 0,
+        aftertaste: 0,
+        clarity: 0,
+      };
+    }
+
     return {
-      acidity: Math.floor((props.scores.acidity / props.maxScores.acidity) * 100) || 0,
-      sweetness: Math.floor((props.scores.sweetness / props.maxScores.sweetness) * 100) || 0,
-      body: Math.floor((props.scores.body / props.maxScores.body) * 100) || 0,
-      aftertaste: Math.floor((props.scores.aftertaste / props.maxScores.aftertaste) * 100) || 0,
-      clarity: Math.floor((props.scores.clarity / props.maxScores.clarity) * 100) || 0,
+      acidity: Math.floor((scores.acidity / maxScores.acidity) * 100) || 0,
+      sweetness: Math.floor((scores.sweetness / maxScores.sweetness) * 100) || 0,
+      body: Math.floor((scores.body / maxScores.body) * 100) || 0,
+      aftertaste: Math.floor((scores.aftertaste / maxScores.aftertaste) * 100) || 0,
+      clarity: Math.floor((scores.clarity / maxScores.clarity) * 100) || 0,
     };
   });
 
-  // 雷達圖
   Chart.register(
     RadarController,
     RadialLinearScale,
@@ -246,13 +208,20 @@
   }
 
   watch(() => normalizedScores, renderRadar, { deep: true });
-
+  watch(
+    () => props.scores,
+    (newScores) => {
+      if (newScores) {
+        renderRadar();
+      }
+    },
+    { deep: true, immediate: true }
+  );
   onMounted(renderRadar);
 
-  //拿到風味測試角色
   import { getPersona } from '@/utils/getPersona';
   import html2canvas from 'html2canvas';
-  // import { blob } from 'stream/consumers';
+
   const persona = computed(() => getPersona(normalizedScores)!);
 
   // 卡片效果
@@ -303,10 +272,8 @@
   }
 
   // 分享功能
-  const isSharing = ref(false);
   const isSaving = ref(false);
   const isProcessing = ref(false);
-  const showMenu = ref(false);
   const hint = ref({ show: true, message: '' });
 
   function showHint(message: string) {
@@ -319,13 +286,13 @@
 
   const shareText = computed(() => {
     return `我的 Coffee ID 是 ${persona.value.name}！來看看你的風味測試結果吧！
-       風味分數：
+      風味分數：
       酸味: ${normalizedScores.value.acidity}
       甜味: ${normalizedScores.value.sweetness}
       醇厚度: ${normalizedScores.value.body}
       餘韻: ${normalizedScores.value.aftertaste}
       澄澈度: ${normalizedScores.value.clarity}
-      推薦商品: ${persona.value.beans.join(', ')}`;
+      推薦商品: ${persona.value.beans.join('、')}`;
   });
 
   async function idCardToImage(): Promise<Blob | null> {
@@ -333,6 +300,8 @@
     try {
       const originalStyle = cardStyle.value;
       cardStyle.value = '';
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const canvas = await html2canvas(idCard.value, {
         backgroundColor: null,
@@ -352,177 +321,77 @@
     }
   }
 
+  function downloadBlob(blob: Blob, name: string) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  }
+
+  async function copyTextToClipboard(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+  }
   const isMobile = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  async function shareIdCard() {
-    isSharing.value = true;
-    showMenu.value = true;
-    isSharing.value = false;
-  }
+  async function handleMainShare() {
+    if (isProcessing.value) return;
 
-  async function shareToFacebook() {
     isProcessing.value = true;
-    showMenu.value = false;
+    showHint('正在生成 Coffee ID 圖片...');
+
     try {
-      const imageblob = await idCardToImage();
-      if (!imageblob) {
-        showHint('圖片生成失敗');
-        return;
-      }
-      const imageFile = new File([imageblob], 'coffee-id-card.png', { type: 'image/png' });
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [imageFile] })) {
+      const imageBlob = await idCardToImage();
+      if (!imageBlob) throw new Error('圖片生成失敗');
+
+      const fileName = `coffee-id-${persona.value.name}.png`;
+      const imageFile = new File([imageBlob], fileName, { type: 'image/png' });
+      const canNativeShare = !!navigator.canShare && navigator.canShare({ files: [imageFile] });
+
+      if (canNativeShare) {
+        // 原生分享（手機/平板）
         await navigator.share({
-          title: '我的Coffee ID',
+          title: '我的 Coffee ID',
           text: shareText.value,
           files: [imageFile],
         });
         showHint('分享成功！');
       } else {
-        const imageUrl = URL.createObjectURL(imageblob);
-        const imageLink = document.createElement('a');
-        imageLink.href = imageUrl;
-        imageLink.download = `coffee-id-${persona.value.name}.png`;
-        imageLink.click();
-        URL.revokeObjectURL(imageUrl);
-        await navigator.clipboard.writeText(shareText.value);
-
-        showHint('現在開啟 Facebook～～');
-
-        setTimeout(() => {
-          window.open('https://www.facebook.com/', '_blank');
-        }, 1500);
-      }
-    } catch (error) {
-      if ((error as Error).name !== 'AbortError') {
-        showHint('分享失敗，請稍後再試');
-      }
-    } finally {
-      isProcessing.value = false;
-    }
-  }
-
-  async function shareToLine() {
-    isProcessing.value = true;
-    showMenu.value = false;
-
-    try {
-      const imageblob = await idCardToImage();
-      if (!imageblob) {
-        showHint('圖片生成失敗');
-        return;
-      }
-
-      // 1. 處理圖片下載 (因為無法直接把 Blob 塞進 LINE 連結)
-      const imageUrl = URL.createObjectURL(imageblob);
-      const imageLink = document.createElement('a');
-      imageLink.href = imageUrl;
-      imageLink.download = `coffee-id-${persona.value.name}.png`;
-      document.body.appendChild(imageLink); // 相容性處理
-      imageLink.click();
-      document.body.removeChild(imageLink);
-
-      // 2. 複製分享文字到剪貼簿 (讓使用者到 LINE 直接貼上)
-      try {
-        await navigator.clipboard.writeText(shareText.value);
-        showHint('圖片已下載，文字已複製！');
-      } catch (clipError) {
-        console.error('剪貼簿功能失效', clipError);
-      }
-
-      // 3. 根據裝置跳轉 LINE
-      setTimeout(() => {
-        // 建議使用 LINE 官方的 Share 連結，相容性最高
-        const encodedText = encodeURIComponent(shareText.value);
-        const lineEndpoint = `https://social-plugins.line.me/lineit/share?text=${encodedText}`;
-
-        if (isMobile) {
-          // 行動裝置嘗試開啟 App
-          window.location.href = lineEndpoint;
-        } else {
-          // 電腦版開啟新視窗
-          window.open(lineEndpoint, '_blank');
+        // 電腦版用「下載圖片 + 複製文字」
+        downloadBlob(imageBlob, fileName);
+        await copyTextToClipboard(shareText.value);
+        showHint('圖片已下載，文字已複製！請貼上至社群媒體。');
+        if (!isMobile) {
+          setTimeout(() => {
+            window.open('https://www.facebook.com/', '_blank');
+          }, 2000);
         }
-
-        URL.revokeObjectURL(imageUrl);
-      }, 1200);
-    } catch (error) {
-      showHint('分享過程中發生錯誤');
-      console.error(error);
-    } finally {
-      isProcessing.value = false;
-    }
-  }
-  async function shareToInstagram() {
-    isProcessing.value = true;
-    showMenu.value = false;
-
-    try {
-      const imageblob = await idCardToImage();
-      if (!imageblob) {
-        showHint('圖片生成失敗');
-        return;
       }
-      const imageFile = new File([imageblob], 'coffee-id-card.png', { type: 'image/png' });
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [imageFile] })) {
-        await navigator.share({
-          title: '我的Coffee ID',
-          text: shareText.value,
-          files: [imageFile],
-        });
-        showHint('分享成功！');
+    } catch (error) {
+      if ((error as Error).name === 'AbortError') {
+        console.log('使用者取消分享');
       } else {
-        const imageUrl = URL.createObjectURL(imageblob);
-        const imageLink = document.createElement('a');
-        imageLink.href = imageUrl;
-        imageLink.download = `coffee-id-${persona.value.name}.png`;
-        imageLink.click();
-        URL.revokeObjectURL(imageUrl);
-
-        await navigator.clipboard.writeText(shareText.value);
-        showHint('開啟Instagram中～～');
-
-        setTimeout(() => {
-          if (isMobile) {
-            window.location.href = 'instagram://';
-          } else {
-            window.open('https://www.instagram.com/', '_blank');
-          }
-        }, 1500);
-      }
-    } catch (error) {
-      if ((error as Error).name !== 'AbortError') {
-        showHint('分享失敗，請稍後再試～');
+        console.error('分享失敗:', error);
+        showHint('分享失敗，請使用「儲存我的 Coffee ID」');
       }
     } finally {
       isProcessing.value = false;
     }
   }
 
-  function shareToX() {
-    const text = encodeURIComponent(
-      `我的 Coffee ID 測試結果是「${persona.value.name}」！快來測試你的 Coffee ID！`
-    );
-    const componentUrl = encodeURIComponent(window.location.href);
-    window.open(
-      `https://twitter.com/intent/tweet?text=${text}&url=${componentUrl}`,
-      '_blank',
-      'width=600,height=400'
-    );
-    showMenu.value = false;
-    showHint('已開啟 Twitter 分享視窗');
-  }
-
-  async function copyLink() {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      showMenu.value = false;
-      showHint('圖片連結已複製');
-    } catch (error) {
-      console.error('複製失敗:', error);
-      showHint('複製失敗，請手動複製網址');
-    }
-  }
-  // TODO:現在是直接儲存圖片，帶資料庫建好後要改成存到使用者帳號中
+  // TODO:現在是直接儲存圖片，待資料庫建好後要改成存到使用者帳號中
   async function saveIdCard() {
     isSaving.value = true;
     try {

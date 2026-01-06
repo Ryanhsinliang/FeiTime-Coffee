@@ -21,7 +21,7 @@
     </div>
     <div class="w-2/3 mx-auto flex justify-end my-3">
       <button
-        v-if="quizData.currentIndex >= 1"
+        v-if="quizData.currentIndex >= 1 || coffeeResultStore.hasResult"
         @click="resetTest"
         type="button"
         class="border-[#dccfc0] border p-2 rounded-lg hover:bg-[#a2af9b] text-white"
@@ -29,7 +29,11 @@
         重新測驗
       </button>
     </div>
-    <section v-if="!quizData.showResult" id="questionCard" class="flex flex-wrap justify-center">
+    <section
+      v-if="!coffeeResultStore.hasResult"
+      id="questionCard"
+      class="flex flex-wrap justify-center"
+    >
       <div
         ref="card"
         @mousemove="handleMove"
@@ -91,10 +95,20 @@
       </div>
     </section>
     <CoffeeID
-      v-if="quizData.showResult"
-      :scores="quizData.scores"
-      :answers="quizData.answers"
-      :maxScores="maxScores"
+      v-if="coffeeResultStore.hasResult"
+      :scores="
+        coffeeResultStore.scores || { acidity: 0, sweetness: 0, body: 0, aftertaste: 0, clarity: 0 }
+      "
+      :answers="coffeeResultStore.answers"
+      :maxScores="
+        coffeeResultStore.maxScores || {
+          acidity: 0,
+          sweetness: 0,
+          body: 0,
+          aftertaste: 0,
+          clarity: 0,
+        }
+      "
     />
   </main>
 </template>
@@ -105,6 +119,10 @@
   import type { Scores, Option, Question, Answer } from './type';
   import { questionAPI, quizAPI } from '@/services/api';
   import bgImage from './assets/img/bgImage.jpg';
+  import { useCoffeeResultStore } from '@/store/coffeeResult';
+  import { getPersona } from '@/utils/getPersona';
+
+  const coffeeResultStore = useCoffeeResultStore();
 
   const quizData = reactive<{
     currentIndex: number;
@@ -126,7 +144,6 @@
     questions: [],
   });
 
-  //  儲存後端計算的結果
   const calculatedResult = ref<{
     scores: Scores;
     maxScores: Scores;
@@ -142,8 +159,35 @@
     }
   };
 
-  onMounted(() => {
-    fetchQuetions();
+  onMounted(async () => {
+    await fetchQuetions();
+
+    if (coffeeResultStore.hasResult) {
+      calculatedResult.value = {
+        scores: coffeeResultStore.scores ?? {
+          acidity: 0,
+          sweetness: 0,
+          body: 0,
+          aftertaste: 0,
+          clarity: 0,
+        },
+        maxScores: coffeeResultStore.maxScores ?? {
+          acidity: 0,
+          sweetness: 0,
+          body: 0,
+          aftertaste: 0,
+          clarity: 0,
+        },
+        normalizedScores: coffeeResultStore.normalizedScores ?? {
+          acidity: 0,
+          sweetness: 0,
+          body: 0,
+          aftertaste: 0,
+          clarity: 0,
+        },
+      };
+      quizData.showResult = true;
+    }
   });
 
   // 進度條
@@ -171,7 +215,6 @@
       quizData.answers[quizData.currentIndex] = undefined;
     }
   }
-
   function resetTest() {
     quizData.currentIndex = 0;
     quizData.answers = [];
@@ -184,6 +227,7 @@
     };
     quizData.showResult = false;
     calculatedResult.value = null;
+    coffeeResultStore.clearResult();
   }
 
   const emit = defineEmits(['quiz-finished']);
@@ -202,8 +246,29 @@
       if (data.success) {
         calculatedResult.value = data.data;
         quizData.scores = data.data.scores;
+
+        const normalized = {
+          acidity: Math.floor((data.data.scores.acidity / data.data.maxScores.acidity) * 100) || 0,
+          sweetness:
+            Math.floor((data.data.scores.sweetness / data.data.maxScores.sweetness) * 100) || 0,
+          body: Math.floor((data.data.scores.body / data.data.maxScores.body) * 100) || 0,
+          aftertaste:
+            Math.floor((data.data.scores.aftertaste / data.data.maxScores.aftertaste) * 100) || 0,
+          clarity: Math.floor((data.data.scores.clarity / data.data.maxScores.clarity) * 100) || 0,
+        };
+
+        const persona = getPersona({ value: normalized });
+
+        coffeeResultStore.setResult({
+          scores: data.data.scores,
+          maxScores: data.data.maxScores,
+          normalizedScores: normalized,
+          personaId: persona?.id || 'unknown',
+          answers: validAnswers,
+        });
+
         quizData.showResult = true;
-        emit('quiz-finished', data.data.scores, quizData.answers);
+        emit('quiz-finished', data.data.scores, validAnswers);
       }
     } catch (err: any) {
       console.error('計算分數失敗:', err.message);
@@ -215,17 +280,6 @@
     return quizData.currentIndex === lastIndex && quizData.answers[lastIndex] !== undefined;
   });
 
-  const maxScores = computed(() => {
-    return (
-      calculatedResult.value?.maxScores || {
-        acidity: 0,
-        sweetness: 0,
-        body: 0,
-        aftertaste: 0,
-        clarity: 0,
-      }
-    );
-  });
   //卡片效果
   const card = ref<HTMLElement | null>(null);
   const style = ref('');

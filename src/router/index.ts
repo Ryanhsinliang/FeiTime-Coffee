@@ -26,6 +26,8 @@ import AdminStockDetail from '@/views/Admin/StockDetail.vue';
 import AdminUsers from '@/views/Admin/AdminUsers.vue';
 import AdminUserDetail from '@/views/Admin/AdminUserDetail.vue';
 import Checkout from '@/views/Checkout/Checkout.vue';
+import PayCancel from '@/views/PayCancel.vue';
+import PaySuccess from '@/views/PaySuccess.vue';
 
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
@@ -157,7 +159,19 @@ const routes = [
     name: 'Checkout',
     component: Checkout,
   },
-  //測試用
+
+  {
+    path: '/payment-cancel',
+    name: 'payment-cancel',
+    component: PayCancel,
+  },
+
+  {
+    path: '/payment-success',
+    name: 'payment-success',
+    component: PaySuccess,
+  },
+
   {
     path: '/email-confirmed',
     name: 'EmailConfirmed',

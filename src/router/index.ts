@@ -82,6 +82,11 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+
+  // 🎯 頁面切換時永遠回到頂部
+  scrollBehavior() {
+    return { top: 0, behavior: 'smooth' };
+  },
 });
 
 export default router;

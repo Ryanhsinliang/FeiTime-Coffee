@@ -230,7 +230,11 @@
       :class="topBarSapce"
     >
       <!-- card start -->
-      <router-link :to="`/product-detail/${p.pid}`" v-for="p in product" :key="p.pid">
+      <router-link
+        :to="{ name: 'ProductDetail', params: { pid: p.pid } }"
+        v-for="p in product"
+        :key="p.pid"
+      >
         <div class="relative">
           <img
             v-if="p.img && p.img.length > 0"

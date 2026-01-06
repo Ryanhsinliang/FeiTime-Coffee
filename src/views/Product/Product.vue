@@ -230,8 +230,7 @@
       :class="topBarSapce"
     >
       <!-- card start -->
-      <a href="/product-detail/:pid" target="_blank" v-for="p in product" :key="p.pid">
-        <!-- 待放網址 -->
+      <router-link :to="`/product-detail/${p.pid}`" v-for="p in product" :key="p.pid">
         <div class="relative">
           <img
             v-if="p.img && p.img.length > 0"
@@ -254,13 +253,12 @@
             <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
           </div>
         </div>
-      </a>
+      </router-link>
       <!-- card end -->
     </div>
   </div>
 
   <!-- 等API.get時顯示 -->
-
   <div v-show="loading" class="flex w-full justify-center mb-[100px]">
     <img class="w-[35%]" src="./assets/w.png" alt="正在為您準備咖啡清單..." />
   </div>

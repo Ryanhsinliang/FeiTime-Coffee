@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Intro from '@/views/HomePage/Intro.vue';
 import HomePage from '@/views/HomePage/HomePage.vue';
+import AboutUs from '@/views/Story/Story.vue';
 import Product from '@/views/Product/Product.vue';
 import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
 import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
@@ -24,6 +25,11 @@ const routes = [
     path: '/home',
     name: 'HomePage',
     component: HomePage,
+  },
+  {
+    path: '/aboutus',
+    name: 'AboutUs',
+    component: AboutUs,
   },
   {
     path: '/product',
@@ -57,23 +63,23 @@ const routes = [
     component: CoffeeSimulatorT1TP1,
   },
   {
-    path: '/Login',
+    path: '/login',
     name: 'Login',
     component: Login,
   },
   {
-    path: '/Register',
+    path: '/register',
     name: 'Register',
     component: Register,
   },
   {
-    path: '/Member',
-    name: 'Memberr',
+    path: '/member',
+    name: 'Member',
     component: Member,
   },
   //測試用
   {
-    path: '/CTest',
+    path: '/cTest',
     name: 'CTest',
     component: CTest,
   },

@@ -1,6 +1,13 @@
 <template>
-  <div v-if="loading">載入中...</div>
+  <!-- Loading status -->
+  <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
+    <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
+    <p>載入產品中...</p>
+  </div>
+  <!-- Error status -->
   <div v-else-if="error">{{ error }}</div>
+
+  <!-- Product information -->
   <main class="relative" v-else-if="product">
     <!-- Product Guide Section -->
     <section class="flex flex-col lg:flex-row justify-center relative min-h-[825px]">
@@ -157,9 +164,8 @@
       </p>
     </section>
 
-    <!-- Product Details -->
+    <!-- Product Description -->
     <section class="bg-[#eeeeee]">
-      <!-- First Detail Block -->
       <div class="flex flex-col lg:flex-row">
         <div class="w-full lg:w-1/2 px-20 pb-12 lg:py-0">
           <h3 class="text-3xl font-semibold text-[#6d654f]">{{ product.name }}</h3>
@@ -207,32 +213,99 @@
 
 <script setup lang="ts">
   import { ref, computed, onMounted, watch } from 'vue';
-  import type { ProductRequest } from '@/services/ProductDetail';
-  import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
   import { useRoute } from 'vue-router';
+  import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
+  import type { ProductRequest } from '@/services/ProductDetail';
+
+  // 1. 靜態對照表
+  const originMap: Record<string, string> = {
+    Ethiopia: '衣索比亞',
+    Kenya: '肯亞',
+    Rwanda: '盧安達',
+    Burundi: '布隆迪',
+    Colombia: '哥倫比亞',
+    Brazil: '巴西',
+    Guatemala: '瓜地馬拉',
+    'Costa Rica': '哥斯大黎加',
+    'El Salvador': '薩爾瓦多',
+    Panama: '巴拿馬',
+    Indonesia: '印尼',
+    Vietnam: '越南',
+    India: '印度',
+    Thailand: '泰國',
+    'Papua New Guinea': '巴布亞紐幾內亞',
+  };
+
+  const roastMap: Record<string, string> = {
+    Light: '淺焙 ︱ 口感輕盈，香氣明亮清爽',
+    Medium: '中焙 ︱ 口感平衡，香氣溫潤適中',
+    Dark: '深焙 ︱ 口感濃郁，香氣深沉厚重',
+  };
+
+  const processingMap: Record<string, string> = {
+    Washed: '水洗處理',
+    Natural: '日曬處理',
+    Honey: '蜜處理',
+    Anaerobic: '厭氧發酵',
+    'Wet-Hulled': '濕剝法（半水洗）',
+    'Anaerobic Natural': '厭氧日曬',
+    'Anaerobic Washed': '厭氧水洗',
+    Monsooned: '季風處理',
+  };
+
+  const flavorTagsMap: Record<string, string> = {
+    Fruity: '果香',
+    Berry: '莓果',
+    Tropical: '熱帶水果',
+    Citrus: '柑橘',
+    Sweet: '甜感',
+    Fermented: '發酵',
+    Winey: '酒香',
+    Balanced: '平衡',
+    Wild: '野性',
+    Nutty: '堅果',
+    Chocolate: '巧克力',
+    Cocoa: '可可',
+    Caramel: '焦糖',
+    Smooth: '滑順',
+    Heavy: '厚重',
+    Earthy: '土壤',
+    Woody: '木質',
+    Spice: '香料',
+    Herbal: '草本',
+    Bitter: '苦感',
+    Rich: '濃郁',
+    Floral: '花香',
+    Jasmine: '茉莉',
+    'Tea-like': '茶感',
+    Clean: '乾淨',
+    Bright: '明亮酸質',
+  };
+
+  // 2. 組件狀態與邏輯
 
   const route = useRoute();
 
   const product = ref<ProductRequest | null>(null);
+  const recommendations = ref<ProductRequest[]>([]);
   const loading = ref(false);
   const error = ref<string>('');
 
-  const recommendations = ref<ProductRequest[]>([]);
-
+  // 呼叫 API
   async function loadProductData(pid: string) {
     loading.value = true;
     error.value = '';
     try {
-      // 載入當前商品
-      const res = await callSingleProduct(pid);
-      product.value = res.data;
+      // 並行載入當前商品和推薦商品
+      const [productRes, recommendationsRes] = await Promise.all([
+        callSingleProduct(pid),
+        callRecommendations(pid),
+      ]);
 
+      product.value = productRes.data;
       console.log('✅ 成功載入商品:', product.value);
 
-      // 載入推薦商品
-      const recRes = await callRecommendations(pid);
-      recommendations.value = recRes.data;
-
+      recommendations.value = recommendationsRes.data;
       console.log('✅ 推薦商品數量:', recommendations.value.length);
 
       // 重置圖片輪播索引
@@ -316,79 +389,18 @@
   };
 
   // 資料庫中英切換
+  const originText = computed(() => {
+    return product.value ? originMap[product.value.origin] || product.value.origin : '';
+  });
   const roastText = computed(() => {
-    const roastMap: Record<string, string> = {
-      Light: '淺焙 ︱ 口感輕盈，香氣明亮清爽',
-      Medium: '中焙 ︱ 口感平衡，香氣溫潤適中',
-      Dark: '深焙 ︱ 口感濃郁，香氣深沉厚重',
-    };
     return product.value ? roastMap[product.value.roast] || product.value.roast : '';
   });
   const processingText = computed(() => {
-    const processingMap: Record<string, string> = {
-      Washed: '水洗處理',
-      Natural: '日曬處理',
-      Honey: '蜜處理',
-      Anaerobic: '厭氧發酵',
-      'Wet-Hulled': '濕剝法（半水洗）',
-      'Anaerobic Natural': '厭氧日曬',
-      'Anaerobic Washed': '厭氧水洗',
-      Monsooned: '季風處理',
-    };
     return product.value ? processingMap[product.value.processing] || product.value.processing : '';
-  });
-
-  const originText = computed(() => {
-    const originMap: Record<string, string> = {
-      Ethiopia: '衣索比亞',
-      Kenya: '肯亞',
-      Rwanda: '盧安達',
-      Burundi: '布隆迪',
-      Colombia: '哥倫比亞',
-      Brazil: '巴西',
-      Guatemala: '瓜地馬拉',
-      'Costa Rica': '哥斯大黎加',
-      'El Salvador': '薩爾瓦多',
-      Panama: '巴拿馬',
-      Indonesia: '印尼',
-      Vietnam: '越南',
-      India: '印度',
-      Thailand: '泰國',
-      'Papua New Guinea': '巴布亞紐幾內亞',
-    };
-    return product.value ? originMap[product.value.origin] || product.value.origin : '';
   });
 
   const flavorTagsText = computed(() => {
     if (!product.value?.flavor_tags) return [];
-    const flavorTagsMap: Record<string, string> = {
-      Fruity: '果香',
-      Berry: '莓果',
-      Tropical: '熱帶水果',
-      Citrus: '柑橘',
-      Sweet: '甜感',
-      Fermented: '發酵',
-      Winey: '酒香',
-      Balanced: '平衡',
-      Wild: '野性',
-      Nutty: '堅果',
-      Chocolate: '巧克力',
-      Cocoa: '可可',
-      Caramel: '焦糖',
-      Smooth: '滑順',
-      Heavy: '厚重',
-      Earthy: '土壤',
-      Woody: '木質',
-      Spice: '香料',
-      Herbal: '草本',
-      Bitter: '苦感',
-      Rich: '濃郁',
-      Floral: '花香',
-      Jasmine: '茉莉',
-      'Tea-like': '茶感',
-      Clean: '乾淨',
-      Bright: '明亮酸質',
-    };
     return product.value.flavor_tags.map((tagObj) => {
       const tag = tagObj.name;
       return flavorTagsMap[tag] ?? tag;

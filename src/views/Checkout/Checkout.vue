@@ -111,7 +111,7 @@
     try {
       // 呼叫你的 Node.js 橋樑 (port 8080)
       const response = await axios.post(`${linepayUrl}/linepay/gobuy`, {
-        // 網址為後端設定的 port 和路由 /linePay/gobuy
+        // 路由為後端寫好的 /linePay/gobuy
         amount: 3, // 實際金額
         productName: '美味咖啡豆',
       });
@@ -119,8 +119,7 @@
       // 幣值在後端有寫了 先假設只在臺灣賣 這邊就不特別設定
 
       if (response.data.returnCode === '0000') {
-        // 跳轉到 LINE Pay 提供的支付網頁
-        window.location.href = response.data.info.paymentUrl.web;
+        window.location.href = response.data.info.paymentUrl.web; // 跳轉到 LINE Pay 提供的支付網頁
       } else {
         alert('建立交易失敗：' + response.data.returnMessage);
       }

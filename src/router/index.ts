@@ -9,9 +9,9 @@ import CoffeeIdTestCard from '@/views/CoffeeIdTest/CoffeeIdTestCard.vue';
 import CoffeeSimulatorT1T from '@/views/CoffeeLabT1-T/CoffeeSimulatorT1T.vue';
 import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.vue';
 import Login from '@/views/Login/Login.vue';
-import Register from '@/views/Login/Register.vue';
+import Register from '@/views/Register/Register.vue';
 import Member from '@/views/Member/Member.vue';
-
+import EmailComfirmed from '@/views/Register/EmailComfirmed.vue';
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
 
@@ -76,6 +76,11 @@ const routes = [
     path: '/member',
     name: 'Member',
     component: Member,
+  },
+  {
+    path: '/email-confirmed',
+    name: 'EmailConfirmed',
+    component: EmailComfirmed,
   },
   //測試用
   {

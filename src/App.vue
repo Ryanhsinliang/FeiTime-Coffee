@@ -31,7 +31,7 @@
   const route = useRoute();
 
   // 判斷是否顯示 Header/Footer
-  const showHeaderFooter = computed(() => route.name !== 'Intro');
+  const showHeaderFooter = computed(() => route.name !== 'Intro' && route.name !== 'Admin');
 </script>
 
 <style>

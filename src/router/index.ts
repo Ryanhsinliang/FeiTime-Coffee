@@ -10,6 +10,7 @@ import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.
 import Login from '@/views/Login/Login.vue';
 import Register from '@/views/Login/Register.vue';
 import Member from '@/views/Member/Member.vue';
+import Admin from '@/views/Admin/Admin.vue';
 
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
@@ -70,6 +71,11 @@ const routes = [
     path: '/Member',
     name: 'Memberr',
     component: Member,
+  },
+  {
+    path: '/Admin',
+    name: 'Admin',
+    component: Admin,
   },
   //測試用
   {

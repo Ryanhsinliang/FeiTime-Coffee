@@ -16,6 +16,10 @@ import EmailConfirmed from '@/views/Register/EmailConfirmed.vue';
 import ForgotPassword from '@/views/Login/ForgotPassword.vue';
 import ResetPassword from '@/views/Login/ResetPassword.vue';
 import GoogleCallback from '@/views/Login/GoogleCallback.vue';
+import Admin from '@/views/Admin/Admin.vue';
+
+//後端串接測試用
+import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
 
 const routes = [
   {
@@ -84,6 +88,12 @@ const routes = [
     component: Member,
     meta: { requiresAuth: true },
   },
+  {
+    path: '/Admin',
+    name: 'Admin',
+    component: Admin,
+  },
+  //測試用
   {
     path: '/email-confirmed',
     name: 'EmailConfirmed',

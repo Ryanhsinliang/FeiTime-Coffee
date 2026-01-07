@@ -49,7 +49,7 @@
             class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
           />
         </div>
-        <button type="submit" class="w-full p-3 rounded-md mt-2 mb-4 bg-[#6d654f] text-white">
+        <button type="submit" class="w-full p-3 rounded-md mt-2 mb-4 bg-lime-400 text-white">
           確認送出訂單
         </button>
       </div>
@@ -89,6 +89,9 @@
       </div>
     </section>
   </main>
+  <button @click="useLinePay" class="w-full p-3 rounded-md mt-2 mb-4 bg-lime-400 text-white">
+    確認送出訂單
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -103,16 +106,20 @@
   });
 
   // 串linepay
+  const linepayUrl = import.meta.env.VITE_LINK;
   const useLinePay = async () => {
     try {
-      // 呼叫你的 Node.js 橋樑 (port 3000)
-      const response = await axios.post('http://localhost:3000/linePay/checkout', {
-        amount: 100, // 實際金額
+      // 呼叫你的 Node.js 橋樑 (port 8080)
+      const response = await axios.post(`${linepayUrl}/linepay/gobuy`, {
+        // 網址為後端設定的 port 和路由 /linePay/gobuy
+        amount: 3, // 實際金額
         productName: '美味咖啡豆',
       });
+      // amount productName 自行取名 在前端不用固定
+      // 幣值在後端有寫了 先假設只在臺灣賣 這邊就不特別設定
 
       if (response.data.returnCode === '0000') {
-        // 關鍵！跳轉到 LINE Pay 提供的支付網頁
+        // 跳轉到 LINE Pay 提供的支付網頁
         window.location.href = response.data.info.paymentUrl.web;
       } else {
         alert('建立交易失敗：' + response.data.returnMessage);
@@ -122,32 +129,14 @@
     }
   };
 
-  //   3. 最關鍵的一步：成功後的「Confirm」
-  // 這點新手最容易漏掉！ 當你從 LINE Pay 跳回 PaymentSuccess.vue 時，這筆錢還沒真的扣掉。
-  // 你必須在成功頁面的 onMounted 階段，再呼叫一次後端。
+  // 官方文件 https://developers-pay.line.me/zh/online-api-v3
+  // response.data  用 axios 發送請求時，它會把回傳值放在 data 的物件裡
+  // returnCode、info、paymentUrl 為 LINE Pay 提供
+  // returnCode： 狀態碼  0000 是正常  1101 是 ID或Secret錯了（未授權)
+  // info.paymentUrl.web 是把網路連到linepay他們自己做的付款頁面
+  // returnMessage 失敗時 顯示的訊息
 
-  // 流程如下：
-  // LINE Pay 跳回 http://localhost:5173/payment-success?transactionId=xxxx
-
-  // PaymentSuccess.vue 抓取 URL 上的 transactionId。
-
-  // Vue 把這個 ID 丟給 Node.js。
-
-  // Node.js 呼叫 LINE Pay 的 Confirm API（這步做完才算真的收錢成功）。
-
-  // 4. 你的下一步清單（實作順序）
-  // 前端： 建立 PaymentSuccess.vue 與 PaymentCancel.vue。
-
-  // 前端： 在 router 設定這兩個路徑。
-
-  // 後端 (Node.js)： 補上第二個路由 app.post('/linePay/confirm', ...)。
-
-  // 測試： 點擊 Checkout.vue 按鈕 -> 跳轉 LINE Pay -> 輸入測試帳密 -> 跳回成功頁。
-
-  // 💡 小提醒 (TypeScript)
-  // 因為你有用 TS，如果 axios 回傳的資料類型報錯，你可以先用 any 擋一下，或者定義一個 interface。
-
-  // 你想先看 PaymentSuccess.vue 怎麼抓網址參數的程式碼，還是想先補完 Node.js 那個最關鍵的 Confirm API？
+  // window.location.href 可以跳轉至寫進去的網址 執行後瀏覽器會立刻跳轉過去 就像是在瀏覽器輸入網址並按 Enter 一樣
 </script>
 
 <style></style>

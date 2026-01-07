@@ -9,6 +9,7 @@ module.exports = {
         shizuru: ['"Shizuru"'], // font-shizuru
         cactus: ['"Cactus Classical Serif"', 'serif'], // font-cactus
         notoserif: ['"Noto Serif TC"', 'serif'], // font-notoserif
+        notosans: ['Noto Sans TC', 'sans-serif'], // font-notosans
       },
       keyframes: {
         float: {

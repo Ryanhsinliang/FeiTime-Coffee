@@ -181,15 +181,16 @@
 
   /* ===== Scroll Effect ===== */
   const scrollY = ref<number>(0);
-  const bannerHeight = ref<number>(0);
+  // 🔥 使用 computed 自動計算 banner 高度（94vh）
+  const bannerHeight = computed(() => window.innerHeight * 0.94);
 
   const onScroll = () => {
     scrollY.value = window.scrollY;
   };
 
   onMounted(() => {
-    const banner = document.querySelector<HTMLElement>('header');
-    bannerHeight.value = banner?.offsetHeight ?? 0;
+    // 🔥 初始化當前滾動位置
+    scrollY.value = window.scrollY;
     window.addEventListener('scroll', onScroll);
   });
 

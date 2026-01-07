@@ -1,6 +1,13 @@
 <template>
-  <div v-if="loading">載入中...</div>
+  <!-- Loading status -->
+  <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
+    <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
+    <p>載入產品中...</p>
+  </div>
+  <!-- Error status -->
   <div v-else-if="error">{{ error }}</div>
+
+  <!-- Product information -->
   <main class="relative" v-else-if="product">
     <!-- Product Guide Section -->
     <section class="flex flex-col lg:flex-row justify-center relative min-h-[825px]">
@@ -108,7 +115,7 @@
           <p v-show="showFlavor" class="pb-2">
             {{ descriptionFlavor }}
             <br />
-            {{ product.flavor_type }}+{{ product.flavor_tags.map((tag) => tag.name).join('、') }}
+            核心風味：{{ flavorTagsText.join('、') }}
           </p>
         </div>
 
@@ -132,13 +139,13 @@
           <button
             @click="addToCart"
             type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 mx-2 rounded hover:bg-[#ABB7A5]"
+            class="bg-[#6d654f] text-white text-sm p-3.5 mx-2 rounded font-bold hover:bg-[#ABB7A5]"
           >
             加到購物車
           </button>
           <button
             type="submit"
-            class="bg-[#6d654f] text-white text-sm p-3.5 rounded w-24 hover:bg-[#ABB7A5]"
+            class="bg-[#6d654f] text-white text-sm p-3.5 rounded w-24 font-bold hover:bg-[#ABB7A5]"
           >
             立即購買
           </button>
@@ -151,19 +158,17 @@
       <img class="w-full aspect-[9/4] object-cover" src="./assets/coffee_banner.jpg" alt="" />
     </section>
 
-    <!-- Quote Section -->
     <section>
-      <p class="bg-[#eeeeee] text-[#6d654f] text-3xl text-center py-48">
-        品味高海拔的清新果香,讓每一口都回到自然的純粹
+      <p class="bg-[#eeeeee] text-[#6d654f] font-semibold text-4xl text-center py-48">
+        源自高品質產地，香氣清晰口感純淨
       </p>
     </section>
 
-    <!-- Product Details -->
+    <!-- Product Description -->
     <section class="bg-[#eeeeee]">
-      <!-- First Detail Block -->
       <div class="flex flex-col lg:flex-row">
         <div class="w-full lg:w-1/2 px-20 pb-12 lg:py-0">
-          <h3 class="text-3xl text-[#6d654f]">{{ product.name }}</h3>
+          <h3 class="text-3xl font-semibold text-[#6d654f]">{{ product.name }}</h3>
           <p class="text-lg text-[#808080] pt-10">
             {{ descriptionBody }}
           </p>
@@ -177,309 +182,156 @@
 
     <!-- Recommend Products Section -->
     <section class="bg-[#eeeeee] py-[100px] min-h-[750px] overflow-hidden w-full">
-      <h2 class="py-10 text-center text-3xl text-[#6d654f]">推薦商品</h2>
+      <h2 class="py-10 text-center text-3xl font-semibold text-[#6d654f]">推薦商品</h2>
       <div
         class="cursor-pointer flex gap-12 w-max animate-[scroll_80s_linear_infinite] [will-change:transform] hover:[animation-play-state:paused]"
       >
-        <a
-          href="#"
+        <router-link
+          v-for="item in recommendations"
+          :key="item.pid"
+          :to="`/product-detail/${item.pid}`"
           class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
         >
           <img
-            src="./assets/coffee_bag.png"
-            alt="orange"
+            :src="item.img[0]?.formats?.large?.url"
+            :alt="item.name"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
           />
           <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
+            :src="item.img[2]?.formats?.large?.url"
+            :alt="item.name"
             class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
           />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
+          <p class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold">
+            {{ item.name }}
           </p>
-        </a>
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/coffee_bag.png"
-            alt="coffee_bag"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
-
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/coffee_bag.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/orange.png"
-            alt="orange"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
-        <a
-          href="#"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
-        >
-          <img
-            src="./assets/coffee_bag.png"
-            alt="coffee_bag"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0"
-          />
-          <img
-            src="./assets/coffee_cup.png"
-            alt="coffee_cup"
-            class="aspect-[2/3] w-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          />
-          <p
-            class="absolute top-[100%] left-0 right-0 text-left p-2 text-[#6d654f] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-          >
-            阿拉比卡．Arabica
-          </p>
-        </a>
+        </router-link>
       </div>
     </section>
-
-    <!-- 檢查用請忽略 -->
-    <!-- <div v-if="loading">載入中...</div>
-    <div v-else-if="error">{{ error }}</div>
-    <div v-else-if="product">
-      <h3>{{ product.name }}</h3>
-      <p>產品編號: {{ product.pid }}</p>
-      <p>風味: {{ product.flavor_type }}</p>
-      <p>
-        風味標籤：
-        {{ product.flavor_tags.map((tag) => tag.name).join('、') }}
-      </p>
-      <p>價格: ${{ product.price }}</p>
-      <p>庫存: {{ product.stock }}</p>
-      <h4>{{ descriptionFlavor }}</h4>
-      <p>{{ descriptionBody }}</p>
-      <p>{{ descriptionBody2 }}</p>
-      <img
-        v-for="(img, index) in product.img"
-        :key="index"
-        :src="img.formats.medium.url"
-        :alt="`${product.name} - ${index + 1}`"
-      />
-    </div> -->
   </main>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
-  import { callProducts } from '@/services/ProductDetail';
-  import type { ProductRequest } from '@/services/ProductDetail';
-  import { callSingleProduct } from '@/services/ProductDetail';
+  import { ref, computed, onMounted, watch } from 'vue';
   import { useRoute } from 'vue-router';
+  import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
+  import type { ProductRequest } from '@/services/ProductDetail';
+
+  // 1. 靜態對照表
+  const originMap: Record<string, string> = {
+    Ethiopia: '衣索比亞',
+    Kenya: '肯亞',
+    Rwanda: '盧安達',
+    Burundi: '布隆迪',
+    Colombia: '哥倫比亞',
+    Brazil: '巴西',
+    Guatemala: '瓜地馬拉',
+    'Costa Rica': '哥斯大黎加',
+    'El Salvador': '薩爾瓦多',
+    Panama: '巴拿馬',
+    Indonesia: '印尼',
+    Vietnam: '越南',
+    India: '印度',
+    Thailand: '泰國',
+    'Papua New Guinea': '巴布亞紐幾內亞',
+  };
+
+  const roastMap: Record<string, string> = {
+    Light: '淺焙 ︱ 口感輕盈，香氣明亮清爽',
+    Medium: '中焙 ︱ 口感平衡，香氣溫潤適中',
+    Dark: '深焙 ︱ 口感濃郁，香氣深沉厚重',
+  };
+
+  const processingMap: Record<string, string> = {
+    Washed: '水洗處理',
+    Natural: '日曬處理',
+    Honey: '蜜處理',
+    Anaerobic: '厭氧發酵',
+    'Wet-Hulled': '濕剝法（半水洗）',
+    'Anaerobic Natural': '厭氧日曬',
+    'Anaerobic Washed': '厭氧水洗',
+    Monsooned: '季風處理',
+  };
+
+  const flavorTagsMap: Record<string, string> = {
+    Fruity: '果香',
+    Berry: '莓果',
+    Tropical: '熱帶水果',
+    Citrus: '柑橘',
+    Sweet: '甜感',
+    Fermented: '發酵',
+    Winey: '酒香',
+    Balanced: '平衡',
+    Wild: '野性',
+    Nutty: '堅果',
+    Chocolate: '巧克力',
+    Cocoa: '可可',
+    Caramel: '焦糖',
+    Smooth: '滑順',
+    Heavy: '厚重',
+    Earthy: '土壤',
+    Woody: '木質',
+    Spice: '香料',
+    Herbal: '草本',
+    Bitter: '苦感',
+    Rich: '濃郁',
+    Floral: '花香',
+    Jasmine: '茉莉',
+    'Tea-like': '茶感',
+    Clean: '乾淨',
+    Bright: '明亮酸質',
+  };
+
+  // 2. 組件狀態與邏輯
 
   const route = useRoute();
 
   const product = ref<ProductRequest | null>(null);
+  const recommendations = ref<ProductRequest[]>([]);
   const loading = ref(false);
   const error = ref<string>('');
 
-  onMounted(async () => {
+  // 呼叫 API
+  async function loadProductData(pid: string) {
     loading.value = true;
+    error.value = '';
     try {
-      const pid = route.params.pid as string; // 從路由取得 pid
-      const res = await callSingleProduct(pid);
+      // 並行載入當前商品和推薦商品
+      const [productRes, recommendationsRes] = await Promise.all([
+        callSingleProduct(pid),
+        callRecommendations(pid),
+      ]);
 
-      product.value = res.data;
-
+      product.value = productRes.data;
       console.log('✅ 成功載入商品:', product.value);
-    } catch (err) {
+
+      recommendations.value = recommendationsRes.data;
+      console.log('✅ 推薦商品數量:', recommendations.value.length);
+
+      // 重置圖片輪播索引
+      currentIndex.value = 0;
+    } catch (err: unknown) {
       console.error('❌ API載入失敗', err);
       error.value = '商品載入失敗';
     } finally {
       loading.value = false;
     }
+  }
+
+  onMounted(() => {
+    const pid = route.params.pid as string;
+    loadProductData(pid);
   });
+
+  // 監聽路由變化
+  watch(
+    () => route.params.pid,
+    (newPid) => {
+      if (newPid) {
+        loadProductData(newPid as string);
+      }
+    }
+  );
 
   // 圖片點擊輪播
   const currentIndex = ref(0);
@@ -537,80 +389,23 @@
   };
 
   // 資料庫中英切換
+  const originText = computed(() => {
+    return product.value ? originMap[product.value.origin] || product.value.origin : '';
+  });
   const roastText = computed(() => {
-    const roastMap: Record<string, string> = {
-      Light: '淺焙 ︱ 口感輕盈，香氣明亮清爽',
-      Medium: '中焙 ︱ 口感平衡，香氣溫潤適中',
-      Dark: '深焙 ︱ 口感濃郁，香氣深沉厚重',
-    };
     return product.value ? roastMap[product.value.roast] || product.value.roast : '';
   });
   const processingText = computed(() => {
-    const processingMap: Record<string, string> = {
-      Washed: '水洗處理',
-      Natural: '日曬處理',
-      Honey: '蜜處理',
-      Anaerobic: '厭氧發酵',
-      'Wet-Hulled': '濕剝法（半水洗）',
-      'Anaerobic Natural': '厭氧日曬',
-      'Anaerobic Washed': '厭氧水洗',
-      Monsooned: '季風處理',
-    };
     return product.value ? processingMap[product.value.processing] || product.value.processing : '';
   });
-  const originText = computed(() => {
-    const originMap: Record<string, string> = {
-      Ethiopia: '衣索比亞',
-      Kenya: '肯亞',
-      Rwanda: '盧安達',
-      Burundi: '布隆迪',
-      Colombia: '哥倫比亞',
-      Brazil: '巴西',
-      Guatemala: '瓜地馬拉',
-      'Costa Rica': '哥斯大黎加',
-      'El Salvador': '薩爾瓦多',
-      Panama: '巴拿馬',
-      Indonesia: '印尼',
-      Vietnam: '越南',
-      India: '印度',
-      Thailand: '泰國',
-      'Papua New Guinea': '巴布亞紐幾內亞',
-    };
-    return product.value ? originMap[product.value.origin] || product.value.origin : '';
+
+  const flavorTagsText = computed(() => {
+    if (!product.value?.flavor_tags) return [];
+    return product.value.flavor_tags.map((tagObj) => {
+      const tag = tagObj.name;
+      return flavorTagsMap[tag] ?? tag;
+    });
   });
-  // const flavorTagsText = computed(() => {
-  //   const flavorTagsMap: Record<string, string> = {
-  //     Fruity: '果香',
-  //     Berry: '莓果',
-  //     Tropical: '熱帶水果',
-  //     Citrus: '柑橘',
-  //     Sweet: '甜感',
-  //     Fermented: '發酵',
-  //     Winey: '酒香',
-  //     Balanced: '平衡',
-  //     Wild: '野性',
-  //     Nutty: '堅果',
-  //     Chocolate: '巧克力',
-  //     Cocoa: '可可',
-  //     Caramel: '焦糖',
-  //     Smooth: '滑順',
-  //     Heavy: '厚重',
-  //     Earthy: '土壤',
-  //     Woody: '木質',
-  //     Spice: '香料',
-  //     Herbal: '草本',
-  //     Bitter: '苦感',
-  //     Rich: '濃郁',
-  //     Floral: '花香',
-  //     Jasmine: '茉莉',
-  //     // Tea-like: '茶感',
-  //     // Clean: '乾淨',
-  //     // Bright: '明亮酸質',
-  //   };
-  //   return product.value
-  //     ? flavorTagsMap[product.value.flavor_tags] || product.value.flavor_tags
-  //     : '';
-  // });
 
   // 產品描述分段
   const descriptionLines = computed(() => {

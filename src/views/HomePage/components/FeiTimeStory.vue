@@ -119,69 +119,27 @@
         <!-- 卡片邊框流動效果 SVG -->
         <svg
           class="card-border-flow-svg"
-          viewBox="0 0 100 100"
+          viewBox="0 0 1200 800"
           preserveAspectRatio="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            <!-- 卡片邊框流動漸層 - 更短更集中的高光 -->
-            <linearGradient id="card-border-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style="stop-color: #dccfc0; stop-opacity: 0">
-                <animate
-                  attributeName="offset"
-                  values="-0.15; 1.15"
-                  dur="8s"
-                  repeatCount="indefinite"
-                />
-              </stop>
-              <stop offset="5%" style="stop-color: #f5e6d3; stop-opacity: 0.9">
-                <animate
-                  attributeName="offset"
-                  values="-0.1; 1.2"
-                  dur="8s"
-                  repeatCount="indefinite"
-                />
-              </stop>
-              <stop offset="10%" style="stop-color: #fffef5; stop-opacity: 1">
-                <animate
-                  attributeName="offset"
-                  values="-0.05; 1.25"
-                  dur="8s"
-                  repeatCount="indefinite"
-                />
-              </stop>
-              <stop offset="15%" style="stop-color: #f5e6d3; stop-opacity: 0.9">
-                <animate attributeName="offset" values="0; 1.3" dur="8s" repeatCount="indefinite" />
-              </stop>
-              <stop offset="20%" style="stop-color: #dccfc0; stop-opacity: 0">
-                <animate
-                  attributeName="offset"
-                  values="0.05; 1.35"
-                  dur="8s"
-                  repeatCount="indefinite"
-                />
-              </stop>
-            </linearGradient>
-
             <!-- 柔和發光濾鏡 -->
-            <filter id="border-glow" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+            <filter id="border-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur" />
               <feMerge>
-                <feMergeNode in="coloredBlur" />
                 <feMergeNode in="coloredBlur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
           </defs>
 
-          <!-- 背景固定線（上半部）- 最小圓角 -->
-          <path
-            d="M 0 50 
-               L 0 1.5 
-               Q 0 0, 1.5 0 
-               L 98.5 0 
-               Q 100 0, 100 1.5 
-               L 100 50"
+          <!-- 背景固定邊框 -->
+          <rect
+            x="1"
+            y="1"
+            width="1198"
+            height="798"
             fill="none"
             stroke="#A2AF9B"
             stroke-width="2"
@@ -189,55 +147,88 @@
             vector-effect="non-scaling-stroke"
           />
 
-          <!-- 背景固定線（下半部）- 最小圓角 -->
-          <path
-            d="M 0 50 
-               L 0 98.5 
-               Q 0 100, 1.5 100 
-               L 98.5 100 
-               Q 100 100, 100 98.5 
-               L 100 50"
-            fill="none"
-            stroke="#A2AF9B"
-            stroke-width="2"
-            opacity="0.3"
-            vector-effect="non-scaling-stroke"
-          />
-
-          <!-- 上半部流動高光 - 最小圓角 -->
-          <path
-            class="card-border-flow card-border-top"
-            d="M 0 50 
-               L 0 1.5
-               Q 0 0, 1.5 0
-               L 98.5 0
-               Q 100 0, 100 1.5
-               L 100 50"
-            fill="none"
-            stroke="url(#card-border-gradient)"
-            stroke-width="6"
-            filter="url(#border-glow)"
+          <!-- 上路徑：左中→左上→上邊→右上→右中 -->
+          <!-- 左中到左上（垂直向上） -->
+          <line
+            class="card-path-upper card-path-left-up"
+            x1="0"
+            y1="400"
+            x2="0"
+            y2="0"
+            stroke="#D4A574"
+            stroke-width="4"
             vector-effect="non-scaling-stroke"
             stroke-linecap="round"
-            stroke-linejoin="round"
+            pathLength="100"
           />
 
-          <!-- 下半部流動高光 - 最小圓角 -->
-          <path
-            class="card-border-flow card-border-bottom"
-            d="M 0 50
-               L 0 98.5
-               Q 0 100, 1.5 100
-               L 98.5 100
-               Q 100 100, 100 98.5
-               L 100 50"
-            fill="none"
-            stroke="url(#card-border-gradient)"
-            stroke-width="6"
-            filter="url(#border-glow)"
+          <!-- 上邊（水平向右） -->
+          <line
+            class="card-path-upper card-path-top"
+            x1="0"
+            y1="0"
+            x2="1200"
+            y2="0"
+            stroke="#D4A574"
+            stroke-width="4"
             vector-effect="non-scaling-stroke"
             stroke-linecap="round"
-            stroke-linejoin="round"
+            pathLength="100"
+          />
+
+          <!-- 右上到右中（垂直向下） -->
+          <line
+            class="card-path-upper card-path-right-down"
+            x1="1200"
+            y1="0"
+            x2="1200"
+            y2="400"
+            stroke="#D4A574"
+            stroke-width="4"
+            vector-effect="non-scaling-stroke"
+            stroke-linecap="round"
+            pathLength="100"
+          />
+
+          <!-- 下路徑：左中→左下→下邊→右下→右中 -->
+          <!-- 左中到左下（垂直向下） -->
+          <line
+            class="card-path-lower card-path-left-down"
+            x1="0"
+            y1="400"
+            x2="0"
+            y2="800"
+            stroke="#D4A574"
+            stroke-width="4"
+            vector-effect="non-scaling-stroke"
+            stroke-linecap="round"
+            pathLength="100"
+          />
+
+          <!-- 下邊（水平向右） -->
+          <line
+            class="card-path-lower card-path-bottom"
+            x1="0"
+            y1="800"
+            x2="1200"
+            y2="800"
+            stroke="#D4A574"
+            stroke-width="4"
+            vector-effect="non-scaling-stroke"
+            stroke-linecap="round"
+          />
+
+          <!-- 右下到右中（垂直向上） -->
+          <line
+            class="card-path-lower card-path-right-up"
+            x1="1200"
+            y1="800"
+            x2="1200"
+            y2="400"
+            stroke="#D4A574"
+            stroke-width="4"
+            vector-effect="non-scaling-stroke"
+            stroke-linecap="round"
           />
         </svg>
 
@@ -559,38 +550,109 @@
 
 <style scoped>
   /* ============================================
-     心電圖流動動畫 - 完整時間軸（8秒循環）
-     
-     左右兩側使用相同參數，確保視覺效果完全一致
+     心電圖流動動畫 - 完整時間軸（18秒循環）
+
+     時間軸設計：
+     0-3秒：左側心電圖高光流動
+     3-5秒：卡片左側邊框（左中→左上/左下）垂直段，上下同時
+     5-8秒：卡片上下邊框（左→右）水平段，上下同時
+     8-10秒：卡片右側邊框（右上/右下→右中）垂直段，上下同時
+     10-12秒：右側心電圖高光流動
+     12-18秒：暫停等待
      ============================================ */
   .flow-active {
-    /* 增加高光長度，讓兩側都非常明顯 */
-    stroke-dasharray: 600 2800;
-    stroke-dashoffset: 3400;
-    animation: energy-move 8s linear infinite;
+    /* 高光長度設定 */
+    stroke-dasharray: 520 0;
+    animation: energy-move 3s linear forwards;
+    animation-play-state: paused;
+    animation-delay: 0s;
   }
 
   @keyframes energy-move {
+    from {
+      stroke-dashoffset: 520;
+    }
     to {
       stroke-dashoffset: 0;
     }
   }
 
-  /* 左側心電圖：立即開始 */
+  /* 左側心電圖：0-3秒 */
   .flow-left {
-    animation-delay: 0s;
+    animation-name: energy-move-left;
+    animation-duration: 18s;
+    animation-iteration-count: infinite;
   }
 
-  /* 右側心電圖：延遲7秒開始（確保卡片邊框完全走完）*/
+  @keyframes energy-move-left {
+    0% {
+      stroke-dasharray: 520 0;
+      stroke-dashoffset: 520;
+      opacity: 1;
+    }
+    16.67% {
+      stroke-dasharray: 520 0;
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    16.68% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* 右側心電圖：10-12秒 */
   .flow-right {
-    animation-delay: 7s;
+    animation-name: energy-move-right;
+    animation-duration: 18s;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes energy-move-right {
+    0% {
+      stroke-dasharray: 520 0;
+      stroke-dashoffset: 520;
+      opacity: 0;
+    }
+    55.54% {
+      /* 10秒 */
+      opacity: 0;
+    }
+    55.55% {
+      stroke-dasharray: 520 0;
+      stroke-dashoffset: 520;
+      opacity: 1;
+    }
+    66.67% {
+      /* 12秒 */
+      stroke-dasharray: 520 0;
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    66.68% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+    }
   }
 
   /* ============================================
-     卡片邊框流動動畫 - 上下兩條路徑
-     從左側中點分流，沿著上下邊緣，在右側中點匯合
-     
-     2.5-5.5秒：持續3秒流動
+     卡片邊框流動動畫 - 上下雙路徑系統
+
+     路徑流向：
+     上路徑：左中(0,400) → 左上(0,0) → 右上(1200,0) → 右中(1200,400)
+     下路徑：左中(0,400) → 左下(0,800) → 右下(1200,800) → 右中(1200,400)
+
+     時間軸：
+     0-3秒：左側心電圖
+     3-5秒：左中到轉角（左上/左下）- 垂直段
+     5-8秒：轉角到轉角（上邊/下邊）- 水平段
+     8-10秒：轉角到右中（右上/右下到右中）- 垂直段
+     10-12秒：右側心電圖
+     12-18秒：暫停
      ============================================ */
   .card-border-flow-svg {
     position: absolute;
@@ -602,23 +664,229 @@
     z-index: 1;
   }
 
-  .card-border-flow {
-    /* 卡片邊框：佔25%時間（3-5秒，2秒）*/
-    stroke-dasharray: 1100 3300;
-    stroke-dashoffset: 4400;
-    animation: border-flow-move 8s linear infinite;
+  /* ========== 上路徑動畫 ========== */
+
+  /* 左中到左上 (3-5秒，垂直向上) */
+  .card-path-left-up {
+    stroke-dasharray: 30 200;
+    stroke-dashoffset: 30;
+    opacity: 0;
+    animation: pathLeftUp 18s linear infinite;
   }
 
-  /* 從第 3 秒延遲開始（3-5秒，持續2秒）*/
-  /* 從第 3.5 秒延遲開始（確保左側心電圖高光完全到達卡片左側邊緣）*/
-  .card-border-top,
-  .card-border-bottom {
-    animation-delay: 3.5s;
+  @keyframes pathLeftUp {
+    0% {
+      stroke-dashoffset: 30;
+      opacity: 0;
+    }
+    16.66% {
+      /* 3秒 */
+      stroke-dashoffset: 30;
+      opacity: 0;
+    }
+    16.67% {
+      stroke-dashoffset: 30;
+      opacity: 1;
+    }
+    27.77% {
+      /* 5秒 */
+      stroke-dashoffset: -70;
+      opacity: 1;
+    }
+    27.78% {
+      opacity: 0;
+      stroke-dashoffset: -70;
+    }
+    100% {
+      opacity: 0;
+      stroke-dashoffset: 30;
+    }
   }
 
-  @keyframes border-flow-move {
-    to {
+  /* 上邊 (5-8秒，水平向右) */
+  .card-path-top {
+    stroke-dasharray: 300 1200;
+    stroke-dashoffset: 1500;
+    opacity: 0;
+    animation: pathTop 18s linear infinite;
+  }
+
+  @keyframes pathTop {
+    0% {
+      stroke-dashoffset: 1500;
+      opacity: 0;
+    }
+    27.76% {
+      /* 5秒 */
+      stroke-dashoffset: 1500;
+      opacity: 0;
+    }
+    27.77% {
+      stroke-dashoffset: 1500;
+      opacity: 1;
+    }
+    44.44% {
+      /* 8秒 */
       stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    44.45% {
+      opacity: 0;
+      stroke-dashoffset: 0;
+    }
+    100% {
+      opacity: 0;
+      stroke-dashoffset: 1500;
+    }
+  }
+
+  /* 右上到右中 (8-10秒，垂直向下) */
+  .card-path-right-down {
+    stroke-dasharray: 120 400;
+    stroke-dashoffset: 520;
+    opacity: 0;
+    animation: pathRightDown 18s linear infinite;
+  }
+
+  @keyframes pathRightDown {
+    0% {
+      stroke-dashoffset: 520;
+      opacity: 0;
+    }
+    44.43% {
+      /* 8秒 */
+      stroke-dashoffset: 520;
+      opacity: 0;
+    }
+    44.44% {
+      stroke-dashoffset: 520;
+      opacity: 1;
+    }
+    55.55% {
+      /* 10秒 */
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    55.56% {
+      opacity: 0;
+      stroke-dashoffset: 0;
+    }
+    100% {
+      opacity: 0;
+      stroke-dashoffset: 520;
+    }
+  }
+
+  /* ========== 下路徑動畫 ========== */
+
+  /* 左中到左下 (3-5秒，垂直向下) */
+  .card-path-left-down {
+    stroke-dasharray: 30 200;
+    stroke-dashoffset: 30;
+    opacity: 0;
+    animation: pathLeftDown 18s linear infinite;
+  }
+
+  @keyframes pathLeftDown {
+    0% {
+      stroke-dashoffset: 30;
+      opacity: 0;
+    }
+    16.66% {
+      /* 3秒 */
+      stroke-dashoffset: 30;
+      opacity: 0;
+    }
+    16.67% {
+      stroke-dashoffset: 30;
+      opacity: 1;
+    }
+    27.77% {
+      /* 5秒 */
+      stroke-dashoffset: -70;
+      opacity: 1;
+    }
+    27.78% {
+      opacity: 0;
+      stroke-dashoffset: -70;
+    }
+    100% {
+      opacity: 0;
+      stroke-dashoffset: 30;
+    }
+  }
+
+  /* 下邊 (5-8秒，水平向右) */
+  .card-path-bottom {
+    stroke-dasharray: 300 1200;
+    stroke-dashoffset: 1500;
+    opacity: 0;
+    animation: pathBottom 18s linear infinite;
+  }
+
+  @keyframes pathBottom {
+    0% {
+      stroke-dashoffset: 1500;
+      opacity: 0;
+    }
+    27.76% {
+      /* 5秒 */
+      stroke-dashoffset: 1500;
+      opacity: 0;
+    }
+    27.77% {
+      stroke-dashoffset: 1500;
+      opacity: 1;
+    }
+    44.44% {
+      /* 8秒 */
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    44.45% {
+      opacity: 0;
+      stroke-dashoffset: 0;
+    }
+    100% {
+      opacity: 0;
+      stroke-dashoffset: 1500;
+    }
+  }
+
+  /* 右下到右中 (8-10秒，垂直向上) */
+  .card-path-right-up {
+    stroke-dasharray: 120 400;
+    stroke-dashoffset: 520;
+    opacity: 0;
+    animation: pathRightUp 18s linear infinite;
+  }
+
+  @keyframes pathRightUp {
+    0% {
+      stroke-dashoffset: 520;
+      opacity: 0;
+    }
+    44.43% {
+      /* 8秒 */
+      stroke-dashoffset: 520;
+      opacity: 0;
+    }
+    44.44% {
+      stroke-dashoffset: 520;
+      opacity: 1;
+    }
+    55.55% {
+      /* 10秒 */
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    55.56% {
+      opacity: 0;
+      stroke-dashoffset: 0;
+    }
+    100% {
+      opacity: 0;
+      stroke-dashoffset: 520;
     }
   }
 

@@ -10,6 +10,7 @@
     getRandomMusic,
     type YouTubeVideo,
   } from '@/services/homePage/flavorMusic';
+  import feiDJ from '@/views/HomePage/assets/fei-DJ.webp';
   import type { Flavor } from '@/views/HomePage/type';
 
   // ============================================
@@ -580,19 +581,17 @@
                 class="w-10 h-10 rounded-full bg-sage flex-shrink-0 flex items-center justify-center text-white shadow-md relative"
               >
                 <span
-                  v-if="!musicError && !musicLoading"
+                  v-if="!musicError"
                   class="absolute inset-0 rounded-full bg-sage animate-ping opacity-20"
                 ></span>
-                <span class="material-symbols-outlined text-xl text-[#171412]">
-                  {{ musicError ? 'error' : 'smart_toy' }}
-                </span>
+                <img :src="feiDJ" class="w-6 h-6 object-contain" alt="Fei DJ" />
               </div>
               <div class="flex flex-col min-w-0 flex-1">
                 <div class="flex items-center gap-2">
                   <span
                     class="text-[10px] font-bold uppercase tracking-wider text-sage whitespace-nowrap"
                   >
-                    AI DJ
+                    FEI DJ
                   </span>
                   <span
                     v-if="!musicError && !musicLoading"
@@ -600,18 +599,18 @@
                   ></span>
                 </div>
                 <span class="text-sm font-bold text-[#171412] leading-tight truncate">
-                  推薦:{{ aiRecommendation }}
+                  推薦: {{ aiRecommendation }}
                 </span>
               </div>
             </div>
             <button
               @click="nextRecommendation"
               :disabled="musicLoading || !selectedFlavor || musicError !== null"
-              class="flex items-center justify-center gap-2 bg-[#171412] text-[#FAF9EE] px-4 py-2 rounded-lg hover:bg-[#DCCFC0] hover:text-[#171412] transition-all duration-300 shadow-md hover:shadow-lg group flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="flex items-center justify-center gap-2 bg-[#DCCFC0] text-[#171412] px-4 py-2 rounded-lg hover:bg-[#C4B5A0] hover:shadow-lg transition-all duration-300 shadow-md group flex-shrink-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none hover:disabled:bg-gray-200"
             >
               <span class="text-xs font-bold tracking-wide hidden sm:inline">Next</span>
               <span
-                class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform"
+                class="material-symbols-outlined text-lg group-hover:group-enabled:translate-x-1 transition-transform"
               >
                 skip_next
               </span>
@@ -631,7 +630,7 @@
             </h2>
             <div class="flex items-center gap-2">
               <span class="h-1 w-6 bg-[#A2AF9B] rounded-full"></span>
-              <p class="text-[#A2AF9B] text-xs font-medium">AI 將為您調配專屬歌單</p>
+              <p class="text-[#A2AF9B] text-xs font-medium">DJ 將為您調配專屬歌單</p>
             </div>
           </div>
 
@@ -647,7 +646,7 @@
               ]"
             >
               <div
-                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 rounded-xl"
+                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                 :style="{ backgroundImage: `url('${flavor.image}')` }"
               ></div>
               <div

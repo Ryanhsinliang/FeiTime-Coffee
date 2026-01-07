@@ -20,4 +20,4 @@ export const registerUser = (data: RegisterInput) =>
   api.post<AuthResponse>('/api/auth/local/register', data);
 
 export const resendConfirmationEmail = (email: string) =>
-  api.post('/auth/local/send-email-confirmation', { email });
+  api.post('/api/auth/local/send-email-confirmation', { email });

@@ -10,7 +10,7 @@ import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.
 import Login from '@/views/Login/Login.vue';
 import Register from '@/views/Register/Register.vue';
 import Member from '@/views/Member/Member.vue';
-import EmailComfirmed from '@/views/Register/EmailComfirmed.vue';
+import EmailConfirmed from '@/views/Register/EmailConfirmed.vue';
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
 
@@ -72,9 +72,9 @@ const routes = [
     component: Member,
   },
   {
-    path: '/email-confirmed',
+    path: '/Email-confirmed',
     name: 'EmailConfirmed',
-    component: EmailComfirmed,
+    component: EmailConfirmed,
   },
   //測試用
   {

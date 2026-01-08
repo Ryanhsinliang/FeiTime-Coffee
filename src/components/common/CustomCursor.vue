@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 pointer-events-none z-[9999]">
+  <div v-if="!isTouchDevice" class="fixed inset-0 pointer-events-none z-[9999]">
     <canvas ref="canvasRef" class="block w-full h-full"></canvas>
   </div>
 </template>
@@ -10,6 +10,7 @@
   const canvasRef = ref(null);
   let ctx = null;
   let animationId = null;
+  const isTouchDevice = ref(false);
 
   const mouse = { x: -100, y: -100 };
   const particles = [];
@@ -28,6 +29,21 @@
     glowColor: '255, 235, 150',
     pourAngle: -Math.PI / 4,
     accumulationY: 22,
+  };
+
+  // 檢測是否為觸控設備
+  const checkTouchDevice = () => {
+    // 方法1: 檢測是否支援觸控
+    const hasTouchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    // 方法2: 使用媒體查詢檢測 pointer 類型
+    const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+
+    // 方法3: 檢測螢幕寬度 (作為備用判斷)
+    const isMobileWidth = window.innerWidth <= 1024;
+
+    // 如果是觸控設備或小螢幕設備,就不顯示游標
+    return hasTouchSupport || hasCoarsePointer || isMobileWidth;
   };
 
   class StarDust {
@@ -246,6 +262,14 @@
   };
 
   onMounted(() => {
+    // 檢測是否為觸控設備
+    isTouchDevice.value = checkTouchDevice();
+
+    // 如果是觸控設備,就不初始化游標效果
+    if (isTouchDevice.value) {
+      return;
+    }
+
     ctx = canvasRef.value.getContext('2d');
     resize();
     window.addEventListener('resize', resize);
@@ -257,11 +281,14 @@
   });
 
   onUnmounted(() => {
-    window.removeEventListener('resize', resize);
-    window.removeEventListener('mousemove', handleMouseMove);
-    window.removeEventListener('mousedown', handleMouseDown);
-    window.removeEventListener('mouseup', handleMouseUp);
-    document.body.style.cursor = 'auto';
-    cancelAnimationFrame(animationId);
+    // 只有在非觸控設備時才移除事件監聽
+    if (!isTouchDevice.value) {
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'auto';
+      cancelAnimationFrame(animationId);
+    }
   });
 </script>

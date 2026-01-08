@@ -73,7 +73,7 @@
         </div>
 
         <div>
-          <h3 class="block font-semibold">重量</h3>
+          <p class="block font-semibold">重量</p>
           <p class="pt-1">{{ product.weight }}</p>
         </div>
 

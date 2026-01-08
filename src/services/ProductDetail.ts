@@ -3,6 +3,7 @@ import api from '@/services/api';
 // 定義商品型別
 export interface ProductRequest {
   name: string; // 產品名稱
+  english_name: string; // 產品英文名稱
   pid: string; // 產品編號
   origin: string; // 產地
   processing: string; // 處理法

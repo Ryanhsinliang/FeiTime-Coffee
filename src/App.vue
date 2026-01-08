@@ -16,6 +16,9 @@
 
     <!-- AI Chat Ball -->
     <AIChatBall v-if="showHeaderFooter" />
+
+    <!-- Shopping Cart -->
+    <Cart />
   </div>
 </template>
 
@@ -24,6 +27,7 @@
   import Footer from './components/Footer.vue';
   import AIChatBall from './components/common/AIChatBall.vue';
   import CustomCursor from '@/components/common/CustomCursor.vue';
+  import Cart from '@/components/Cart.vue';
   import { useRoute } from 'vue-router';
   import { computed } from 'vue';
 

@@ -84,7 +84,7 @@
             class="w-1/2 py-2 flex justify-between font-semibold"
           >
             烘焙度
-            <i class="fa-solid fa-plus"></i>
+            <i :class="showRoast ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
           </button>
           <p v-show="showRoast" class="pb-2">{{ roastText }}</p>
           <button
@@ -93,7 +93,7 @@
             class="w-1/2 py-2 flex justify-between font-semibold"
           >
             處理方式
-            <i class="fa-solid fa-plus"></i>
+            <i :class="showProcess ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
           </button>
           <p v-show="showProcess" class="pb-2">{{ processingText }}</p>
           <button
@@ -102,7 +102,7 @@
             class="w-1/2 py-2 flex justify-between font-semibold"
           >
             風味特性
-            <i class="fa-solid fa-plus"></i>
+            <i :class="showFlavor ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
           </button>
           <p v-show="showFlavor" class="pb-2">
             {{ descriptionFlavor }}

@@ -300,8 +300,13 @@
       class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
       :class="topBarSapce"
     >
-        <!-- 待放網址 -->
-        <div class="relative group cursor-pointer" @click.stop v-for="p in product" :key="p.pid">
+      <!-- card start -->
+      <router-link
+        :to="{ name: 'ProductDetail', params: { pid: p.pid } }"
+        v-for="p in product"
+        :key="p.pid"
+      >
+        <div class="relative group cursor-pointer">
           <img
             v-if="p.img && p.img.length > 0"
             class="w-[100%] aspect-[1/1.2] object-cover object-center"
@@ -334,6 +339,7 @@
              </button>
           </div>
         </div>
+      </router-link>
       <!-- link removed -->
     </div>
   </div>

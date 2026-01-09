@@ -119,7 +119,8 @@
       // 幣值在後端有寫了 先假設只在臺灣賣 這邊就不特別設定
 
       if (response.data.returnCode === '0000') {
-        window.location.href = response.data.info.paymentUrl.web; // 跳轉到 LINE Pay 提供的支付網頁
+        window.location.href = response.data.info.paymentUrl.web;
+        // 需得到linepay的回傳物件 從中得到網址跳轉到linepay付款頁面 每次的網址都不一樣
       } else {
         alert('建立交易失敗：' + response.data.returnMessage);
       }

@@ -18,7 +18,7 @@
       try {
         const res = await axios.post(`${linepayUrl}/linePay/confirm`, {
           transactionId: transactionId,
-          amount: 100, // 測試階段先寫死，之後要從 Pinia 拿
+          amount: 100, // 這邊之後串資料庫拿總金額
         });
         console.log('金流狀態：', res.data.message);
       } catch (err) {

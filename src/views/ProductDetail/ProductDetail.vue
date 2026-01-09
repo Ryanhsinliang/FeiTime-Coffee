@@ -128,7 +128,7 @@
             加到購物車
           </button>
           <button
-            type="submit"
+            type="button"
             :disabled="isSoldOut"
             @click="buyNow"
             class="bg-[#6d654f] text-white text-sm p-3.5 rounded-md w-32 font-bold hover:bg-[#ABB7A5] disabled:bg-gray-400 disabled:cursor-not-allowed"

@@ -1,49 +1,35 @@
 import { reactive, computed } from 'vue';
+import { Product, CartItem } from '@/types/product';
 
-// 初始商品資料 (模擬)
-const initialCartItems = [
-    {
-        id: 1,
-        name: '衣索比亞 耶加雪菲',
-        description: '淺焙 • 12oz',
-        price: 24.00,
-        quantity: 1,
-        matchPercentage: 98,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD2gabWd4ozx91suo-QAgQabZG7Vq4nm8fgLKge3HKEBEdto15YwvEksKRDqpizJtewwXADuBVbziJkyNK2ZFOeFxauVQPtSNT3gvTnsAMEPi7HroRwXZIVIKT2Pg3VIcufEQ4VlOAjCE_Wj0FA8EkBu-kaul-bINnrRb8HMR2yTicqELwDop0f_uplFKjOIU0FxJinRHump9oRR9vJ8HfzgXfdRKFKPU66uRoistv7tomPvfOVWsCtUN2CGIt5TrVeox2brOU7Rq1q'
-    },
-    {
-        id: 2,
-        name: 'FeiTime 玻璃分享壺',
-        description: '高硼矽玻璃 • 600ml',
-        price: 35.00,
-        quantity: 1,
-        matchPercentage: null,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAJGjVM2WwRNXaixFMbSLqGc7a5SPd6t6s5lE4yjLieJrxT6ecGSYB7-gOvTnQ_nSU27b_pXmzbELx4ymoENuJOtXtGIMjoBgS83ETVrK1j82dVsM3eLMTCI5ycd9BCez-fPt78f-QGwkRLp_pEH_MqdqMy1iVo7ps--wgZSZ80QSYm3lN_tokBYn7UQuTrEL9Brwt22HYzKZmhP2efROx6sU7MLEOGQvsF4tQ9fLs1Vjq0QcYipQPfriD0fJNXlX7VrSDjj2DZUy4V'
-    }
-];
-
-const initialRecommendations = [
-    {
-        id: 3,
-        name: '肯亞 AA',
-        price: 22.00,
-        tag: '果香調性',
-        aiRecommended: true,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBn_r7SRXOTtcGPvGVHBg4-J0wkbfZOH0L3qICRTnXFfkH7OQwAmfSiRWQINp6eIG_QEC9vMJZxtGtAsZTQqu1NZIcbPTaLQ7B60RTwcs9vNZ32sYV7Tmdd7C5YETW6Pwd12RDimiqhWXo29jo7U6vQJ5_QZlDmTxOYRAX2yVlNQYJ0RKcU6Dc8_TPKl4K_5NkxqqoZDPyjCZvPUpLk-rWWhX1iQe09znt3c5onCopKvGkPIpXvrS6_PK_RqoYuaEhseNunCGWJytuh'
-    }
-];
+// Initial data left as mock for now, but typed partially
+const initialCartItems: CartItem[] = [];
+const initialRecommendations: CartItem[] = [];
 
 // State
 const state = reactive({
     isOpen: false,
-    items: [...initialCartItems],
-    recommendations: [...initialRecommendations]
+    items: [] as CartItem[],
+    recommendations: [] as CartItem[]
 });
 
 // Getters
 const totalItems = computed(() => state.items.reduce((sum, item) => sum + item.quantity, 0));
 const subtotal = computed(() => state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0));
-const total = computed(() => subtotal.value); // 暫時無運費邏輯
+const total = computed(() => subtotal.value);
+
+// Helper to normalize product image
+function getProductImage(product: Product): string {
+    if (product.img && product.img.length > 0) {
+        // Try to get large, then medium, then small, then original url
+        const firstImg = product.img[0];
+        return firstImg.formats?.large?.url ||
+            firstImg.formats?.medium?.url ||
+            firstImg.formats?.small?.url ||
+            firstImg.url ||
+            ''; // fallback placeholder if needed
+    }
+    return '';
+}
 
 // Actions
 function toggleCart() {
@@ -58,21 +44,41 @@ function closeCart() {
     state.isOpen = false;
 }
 
-function addToCart(product: any) {
+// Add to Cart accepts a Product (from API) or a CartItem (from recommendations/existing mock)
+function addToCart(product: Product | CartItem) {
     const existingItem = state.items.find(i => i.id === product.id);
+
     if (existingItem) {
         existingItem.quantity++;
     } else {
-        state.items.push({
-            ...product,
-            quantity: 1
-        });
+        // Check if it's already a CartItem (has image string and quantity), otherwise normalize it
+        const isCartItem = (p: any): p is CartItem => 'image' in p && typeof p.image === 'string';
+
+        let newItem: CartItem;
+
+        if (isCartItem(product)) {
+            newItem = { ...product, quantity: 1 };
+        } else {
+            // It's a raw Product from API, need to normalize
+            newItem = {
+                ...product,
+                quantity: 1,
+                image: getProductImage(product),
+                matchPercentage: product.aiRecommended ? 95 : null // Default match % for now
+            };
+            // Omit the original 'img' array to match CartItem type if needed, 
+            // but Spread operator keeps it. Ideally we clean it up but it's fine.
+        }
+
+        state.items.push(newItem);
     }
-    // 如果在推薦列表中，則移除
+
+    // If in recommendations, remove it
     const recIndex = state.recommendations.findIndex(r => r.id === product.id);
     if (recIndex > -1) {
         state.recommendations.splice(recIndex, 1);
     }
+
     openCart();
 }
 
@@ -96,7 +102,7 @@ function removeFromCart(itemId: number) {
 
 function checkout() {
     console.log('Proceeding to checkout with items:', state.items);
-    // 這裡可以加入跳轉到結帳頁面的邏輯
+    // Future: Router push to checkout
 }
 
 export const useCartStore = () => {

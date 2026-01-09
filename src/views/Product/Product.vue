@@ -300,10 +300,8 @@
       class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
       :class="topBarSapce"
     >
-      <!-- card start -->
-      <a href="#" target="_blank" v-for="p in product" :key="p.pid">
         <!-- 待放網址 -->
-        <div class="relative">
+        <div class="relative group cursor-pointer" @click.stop>
           <img
             v-if="p.img && p.img.length > 0"
             class="w-[100%] aspect-[1/1.2] object-cover object-center"
@@ -324,9 +322,19 @@
             </h3>
             <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
           </div>
+
+          <!-- Add to Cart Overlay -->
+          <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+             <button 
+                @click.stop="addToCart(p)"
+                class="bg-[#A2AF9B] text-white font-bold py-3 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all hover:bg-[#8f9b88] hover:scale-105 shadow-lg flex items-center gap-2"
+             >
+                <span class="material-symbols-outlined">shopping_cart</span>
+                加入購物車
+             </button>
+          </div>
         </div>
-      </a>
-      <!-- card end -->
+      <!-- link removed -->
     </div>
   </div>
 
@@ -346,6 +354,9 @@
   import { getProducts } from '../../services/product';
   import { ref, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
+  import { useCartStore } from '@/store/cartStore';
+
+  const { addToCart } = useCartStore();
 
   // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
   const sortTopbar = ref(true);

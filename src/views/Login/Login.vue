@@ -185,13 +185,10 @@
     password: '',
   });
 
-  // UI 狀態
   const isLoading = ref(false);
   const errorMessage = ref('');
   const isPasswordVisible = ref(false);
-
   const submitForm = async () => {
-    // 基礎前端驗證
     if (!form.email || !form.password) {
       errorMessage.value = '請輸入帳號與密碼';
       return;
@@ -201,18 +198,13 @@
     errorMessage.value = '';
 
     try {
-      // 呼叫 Pinia Store 的登入邏輯
       const result = await authStore.handleLogin(form.email, form.password);
 
       if (result.success) {
-        // 登入成功後的路由導向邏輯
         if (authStore.isAdmin) {
-          router.push('/Member'); // 如果你有專屬 Admin 頁面可改路徑
-        } else {
-          router.push('/Member');
+          router.push('/home');
         }
       } else {
-        // 顯示後端回傳的錯誤訊息
         errorMessage.value = result.message || '登入失敗，請檢查您的憑據';
       }
     } catch (err) {

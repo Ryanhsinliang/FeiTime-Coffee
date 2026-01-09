@@ -63,17 +63,17 @@ const routes = [
     component: UltraCoffeeSimulator,
   },
   {
-    path: '/Login',
+    path: '/login',
     name: 'Login',
     component: Login,
   },
   {
-    path: '/Register',
+    path: '/register',
     name: 'Register',
     component: Register,
   },
   {
-    path: '/Member',
+    path: '/member',
     name: 'Memberr',
     component: Member,
   },

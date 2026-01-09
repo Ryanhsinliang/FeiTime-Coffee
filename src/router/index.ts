@@ -10,6 +10,7 @@ import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.
 import Login from '@/views/Login/Login.vue';
 import Register from '@/views/Login/Register.vue';
 import Member from '@/views/Member/Member.vue';
+import UltraCoffeeSimulator from '@/views/UltraCoffeeSimulator/UltraCoffeeSimulator.vue';
 
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
@@ -55,6 +56,11 @@ const routes = [
     path: '/coffeeLabT1-T-P1',
     name: 'CoffeeLabT1-T-P1',
     component: CoffeeSimulatorT1TP1,
+  },
+  {
+    path: '/UltraCoffeeSimulator',
+    name: 'UltraCoffeeSimulator',
+    component: UltraCoffeeSimulator,
   },
   {
     path: '/Login',

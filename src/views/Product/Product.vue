@@ -301,7 +301,7 @@
       :class="topBarSapce"
     >
         <!-- 待放網址 -->
-        <div class="relative group cursor-pointer" @click.stop>
+        <div class="relative group cursor-pointer" @click.stop v-for="p in product" :key="p.pid">
           <img
             v-if="p.img && p.img.length > 0"
             class="w-[100%] aspect-[1/1.2] object-cover object-center"
@@ -411,6 +411,7 @@
         loading.value = false;
       }
     } catch (error) {
+      loading.value = false; // 發生錯誤時也要關閉 loading
       err.value = (error as Error).message;
       console.error('API 串接出錯：', error);
     }

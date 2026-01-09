@@ -194,7 +194,7 @@ const handleCheckout = () => {
 }
 </script>
 
-<style>
+<style scoped>
 /* Transition animations */
 .cart-overlay-enter-active,
 .cart-overlay-leave-active {

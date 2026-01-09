@@ -60,14 +60,14 @@ function addToCart(product: Product | CartItem) {
             newItem = { ...product, quantity: 1 };
         } else {
             // It's a raw Product from API, need to normalize
+            // Destructure to remove 'img' from the rest of the product properties
+            const { img, ...restOfProduct } = product;
             newItem = {
-                ...product,
+                ...restOfProduct,
                 quantity: 1,
                 image: getProductImage(product),
                 matchPercentage: product.aiRecommended ? 95 : null // Default match % for now
             };
-            // Omit the original 'img' array to match CartItem type if needed, 
-            // but Spread operator keeps it. Ideally we clean it up but it's fine.
         }
 
         state.items.push(newItem);

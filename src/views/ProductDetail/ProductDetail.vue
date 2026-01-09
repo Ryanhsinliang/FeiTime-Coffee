@@ -130,6 +130,7 @@
           <button
             type="submit"
             :disabled="isSoldOut"
+            @click="buyNow"
             class="bg-[#6d654f] text-white text-sm p-3.5 rounded-md w-32 font-bold hover:bg-[#ABB7A5] disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             立即購買
@@ -198,7 +199,7 @@
 
 <script setup lang="ts">
   import { ref, computed, onMounted, watch } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
   import type { ProductRequest } from '@/services/ProductDetail';
 
@@ -361,9 +362,17 @@
     }
   });
 
-  // 加入購物車提示
+  // TODO:加入購物車
   const addToCart = () => {
     alert('已加入購物車');
+  };
+
+  // TODO:立即購買：檢驗登入狀態，並導向結帳頁
+  const router = useRouter();
+  const buyNow = () => {
+    if (!product.value) return;
+    // 導向結帳頁面
+    router.push('/Checkout');
   };
 
   // 商品資訊欄位展開

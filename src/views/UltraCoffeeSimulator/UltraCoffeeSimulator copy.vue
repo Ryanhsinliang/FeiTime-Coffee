@@ -173,64 +173,11 @@
             </div>
           </div>
 
-          <!-- Ratio (Water to Coffee) -->
-          <div class="flex flex-col gap-10 relative">
-            <div class="flex items-baseline justify-between border-b border-[#E6EBE6] pb-4">
-              <h2 class="text-2xl font-notoserif text-[#2C3E2D]">粉水比 <span class="text-base text-[#5C6B5D] font-light ml-2">Ratio</span></h2>
-              <span class="text-[#6B8E6B]/10 text-6xl font-notoserif absolute -top-8 -left-16 font-light">04</span>
-            </div>
-            <div class="flex gap-4 items-start -mt-4 mb-4 max-w-2xl">
-              <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float">
-                <span class="material-symbols-outlined text-xl">auto_awesome</span>
-              </div>
-              <div class="relative bg-[#F2F7F2]/50 hover:bg-[#F2F7F2] transition-colors p-3 rounded-2xl rounded-tl-none border border-[#8FA98F]/20">
-                <h4 class="text-[10px] font-bold text-[#6B8E6B] uppercase tracking-widest mb-1 flex items-center gap-2">
-                  咖啡精靈 (Coffee Fairy)
-                  <span class="w-1 h-1 rounded-full bg-[#8FA98F]"></span>
-                </h4>
-                <p class="text-sm text-[#5C6B5D] font-notoserif leading-relaxed italic">
-                  「粉水比是濃淡的魔法。1:15 濃郁帶勁，適合加奶；1:18 清爽如茶，最能展現產地花果香。」
-                </p>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div 
-                v-for="r in ratios" 
-                :key="r.name"
-                @click="selectedRatio = r.name"
-                class="cursor-pointer flex flex-col items-center justify-center gap-3 p-6 rounded-xl transition-all border group relative"
-                :class="selectedRatio === r.name 
-                  ? 'bg-gradient-to-br from-white to-[#F2F7F2] ring-1 ring-[#8FA98F] shadow-soft border-transparent' 
-                  : 'bg-white hover:bg-white hover:shadow-card border-transparent hover:border-[#8FA98F]/30'"
-              >
-                <div v-if="selectedRatio === r.name" class="absolute top-2 right-2 text-[#8FA98F]">
-                  <span class="material-symbols-outlined text-sm">check_circle</span>
-                </div>
-                <!-- Visual for Ratio -->
-                <div class="flex items-end gap-1 mb-2 h-12">
-                   <div class="w-3 bg-[#3e2723] rounded-sm" :style="{ height: '24px' }"></div> <!-- Coffee dose constant visualization -->
-                   <div class="w-8 border-2 border-[#8FA98F]/50 rounded-sm relative overflow-hidden bg-white">
-                      <!-- Water visualization -->
-                      <div class="absolute bottom-0 left-0 right-0 bg-[#8FA98F]/30 transition-all duration-500" :style="{ height: ((r.val - 12) / 8) * 100 + '%' }"></div>
-                   </div>
-                </div>
-
-                <p class="font-notoserif text-lg text-[#2C3E2D]" :class="{'font-medium': selectedRatio === r.name}">{{ r.name.split(' ')[0] }}</p>
-                <p 
-                  class="text-[10px] uppercase tracking-wider text-center"
-                  :class="selectedRatio === r.name ? 'text-[#8FA98F] font-bold' : 'text-[#8DA390] font-light'"
-                >
-                  {{ r.desc }}
-                </p>
-              </div>
-            </div>
-          </div>
-
           <!-- Brew Method -->
           <div class="flex flex-col gap-10 relative">
             <div class="flex items-baseline justify-between border-b border-[#E6EBE6] pb-4">
               <h2 class="text-2xl font-notoserif text-[#2C3E2D]">沖煮方式 <span class="text-base text-[#5C6B5D] font-light ml-2">Brew Method</span></h2>
-              <span class="text-[#6B8E6B]/10 text-6xl font-notoserif absolute -top-8 -left-16 font-light">05</span>
+              <span class="text-[#6B8E6B]/10 text-6xl font-notoserif absolute -top-8 -left-16 font-light">04</span>
             </div>
             <div class="flex gap-4 items-start -mt-4 mb-4 max-w-2xl">
               <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float">
@@ -344,9 +291,9 @@
 
         <!-- Sticky Sidebar -->
 
-        <!-- Fixed Sidebar (Right Column) - Responsive Adjustment -->
-        <div class="block w-full lg:fixed lg:top-0 lg:right-0 lg:w-[400px] lg:h-screen lg:pt-24 lg:pb-8 lg:pr-6 z-30 lg:z-40 mt-16 lg:mt-0">
-           <div class="flex flex-col gap-6 p-6 lg:h-full lg:overflow-y-auto lg:pr-2 bg-white lg:bg-[#F8FAF9]/95 lg:backdrop-blur-sm lg:custom-scrollbar rounded-xl lg:rounded-l-xl lg:rounded-r-none shadow-sm lg:shadow-lg border border-[#E6EBE6] lg:border-r-0 lg:border-t-0 lg:border-b-0 lg:border-l">
+        <!-- Fixed Sidebar (Right Column) -->
+        <div class="hidden lg:block fixed top-0 right-0 w-[400px] h-screen pt-24 pb-8 pr-6 z-40">
+           <div class="h-full flex flex-col gap-6 overflow-y-auto pr-2 bg-[#F8FAF9]/95 backdrop-blur-sm custom-scrollbar rounded-l-xl shadow-lg border-l border-[#E6EBE6] p-6">
               
               <!-- Sidebar Header -->
               <div class="flex items-center justify-between pb-4 border-b border-[#E6EBE6]">
@@ -372,10 +319,6 @@
                         <div class="flex justify-between items-center text-sm border-b border-dashed border-[#5C6B5D]/20 pb-2">
                           <span class="text-[#8DA390] font-medium uppercase tracking-wider text-xs">研磨 (Grind)</span>
                           <span class="font-notoserif text-[#2C3E2D] text-right text-base">{{ selectedGrind }}</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm border-b border-dashed border-[#5C6B5D]/20 pb-2">
-                          <span class="text-[#8DA390] font-medium uppercase tracking-wider text-xs">粉水比 (Ratio)</span>
-                          <span class="font-notoserif text-[#2C3E2D] text-right text-base">{{ selectedRatio.split(' ')[0] }}</span>
                         </div>
                         <div class="flex justify-between items-center text-sm">
                           <span class="text-[#8DA390] font-medium uppercase tracking-wider text-xs">方式 (Method)</span>
@@ -522,18 +465,10 @@ const methods = [
   { name: '愛樂壓 (Aeropress)', icon: 'opacity' },
 ];
 
-const ratios = [
-  { name: '1:15 (Strong)', desc: '濃郁厚實 (Rich & Bold)', val: 15 },
-  { name: '1:16 (Balanced)', desc: '黃金比例 (Golden Ratio)', val: 16 },
-  { name: '1:17 (Light)', desc: '清爽明亮 (Clear & Bright)', val: 17 },
-  { name: '1:18 (Tea-like)', desc: '茶感淡雅 (Delicate)', val: 18 },
-];
-
 // Reactive State
 const selectedOrigin = ref('衣索比亞 耶加雪菲 (Ethiopia Yirgacheffe)');
 const selectedRoast = ref('中焙 (Medium Roast)');
 const selectedGrind = ref('細研磨 (Fine)');
-const selectedRatio = ref('1:16 (Balanced)');
 const selectedMethod = ref('義式濃縮 (Espresso)');
 const pourStages = ref('1 段 (Stage)');
 // const isDrawerOpen = ref(false); // Removed
@@ -566,11 +501,6 @@ const grindValue = computed(() => {
    return 0; // Default Medium
 });
 
-const ratioValue = computed(() => {
-   const match = selectedRatio.value.match(/^1:(\d+)/);
-   return match ? parseInt(match[1]) : 16;
-});
-
 const poursValue = computed(() => {
    if (selectedMethod.value !== '手沖 (Pour Over)') return 3; // Default for non-pour over
    // Extract number from string "1 段 (Stage)"
@@ -581,7 +511,7 @@ const poursValue = computed(() => {
 // Create config object for brewLogic
 const config = computed(() => ({
   roastLevel: roastValue.value,
-  ratio: ratioValue.value,
+  ratio: 16, // Default constant
   brewTimeSec: 165, // Default constant (2:45)
   grindLevel: grindValue.value,
   pours: poursValue.value,

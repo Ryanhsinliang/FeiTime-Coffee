@@ -12,7 +12,7 @@
     </main>
 
     <!-- Footer 只有非 Intro 頁面顯示 -->
-    <Footer v-if="showHeaderFooter"></Footer>
+    <Footer v-if="showHeaderFooter" class="relative z-50"></Footer>
 
     <!-- AI Chat Ball -->
     <AIChatBall v-if="showHeaderFooter" />

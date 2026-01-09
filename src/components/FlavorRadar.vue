@@ -94,7 +94,6 @@ const props = defineProps<{
 
 const orderedKeys = computed<FlavorKey[]>(() => {
   const fallback: FlavorKey[] = ['Sweetness', 'Acidity', 'Clarity', 'Body', 'Aftertaste'];
-  // 若外部傳入 scores 有缺 key，就依 fallback 補齊（避免雷達圖軸數錯亂）
   const keys = fallback.filter((k) => Object.prototype.hasOwnProperty.call(props.scores, k));
   return keys.length === 5 ? keys : fallback;
 });
@@ -111,7 +110,6 @@ function clamp(n: number, min: number, max: number) {
 }
 
 function angleRad(idx: number) {
-  // 0: top, clockwise
   return (Math.PI * 2 * idx) / orderedKeys.value.length - Math.PI / 2;
 }
 
@@ -135,7 +133,7 @@ function safeScore(key: string) {
 
 function dataPoint(idx: number) {
   const key = orderedKeys.value[idx] ?? '';
-  const t = safeScore(key) / 5; // 1..5 映射到 0.2..1
+  const t = safeScore(key) / 5;
   return pointAt(radius * t, idx);
 }
 

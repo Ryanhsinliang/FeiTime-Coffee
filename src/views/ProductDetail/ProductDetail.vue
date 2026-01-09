@@ -44,7 +44,7 @@
           class="w-[60px] h-5 bg-[#d9cfc7] absolute bottom-2.5 left-1/2 -translate-x-1/2 rounded-[20px] opacity-50 flex justify-center items-center gap-2"
         >
           <div
-            v-for="(dot, index) in product.img"
+            v-for="(_, index) in product.img"
             :key="index"
             class="w-2 h-2 rounded-full"
             :class="index === currentIndex ? 'bg-[#141e0e]' : 'bg-[#a2af9b]'"
@@ -53,10 +53,11 @@
       </div>
 
       <!-- Product Form -->
-      <form class="py-24 px-32 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-16 text-[#6d654f]">
-        <p id="origin">{{ originText }}</p>
-        <h2 class="text-4xl py-4 font-semibold">{{ product.name }}</h2>
-        <p id="price" class="text-lg font-semibold">{{ `$${price}` }}</p>
+      <form class="py-24 px-32 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-12 text-[#6d654f]">
+        <p id="origin">{{ originText }} • Single Origin</p>
+        <h2 class="text-4xl pt-3 font-semibold">{{ product.name }}</h2>
+        <h3 class="pt-2 pb-4">{{ product.english_name }}</h3>
+        <p id="price" class="text-xl font-semibold">{{ `$${price}` }}</p>
 
         <div class="py-4">
           <label for="quantity" class="block font-semibold">數量</label>
@@ -72,17 +73,8 @@
         </div>
 
         <div>
-          <label for="weight" class="block font-semibold">重量</label>
-          <select
-            v-model.number="weight"
-            name="weight"
-            id="weight"
-            class="border border-gray-300 px-3 py-2 rounded w-1/2"
-          >
-            <option value="100">100g</option>
-            <option value="250">250g</option>
-            <option value="500">500g</option>
-          </select>
+          <p class="block font-semibold">重量</p>
+          <p class="pt-1">{{ product.weight }}</p>
         </div>
 
         <div class="py-4">
@@ -92,7 +84,7 @@
             class="w-1/2 py-2 flex justify-between font-semibold"
           >
             烘焙度
-            <i class="fa-solid fa-plus"></i>
+            <i :class="showRoast ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
           </button>
           <p v-show="showRoast" class="pb-2">{{ roastText }}</p>
           <button
@@ -101,7 +93,7 @@
             class="w-1/2 py-2 flex justify-between font-semibold"
           >
             處理方式
-            <i class="fa-solid fa-plus"></i>
+            <i :class="showProcess ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
           </button>
           <p v-show="showProcess" class="pb-2">{{ processingText }}</p>
           <button
@@ -110,7 +102,7 @@
             class="w-1/2 py-2 flex justify-between font-semibold"
           >
             風味特性
-            <i class="fa-solid fa-plus"></i>
+            <i :class="showFlavor ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
           </button>
           <p v-show="showFlavor" class="pb-2">
             {{ descriptionFlavor }}
@@ -348,20 +340,11 @@
 
   // 重量對應價格
   const quantity = ref(1);
-  const weight = ref(250);
   const price = computed(() => {
     if (!product.value) {
       return 0;
     }
-    if (weight.value === 100) {
-      return (product.value.price * quantity.value) / 2;
-    } else if (weight.value === 250) {
-      return product.value.price * quantity.value;
-    } else if (weight.value === 500) {
-      return product.value.price * quantity.value * 2;
-    } else {
-      return 0;
-    }
+    return product.value.price * quantity.value;
   });
 
   // 加入收藏與購物車提示

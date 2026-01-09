@@ -10,6 +10,7 @@ import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.
 import Login from '@/views/Login/Login.vue';
 import Register from '@/views/Login/Register.vue';
 import Member from '@/views/Member/Member.vue';
+import { useAuthStore } from '@/store/auth';
 
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
@@ -83,5 +84,21 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
 
+  if (to.meta.requiresAdmin) {
+    if (authStore.isAdmin) {
+      next();
+    } else {
+      alert('權限不足，無法進入管理介面');
+      next('/Login');
+    }
+  } else if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+    alert('請先登入');
+    next('/Login');
+  } else {
+    next();
+  }
+});
 export default router;

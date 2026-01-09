@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col overflow-x-hidden antialiased font-sans text-[#2C3E2D] selection:bg-[#8FA98F]/30 selection:text-[#2C3E2D] bg-[#F8FAF9] bg-texture">
+  <div class="min-h-screen flex flex-col overflow-x-hidden antialiased font-wenkai text-[#2C3E2D] selection:bg-[#8FA98F]/30 selection:text-[#2C3E2D] bg-[#F8FAF9] bg-texture">
 
 
     <main class="flex-grow flex flex-col items-center w-full px-6 md:px-12 lg:pr-[560px] py-12">
@@ -29,8 +29,8 @@
               <span class="text-[#6B8E6B]/10 text-6xl font-notoserif absolute -top-8 -left-16 font-light">01</span>
             </div>
             <div class="flex gap-4 items-start -mt-4 mb-4 max-w-2xl">
-              <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float">
-                <span class="material-symbols-outlined text-xl">auto_awesome</span>
+              <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float p-1.5">
+                <CoffeeFairyIcon />
               </div>
               <div class="relative bg-[#F2F7F2]/50 hover:bg-[#F2F7F2] transition-colors p-3 rounded-2xl rounded-tl-none border border-[#8FA98F]/20">
                 <h4 class="text-[10px] font-bold text-[#6B8E6B] uppercase tracking-widest mb-1 flex items-center gap-2">
@@ -83,8 +83,8 @@
               <span class="text-[#6B8E6B]/10 text-6xl font-notoserif absolute -top-8 -left-16 font-light">02</span>
             </div>
              <div class="flex gap-4 items-start -mt-4 mb-4 max-w-2xl">
-              <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float">
-                <span class="material-symbols-outlined text-xl">auto_awesome</span>
+              <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float p-1.5">
+                <CoffeeFairyIcon />
               </div>
               <div class="relative bg-[#F2F7F2]/50 hover:bg-[#F2F7F2] transition-colors p-3 rounded-2xl rounded-tl-none border border-[#8FA98F]/20">
                 <h4 class="text-[10px] font-bold text-[#6B8E6B] uppercase tracking-widest mb-1 flex items-center gap-2">
@@ -134,8 +134,8 @@
               <span class="text-[#6B8E6B]/10 text-6xl font-notoserif absolute -top-8 -left-16 font-light">03</span>
             </div>
             <div class="flex gap-4 items-start -mt-4 mb-4 max-w-2xl">
-               <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float">
-                <span class="material-symbols-outlined text-xl">auto_awesome</span>
+               <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float p-1.5">
+                <CoffeeFairyIcon />
               </div>
               <div class="relative bg-[#F2F7F2]/50 hover:bg-[#F2F7F2] transition-colors p-3 rounded-2xl rounded-tl-none border border-[#8FA98F]/20">
                  <h4 class="text-[10px] font-bold text-[#6B8E6B] uppercase tracking-widest mb-1 flex items-center gap-2">
@@ -180,8 +180,8 @@
               <span class="text-[#6B8E6B]/10 text-6xl font-notoserif absolute -top-8 -left-16 font-light">04</span>
             </div>
             <div class="flex gap-4 items-start -mt-4 mb-4 max-w-2xl">
-              <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float">
-                <span class="material-symbols-outlined text-xl">auto_awesome</span>
+              <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float p-1.5">
+                <CoffeeFairyIcon />
               </div>
               <div class="relative bg-[#F2F7F2]/50 hover:bg-[#F2F7F2] transition-colors p-3 rounded-2xl rounded-tl-none border border-[#8FA98F]/20">
                 <h4 class="text-[10px] font-bold text-[#6B8E6B] uppercase tracking-widest mb-1 flex items-center gap-2">
@@ -233,8 +233,8 @@
               <span class="text-[#6B8E6B]/10 text-6xl font-notoserif absolute -top-8 -left-16 font-light">05</span>
             </div>
             <div class="flex gap-4 items-start -mt-4 mb-4 max-w-2xl">
-              <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float">
-                <span class="material-symbols-outlined text-xl">auto_awesome</span>
+              <div class="size-10 rounded-full bg-[#F2F7F2] border border-[#8FA98F]/30 flex items-center justify-center text-[#8FA98F] shadow-sm shrink-0 fairy-float p-1.5">
+                <CoffeeFairyIcon />
               </div>
               <div class="relative bg-[#F2F7F2]/50 hover:bg-[#F2F7F2] transition-colors p-3 rounded-2xl rounded-tl-none border border-[#8FA98F]/20">
                 <h4 class="text-[10px] font-bold text-[#6B8E6B] uppercase tracking-widest mb-1 flex items-center gap-2">
@@ -319,7 +319,9 @@
             <div class="relative z-10 px-8 py-12 md:px-12 md:py-14 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
               <div class="flex flex-col gap-4">
                 <div class="flex items-center gap-3 mb-1 justify-center md:justify-start">
-                  <span class="material-symbols-outlined text-[#8FA98F] animate-pulse">auto_awesome</span>
+                  <div class="h-6 w-6 text-[#8FA98F] animate-pulse">
+                    <CoffeeFairyIcon />
+                  </div>
                   <span class="text-[10px] font-bold text-[#8FA98F] uppercase tracking-[0.2em] bg-white/10 px-3 py-1 rounded-full">精靈推薦 (Recommendation)</span>
                 </div>
                 <h2 class="text-3xl md:text-4xl font-notoserif text-white leading-snug">
@@ -541,6 +543,7 @@ const pourStages = ref('1 段 (Stage)');
 // --- Logic Integration ---
 import FlavorRadar from '@/components/FlavorRadar.vue';
 import GeminiTestButton from '@/components/GeminiTestButton.vue';
+import CoffeeFairyIcon from '@/components/common/CoffeeFairyIcon.vue';
 import {
   calculateSweetness,
   calculateAcidity,

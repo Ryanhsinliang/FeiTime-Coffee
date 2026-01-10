@@ -1,10 +1,11 @@
 <template>
   <main class="font-wenkai flex justify-center">
+    <!-- 寄送資料 -->
     <form action="#" class="w-[55%] bg-[#FAFAFA] pt-4 pb-8 flex justify-end">
       <div class="w-[65%]">
         <div class="my-5">
           <h2 class="text-2xl font-semibold mb-5">配送方式</h2>
-          <p>宅配取貨付款</p>
+          <p>宅配取貨</p>
         </div>
 
         <div class="">
@@ -49,12 +50,13 @@
             class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
           />
         </div>
-        <button type="submit" class="w-full p-3 rounded-md mt-2 mb-4 bg-lime-400 text-white">
+        <button type="submit" class="w-full p-3 rounded-md mt-2 mb-4 bg-[--green-gray] text-white">
           確認送出訂單
         </button>
       </div>
     </form>
 
+    <!-- 訂單資料 -->
     <section class="w-[45%]">
       <div class="w-[65%]">
         <div class="flex mx-8 my-12">
@@ -89,8 +91,10 @@
       </div>
     </section>
   </main>
-  <button @click="useLinePay" class="w-full p-3 rounded-md mt-2 mb-4 bg-lime-400 text-white">
-    確認送出訂單
+
+  <button @click="useLinePay" class="flex text-[36px] mx-auto">
+    <p class="font-[700] px-[12px] py-[8px]">LINE</p>
+    <p class="font-[600] px-[12px] py-[8px] rounded-[4px] bg-[#00C34D] text-white">Pay</p>
   </button>
 </template>
 
@@ -130,4 +134,37 @@
   };
 </script>
 
-<style></style>
+<style>
+  /* Tailwind 3.4 官網 */
+  /* https://v3.tailwindcss.com/ */
+
+  /* Font-awesome */
+  /* https://fontawesome.com/search?ic=free-collection */
+
+  /*
+    先寫不會變動的樣式
+    再用lg: 寫電腦版
+    再用md: 寫平板
+    手機版 不用特別寫
+  */
+
+  /* 
+    在F12 元素丟這段 找回滑鼠
+    const style = document.createElement('style');
+    style.innerHTML = `* { cursor: auto !important; }`;
+    document.head.appendChild(style); 
+  */
+
+  :root {
+    --main-color: #faf9ee;
+    /* 淡黃 */
+    --green-gray: #a2af9b;
+    /* 抹茶綠 */
+    --soft-brown: #dccfc0;
+    /* 亮咖啡 */
+    --heavy-brown: #b49e89;
+    /* 深咖啡 */
+    --light-gray: #eeeeee;
+    /* 淡灰 */
+  }
+</style>

@@ -109,34 +109,25 @@
   const linepayUrl = import.meta.env.VITE_LINK;
   const useLinePay = async () => {
     try {
-      // 呼叫你的 Node.js 橋樑 (port 8080)
+      // 前往後端
       const response = await axios.post(`${linepayUrl}/linepay/gobuy`, {
-        // 路由為後端寫好的 /linePay/gobuy
-        amount: 3, // 實際金額
-        productName: '美味咖啡豆',
+        amount: 3, // 這邊之後拉資料庫
+        productName: '美味咖啡豆', // 這邊之後拉資料庫
       });
-      // amount productName 自行取名 在前端不用固定
-      // 幣值在後端有寫了 先假設只在臺灣賣 這邊就不特別設定
 
       if (response.data.returnCode === '0000') {
+        // linepay回傳物件給後端  後端再丟回物件給前端 從物件中抓出狀態碼
+        // linepay定義狀態碼為字串 "0000" 才是成功
         window.location.href = response.data.info.paymentUrl.web;
-        // 需得到linepay的回傳物件 從中得到網址跳轉到linepay付款頁面 每次的網址都不一樣
+        // window.location.href 可以跳轉至寫進去的網址 執行後瀏覽器會立刻跳轉過去 就像是在瀏覽器輸入網址並按 Enter 一樣
+        // 從物件中抓出網址 跳轉到linepay付款頁面 網址每次都不一樣
       } else {
-        alert('建立交易失敗：' + response.data.returnMessage);
+        alert('建立交易失敗：' + response.data.returnMessage); // 從物件中抓出錯誤訊息
       }
-    } catch (error) {
-      console.error('結帳出錯：', error);
+    } catch (error: any) {
+      console.error('結帳出錯：', error.response?.data || error.message);
     }
   };
-
-  // 官方文件 https://developers-pay.line.me/zh/online-api-v3
-  // response.data  用 axios 發送請求時，它會把回傳值放在 data 的物件裡
-  // returnCode、info、paymentUrl 為 LINE Pay 提供
-  // returnCode： 狀態碼  0000 是正常  1101 是 ID或Secret錯了（未授權)
-  // info.paymentUrl.web 是把網路連到linepay他們自己做的付款頁面
-  // returnMessage 失敗時 顯示的訊息
-
-  // window.location.href 可以跳轉至寫進去的網址 執行後瀏覽器會立刻跳轉過去 就像是在瀏覽器輸入網址並按 Enter 一樣
 </script>
 
 <style></style>

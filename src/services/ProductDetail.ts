@@ -3,6 +3,7 @@ import api from '@/services/api';
 // 定義商品型別
 export interface ProductRequest {
   name: string; // 產品名稱
+  english_name: string; // 產品英文名稱
   pid: string; // 產品編號
   origin: string; // 產地
   processing: string; // 處理法
@@ -29,10 +30,8 @@ export interface SingleProductResponse {
   data: ProductRequest;
 }
 
-// 取得單筆商品
-export async function callSingleProduct(pid: string): Promise<SingleProductResponse> {
-  const res = await api.get<SingleProductResponse>(`/api/product-detail/${pid}`);
-  return res.data;
+export interface RecommendationsResponse {
+  data: ProductRequest[];
 }
 
 //呼叫 後端 Express 的 API
@@ -43,5 +42,17 @@ export async function callProducts(page = 1, pageSize = 100): Promise<ProductLis
       pageSize,
     },
   });
+  return res.data;
+}
+
+// 取得單筆商品
+export async function callSingleProduct(pid: string): Promise<SingleProductResponse> {
+  const res = await api.get<SingleProductResponse>(`/api/product-detail/${pid}`);
+  return res.data;
+}
+
+// 取得推薦商品
+export async function callRecommendations(pid: string): Promise<RecommendationsResponse> {
+  const res = await api.get<RecommendationsResponse>(`/api/product-detail/${pid}/recommendations`);
   return res.data;
 }

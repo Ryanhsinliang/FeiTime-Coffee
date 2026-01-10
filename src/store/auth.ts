@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { loginService } from '@/services/loginService';
+import Cookies from 'js-cookie';
+
 interface User {
   id: number;
   username: string;
@@ -20,7 +22,7 @@ interface AuthResponse {
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
-  const token = ref<string | null>(localStorage.getItem('token'));
+  const token = ref<string | null>(Cookies.get('auth_token') || 'null');
 
   const isAdmin = computed(() => user.value?.user_role === 'Admin');
 
@@ -28,19 +30,26 @@ export const useAuthStore = defineStore('auth', () => {
     return !!token.value && !!user.value;
   });
 
-  async function handleLogin(identifier: string, password: string) {
+  async function handleLogin(identifier: string, password: string, remember: boolean = false) {
     try {
       const data: AuthResponse = await loginService.login(identifier, password);
 
       token.value = data.jwt;
       user.value = data.user;
 
-      localStorage.setItem('token', data.jwt);
+      if (remember) {
+        Cookies.set('auth_token', data.jwt, { expires: 7, sameSite: 'strict' });
+      } else {
+        Cookies.set('auth_token', data.jwt, { sameSite: 'strict' });
+      }
       localStorage.setItem('user', JSON.stringify(data.user));
 
       return { success: true };
     } catch (err: any) {
-      return { success: false, message: err.message };
+      const message =
+        err?.response?.data?.error?.message || err?.response?.data?.message || '帳號或密碼錯誤';
+
+      return { success: false, message };
     }
   }
   function logout() {

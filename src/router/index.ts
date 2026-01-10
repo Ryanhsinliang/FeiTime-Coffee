@@ -69,8 +69,9 @@ const routes = [
   },
   {
     path: '/Member',
-    name: 'Memberr',
+    name: 'Member',
     component: Member,
+    meta: { requiresAuth: true },
   },
   //測試用
   {
@@ -87,16 +88,19 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
+  if (authStore.isLoggedIn && (to.path === '/login' || to.path === '/register')) {
+    return next('/home');
+  }
   if (to.meta.requiresAdmin) {
-    if (authStore.isAdmin) {
+    if (authStore.isLoggedIn && authStore.isAdmin) {
       next();
     } else {
       alert('權限不足，無法進入管理介面');
-      next('/Login');
+      next(authStore.isLoggedIn ? '/home' : '/login');
     }
   } else if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     alert('請先登入');
-    next('/Login');
+    next('/login');
   } else {
     next();
   }

@@ -102,6 +102,7 @@
               <div class="flex items-center justify-between">
                 <label class="flex items-center gap-3 cursor-pointer group">
                   <input
+                    v-model="rememberMe"
                     class="peer h-5 w-5 rounded border-2 border-border-gray text-primary bg-white focus:ring-primary focus:ring-offset-0 checked:bg-primary checked:border-primary transition-all cursor-pointer"
                     type="checkbox"
                   />
@@ -172,7 +173,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, onMounted } from 'vue';
   import { useAuthStore } from '../../store/auth';
   import { useRouter } from 'vue-router';
 
@@ -188,9 +189,22 @@
   const isLoading = ref(false);
   const errorMessage = ref('');
   const isPasswordVisible = ref(false);
+  const rememberMe = ref(false);
+
+  onMounted(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    if (savedEmail) {
+      form.email = savedEmail;
+      rememberMe.value = true;
+    }
+  });
+
   const submitForm = async () => {
-    if (!form.email || !form.password) {
-      errorMessage.value = '請輸入帳號與密碼';
+    if (!form.email) {
+      errorMessage.value = '請輸入帳號';
+      return;
+    } else if (!form.password) {
+      errorMessage.value = '請輸入密碼';
       return;
     }
 
@@ -198,14 +212,17 @@
     errorMessage.value = '';
 
     try {
-      const result = await authStore.handleLogin(form.email, form.password);
+      const result = await authStore.handleLogin(form.email, form.password, rememberMe.value);
 
       if (result.success) {
-        if (authStore.isAdmin) {
-          router.push('/home');
+        if (rememberMe.value) {
+          localStorage.setItem('rememberedEmail', form.email);
+        } else {
+          localStorage.removeItem('rememberedEmail');
         }
+        router.push('/Home');
       } else {
-        errorMessage.value = result.message || '登入失敗，請檢查您的憑據';
+        errorMessage.value = result.message || '登入失敗，請稍後再試';
       }
     } catch (err) {
       errorMessage.value = '連線伺服器失敗，請稍後再試';

@@ -49,23 +49,45 @@
             required
             class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
           />
+
+          <h2 class="text-2xl font-semibold mb-[12px] mt-[24px]">付款方式</h2>
+
+          <div class="flex">
+            <input
+              type="checkbox"
+              id="give-money"
+              required
+              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
+            />
+            <label for="give-money" class="pl-[8px]">
+              <img src="./assets/linepay.svg" alt="linepay支付" class="w-[160px]" />
+            </label>
+          </div>
         </div>
+
         <button type="submit" class="w-full p-3 rounded-md mt-2 mb-4 bg-[--green-gray] text-white">
           確認送出訂單
         </button>
+
+        <!-- 備用 文字版linepay -->
+        <!-- <button @click="useLinePay" class="flex text-[36px] mx-auto">
+          <p class="font-[700] px-[12px] py-[8px]">LINE</p>
+          <p class="font-[600] px-[12px] py-[8px] rounded-[4px] bg-[#00C34D] text-white">Pay</p>
+        </button> -->
       </div>
     </form>
 
     <!-- 訂單資料 -->
     <section class="w-[45%]">
       <div class="w-[65%]">
+        <!-- 這下面要跑v-for -->
         <div class="flex mx-8 my-12">
           <img
             src="./assets/coffee_001.png"
             alt=""
             class="w-[64px] h-full aspect-square object-cover rounded-xl"
           />
-          <div class="mx-4 w-[65%]">
+          <div class="mx-4 w-full">
             <h3>耶加雪菲G1日曬</h3>
             <p class="text-sm mt-2">200g</p>
           </div>
@@ -91,11 +113,6 @@
       </div>
     </section>
   </main>
-
-  <button @click="useLinePay" class="flex text-[36px] mx-auto">
-    <p class="font-[700] px-[12px] py-[8px]">LINE</p>
-    <p class="font-[600] px-[12px] py-[8px] rounded-[4px] bg-[#00C34D] text-white">Pay</p>
-  </button>
 </template>
 
 <script setup lang="ts">

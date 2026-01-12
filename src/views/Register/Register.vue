@@ -11,7 +11,7 @@
     <div class="absolute inset-0 bg-black/30 -z-10"></div>
 
     <div
-      class="w-1/3 my-3 mx-auto backdrop-blur-md bg-background-light/90 py-6 px-8 rounded-xl shadow-md"
+      class="w-[95%] max-w-[450px] md:w-1/2 my-3 mx-auto backdrop-blur-md bg-background-light/90 py-6 px-8 rounded-xl shadow-md"
     >
       <h2 class="text-center text-2xl font-semibold mb-5 text-[#F3F3F3]">
         {{ isSubmitted ? '註冊確認' : '會員註冊' }}
@@ -45,7 +45,6 @@
         <label class="block text-sm text-[#F3F3F3] mt-2">帳號（Email）</label>
         <input
           v-model="form.email"
-          @blur="validate()"
           type="email"
           placeholder="請輸入帳號（Email）"
           required
@@ -56,7 +55,6 @@
         <label class="block text-sm text-[#F3F3F3] mt-2">設定密碼</label>
         <input
           v-model="form.password"
-          @blur="validate()"
           type="password"
           placeholder="請輸入密碼"
           required
@@ -67,7 +65,6 @@
         <label class="block text-sm text-[#F3F3F3] mt-2">確認密碼</label>
         <input
           v-model="form.confirmPassword"
-          @blur="validate()"
           type="password"
           placeholder="請再次輸入密碼"
           required
@@ -80,7 +77,6 @@
         <label class="block text-sm text-[#F3F3F3] mt-2">姓名</label>
         <input
           v-model="form.name"
-          @blur="validate()"
           type="text"
           placeholder="請輸入姓名"
           required
@@ -121,6 +117,7 @@
           已有帳號？
           <router-link to="/login" class="text-[#ABB7A5] hover:underline">前往登入</router-link>
         </div>
+        <p v-if="apiError" class="text-red-500 text-sm mt-2 text-center">{{ apiError }}</p>
       </form>
     </div>
   </div>
@@ -130,11 +127,17 @@
   import { ref, reactive } from 'vue';
   import { registerUser, resendConfirmationEmail } from '@/services/register/register';
   import { useUserStore } from '@/store/user';
+  import { useAuthStore } from '@/store/auth';
 
+  const apiError = ref('');
   const userStore = useUserStore();
+  const authStore = useAuthStore();
   const isSubmitted = ref(false);
   const isLoading = ref(false);
   const isResending = ref(false);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  const nameRegex = /^[\u4e00-\u9fa5a-zA-Z]{2,20}$/;
 
   const form = reactive({
     email: '',
@@ -149,10 +152,6 @@
     confirmPassword: '',
     name: '',
   });
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-  const nameRegex = /^[\u4e00-\u9fa5a-zA-Z]{2,20}$/;
 
   function validate() {
     let isValid = true;
@@ -190,6 +189,7 @@
   }
 
   async function handleSubmit() {
+    authStore.clearBanner();
     if (!validate() || isLoading.value) return;
 
     isLoading.value = true;
@@ -201,22 +201,56 @@
       });
       userStore.setPendingEmail(form.email);
       isSubmitted.value = true;
-    } catch (error: any) {
-      alert(error.response?.data?.error?.message || '註冊失敗');
+      authStore.setBanner('註冊成功！請檢查電子信箱驗證帳號。', 'success');
+    } catch (err: any) {
+      let message = '註冊失敗，請稍後再試';
+
+      const status = err.status;
+      const serverMessage = err.message;
+
+      if (status === 429) {
+        message = '操作過於頻繁，請稍等 15 分鐘後再試。';
+      } else if (status === 400) {
+        if (serverMessage.includes('already taken') || serverMessage.includes('已被註冊')) {
+          message = '此 Email 帳號已被註冊，請使用其他 Email 或直接登入。';
+        } else if (serverMessage.includes('Invalid') || serverMessage.includes('格式')) {
+          message = '輸入的資料格式有誤。';
+        } else {
+          message = serverMessage || '格式錯誤，請檢查輸入內容。';
+        }
+      } else if (status >= 500) {
+        message = '伺服器維護中，請稍後再試。';
+      } else {
+        if (serverMessage.includes('Network Error')) {
+          message = '網路連線不穩定，請檢查您的網路。';
+        } else {
+          message = serverMessage || message;
+        }
+      }
+      authStore.setBanner(message, 'error');
     } finally {
       isLoading.value = false;
     }
   }
 
   async function handleResendEmail() {
-    if (!form.email || isResending.value) return;
+    const targetEmail = form.email || userStore.pendingEmail;
+    if (!targetEmail || isResending.value) return;
 
     isResending.value = true;
     try {
-      await resendConfirmationEmail(form.email);
-      alert('驗證信已重新發送，請至您的信箱查看。');
-    } catch (error: any) {
-      alert(error.response?.data?.error?.message || '發送失敗');
+      await resendConfirmationEmail(targetEmail);
+      authStore.setBanner('驗證信已重發，請查看信箱', 'success');
+    } catch (err: any) {
+      const status = err.status;
+      let msg = err.message || '重發失敗，請稍後再試';
+      if (status === 429) {
+        msg = '發送頻率過高，請稍後再試。';
+      } else if (status === 404) {
+        msg = '找不到該帳號，請重新註冊。';
+      }
+
+      authStore.setBanner(msg, 'error');
     } finally {
       isResending.value = false;
     }

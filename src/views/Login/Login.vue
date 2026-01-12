@@ -220,7 +220,7 @@
         } else {
           localStorage.removeItem('rememberedEmail');
         }
-        router.push('/Home');
+        router.push({ name: 'home' });
       } else {
         errorMessage.value = result.message || '登入失敗，請稍後再試';
       }

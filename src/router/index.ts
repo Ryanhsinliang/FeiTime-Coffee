@@ -89,19 +89,20 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
   if (authStore.isLoggedIn && (to.path === '/login' || to.path === '/register')) {
-    return next('/home');
+    return next({ name: 'home' });
   }
   if (to.meta.requiresAdmin) {
     if (authStore.isLoggedIn && authStore.isAdmin) {
       next();
     } else {
-      alert('權限不足，無法進入管理介面');
-      next(authStore.isLoggedIn ? '/home' : '/login');
+      authStore.setBanner('請先登入帳號', 'warning');
+      next(authStore.isLoggedIn ? { name: 'home' } : { name: 'login' });
     }
   } else if (to.meta.requiresAuth && !authStore.isLoggedIn) {
-    alert('請先登入');
-    next('/login');
+    authStore.setBanner('請先登入帳號', 'warning');
+    next({ name: 'login' });
   } else {
+    authStore.clearBanner();
     next();
   }
 });

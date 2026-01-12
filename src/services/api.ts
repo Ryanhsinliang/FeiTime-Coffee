@@ -1,5 +1,6 @@
 import { Answer } from '@/views/CoffeeIdTest/type';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -29,7 +30,7 @@ export const quizAPI = {
   },
 };
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = Cookies.get('auth_token');
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -40,6 +41,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.clear();
+      Cookies.remove('auth_token');
       window.location.href = '/login';
       return Promise.reject(new Error('登入逾時，請重新登入'));
     }

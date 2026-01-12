@@ -11,6 +11,9 @@ import Login from '@/views/Login/Login.vue';
 import Register from '@/views/Login/Register.vue';
 import Member from '@/views/Member/Member.vue';
 import Admin from '@/views/Admin/Admin.vue';
+import AdminOrders from '@/views/Admin/Orders.vue';
+import AdminStocks from '@/views/Admin/Stock.vue';
+import AdminCustomers from '@/views/Admin/Customers.vue';
 
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
@@ -73,9 +76,26 @@ const routes = [
     component: Member,
   },
   {
-    path: '/Admin',
+    path: '/admin',
     name: 'Admin',
     component: Admin,
+    children: [
+      {
+        path: 'orders',
+        name: 'AdminOrders',
+        component: AdminOrders,
+      },
+      {
+        path: 'stocks',
+        name: 'AdminStocks',
+        component: AdminStocks,
+      },
+      {
+        path: 'customers',
+        name: 'AdminCustomers',
+        component: AdminCustomers,
+      },
+    ],
   },
   //測試用
   {

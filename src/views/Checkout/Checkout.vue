@@ -50,6 +50,16 @@
             class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
           />
 
+          <label for="address" class="block">備註</label>
+          <input
+            v-model="form.address"
+            type="text"
+            id="address"
+            placeholder="若"
+            required
+            class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
+          />
+
           <h2 class="text-2xl font-semibold mb-[12px] mt-[24px]">付款方式</h2>
 
           <div class="flex">

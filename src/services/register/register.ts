@@ -16,8 +16,14 @@ export interface AuthResponse {
     updatedAt: string;
   };
 }
-export const registerUser = (data: RegisterInput) =>
-  api.post<AuthResponse>('/api/auth/local/register', data);
+export const registerUser = async (data: RegisterInput) => {
+  try {
+    const response = await api.post<AuthResponse>('/api/auth/local/register', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const resendConfirmationEmail = (email: string) =>
   api.post('/api/auth/local/send-email-confirmation', { email });

@@ -11,9 +11,21 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message = error.response?.data?.error || error.message || '未知 API 錯誤';
+    const serverData = error.response?.data?.error;
 
-    return Promise.reject(new Error(message));
+    // 如果 serverData 是物件就抓裡面的 message
+    const finalMsg =
+      typeof serverData === 'object' && serverData !== null
+        ? serverData.message
+        : serverData || error.message || '未知錯誤';
+
+    // 這樣 new Error 接收到的就是錯誤字串，而不是物件
+    const customError = new Error(finalMsg);
+
+    // 放入狀態碼用以判斷
+    (customError as any).status = error.response?.status;
+
+    return Promise.reject(customError);
   }
 );
 

@@ -1,4 +1,5 @@
 <template>
+  <GlobalBanner />
   <div class="min-h-screen flex flex-col">
     <!-- 添加自定義游標 -->
     <CustomCursor />
@@ -24,6 +25,7 @@
   import Footer from './components/Footer.vue';
   import AIChatBall from './components/common/AIChatBall.vue';
   import CustomCursor from '@/components/common/CustomCursor.vue';
+  import GlobalBanner from './components/GlobalBanner.vue';
   import { useRoute } from 'vue-router';
   import { computed } from 'vue';
 

@@ -138,29 +138,17 @@
   });
 
   // ============================================
-  // 播放進度檢查
+  // 播放進度檢查 - 簡化版：只更新時間記錄，不調整旋轉
   // ============================================
   const checkPlaybackProgress = () => {
     if (!youtubePlayer || !youtubePlayer.getCurrentTime) return;
 
     try {
       const currentTime = youtubePlayer.getCurrentTime();
-      const duration = youtubePlayer.getDuration();
 
-      if (currentTime && duration && currentTime !== lastPlaybackTime.value) {
-        const timeDiff = Math.abs(currentTime - lastPlaybackTime.value);
-
-        if (timeDiff > 2) {
-          const rotationPerSecond = 30;
-          const angleDiff = timeDiff * rotationPerSecond;
-
-          if (currentTime > lastPlaybackTime.value) {
-            vinylRotation.value = (vinylRotation.value + angleDiff) % 360;
-          } else {
-            vinylRotation.value = (vinylRotation.value - angleDiff + 360) % 360;
-          }
-        }
-
+      // 只更新時間記錄，旋轉完全由 rotateVinyl() 動畫處理
+      // 這樣黑膠會平滑旋轉，液體會固定在底部，不會跳動
+      if (currentTime) {
         lastPlaybackTime.value = currentTime;
       }
     } catch (err) {
@@ -184,13 +172,21 @@
     }
   };
 
+  // ============================================
+  // 修復：確保切換歌曲時 player 正確初始化
+  // ============================================
   watch(embedUrl, (newUrl) => {
+    // 清理舊的進度檢查
     if (progressCheckInterval) {
       clearInterval(progressCheckInterval);
       progressCheckInterval = null;
     }
 
+    // 重置播放器引用
+    youtubePlayer = null;
+
     if (newUrl) {
+      // 重置狀態
       isPlaying.value = false;
       lastPlaybackTime.value = 0;
 
@@ -203,25 +199,39 @@
               events: {
                 onStateChange: (event: YTPlayerEvent) => {
                   const wasPlaying = isPlaying.value;
-                  isPlaying.value = event.data === 1;
+                  const newIsPlaying = event.data === 1;
+
+                  console.log('🎵 Player state changed:', event.data, 'isPlaying:', newIsPlaying);
+                  isPlaying.value = newIsPlaying;
 
                   if (isPlaying.value && !wasPlaying) {
                     lastPlaybackTime.value = youtubePlayer?.getCurrentTime() || 0;
+                    console.log('▶️ Started playing, lastPlaybackTime:', lastPlaybackTime.value);
                   }
                 },
                 onReady: (event: YTPlayerEvent) => {
-                  console.log('✅ YouTube player ready');
+                  console.log('✅ YouTube player ready for new video');
                   progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
 
                   // 如果標記為應自動播放，則自動播放
                   if (shouldAutoPlay.value) {
-                    console.log('🎵 Auto-playing video...');
-                    try {
-                      event.target.playVideo();
-                      shouldAutoPlay.value = false;
-                    } catch (err) {
-                      console.warn('⚠️ Auto-play failed:', err);
-                    }
+                    console.log('🎵 Auto-playing new video...');
+                    setTimeout(() => {
+                      try {
+                        event.target.playVideo();
+                        shouldAutoPlay.value = false;
+
+                        // 修復：直接設置 isPlaying，不等待 onStateChange
+                        // 因為有時 onStateChange 觸發有延遲
+                        setTimeout(() => {
+                          isPlaying.value = true;
+                          console.log('✅ Set isPlaying to true after autoplay');
+                        }, 200);
+                      } catch (err) {
+                        console.warn('⚠️ Auto-play failed:', err);
+                        shouldAutoPlay.value = false;
+                      }
+                    }, 100); // 給一點延遲確保 player 完全準備好
                   }
                 },
               },
@@ -593,9 +603,15 @@
                   >
                     FEI DJ
                   </span>
+                  <!-- 修復1&2：狀態指示器 - 紅色=未播放/暫停，黃色=loading，綠色=播放中 -->
                   <span
-                    v-if="!musicError && !musicLoading"
-                    class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"
+                    v-if="!musicError"
+                    class="w-1.5 h-1.5 rounded-full animate-pulse"
+                    :class="{
+                      'bg-red-500': !isPlaying && !musicLoading,
+                      'bg-yellow-500': musicLoading,
+                      'bg-green-500': isPlaying && !musicLoading,
+                    }"
                   ></span>
                 </div>
                 <span class="text-sm font-bold text-[#171412] leading-tight truncate">
@@ -685,9 +701,9 @@
     opacity: 0.8;
   }
 
-  /* 液體容器 */
+  /* 液體容器 - 移除 transition，讓反向旋轉即時同步，避免繞圈效果 */
   .liquid-container {
-    transition: transform 0.1s linear;
+    /* 不使用 transition，讓旋轉即時跟隨黑膠 */
   }
 
   .liquid-body {

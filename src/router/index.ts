@@ -17,6 +17,9 @@ import ForgotPassword from '@/views/Login/ForgotPassword.vue';
 import ResetPassword from '@/views/Login/ResetPassword.vue';
 import GoogleCallback from '@/views/Login/GoogleCallback.vue';
 import Admin from '@/views/Admin/Admin.vue';
+import AdminOrders from '@/views/Admin/Orders.vue';
+import AdminStocks from '@/views/Admin/Stock.vue';
+import AdminCustomers from '@/views/Admin/Customers.vue';
 
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
@@ -89,9 +92,26 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/Admin',
+    path: '/admin',
     name: 'Admin',
     component: Admin,
+    children: [
+      {
+        path: 'orders',
+        name: 'AdminOrders',
+        component: AdminOrders,
+      },
+      {
+        path: 'stocks',
+        name: 'AdminStocks',
+        component: AdminStocks,
+      },
+      {
+        path: 'customers',
+        name: 'AdminCustomers',
+        component: AdminCustomers,
+      },
+    ],
   },
   //測試用
   {

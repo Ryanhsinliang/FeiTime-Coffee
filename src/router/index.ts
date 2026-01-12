@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Intro from '@/views/HomePage/Intro.vue';
 import HomePage from '@/views/HomePage/HomePage.vue';
+import AboutUs from '@/views/Story/Story.vue';
 import Product from '@/views/Product/Product.vue';
 import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
 import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
@@ -8,10 +9,10 @@ import CoffeeIdTestCard from '@/views/CoffeeIdTest/CoffeeIdTestCard.vue';
 import CoffeeSimulatorT1T from '@/views/CoffeeLabT1-T/CoffeeSimulatorT1T.vue';
 import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.vue';
 import Login from '@/views/Login/Login.vue';
-import Register from '@/views/Login/Register.vue';
+import Register from '@/views/Register/Register.vue';
 import Member from '@/views/Member/Member.vue';
 import { useAuthStore } from '@/store/auth';
-
+import EmailConfirmed from '@/views/Register/EmailConfirmed.vue';
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
 
@@ -25,6 +26,11 @@ const routes = [
     path: '/home',
     name: 'HomePage',
     component: HomePage,
+  },
+  {
+    path: '/aboutus',
+    name: 'AboutUs',
+    component: AboutUs,
   },
   {
     path: '/product',
@@ -58,24 +64,29 @@ const routes = [
     component: CoffeeSimulatorT1TP1,
   },
   {
-    path: '/Login',
+    path: '/login',
     name: 'Login',
     component: Login,
   },
   {
-    path: '/Register',
+    path: '/register',
     name: 'Register',
     component: Register,
   },
   {
-    path: '/Member',
+    path: '/member',
     name: 'Member',
     component: Member,
     meta: { requiresAuth: true },
   },
+  {
+    path: '/Email-confirmed',
+    name: 'EmailConfirmed',
+    component: EmailConfirmed,
+  },
   //測試用
   {
-    path: '/CTest',
+    path: '/cTest',
     name: 'CTest',
     component: CTest,
   },
@@ -84,6 +95,11 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+
+  // 🎯 頁面切換時永遠回到頂部
+  scrollBehavior() {
+    return { top: 0, behavior: 'smooth' };
+  },
 });
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();

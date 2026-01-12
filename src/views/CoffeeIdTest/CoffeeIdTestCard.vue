@@ -107,7 +107,7 @@
   import CoffeeID from '../../components/CoffeeID.vue';
   import { reactive, computed, onMounted, ref } from 'vue';
   import type { Scores, Option, Question, Answer } from './type';
-  import { questionAPI, quizAPI } from '@/services/api';
+  import { questionAPI, quizAPI } from '@/services/coffeeIdTest/Question';
   import bgImage from './assets/img/bgImage.jpg';
 
   const quizData = reactive<{

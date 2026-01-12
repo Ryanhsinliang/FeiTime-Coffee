@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
+  import homeStoryImage from '@/views/HomePage/assets/home-story.webp';
 
   // 按鈕 hover 狀態
   const isBrewingHovered = ref(false);
@@ -146,7 +147,8 @@
                 <div
                   class="absolute inset-0 bg-cover bg-center"
                   :style="{
-                    backgroundImage: `url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80')`,
+                    backgroundImage: `url(${homeStoryImage})`,
+                    backgroundPosition: 'center 30%',
                     filter: 'grayscale(10%) brightness(0.95)',
                   }"
                 ></div>
@@ -178,7 +180,7 @@
               <h2
                 class="text-4xl md:text-5xl font-serif text-[#4A3728] leading-tight animate-fade-in"
               >
-                靜謐時光，
+                靜謐時光,
                 <br />
                 用心釀造咖啡體驗
               </h2>
@@ -193,8 +195,8 @@
 
             <!-- 描述文字 -->
             <p class="text-gray-600 font-light leading-relaxed text-base">
-              踏上專屬您的咖啡旅程，透過互動體驗深入了解手沖咖啡的迷人世界。
-              無論是模擬沖煮過程，還是探索個人風味偏好，FeiTime 為您打造全新的客製化咖啡體驗。
+              踏上專屬您的咖啡旅程,透過互動體驗深入了解手沖咖啡的迷人世界。
+              無論是模擬沖煮過程,還是探索個人風味偏好,FeiTime 為您打造全新的客製化咖啡體驗。
             </p>
 
             <!-- 液態氣泡按鈕區 -->
@@ -591,18 +593,19 @@
     border: 2px solid transparent;
     background: linear-gradient(
         90deg,
-        rgba(220, 207, 192, 0.4),
-        rgba(255, 255, 255, 0.7),
-        rgba(162, 175, 155, 0.5),
-        rgba(255, 255, 255, 0.7),
-        rgba(245, 230, 211, 0.4),
-        rgba(255, 255, 255, 0.7),
-        rgba(220, 207, 192, 0.4)
+        rgba(220, 207, 192, 0.5),
+        rgba(255, 255, 255, 0.9),
+        rgba(162, 175, 155, 0.6),
+        rgba(255, 255, 255, 0.9),
+        rgba(245, 230, 211, 0.5),
+        rgba(255, 255, 255, 0.9),
+        rgba(220, 207, 192, 0.5)
       )
       border-box;
     background-size: 300% 100%;
     -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
     animation: borderShine 18s linear infinite;
   }
@@ -703,7 +706,7 @@
   }
 
   /* ============================================
-     液態氣泡按鈕樣式（保留原有）
+     液態氣泡按鈕樣式(保留原有)
      ============================================ */
   .bubble-button-container {
     display: flex;

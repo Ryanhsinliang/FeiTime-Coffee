@@ -11,9 +11,6 @@ import Login from '@/views/Login/Login.vue';
 import Register from '@/views/Login/Register.vue';
 import Member from '@/views/Member/Member.vue';
 
-//後端串接測試用
-import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
-
 const routes = [
   {
     path: '/', // URL 地址，使用者訪問此頁面時的路徑
@@ -57,25 +54,19 @@ const routes = [
     component: CoffeeSimulatorT1TP1,
   },
   {
-    path: '/Login',
+    path: '/login',
     name: 'Login',
     component: Login,
   },
   {
-    path: '/Register',
+    path: '/register',
     name: 'Register',
     component: Register,
   },
   {
-    path: '/Member',
-    name: 'Memberr',
+    path: '/member',
+    name: 'Member',
     component: Member,
-  },
-  //測試用
-  {
-    path: '/CTest',
-    name: 'CTest',
-    component: CTest,
   },
 ];
 

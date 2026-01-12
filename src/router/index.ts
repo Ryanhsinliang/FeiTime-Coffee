@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Intro from '@/views/HomePage/Intro.vue';
 import HomePage from '@/views/HomePage/HomePage.vue';
+import AboutUs from '@/views/Story/Story.vue';
 import Product from '@/views/Product/Product.vue';
 import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
 import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
@@ -23,13 +24,18 @@ const routes = [
     component: HomePage,
   },
   {
+    path: '/aboutus',
+    name: 'AboutUs',
+    component: AboutUs,
+  },
+  {
     path: '/product',
     name: 'Product',
     component: Product,
   },
 
   {
-    path: '/product-detail',
+    path: '/product-detail/:pid',
     name: 'ProductDetail',
     component: ProductDetail,
   },
@@ -73,6 +79,11 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+
+  // 🎯 頁面切換時永遠回到頂部
+  scrollBehavior() {
+    return { top: 0, behavior: 'smooth' };
+  },
 });
 
 export default router;

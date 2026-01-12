@@ -113,6 +113,7 @@
       </div>
     </section>
   </main>
+  <p class="text-[48px] bg-[#ffb8f4] p-3" @click="useLinePay">測試linepay</p>
 </template>
 
 <script setup lang="ts">

@@ -2,9 +2,9 @@
   <main class="font-wenkai flex flex-col items-center bg-[--main-color]">
     <form action="#" class="w-[50%] pt-4 pb-8 px-[40px] justify-center">
       <div class="">
-        <div class="my-5">
+        <div class="mt-[20px] mb-[28px]">
           <!-- 【 1 】 配送方式 -->
-          <h2 class="text-2xl font-semibold mb-5">配送方式</h2>
+          <h2 class="text-2xl font-semibold mb-[20px]">配送方式</h2>
           <div class="flex my-[18px]">
             <!-- 車icon-->
             <div
@@ -26,8 +26,8 @@
         </div>
 
         <!-- 【 2 】 收件人資訊 -->
-        <div class="">
-          <h2 class="text-2xl font-semibold mb-5">收件人資訊</h2>
+        <div class="mb-[28px]">
+          <h2 class="text-2xl font-semibold mb-[20px]">收件人資訊</h2>
           <label for="name" class="block">姓名</label>
           <input
             v-model="form.name"
@@ -77,32 +77,91 @@
             required
             class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
           />
+        </div>
 
-          <!-- 【 3 】  付款方式 -->
-          <h2 class="text-2xl font-semibold mb-[12px] mt-[24px]">付款方式</h2>
+        <!-- 【 3 】  付款方式 -->
+        <div class="mb-[28px]">
+          <h2 class="text-2xl font-semibold mt-[12px] mb-[20px]">付款方式</h2>
 
           <div class="flex">
             <input
               type="radio"
-              id="give-money"
+              id="m-linepay"
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
+              name="give-money"
             />
-            <label for="give-money" class="pl-[8px]">
-              <img src="./assets/linepay.svg" alt="linepay支付" class="w-[160px]" />
+            <label for="m-linepay" class="pl-[20px]">
+              <img src="./assets/linepay.svg" alt="linepay支付" class="w-[160px] h-[60px]" />
+            </label>
+          </div>
+
+          <div class="flex my-[12px]">
+            <input
+              type="radio"
+              id="m-paypay"
+              required
+              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
+              name="give-money"
+            />
+            <label for="m-paypay" class="pl-[20px]">
+              <img src="./assets/paypay.svg" alt="paypay支付" class="w-[160px] h-[60px]" />
+            </label>
+          </div>
+
+          <div class="flex">
+            <input
+              type="radio"
+              id="m-card"
+              required
+              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
+              name="give-money"
+            />
+            <label for="m-card" class="pl-[20px]">
+              <img
+                src="./assets/kaato.svg"
+                alt="刷卡"
+                class="w-[160px] py-[16px] h-[60px] bg-white"
+              />
+            </label>
+          </div>
+
+          <div class="flex">
+            <input
+              type="radio"
+              id="m-ok711"
+              required
+              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
+              name="give-money"
+            />
+            <label for="m-ok711" class="pl-[20px]">
+              <img src="./assets/ok711.svg" alt="超商付款" class="w-[160px] h-[60px]" />
+            </label>
+          </div>
+
+          <div class="flex my-[12px]">
+            <input
+              type="radio"
+              id="m-come"
+              required
+              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
+              name="give-money"
+            />
+            <label for="m-come" class="pl-[20px]">
+              <img src="./assets/come.svg" alt="貨到付款" class="w-[160px] h-[60px]" />
             </label>
           </div>
         </div>
 
         <!-- 【 4 】  訂單資料 -->
         <section class="">
-          <h2 class="text-2xl font-semibold mb-5">訂單資料</h2>
+          <h2 class="text-2xl font-semibold mb-[20px]">訂單資料</h2>
           <div class="px-[40px]">
             <!-- 這下面要跑v-for -->
-            <div class="flex my-12">
+            <div class="flex my-[48px]">
               <img
                 src="./assets/coffee_001.png"
-                alt=""
+                alt="商品圖片"
                 class="w-[64px] h-full aspect-square object-cover rounded-xl"
               />
               <div class="mx-4 w-full">
@@ -113,7 +172,9 @@
             </div>
 
             <!-- 產品小計 -->
-            <div class="">
+            <div
+              class="bg-[--soft-brown] px-[24px] py-[18px] rounded-[24px] mb-[24px] shadow-[0_0_10px_rgba(0,0,0,0.3)]"
+            >
               <div class="flex justify-between text-[20px]">
                 <p class="">商品金額</p>
                 <p id="price" class="">$1,000</p>
@@ -132,7 +193,10 @@
           </div>
         </section>
 
-        <button type="submit" class="w-full p-3 rounded-md mt-2 mb-4 bg-[--green-gray] text-white">
+        <button
+          type="submit"
+          class="ml-[25%] w-[50%] p-[12px] rounded-md mt-2 mb-4 bg-[--green-gray] text-white font-bold text-[20px]"
+        >
           確認送出訂單
         </button>
 

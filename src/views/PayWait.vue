@@ -64,7 +64,7 @@
   });
 </script>
 
-<style>
+<style scoped>
   /* Tailwind 3.4 官網 */
   /* https://v3.tailwindcss.com/ */
 

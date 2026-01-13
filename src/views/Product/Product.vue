@@ -258,14 +258,16 @@
           </div>
 
           <!-- Add to Cart Overlay -->
-          <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-             <button 
-                @click.stop="addToCart(p)"
-                class="bg-[#A2AF9B] text-white font-bold py-3 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all hover:bg-[#8f9b88] hover:scale-105 shadow-lg flex items-center gap-2"
-             >
-                <span class="material-symbols-outlined">shopping_cart</span>
-                加入購物車
-             </button>
+          <div
+            class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+          >
+            <button
+              @click.stop="addToCart(p)"
+              class="bg-[#A2AF9B] text-white font-bold py-3 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all hover:bg-[#8f9b88] hover:scale-105 shadow-lg flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined">shopping_cart</span>
+              加入購物車
+            </button>
           </div>
         </div>
       </router-link>
@@ -274,9 +276,10 @@
   </div>
 
   <!-- 等API.get時顯示 -->
-  <div v-show="loading" class="flex w-full justify-center mb-[100px]">
-    <img class="w-[35%]" src="./assets/w.png" alt="正在為您準備咖啡清單..." />
-  </div>
+
+  <p class="text-center mt-[48px] text-[40px] font-bold mt-[100px] text-[#222222]">讀取中</p>
+  <p class="text-center text-[#666666]">若加載時間太久 請重新整理</p>
+  <div class="load"></div>
 
   <!-- input搜尋不到才顯示 -->
   <div v-show="cannotFind" class="flex w-full justify-center mb-[100px]">
@@ -444,7 +447,7 @@
   );
 </script>
 
-<style>
+<style scoped>
   /* Tailwind 3.4 官網 */
   /* https://v3.tailwindcss.com/ */
 
@@ -594,6 +597,23 @@
     color: #222222;
     border-radius: 16px;
     box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.35);
+  }
+
+  .load {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 36px;
+    margin-bottom: 36px;
+    width: 35%;
+    height: 32px;
+    border-radius: 12px;
+    background: linear-gradient(var(--soft-brown) 0 0) 0/0% no-repeat #dddddd;
+    animation: maxtsute 2s infinite linear;
+  }
+  @keyframes maxtsute {
+    100% {
+      background-size: 100%;
+    }
   }
 
   /* .sort {

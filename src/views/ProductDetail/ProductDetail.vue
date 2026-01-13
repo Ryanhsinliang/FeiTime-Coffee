@@ -66,10 +66,17 @@
             name="quantity"
             id="quantity"
             value="1"
-            min="1"
+            :min="1"
+            :max="product.stock"
             class="border border-gray-300 px-3 py-2 rounded w-1/2"
             v-model.number="quantity"
           />
+          <p v-if="isSoldOut" class="text-red-500 font-semibold">已售完</p>
+          <p v-else-if="isLowStock" class="text-red-500 font-semibold">
+            剩餘庫存：{{ product.stock }}
+          </p>
+          <!-- TODO:做完庫存管理記得刪掉庫存顯示(售完和低庫存不用刪) -->
+          <p v-else>目前庫存：{{ product.stock }}</p>
         </div>
 
         <div>
@@ -113,31 +120,18 @@
 
         <div>
           <button
-            @click="toggleHeart"
-            v-show="!heartBtn"
-            type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 rounded hover:bg-[#ABB7A5]"
-          >
-            <i class="fa-regular fa-heart"></i>
-          </button>
-          <button
-            @click="toggleHeart"
-            v-show="heartBtn"
-            type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 rounded hover:bg-[#ABB7A5]"
-          >
-            <i class="fa-solid fa-heart"></i>
-          </button>
-          <button
             @click="addToCart"
+            :disabled="isSoldOut"
             type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 mx-2 rounded font-bold hover:bg-[#ABB7A5]"
+            class="bg-[#6d654f] text-white text-sm p-3.5 mr-2 rounded-md w-32 font-bold hover:bg-[#ABB7A5] disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             加到購物車
           </button>
           <button
-            type="submit"
-            class="bg-[#6d654f] text-white text-sm p-3.5 rounded w-24 font-bold hover:bg-[#ABB7A5]"
+            type="button"
+            :disabled="isSoldOut"
+            @click="buyNow"
+            class="bg-[#6d654f] text-white text-sm p-3.5 rounded-md w-32 font-bold hover:bg-[#ABB7A5] disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             立即購買
           </button>
@@ -205,7 +199,7 @@
 
 <script setup lang="ts">
   import { ref, computed, onMounted, watch } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
   import type { ProductRequest } from '@/services/ProductDetail';
 
@@ -300,8 +294,9 @@
       recommendations.value = recommendationsRes.data;
       console.log('✅ 推薦商品數量:', recommendations.value.length);
 
-      // 重置圖片輪播索引
+      // 重置圖片輪播索引、重置數量
       currentIndex.value = 0;
+      quantity.value = 1;
     } catch (err: unknown) {
       console.error('❌ API載入失敗', err);
       error.value = '商品載入失敗';
@@ -347,14 +342,37 @@
     return product.value.price * quantity.value;
   });
 
-  // 加入收藏與購物車提示
-  const heartBtn = ref(false);
-  const toggleHeart = () => {
-    heartBtn.value = !heartBtn.value;
-    alert(heartBtn.value ? '已加入收藏' : '已從收藏移除');
-  };
+  // 庫存顯示(無庫存/低庫存)
+  const isSoldOut = computed(() => {
+    if (!product.value) return false;
+    return product.value.stock === 0;
+  });
+  const isLowStock = computed(() => {
+    if (!product.value) return false;
+    return product.value.stock > 0 && product.value.stock < 21;
+  });
+
+  // 防止使用者手動輸入違規數字
+  watch(quantity, (newVal) => {
+    if (!product.value) return;
+    if (newVal > product.value.stock) {
+      quantity.value = product.value.stock;
+    } else if (newVal < 1) {
+      quantity.value = 1;
+    }
+  });
+
+  // TODO:加入購物車
   const addToCart = () => {
     alert('已加入購物車');
+  };
+
+  // TODO:立即購買：檢驗登入狀態，並導向結帳頁
+  const router = useRouter();
+  const buyNow = () => {
+    if (!product.value) return;
+    // 導向結帳頁面
+    router.push('/Checkout');
   };
 
   // 商品資訊欄位展開

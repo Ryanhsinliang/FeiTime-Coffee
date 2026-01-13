@@ -24,6 +24,7 @@
 </template>
 
 <script setup>
+  import Cart from '@/components/Cart.vue';
   import Header from './components/Header.vue';
   import Footer from './components/Footer.vue';
   import AIChatBall from './components/common/AIChatBall.vue';

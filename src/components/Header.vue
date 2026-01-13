@@ -83,13 +83,16 @@
       <!-- Icons + Mobile Toggle -->
       <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
         <!-- Desktop Icons -->
+        <!-- Always Visible Cart Icon -->
+        <button class="relative group outline-none" @click="toggleCart">
+          <span class="material-symbols-outlined transition-transform group-hover:scale-110" :style="textColorStyle">shopping_bag</span>
+          <span v-if="totalItems > 0" class="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#17cf82] text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
+            {{ totalItems }}
+          </span>
+        </button>
+
+        <!-- Desktop Icons (Person) -->
         <div class="hidden lg:flex items-center gap-4">
-          <button class="relative group outline-none" @click="toggleCart">
-            <span class="material-symbols-outlined transition-transform group-hover:scale-110" :style="textColorStyle">shopping_bag</span>
-            <span v-if="totalItems > 0" class="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#17cf82] text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
-              {{ totalItems }}
-            </span>
-          </button>
           <span class="material-symbols-outlined hover:scale-110 transition-transform cursor-pointer" :style="textColorStyle">person</span>
         </div>
 

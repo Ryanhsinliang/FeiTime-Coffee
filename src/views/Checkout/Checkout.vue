@@ -1,13 +1,31 @@
 <template>
-  <main class="font-wenkai flex justify-center">
-    <!-- 寄送資料 -->
-    <form action="#" class="w-[55%] bg-[--main-color] pt-4 pb-8 px-[40px] flex justify-end">
-      <div class="w-[65%]">
+  <main class="font-wenkai flex flex-col items-center bg-[--main-color]">
+    <form action="#" class="w-[50%] pt-4 pb-8 px-[40px] justify-center">
+      <div class="">
         <div class="my-5">
+          <!-- 【 1 】 配送方式 -->
           <h2 class="text-2xl font-semibold mb-5">配送方式</h2>
-          <p>宅配取貨</p>
+          <div class="flex my-[18px]">
+            <!-- 車icon-->
+            <div
+              class="cursor-pointer mx-[12px] w-[50%] flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px]"
+            >
+              <i class="fa-solid fa-truck text-[--green-gray] text-[36px]"></i>
+              <p class="text-[#222222] font-[600] py-[8px] text-[20px]">宅配取貨</p>
+              <p class="text-[#666666]">約3~5個工作天</p>
+            </div>
+            <!--店icon -->
+            <div
+              class="cursor-pointer mx-[12px] w-[50%] flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px]"
+            >
+              <i class="fa-solid fa-shop text-[--green-gray] text-[36px]"></i>
+              <p class="text-[#222222] font-[600] py-[8px] text-[20px]">來店取貨</p>
+              <p class="text-[#666666]">約3~5小時</p>
+            </div>
+          </div>
         </div>
 
+        <!-- 【 2 】 收件人資訊 -->
         <div class="">
           <h2 class="text-2xl font-semibold mb-5">收件人資訊</h2>
           <label for="name" class="block">姓名</label>
@@ -60,6 +78,7 @@
             class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
           />
 
+          <!-- 【 3 】  付款方式 -->
           <h2 class="text-2xl font-semibold mb-[12px] mt-[24px]">付款方式</h2>
 
           <div class="flex">
@@ -75,6 +94,44 @@
           </div>
         </div>
 
+        <!-- 【 4 】  訂單資料 -->
+        <section class="">
+          <h2 class="text-2xl font-semibold mb-5">訂單資料</h2>
+          <div class="px-[40px]">
+            <!-- 這下面要跑v-for -->
+            <div class="flex my-12">
+              <img
+                src="./assets/coffee_001.png"
+                alt=""
+                class="w-[64px] h-full aspect-square object-cover rounded-xl"
+              />
+              <div class="mx-4 w-full">
+                <h3>耶加雪菲G1日曬</h3>
+                <p class="text-sm mt-2">200g</p>
+              </div>
+              <div class="">$1,000</div>
+            </div>
+
+            <!-- 產品小計 -->
+            <div class="">
+              <div class="flex justify-between text-[20px]">
+                <p class="">商品金額</p>
+                <p id="price" class="">$1,000</p>
+              </div>
+
+              <div class="flex justify-between text-[20px]">
+                <p>運費</p>
+                <p id="shippingFee">$130</p>
+              </div>
+
+              <div class="flex justify-between my-4 text-[24px] font-bold">
+                <p>總金額</p>
+                <p>$1,130</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <button type="submit" class="w-full p-3 rounded-md mt-2 mb-4 bg-[--green-gray] text-white">
           確認送出訂單
         </button>
@@ -86,43 +143,6 @@
         </button> -->
       </div>
     </form>
-
-    <!-- 訂單資料 -->
-    <section class="w-[45%] bg-[--soft-brown]">
-      <div class="w-[65%] px-[40px]">
-        <!-- 這下面要跑v-for -->
-        <div class="flex my-12">
-          <img
-            src="./assets/coffee_001.png"
-            alt=""
-            class="w-[64px] h-full aspect-square object-cover rounded-xl"
-          />
-          <div class="mx-4 w-full">
-            <h3>耶加雪菲G1日曬</h3>
-            <p class="text-sm mt-2">200g</p>
-          </div>
-          <div class="">$1,000</div>
-        </div>
-
-        <!-- 產品小計 -->
-        <div class="">
-          <div class="flex justify-between text-[20px]">
-            <p class="">商品金額</p>
-            <p id="price" class="">$1,000</p>
-          </div>
-
-          <div class="flex justify-between text-[20px]">
-            <p>運費</p>
-            <p id="shippingFee">$130</p>
-          </div>
-
-          <div class="flex justify-between my-4 text-[24px] font-bold">
-            <p>總金額</p>
-            <p>$1,130</p>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
   <p class="text-[48px] bg-[#ffb8f4] p-3" @click="useLinePay">測試linepay</p>
 </template>

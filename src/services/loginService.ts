@@ -1,6 +1,4 @@
-import axios from 'axios';
 import api from './api';
-import { st } from 'vue-router/dist/router-CWoNjPRp.mjs';
 export interface User {
   id: number;
   username: string;
@@ -31,7 +29,7 @@ export const loginService = {
 
 export const forgotPasswordService = {
   async forgotPassword(email: string): Promise<void> {
-    await api.post('api/auth/forgot-password', { email });
+    await api.post('/api/auth/forgot-password', { email });
   },
 };
 

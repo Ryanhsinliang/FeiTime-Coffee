@@ -50,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (status === 401) {
         message = '帳號或密碼錯誤，請重新輸入';
       } else if (status === 429) {
-        message = '登入嘗試次數過多，請稍後再試';
+        message = '登入嘗試次數過多，請於15分鐘後再試';
       }
 
       setBanner(message, 'error');
@@ -70,7 +70,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       clearBanner();
       await forgotPasswordService.forgotPassword(email);
-      setBanner('重設密碼連結已發送至鄰的信箱', 'success');
+      setBanner('重設密碼連結已發送至您的信箱', 'success');
       return { success: true };
     } catch (error: any) {
       const message = error.response?.data?.error?.message || '發送失敗，請稍後再試';
@@ -79,10 +79,10 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function handleResetPassword(code: string, pass: string, confirmPass: string) {
+  async function handleResetPassword(code: string, password: string, confirmPass: string) {
     try {
       clearBanner();
-      await resetPasswordService.resetPassword(code, pass, confirmPass);
+      await resetPasswordService.resetPassword(code, password, confirmPass);
       setBanner('密碼修改成功', 'success');
       return { success: true };
     } catch (error: any) {

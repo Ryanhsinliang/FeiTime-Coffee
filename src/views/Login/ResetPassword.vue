@@ -19,7 +19,7 @@
         </div>
         <div class="relative z-10 max-w-md">
           <blockquote class="text-2xl font-medium leading-snug text-white drop-shadow-md">
-            "Don't worry, we'll help you get back to your coffee journey."
+            "一杯咖啡的時間，重新設定您的安全防護。"
           </blockquote>
         </div>
       </div>
@@ -31,19 +31,9 @@
               <h1
                 class="text-3xl font-bold tracking-tight text-text-main dark:text-white lg:text-4xl"
               >
-                找回您的帳號
+                設定新密碼
               </h1>
-              <p class="text-text-muted dark:text-white/60 text-base">
-                請輸入 Email，我們將發送重設連結給您
-              </p>
-            </div>
-
-            <div
-              v-if="isSent"
-              class="p-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl flex items-center gap-2"
-            >
-              <span class="material-symbols-outlined">check_circle</span>
-              <span>重設連結已送出，請檢查您的信箱。</span>
+              <p class="text-text-muted dark:text-white/60 text-base">請輸入您的新密碼以完成重設</p>
             </div>
 
             <div
@@ -56,52 +46,73 @@
               </span>
             </div>
 
-            <form v-if="!isSent" @submit.prevent="handleForgot" class="flex flex-col gap-6">
+            <div
+              v-if="isSuccess"
+              class="p-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl flex flex-col gap-3"
+            >
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined">check_circle</span>
+                <span class="font-bold">密碼重設成功！</span>
+              </div>
+              <router-link to="/login" class="text-primary hover:underline font-bold">
+                立即前往登入頁面 →
+              </router-link>
+            </div>
+
+            <form v-if="!isSuccess" @submit.prevent="handleReset" class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
-                <label class="text-sm font-semibold text-text-main dark:text-white" for="email">
-                  Email
+                <label class="text-sm font-semibold text-text-main dark:text-white" for="password">
+                  新密碼
                 </label>
                 <div class="relative">
                   <span
                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted text-[20px]"
                   >
-                    mail
+                    lock
                   </span>
                   <input
-                    v-model="email"
+                    v-model="form.password"
                     class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 py-3.5 text-base text-text-main dark:text-white placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
-                    id="email"
-                    placeholder="your@email.com"
-                    type="email"
+                    id="password"
+                    placeholder="••••••••"
+                    type="password"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <label
+                  class="text-sm font-semibold text-text-main dark:text-white"
+                  for="passwordConfirmation"
+                >
+                  確認新密碼
+                </label>
+                <div class="relative">
+                  <span
+                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted text-[20px]"
+                  >
+                    lock_reset
+                  </span>
+                  <input
+                    v-model="form.passwordConfirmation"
+                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 py-3.5 text-base text-text-main dark:text-white placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                    id="passwordConfirmation"
+                    placeholder="••••••••"
+                    type="password"
                     required
                   />
                 </div>
               </div>
 
               <button
-                :disabled="isLoading"
-                class="group relative flex w-full items-center justify-center rounded-xl bg-primary px-8 py-3.5 text-base font-bold hover:text-white shadow-sm hover:bg-[#8f9d89] transition-all duration-200 mt-2 disabled:opacity-70"
+                :disabled="isLoading || !route.query.code"
+                class="group relative flex w-full items-center justify-center rounded-xl bg-primary px-8 py-3.5 text-base font-bold hover:text-white shadow-sm hover:bg-[#8f9d89] transition-all duration-200 mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 type="submit"
               >
-                {{ isLoading ? '發送中...' : '發送重設郵件' }}
-                <span
-                  v-if="!isLoading"
-                  class="material-symbols-outlined absolute right-4 transition-transform group-hover:translate-x-1"
-                >
-                  send
-                </span>
+                {{ isLoading ? '提交中...' : '確認修改密碼' }}
               </button>
             </form>
-
-            <div class="text-center mt-4">
-              <router-link
-                to="/login"
-                class="text-sm font-semibold text-primary hover:underline flex items-center justify-center gap-1"
-              >
-                <span class="material-symbols-outlined text-sm">arrow_back</span>
-                返回登入
-              </router-link>
-            </div>
           </div>
         </div>
       </div>
@@ -110,23 +121,47 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, reactive, onMounted } from 'vue';
+  import { useRoute } from 'vue-router';
   import { useAuthStore } from '../../store/auth';
 
+  const route = useRoute();
   const authStore = useAuthStore();
-  const email = ref('');
+
+  const form = reactive({
+    password: '',
+    passwordConfirmation: '',
+  });
+
   const isLoading = ref(false);
-  const isSent = ref(false);
+  const isSuccess = ref(false);
   const errorMessage = ref('');
 
-  const handleForgot = async () => {
+  onMounted(() => {
+    if (!route.query.code) {
+      errorMessage.value = '無效的重設連結。請重新從「忘記密碼」申請。';
+    }
+  });
+
+  const handleReset = async () => {
+    if (form.password !== form.passwordConfirmation) {
+      errorMessage.value = '兩次輸入的密碼不一致';
+      return;
+    }
+
     isLoading.value = true;
     errorMessage.value = '';
-    const result = await authStore.handleForgotPassword(email.value);
+
+    const result = await authStore.handleResetPassword(
+      route.query.code as string,
+      form.password,
+      form.passwordConfirmation
+    );
+
     if (result.success) {
-      isSent.value = true;
+      isSuccess.value = true;
     } else {
-      errorMessage.value = '發送失敗，請確認 Email 是否正確';
+      errorMessage.value = '重設失敗，連結可能已過期。';
     }
     isLoading.value = false;
   };

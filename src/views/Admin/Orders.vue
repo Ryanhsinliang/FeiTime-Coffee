@@ -25,59 +25,22 @@
         </button>
       </section>
 
-      <!-- <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="flex flex-col gap-1 rounded-xl p-5 border shadow-sm">
-          <div class="flex items-center justify-between">
-            <p class="text-sm">今日訂單數</p>
-            <span class="material-symbols-outlined p-1.5 rounded-lg text-[20px]">
-              shopping_cart
-            </span>
-          </div>
-          <div class="flex items-baseline gap-2 mt-2">
-            <p class="text-3xl font-bold dark:text-white">124</p>
-            <span class="text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-0.5 rounded-full">
-              +12%
-            </span>
-          </div>
-        </div>
-        <div class="flex flex-col gap-1 rounded-xl p-5 border shadow-sm">
-          <div class="flex items-center justify-between">
-            <p class="text-sm">待出貨</p>
-            <span class="material-symbols-outlined p-1.5 rounded-lg text-[20px]">
-              local_shipping
-            </span>
-          </div>
-          <div class="flex items-baseline gap-2 mt-2">
-            <p class="text-3xl font-bold">45</p>
-            <span class="text-red-500 text-xs">請盡速出貨</span>
-          </div>
-        </div>
-        <div class="flex flex-col gap-1 rounded-xl p-5 border shadow-sm">
-          <div class="flex items-center justify-between">
-            <p class="text-sm">總營業額</p>
-            <span class="material-symbols-outlined p-1.5 rounded-lg text-[20px]">payments</span>
-          </div>
-          <div class="flex items-baseline gap-2 mt-2">
-            <p class="text-3xl font-bold">$8,320</p>
-            <span class="text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-0.5 rounded-full">
-              +18%
-            </span>
-          </div>
-        </div>
-      </section> -->
-
-      <section class="flex gap-4 p-4 rounded-xl border shadow-sm">
+      <section class="flex gap-4 p-5 rounded-xl border shadow-sm bg-white border-[#e7dacf]">
         <div class="flex-1 relative min-w-[200px]">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <i
+            class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c]"
+          ></i>
           <input
-            class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm focus:ring-2 placeholder:text-[#9a704c]"
+            class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm focus:ring-2 placeholder:text-[#9a704c] border border-[#e7dacf] bg-[#fcfaf8]"
             placeholder="請輸入訂單編號、顧客姓名或使用者ID"
             type="text"
           />
         </div>
 
         <div class="relative min-w-[140px]">
-          <select class="w-full pl-4 pr-10 py-2.5 rounded-lg text-sm cursor-pointer focus:ring-2">
+          <select
+            class="w-full pl-4 pr-10 py-2.5 rounded-lg text-sm cursor-pointer focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8]"
+          >
             <option value="">所有出貨狀態</option>
             <option value="pending">待付款</option>
             <option value="paid">已付款</option>
@@ -86,12 +49,14 @@
             <option value="cancelled">已取消</option>
           </select>
           <i
-            class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[16px]"
+            class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
           ></i>
         </div>
 
         <div class="relative min-w-[160px]">
-          <select class="w-full pl-4 pr-10 py-2.5 rounded-lg b text-sm cursor-pointer focus:ring-2">
+          <select
+            class="w-full pl-4 pr-10 py-2.5 rounded-lg b text-sm cursor-pointer focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8]"
+          >
             <option>最近30天</option>
             <option>最近7天</option>
             <option>今天</option>
@@ -118,14 +83,14 @@
         </div>
       </section>
 
-      <div class="border rounded-xl shadow-sm">
-        <table class="w-full text-left overflow-x-auto">
+      <div class="overflow-hidden rounded-xl border border-[#e7dacf] bg-white shadow-sm">
+        <table class="w-full text-left">
           <thead>
-            <tr class="border-b">
+            <tr class="border-b border-[#e7dacf] bg-[#fcfaf8]">
               <th class="py-4 px-6 text-xs font-bold">
                 <div class="flex items-center gap-1 cursor-pointer">
                   訂單編號
-                  <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+                  <span class="material-symbols-outlined">arrow_downward</span>
                 </div>
               </th>
               <th
@@ -161,8 +126,8 @@
 
               <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
               <td class="py-4 px-6 text-xs">
-                <p class="">下單日期: Oct 24, 2023</p>
-                <p class="text-gray-500">出貨日期: --</p>
+                <p class="">下單日期: 2023-10-24</p>
+                <p class="text-gray-500">付款日期: --</p>
               </td>
 
               <td class="py-4 px-6 text-center">
@@ -175,11 +140,11 @@
 
               <td class="py-4 px-6 text-right text-sm font-bold">$600</td>
 
-              <td class="py-4 px-6 text-right flex items-center gap-2">
-                <button type="button" class="p-1.5 rounded-lg">
+              <td class="py-4 px-6 flex justify-center gap-5">
+                <button type="button">
                   <span class="material-symbols-outlined text-[20px]">visibility</span>
                 </button>
-                <button type="button" class="p-1.5 rounded-lg">
+                <button type="button">
                   <span class="material-symbols-outlined text-[20px]">attach_money</span>
                 </button>
               </td>
@@ -204,8 +169,8 @@
 
               <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
               <td class="py-4 px-6 text-xs">
-                <p class="">下單日期: Oct 24, 2023</p>
-                <p class="text-gray-500">出貨日期: --</p>
+                <p class="">下單日期: 2023-10-24</p>
+                <p class="text-gray-500">付款日期: 2023-10-24</p>
               </td>
 
               <td class="py-4 px-6 text-center">
@@ -218,11 +183,11 @@
 
               <td class="py-4 px-6 text-right text-sm font-bold">$600</td>
 
-              <td class="py-4 px-6 text-right flex items-center gap-2">
-                <button type="button" class="p-1.5 rounded-lg">
+              <td class="py-4 px-6 flex justify-center gap-5">
+                <button type="button">
                   <span class="material-symbols-outlined text-[20px]">visibility</span>
                 </button>
-                <button type="button" class="p-1.5 rounded-lg">
+                <button type="button">
                   <span class="material-symbols-outlined text-[20px]">local_shipping</span>
                 </button>
               </td>
@@ -247,8 +212,8 @@
 
               <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
               <td class="py-4 px-6 text-xs">
-                <p class="">下單日期: Oct 24, 2023</p>
-                <p class="text-gray-500">出貨日期: Oct 25, 2023</p>
+                <p class="">下單日期: 2023-10-24</p>
+                <p class="text-gray-500">出貨日期: 2023-10-25</p>
               </td>
 
               <td class="py-4 px-6 text-center">
@@ -261,11 +226,11 @@
 
               <td class="py-4 px-6 text-right text-sm font-bold">$600</td>
 
-              <td class="py-4 px-6 text-right flex items-center gap-2">
-                <button type="button" class="p-1.5 rounded-lg">
+              <td class="py-4 px-6 flex justify-center gap-5">
+                <button type="button">
                   <span class="material-symbols-outlined text-[20px]">visibility</span>
                 </button>
-                <button type="button" class="p-1.5 rounded-lg">
+                <button type="button">
                   <span class="material-symbols-outlined text-[20px]">location_on</span>
                 </button>
               </td>
@@ -290,8 +255,8 @@
 
               <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
               <td class="py-4 px-6 text-xs">
-                <p class="">下單日期: Oct 24, 2023</p>
-                <p class="text-gray-500">出貨日期: Oct 25, 2023</p>
+                <p class="">下單日期: 2023-10-24</p>
+                <p class="text-gray-500">出貨日期: 2023-10-25</p>
               </td>
 
               <td class="py-4 px-6 text-center">
@@ -304,11 +269,11 @@
 
               <td class="py-4 px-6 text-right text-sm font-bold">$600</td>
 
-              <td class="py-4 px-6 text-right flex items-center gap-2">
-                <button type="button" class="p-1.5 rounded-lg">
+              <td class="py-4 px-6 flex justify-center gap-5">
+                <button type="button">
                   <span class="material-symbols-outlined text-[20px]">visibility</span>
                 </button>
-                <button type="button" class="p-1.5 rounded-lg">
+                <button type="button">
                   <span class="material-symbols-outlined text-[20px]">receipt</span>
                 </button>
               </td>
@@ -333,8 +298,8 @@
 
               <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
               <td class="py-4 px-6 text-xs">
-                <p class="">下單日期: Oct 24, 2023</p>
-                <p class="text-gray-500">出貨日期: Oct 25, 2023</p>
+                <p class="">下單日期: 2023-10-24</p>
+                <p class="text-gray-500">出貨日期: 2023-10-25</p>
               </td>
 
               <td class="py-4 px-6 text-center">
@@ -347,11 +312,11 @@
 
               <td class="py-4 px-6 text-right text-sm font-bold">$600</td>
 
-              <td class="py-4 px-6 text-right flex items-center gap-2">
-                <button type="button" class="p-1.5 rounded-lg">
+              <td class="py-4 px-6 flex justify-center gap-5">
+                <button type="button">
                   <span class="material-symbols-outlined text-[20px]">visibility</span>
                 </button>
-                <button type="button" class="p-1.5 rounded-lg">
+                <button type="button">
                   <span class="material-symbols-outlined text-[20px]">info</span>
                 </button>
               </td>
@@ -359,7 +324,9 @@
           </tbody>
         </table>
 
-        <div class="flex flex-col sm:flex-row items-center justify-between p-4 border-t gap-4">
+        <div
+          class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
+        >
           <p class="text-sm">1 - 10 筆 / 共 24 筆</p>
 
           <div class="flex items-center gap-2">
@@ -367,7 +334,7 @@
               class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
               disabled=""
             >
-              <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+              <i class="fa-solid fa-chevron-left text-sm"></i>
             </button>
             <button
               class="flex items-center justify-center size-9 rounded-lg bg-[#f09a4e] font-bold text-sm shadow-sm"
@@ -381,7 +348,7 @@
               3
             </button>
             <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-              <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+              <i class="fa-solid fa-chevron-right text-sm"></i>
             </button>
           </div>
         </div>

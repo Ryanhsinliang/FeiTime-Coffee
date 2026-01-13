@@ -118,14 +118,15 @@
   // 黑膠旋轉動畫
   // ============================================
   const rotateVinyl = () => {
-    if (isPlaying.value) {
+    // 只有在播放且不在 loading 狀態時才旋轉
+    if (isPlaying.value && !musicLoading.value) {
       vinylRotation.value = (vinylRotation.value + 0.5) % 360;
       animationFrameId = requestAnimationFrame(rotateVinyl);
     }
   };
 
   watch(isPlaying, (newValue) => {
-    if (newValue) {
+    if (newValue && !musicLoading.value) {
       if (!animationFrameId) {
         rotateVinyl();
       }
@@ -137,8 +138,18 @@
     }
   });
 
+  // 監聽 musicLoading 變化，確保 loading 時停止旋轉
+  watch(musicLoading, (newValue) => {
+    if (newValue && animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    } else if (!newValue && isPlaying.value && !animationFrameId) {
+      rotateVinyl();
+    }
+  });
+
   // ============================================
-  // 播放進度檢查 - 簡化版：只更新時間記錄，不調整旋轉
+  // 播放進度檢查 - 檢測快進/後退並調整黑膠角度
   // ============================================
   const checkPlaybackProgress = () => {
     if (!youtubePlayer || !youtubePlayer.getCurrentTime) return;
@@ -146,8 +157,26 @@
     try {
       const currentTime = youtubePlayer.getCurrentTime();
 
-      // 只更新時間記錄，旋轉完全由 rotateVinyl() 動畫處理
-      // 這樣黑膠會平滑旋轉，液體會固定在底部，不會跳動
+      if (currentTime && lastPlaybackTime.value > 0) {
+        // 計算時間差（秒）
+        const timeDiff = currentTime - lastPlaybackTime.value;
+
+        // 如果時間差大於 1.5 秒（考慮到 500ms 檢查間隔），認為是快進/後退
+        if (Math.abs(timeDiff) > 1.5) {
+          // 根據時間差計算角度變化
+          // 設定：1 秒 = 36 度（可以調整這個比例來改變轉動幅度）
+          const angleDelta = timeDiff * 36;
+
+          // 調整黑膠角度 - 確保結果始終為正數（0-359）
+          vinylRotation.value = (((vinylRotation.value + angleDelta) % 360) + 360) % 360;
+
+          console.log(
+            `⏩ Time jump detected: ${timeDiff.toFixed(2)}s, rotating: ${angleDelta.toFixed(0)}°`
+          );
+        }
+      }
+
+      // 更新時間記錄
       if (currentTime) {
         lastPlaybackTime.value = currentTime;
       }
@@ -189,6 +218,7 @@
       // 重置狀態
       isPlaying.value = false;
       lastPlaybackTime.value = 0;
+      musicLoading.value = true; // 設置 loading 狀態，讓黑膠靜止
 
       setTimeout(() => {
         const iframe = document.querySelector('iframe');
@@ -211,6 +241,10 @@
                 },
                 onReady: (event: YTPlayerEvent) => {
                   console.log('✅ YouTube player ready for new video');
+
+                  // 取消 loading 狀態
+                  musicLoading.value = false;
+
                   progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
 
                   // 如果標記為應自動播放，則自動播放
@@ -238,6 +272,7 @@
             });
           } catch (err) {
             console.error('❌ Failed to initialize YouTube player:', err);
+            musicLoading.value = false; // 發生錯誤時也要取消 loading
           }
         }
       }, 1000);
@@ -288,6 +323,7 @@
       currentVideoIndex.value++;
       isPlaying.value = false;
       lastPlaybackTime.value = 0;
+      musicLoading.value = true; // 設置 loading 狀態，讓黑膠靜止
       shouldAutoPlay.value = true;
       return;
     }
@@ -701,11 +737,7 @@
     opacity: 0.8;
   }
 
-  /* 液體容器 - 移除 transition，讓反向旋轉即時同步，避免繞圈效果 */
-  .liquid-container {
-    /* 不使用 transition，讓旋轉即時跟隨黑膠 */
-  }
-
+  /* 液體容器 - 使用反向旋轉即時跟隨黑膠，讓液體保持水平 */
   .liquid-body {
     position: absolute;
     inset: 0;

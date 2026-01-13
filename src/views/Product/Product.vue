@@ -288,9 +288,10 @@
   import { getProducts } from '../../services/product';
   import { ref, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
-  import { useCartStore } from '@/store/cartStore';
+  import { useCartStore } from '@/stores/cart';
 
-  const { addToCart } = useCartStore();
+  const cartStore = useCartStore();
+  const addToCart = cartStore.addItem;
 
   // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
   const sortTopbar = ref(true);

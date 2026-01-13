@@ -1,13 +1,15 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import './style.css';
 import App from './App.vue';
 import router from './router';
-import { createPinia } from 'pinia';
 
 const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate); // 啟用 Pinia 持久化插件 (npm install pinia-plugin-persistedstate)
+
 // ----- 建立 Vue App -----
 createApp(App)
   .use(router) // 安裝 router
-  .use(pinia)
+  .use(pinia)  // 安裝 Pinia
   .mount('#app'); // 掛載

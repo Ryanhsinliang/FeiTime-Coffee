@@ -149,29 +149,35 @@
 import { computed } from 'vue'
 import CartItem from './cart/CartItem.vue'
 import RecommendationCard from './cart/RecommendationCard.vue'
-import { useCartStore } from '@/store/cartStore'
+import { useCartStore } from '@/stores/cart'
 
-const { 
-  state, 
-  totalItems, 
-  subtotal, 
-  total,
-  closeCart,
-  updateQuantity,
-  removeFromCart,
-  addToCart,
-  checkout
-} = useCartStore()
+// Pinia Store 整合
+// 使用 useCartStore 取得購物車狀態與方法
+const cartStore = useCartStore()
 
-// Access state directly
-const isOpen = computed(() => state.isOpen)
-const cartItems = computed(() => state.items)
-const recommendations = computed(() => state.recommendations)
+// State - 直接對應 Store 的 State
+// 使用 computed 保持響應性 (Reactivity)
+const isOpen = computed(() => cartStore.isOpen)
+const cartItems = computed(() => cartStore.items)
+const recommendations = computed(() => cartStore.recommendations)
 
-// Computed for featured item
+// Getters - 從 Store 取得計算後的數值
+const subtotal = computed(() => cartStore.subtotal)
+const total = computed(() => cartStore.total)
+const totalItems = computed(() => cartStore.totalItems)
+
+// Actions - 綁定 Store 的操作方法
+const closeCart = cartStore.closeCart
+const updateQuantity = cartStore.updateQuantity
+const removeFromCart = cartStore.removeItem
+const addToCart = cartStore.addItem
+const checkout = cartStore.checkout
+
+// Computed - 計算當前推薦商品 (前端邏輯)
 const featuredItem = computed(() => {
   return cartItems.value.find(item => item.matchPercentage)
 })
+
 
 const matchPercentage = computed(() => {
   return featuredItem.value?.matchPercentage || 98

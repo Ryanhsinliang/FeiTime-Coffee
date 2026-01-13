@@ -202,6 +202,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
   import type { ProductRequest } from '@/services/ProductDetail';
+  import { useCartStore } from '@/stores/cart';
 
   // 1. 靜態對照表
   const originMap: Record<string, string> = {
@@ -363,8 +364,15 @@
   });
 
   // TODO:加入購物車
-  const addToCart = () => {
-    alert('已加入購物車');
+  const cartStore = useCartStore();
+  const addToCart = async () => {
+    if (!product.value) return;
+    
+    // 準備加入購物車的商品資料 (包含當前選擇的數量)
+    await cartStore.addItem({
+      ...product.value,
+      quantity: quantity.value 
+    });
   };
 
   // TODO:立即購買：檢驗登入狀態，並導向結帳頁

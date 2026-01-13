@@ -35,7 +35,8 @@
             :value="item.quantity"
           />
           <button
-            class="h-full w-8 flex items-center justify-center rounded-md hover:bg-white text-[#1a2e26] transition-colors"
+            class="h-full w-8 flex items-center justify-center rounded-md hover:bg-white text-[#1a2e26] transition-colors disabled:opacity-40"
+            :disabled="item.quantity >= (item.stock || 999)"
             @click="increaseQuantity"
           >
             <span class="material-symbols-outlined text-[16px]">add</span>
@@ -53,9 +54,9 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
+
   item: {
     type: Object,
     required: true
@@ -65,7 +66,9 @@ const props = defineProps({
 const emit = defineEmits(['update-quantity', 'remove'])
 
 const increaseQuantity = () => {
-  emit('update-quantity', props.item.id, props.item.quantity + 1)
+  if (props.item.quantity < (props.item.stock || 999)) {
+    emit('update-quantity', props.item.id, props.item.quantity + 1)
+  }
 }
 
 const decreaseQuantity = () => {

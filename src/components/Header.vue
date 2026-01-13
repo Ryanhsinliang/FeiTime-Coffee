@@ -145,10 +145,18 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted } from 'vue';
   import { useRoute } from 'vue-router';
-  import { useCartStore } from '@/store/cartStore';
+  import { useCartStore } from '@/stores/cart';
 
   const route = useRoute();
-  const { toggleCart, totalItems } = useCartStore();
+  
+  // 整合 Cart Store
+  const cartStore = useCartStore();
+  
+  // 直接使用 cartStore.toggleCart 方法
+  const toggleCart = cartStore.toggleCart;
+  
+  // 使用 computed 取得購物車總數量，確保數字會即時更新
+  const totalItems = computed(() => cartStore.totalItems);
 
   /* ===== 型別定義 ===== */
   interface NavLink {

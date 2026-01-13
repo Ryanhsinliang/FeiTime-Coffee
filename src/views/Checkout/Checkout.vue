@@ -1,7 +1,7 @@
 <template>
   <main class="font-wenkai flex justify-center">
     <!-- 寄送資料 -->
-    <form action="#" class="w-[55%] bg-[#FAFAFA] pt-4 pb-8 flex justify-end">
+    <form action="#" class="w-[55%] bg-[--main-color] pt-4 pb-8 px-[40px] flex justify-end">
       <div class="w-[65%]">
         <div class="my-5">
           <h2 class="text-2xl font-semibold mb-5">配送方式</h2>
@@ -50,12 +50,12 @@
             class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
           />
 
-          <label for="address" class="block">備註</label>
+          <label for="remark" class="block">備註</label>
           <input
-            v-model="form.address"
+            v-model="form.remark"
             type="text"
-            id="address"
-            placeholder="若"
+            id="remark"
+            placeholder="請輸入備註（ 最多200字 ）"
             required
             class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
           />
@@ -64,7 +64,7 @@
 
           <div class="flex">
             <input
-              type="checkbox"
+              type="radio"
               id="give-money"
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
@@ -88,10 +88,10 @@
     </form>
 
     <!-- 訂單資料 -->
-    <section class="w-[45%]">
-      <div class="w-[65%]">
+    <section class="w-[45%] bg-[--soft-brown]">
+      <div class="w-[65%] px-[40px]">
         <!-- 這下面要跑v-for -->
-        <div class="flex mx-8 my-12">
+        <div class="flex my-12">
           <img
             src="./assets/coffee_001.png"
             alt=""
@@ -104,18 +104,19 @@
           <div class="">$1,000</div>
         </div>
 
-        <div class="mx-8">
-          <div class="flex justify-between">
+        <!-- 產品小計 -->
+        <div class="">
+          <div class="flex justify-between text-[20px]">
             <p class="">商品金額</p>
             <p id="price" class="">$1,000</p>
           </div>
 
-          <div class="flex justify-between">
+          <div class="flex justify-between text-[20px]">
             <p>運費</p>
             <p id="shippingFee">$130</p>
           </div>
 
-          <div class="flex justify-between text-lg my-4">
+          <div class="flex justify-between my-4 text-[24px] font-bold">
             <p>總金額</p>
             <p>$1,130</p>
           </div>
@@ -131,10 +132,11 @@
   import { ref, reactive, computed } from 'vue';
 
   const form = reactive({
-    email: '',
     name: '',
     phone: '',
+    email: '',
     address: '',
+    remark: '',
   });
 
   // 串linepay

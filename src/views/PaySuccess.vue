@@ -44,38 +44,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-  import axios from 'axios';
-  import { onMounted } from 'vue';
-  import { useRoute } from 'vue-router';
-
-  const route = useRoute();
-  const linepayUrl = import.meta.env.VITE_LINK;
-
-  onMounted(async () => {
-    const transactionId = route.query.transactionId;
-    // 付款成功後 linepay 會幫忙導回成功頁 並透過網址傳遞  transactionId (交易編號)
-
-    if (transactionId) {
-      // 如果有 transactionId 就跟後端說可以執行第二階段 付款授權
-      try {
-        const res = await axios.post(`${linepayUrl}/linePay/confirm`, {
-          transactionId: transactionId,
-          amount: 3, // 這邊之後串資料庫拿總金額
-          // linepay要求要再傳一次 amount 給它  所以這邊再傳一次給後端
-        });
-        console.log('成功');
-        console.log('金流狀態：', res.data.message);
-        // message 是由後端提供的
-        // 在那個res.json()內的物件 後端可自行定義要給前端什麼資料
-        // 註:res是後端 express().post()第二參數callback的第二參數 慣例用res
-      } catch (error: any) {
-        console.log('失敗');
-        console.error('確認失敗：', error.res?.data || error.message);
-      }
-    }
-  });
-</script>
+<script setup lang="ts"></script>
 
 <style>
   /* Tailwind 3.4 官網 */

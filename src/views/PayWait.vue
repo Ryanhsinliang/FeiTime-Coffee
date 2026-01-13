@@ -1,0 +1,122 @@
+<template>
+  <p class="text-center mt-[48px] text-[40px] font-bold mt-[100px] text-[#222222]">讀取中</p>
+  <p class="text-center text-[#666666]">若加載時間太久 請重新整理</p>
+  <div class="loader"></div>
+  <div class="flex flex-col items-center w-[300px] mx-auto mb-[48px]">
+    <router-link
+      to="/Checkout"
+      class="text-xl bg-[var(--green-gray)] px-[48px] py-[20px] rounded-full text-[var(--main-color)] font-[600] w-full text-center"
+    >
+      返回結帳
+    </router-link>
+
+    <router-link
+      to="/home"
+      class="mt-[20px] text-xl border-2 border-[var(--green-gray)] px-[48px] py-[20px] rounded-full text-[var(--green-gray)] font-[600] w-full text-center"
+    >
+      前往首頁
+    </router-link>
+  </div>
+</template>
+
+<script setup lang="ts">
+  import axios from 'axios';
+  import { ref, onMounted } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+
+  const route = useRoute();
+  const linepayUrl = import.meta.env.VITE_LINK;
+
+  let pay = ref('');
+  const router = useRouter();
+
+  onMounted(async () => {
+    const transactionId = route.query.transactionId;
+    // 付款成功後 linepay 會幫忙導回成功頁 並透過網址傳遞  transactionId (交易編號)
+
+    if (transactionId) {
+      // 如果有 transactionId 就跟後端說可以執行第二階段 付款授權
+      try {
+        const res = await axios.post(`${linepayUrl}/linePay/confirm`, {
+          transactionId: transactionId,
+          amount: 3, // 這邊之後串資料庫拿總金額
+          // linepay要求要再傳一次 amount 給它  所以這邊再傳一次給後端
+        });
+        console.log('成功');
+        console.log('金流狀態：', res.data.message);
+        console.log('金流狀態：', res.data.status);
+        pay.value = res.data.status; // 把後端給的 status 抓過來 等等依此判斷要跳轉成功頁還是失敗頁
+        // message status 是由後端提供的
+        // 在那個res.json()內的物件 後端可自行定義要給前端什麼資料
+        // 註:res是後端 express().post()第二參數callback的第二參數 慣例用res
+
+        if (pay.value === 'success') {
+          // 用 pay 判斷要跳轉 成功頁 還是 失敗頁
+          router.push('/payment-success');
+        } else {
+          router.push('/payment-cancel');
+        }
+      } catch (error: any) {
+        console.log('失敗');
+        console.error('確認失敗：', error.res?.data || error.message);
+      }
+    }
+  });
+</script>
+
+<style>
+  /* Tailwind 3.4 官網 */
+  /* https://v3.tailwindcss.com/ */
+
+  /* Font-awesome */
+  /* https://fontawesome.com/search?ic=free-collection */
+
+  /*
+    先寫不會變動的樣式
+    再用lg: 寫電腦版
+    再用md: 寫平板
+    手機版 不用特別寫
+  */
+
+  /* 
+    在F12 元素丟這段 找回滑鼠
+    const style = document.createElement('style');
+    style.innerHTML = `* { cursor: auto !important; }`;
+    document.head.appendChild(style); 
+  */
+
+  .SS {
+    display: flex;
+    align-items: center;
+  }
+
+  :root {
+    --main-color: #faf9ee;
+    /* 淡黃 */
+    --green-gray: #a2af9b;
+    /* 抹茶綠 */
+    --soft-brown: #dccfc0;
+    /* 亮咖啡 */
+    --heavy-brown: #b49e89;
+    /* 深咖啡 */
+    --light-gray: #eeeeee;
+    /* 淡灰 */
+  }
+
+  .loader {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 36px;
+    margin-bottom: 36px;
+    width: 35%;
+    height: 32px;
+    border-radius: 12px;
+    background: linear-gradient(var(--green-gray) 0 0) 0/0% no-repeat #dddddd;
+    animation: maxtsute 2s infinite linear;
+  }
+  @keyframes maxtsute {
+    100% {
+      background-size: 100%;
+    }
+  }
+</style>

@@ -233,7 +233,7 @@
       <router-link
         :to="{ name: 'ProductDetail', params: { pid: p.pid } }"
         v-for="p in product"
-        :key="p.pid"
+        :key="p.id"
       >
         <div class="relative group cursor-pointer">
           <img

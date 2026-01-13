@@ -112,12 +112,7 @@
                     Remember me
                   </span>
                 </label>
-                <a
-                  class="text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
-                  href="#"
-                >
-                  忘記密碼?
-                </a>
+                <router-link to="/forgot-password">忘記密碼?</router-link>
               </div>
 
               <button
@@ -220,7 +215,7 @@
         } else {
           localStorage.removeItem('rememberedEmail');
         }
-        router.push({ name: 'home' });
+        router.push({ name: 'HomePage' });
       } else {
         errorMessage.value = result.message || '登入失敗，請稍後再試';
       }

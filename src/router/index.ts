@@ -13,6 +13,7 @@ import Register from '@/views/Register/Register.vue';
 import Member from '@/views/Member/Member.vue';
 import { useAuthStore } from '@/store/auth';
 import EmailConfirmed from '@/views/Register/EmailConfirmed.vue';
+import ForgotPassword from '@/views/Login/ForgotPassword.vue';
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
 
@@ -84,6 +85,11 @@ const routes = [
     name: 'EmailConfirmed',
     component: EmailConfirmed,
   },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: ForgotPassword,
+  },
   //測試用
   {
     path: '/cTest',
@@ -105,18 +111,18 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
   if (authStore.isLoggedIn && (to.path === '/login' || to.path === '/register')) {
-    return next({ name: 'home' });
+    return next({ name: 'HomePage' });
   }
   if (to.meta.requiresAdmin) {
     if (authStore.isLoggedIn && authStore.isAdmin) {
       next();
     } else {
       authStore.setBanner('請先登入帳號', 'warning');
-      next(authStore.isLoggedIn ? { name: 'home' } : { name: 'login' });
+      next(authStore.isLoggedIn ? { name: 'HomePage' } : { name: 'Login' });
     }
   } else if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     authStore.setBanner('請先登入帳號', 'warning');
-    next({ name: 'login' });
+    next({ name: 'Login' });
   } else {
     authStore.clearBanner();
     next();

@@ -1,7 +1,13 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import Cookies from 'js-cookie';
-import { loginService, type User, type AuthResponse } from '../services/loginService';
+import {
+  loginService,
+  forgotPasswordService,
+  resetPasswordService,
+  type User,
+  type AuthResponse,
+} from '../services/loginService';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
@@ -60,5 +66,43 @@ export const useAuthStore = defineStore('auth', () => {
     Cookies.remove('auth_token');
   }
 
-  return { user, token, isAdmin, isLoggedIn, banner, handleLogin, logout, setBanner, clearBanner };
+  async function handleForgotPassword(email: string) {
+    try {
+      clearBanner();
+      await forgotPasswordService.forgotPassword(email);
+      setBanner('重設密碼連結已發送至鄰的信箱', 'success');
+      return { success: true };
+    } catch (error: any) {
+      const message = error.response?.data?.error?.message || '發送失敗，請稍後再試';
+      setBanner(message, 'error');
+      return { success: false };
+    }
+  }
+
+  async function handleResetPassword(code: string, pass: string, confirmPass: string) {
+    try {
+      clearBanner();
+      await resetPasswordService.resetPassword(code, pass, confirmPass);
+      setBanner('密碼修改成功', 'success');
+      return { success: true };
+    } catch (error: any) {
+      const message = error.response?.data?.error?.message || '重設失敗，連結可能已過期';
+      setBanner(message, 'error');
+      return { success: false };
+    }
+  }
+
+  return {
+    user,
+    token,
+    isAdmin,
+    isLoggedIn,
+    banner,
+    handleLogin,
+    handleForgotPassword,
+    handleResetPassword,
+    logout,
+    setBanner,
+    clearBanner,
+  };
 });

@@ -1,7 +1,7 @@
 <template>
-  <div 作用="全域設定" class="font-wenkai text-[#222222]">
+  <div 作用="全域設定" class="font-wenkai text-[#222222] bg-[--main-color]">
     <!-- 【 1 】 標頭 -->
-    <header class="mt-[24px] px-[24px] py-[24px]">
+    <header class="px-[24px] py-[48px]">
       <!-- border-2 border-black -->
       <h2 class="text-[32px] font-bold">精選單品咖啡豆</h2>
       <p class="text-[20px]">
@@ -215,7 +215,35 @@
           </div>
         </div>
         <!-- 產品卡片 -->
-        <div class="grid">2</div>
+        <div
+          class="grid bg-[#ffb8f4] mx-[24px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[60px]"
+        >
+          <!-- <router-link
+            v-for="p in product"
+            :key="p.pid"
+            :to="`/product-detail/${p.pid}`"
+          >-->
+          <div id="之後換成v-for" class="px-[20px] bg-white rounded-[12px]">
+            <img
+              class="aspect-[4/3] object-cover object-center rounded-[12px] mt-[20px]"
+              src="./assets/ex.2.png"
+              alt=""
+            />
+            <!-- 文字 -->
+            <div class="my-[16px]">
+              <div class="flex">
+                <p>國家</p>
+                <p>．</p>
+                <p>焙度</p>
+              </div>
+              <p class="text-[24px] font-[600] my-[4px]">名字給我串名字來喔</p>
+              <p>串風味風味風味</p>
+            </div>
+            <!-- 價錢 -->
+            <p class="text-[20px] font-[600] mt-[48px] mb-[16px]">NT$ 串價錢錢錢錢</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-plus"></i>
       </main>
     </div>
     <!-- 2+3的div 結束 -->
@@ -572,12 +600,6 @@
     再用lg: 寫電腦版 (>1024px)
     手機版 不用特別寫
   */
-
-  /* .body {
-    background-color: var(--main-color);
-    font-family: 'LXGW WenKai TC';
-    color: #222222;
-  } */
 
   :root {
     --main-color: #faf9ee;

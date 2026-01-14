@@ -9,49 +9,172 @@
       </p>
     </header>
 
-    <!-- 【 2 】 左側選單 -->
-    <nav class="border-2 border-black px-[24px]">
-      <div class="my-[24px]">
-        <h3 class="text-[24px] font-[600]">焙度</h3>
+    <!-- 2+3的div -->
+    <div class="flex">
+      <!-- 【 2 】 左側篩選選單 -->
+      <nav class="px-[24px] w-[25%]">
+        <!-- border-2 border-black -->
+        <div class="my-[24px]">
+          <!-- 焙度 -->
+          <h3 class="text-[24px] font-[600]">焙度</h3>
 
-        <div class="mt-[8px]">
-          <input type="radio" id="Light" name="roast" value="Light" />
-          <label class="ml-[8px] text-[20px]" for="Light">淺焙</label>
-        </div>
-        <div class="mt-[8px]">
-          <input type="radio" id="Medium" name="roast" value="Medium" />
-          <label class="ml-[8px] text-[20px]" for="Medium">中焙</label>
-        </div>
+          <div class="mt-[8px]">
+            <input type="radio" id="Light" name="roast" value="Light" />
+            <label class="ml-[8px] text-[20px]" for="Light">淺焙</label>
+          </div>
+          <div class="mt-[8px]">
+            <input type="radio" id="Medium" name="roast" value="Medium" />
+            <label class="ml-[8px] text-[20px]" for="Medium">中焙</label>
+          </div>
 
-        <div class="mt-[8px]">
-          <input type="radio" id="Dark" name="roast" value="Dark" />
-          <label class="ml-[8px] text-[20px]" for="Dark">深焙</label>
-        </div>
-      </div>
-
-      <div class="my-[24px]">
-        <h3 class="text-[24px] font-[600]">風味</h3>
-
-        <div class="mt-[8px]">
-          <input type="radio" id="Fruity" name="flavor_type" value="Fruity" />
-          <label class="ml-[8px] text-[20px]" for="Fruity">果香清爽</label>
-        </div>
-        <div class="mt-[8px]">
-          <input type="radio" id="Nutty" name="flavor_type" value="Nutty" />
-          <label class="ml-[8px] text-[20px]" for="Nutty">堅果巧克力</label>
+          <div class="mt-[8px]">
+            <input type="radio" id="Dark" name="roast" value="Dark" />
+            <label class="ml-[8px] text-[20px]" for="Dark">深焙</label>
+          </div>
         </div>
 
-        <div class="mt-[8px]">
-          <input type="radio" id="Bold" name="flavor_type" value="Bold" />
-          <label class="ml-[8px] text-[20px]" for="Bold">濃郁厚實</label>
+        <!-- 風味 -->
+        <div class="my-[24px]">
+          <h3 class="text-[24px] font-[600]">風味</h3>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Fruity" name="flavor_type" value="Fruity" />
+            <label class="ml-[8px] text-[20px]" for="Fruity">果香清爽</label>
+          </div>
+          <div class="mt-[8px]">
+            <input type="radio" id="Nutty" name="flavor_type" value="Nutty" />
+            <label class="ml-[8px] text-[20px]" for="Nutty">堅果巧克力</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Bold" name="flavor_type" value="Bold" />
+            <label class="ml-[8px] text-[20px]" for="Bold">濃郁厚實</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Floral" name="flavor_type" value="Floral" />
+            <label class="ml-[8px] text-[20px]" for="Floral">花香明亮</label>
+          </div>
         </div>
 
-        <div class="mt-[8px]">
-          <input type="radio" id="Floral" name="flavor_type" value="Floral" />
-          <label class="ml-[8px] text-[20px]" for="Floral">花香明亮</label>
+        <!-- 處理法 -->
+        <div class="my-[24px]">
+          <h3 class="text-[24px] font-[600]">處理法</h3>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Washed" name="processing" value="Washed" />
+            <label class="ml-[8px] text-[20px]" for="Washed">水洗</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Natural" name="processing" value="Natural" />
+            <label class="ml-[8px] text-[20px]" for="Natural">日曬</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Honey" name="processing" value="Honey" />
+            <label class="ml-[8px] text-[20px]" for="Honey">蜜處理</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Wet-Hulled" name="processing" value="Wet-Hulled" />
+            <label class="ml-[8px] text-[20px]" for="Wet-Hulled">厭氧</label>
+          </div>
         </div>
-      </div>
-    </nav>
+
+        <!-- 產地 -->
+        <div class="my-[24px]">
+          <h3 class="text-[24px] font-[600]">產地</h3>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Ethiopia" name="origin" value="Ethiopia" />
+            <label class="ml-[8px] text-[20px]" for="Ethiopia">衣索比亞</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Kenya" name="origin" value="Kenya" />
+            <label class="ml-[8px] text-[20px]" for="Kenya">肯亞</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Rwanda" name="origin" value="Rwanda" />
+            <label class="ml-[8px] text-[20px]" for="Rwanda">盧安達</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Burundi" name="origin" value="Burundi" />
+            <label class="ml-[8px] text-[20px]" for="Burundi">布隆迪</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Colombia" name="origin" value="Colombia" />
+            <label class="ml-[8px] text-[20px]" for="Colombia">哥倫比亞</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Brazil" name="origin" value="Brazil" />
+            <label class="ml-[8px] text-[20px]" for="Brazil">巴西</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Guatemala" name="origin" value="Guatemala" />
+            <label class="ml-[8px] text-[20px]" for="Guatemala">瓜地馬拉</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Costa Rica" name="origin" value="Costa Rica" />
+            <label class="ml-[8px] text-[20px]" for="Costa Rica">哥斯大黎加</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="El Salvador" name="origin" value="El Salvador" />
+            <label class="ml-[8px] text-[20px]" for="El Salvador">薩爾瓦多</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Panama" name="origin" value="Panama" />
+            <label class="ml-[8px] text-[20px]" for="Panama">巴拿馬</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Indonesia" name="origin" value="Indonesia" />
+            <label class="ml-[8px] text-[20px]" for="Indonesia">印尼</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Vietnam" name="origin" value="Vietnam" />
+            <label class="ml-[8px] text-[20px]" for="Vietnam">越南</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="India" name="origin" value="India" />
+            <label class="ml-[8px] text-[20px]" for="India">印度</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Thailand" name="origin" value="Thailand" />
+            <label class="ml-[8px] text-[20px]" for="Thailand">泰國</label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input type="radio" id="Papua New Guinea" name="origin" value="Papua New Guinea" />
+            <label class="ml-[8px] text-[20px]" for="Papua New Guinea">巴布亞紐幾內亞</label>
+          </div>
+        </div>
+      </nav>
+
+      <!-- 【 3 】 排序 和 產品卡片 -->
+      <main class="border-2 border-black w-[75%]">
+        <!-- 排序 -->
+        <div>1</div>
+        <!-- 產品卡片 -->
+        <div class="grid">2</div>
+      </main>
+    </div>
+    <!-- 2+3的div 結束 -->
+    <!-- 石頭 -->
+    <!-- 石頭 -->
+    <!-- 石頭 -->
   </div>
   <!-- 全域設定結束 -->
 
@@ -68,7 +191,7 @@
         <input
           v-model="findWord"
           @keyup.enter="find(findWord)"
-          class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] lg:w-[100%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] md:w-[100%] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[90%]"
+          class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] md:w-[100%] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[90%]"
           type="search"
           placeholder="喝一杯靜謐的午後時光"
         />
@@ -388,10 +511,18 @@
   /* Font-awesome */
   /* https://fontawesome.com/search?ic=free-collection */
 
+  /* 
+    在F12 元素丟這段 找回滑鼠
+    const style = document.createElement('style');
+    style.innerHTML = `* { cursor: auto !important; }`;
+    document.head.appendChild(style); 
+  */
+
   /*
+    先md 再lg
     先寫不會變動的樣式
-    再用lg: 寫電腦版
-    再用md: 寫平板
+    再用md: 寫平板 (>768px)
+    再用lg: 寫電腦版 (>1024px)
     手機版 不用特別寫
   */
 

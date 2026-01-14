@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import api from '@/services/api';
+
 export interface Scores {
   acidity: number;
   sweetness: number;
@@ -29,19 +30,20 @@ export const useCoffeeResultStore = defineStore('coffeeResult', {
   },
 
   actions: {
-    setResult(data: {
-      scores: Scores;
-      maxScores: Scores;
-      normalizedScores: Scores;
-      personaId: string;
-      answers: Answer[];
-    }) {
+    setResult(data: { scores: Scores; maxScores: Scores; personaId: string; answers: Answer[] }) {
       this.scores = data.scores;
       this.maxScores = data.maxScores;
-      this.normalizedScores = data.normalizedScores;
-      this.personaId = data.personaId;
       this.answers = data.answers;
+      this.personaId = data.personaId;
       this.calculatedAt = Date.now();
+
+      this.normalizedScores = {
+        acidity: Math.floor((data.scores.acidity / data.maxScores.acidity) * 100) || 0,
+        sweetness: Math.floor((data.scores.sweetness / data.maxScores.sweetness) * 100) || 0,
+        body: Math.floor((data.scores.body / data.maxScores.body) * 100) || 0,
+        aftertaste: Math.floor((data.scores.aftertaste / data.maxScores.aftertaste) * 100) || 0,
+        clarity: Math.floor((data.scores.clarity / data.maxScores.clarity) * 100) || 0,
+      };
     },
 
     clearResult() {
@@ -52,6 +54,7 @@ export const useCoffeeResultStore = defineStore('coffeeResult', {
       this.answers = [];
       this.calculatedAt = null;
     },
+
     async saveToUserAccount(personaData: {
       persona_name: string;
       persona_image: string;
@@ -75,7 +78,7 @@ export const useCoffeeResultStore = defineStore('coffeeResult', {
         const response = await api.post('/api/coffee-results', payload);
         return response.data;
       } catch (error: any) {
-        console.error('儲存失敗，請檢查 Strapi Public 權限是否開啟:', error.message);
+        console.error('儲存失敗:', error.message);
         throw error;
       }
     },

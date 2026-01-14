@@ -12,7 +12,7 @@
     >
       <div class="p-5">
         <img class="h-10" src="" alt="" />
-        <h2 class="text-3xl text-center">您的 Coffee ID card</h2>
+        <h2 class="text-3xl text-center font-cactus">您的 Coffee ID card</h2>
       </div>
 
       <div
@@ -21,22 +21,22 @@
         <canvas ref="radarCanvas" class="mx-auto"></canvas>
       </div>
 
-      <h3 class="mx-auto text-2xl">您的風味測試結果屬於：</h3>
-      <h4 class="mx-auto text-2xl">{{ persona.name }}</h4>
-      <p class="mx-auto">{{ persona.description }}</p>
+      <h3 class="mx-auto text-2xl font-cactus">您的風味測試結果屬於：</h3>
+      <h4 class="mx-auto text-2xl font-bold">{{ persona?.name }}</h4>
+      <p class="mx-auto px-6 text-center">{{ persona?.description }}</p>
 
       <img
-        :src="persona.image"
-        alt=""
+        :src="persona?.image"
+        alt="Persona Image"
         class="w-1/2 mx-auto my-3 shadow-2xl hover:bg-white/20 transition-colors duration-500 rounded-2xl"
       />
 
       <h3 class="mx-auto my-3">推薦商品：</h3>
       <div class="mx-auto flex flex-wrap justify-center gap-3 max-w-xl">
         <router-link
-          v-for="(bean, index) in persona.beans"
+          v-for="(bean, index) in persona?.beans"
           :key="bean"
-          :to="persona.productPaths[index]"
+          :to="persona?.productPaths[index] || '#'"
           class="group/option relative inline-flex items-center justify-center h-12 sm:h-14 px-6 sm:px-8 bg-white/20 text-white text-sm sm:text-base tracking-wider uppercase rounded-sm shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300"
           style="white-space: nowrap"
         >
@@ -51,6 +51,7 @@
       </div>
     </div>
   </section>
+
   <section
     class="flex justify-around flex-wrap group relative mx-auto w-full max-w-3xl transform-gpu transition-transform duration-300 ease-out"
   >
@@ -68,13 +69,14 @@
         class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover/option:scale-100"
       ></span>
     </button>
+
     <button
       @click="saveIdCard"
       :disabled="isSaving"
       type="button"
       class="group/option relative flex items-center justify-center h-14 px-10 bg-white/20 text-white tracking-widest uppercase rounded-xl shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300 mt-3"
     >
-      {{ isSaving ? '儲存中...' : '儲存我的Coffee ID' }}
+      {{ isSaving ? '儲存中...' : '儲存我的 Coffee ID' }}
       <span
         class="pointer-events-none absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-white scale-0 origin-top-left transition-transform duration-300 group-hover/option:scale-100"
       ></span>
@@ -82,6 +84,7 @@
         class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover/option:scale-100"
       ></span>
     </button>
+
     <a
       href="/coffeeLabT1-T-P1"
       class="group/option relative flex items-center justify-center h-14 px-10 bg-white/20 text-white tracking-widest uppercase rounded-xl shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300 mt-3"
@@ -95,11 +98,17 @@
       ></span>
     </a>
   </section>
-  <section class="flex justify-center flex-wrap gap-3 mt-6 mx-auto w-full max-w-3xl px-4"></section>
+
+  <div
+    v-if="hint.show"
+    class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-lg z-50"
+  >
+    {{ hint.message }}
+  </div>
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, onMounted, watch } from 'vue';
+  import { computed, ref, onMounted, watch, nextTick } from 'vue';
   import {
     Chart,
     RadarController,
@@ -110,38 +119,26 @@
     Tooltip,
     Legend,
   } from 'chart.js';
-  import type { Scores } from '../views/CoffeeIdTest/type';
   import { useCoffeeResultStore } from '@/store/coffeeResult';
+  import { getPersona } from '@/utils/getPersona';
+  import html2canvas from 'html2canvas';
 
-  const props = defineProps<{
-    scores: Scores;
-    answers?: any[];
-    maxScores: Scores;
-  }>();
   const coffeeResultStore = useCoffeeResultStore();
-  const currentScores = computed(() => props.scores || coffeeResultStore.scores);
-  const currentMaxScores = computed(() => props.maxScores || coffeeResultStore.maxScores);
-  const normalizedScores = computed(() => {
-    const scores = currentScores.value;
-    const maxScores = currentMaxScores.value;
 
-    if (!scores || !maxScores) {
-      return {
+  const normalizedScores = computed(() => {
+    return (
+      coffeeResultStore.normalizedScores || {
         acidity: 0,
         sweetness: 0,
         body: 0,
         aftertaste: 0,
         clarity: 0,
-      };
-    }
+      }
+    );
+  });
 
-    return {
-      acidity: Math.floor((scores.acidity / maxScores.acidity) * 100) || 0,
-      sweetness: Math.floor((scores.sweetness / maxScores.sweetness) * 100) || 0,
-      body: Math.floor((scores.body / maxScores.body) * 100) || 0,
-      aftertaste: Math.floor((scores.aftertaste / maxScores.aftertaste) * 100) || 0,
-      clarity: Math.floor((scores.clarity / maxScores.clarity) * 100) || 0,
-    };
+  const persona = computed(() => {
+    return getPersona({ value: normalizedScores.value });
   });
 
   Chart.register(
@@ -155,12 +152,10 @@
   );
   const radarCanvas = ref<HTMLCanvasElement | null>(null);
   let radarChart: Chart | null = null;
+
   function renderRadar() {
     if (!radarCanvas.value) return;
-
-    if (radarChart) {
-      radarChart.destroy();
-    }
+    if (radarChart) radarChart.destroy();
 
     radarChart = new Chart(radarCanvas.value, {
       type: 'radar',
@@ -194,204 +189,109 @@
             ticks: { display: false, count: 5 },
             grid: { color: '#ccc' },
             angleLines: { color: '#bbb' },
-            pointLabels: {
-              font: { size: 14, weight: 'normal' },
-              color: '#333',
-            },
+            pointLabels: { font: { size: 14 }, color: '#333' },
           },
         },
-        plugins: {
-          legend: { display: false },
-        },
+        plugins: { legend: { display: false } },
       },
     });
   }
 
-  watch(() => normalizedScores, renderRadar, { deep: true });
-  watch(
-    () => props.scores,
-    (newScores) => {
-      if (newScores) {
-        renderRadar();
-      }
-    },
-    { deep: true, immediate: true }
-  );
+  watch(normalizedScores, renderRadar, { deep: true });
   onMounted(renderRadar);
 
-  import { getPersona } from '@/utils/getPersona';
-  import html2canvas from 'html2canvas';
-
-  const persona = computed(() => getPersona(normalizedScores)!);
-
-  // 卡片效果
   const idCard = ref<HTMLElement | null>(null);
   const cardStyle = ref('');
   const glowStyle = ref('');
 
   function handleMove(e: MouseEvent) {
     if (!idCard.value) return;
-
     const rect = idCard.value.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-
     const rotateY = ((x - centerX) / centerX) * 6;
     const rotateX = -((y - centerY) / centerY) * 4;
 
-    cardStyle.value = `
-        transform:
-          perspective(1000px)
-          rotateY(${rotateY}deg)
-          rotateX(${rotateX}deg)
-          translateY(-4px);
-      `;
-
-    glowStyle.value = `
-        background:
-          radial-gradient(
-            600px circle at ${x}px ${y}px,
-            rgba(255,255,255,0.25),
-            transparent 45%
-          );
-      `;
+    cardStyle.value = `transform: perspective(1000px) rotateY(${rotateY}deg) rotateX(${rotateX}deg) translateY(-4px);`;
+    glowStyle.value = `background: radial-gradient(600px circle at ${x}px ${y}px, rgba(255,255,255,0.25), transparent 45%);`;
   }
 
   function reset() {
-    cardStyle.value = `
-        transform:
-          perspective(1000px)
-          rotateY(0deg)
-          rotateX(0deg)
-          translateY(0);
-      `;
+    cardStyle.value = `transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(0);`;
     glowStyle.value = '';
   }
 
-  // 分享功能
   const isSaving = ref(false);
   const isProcessing = ref(false);
-  const hint = ref({ show: true, message: '' });
+  const hint = ref({ show: false, message: '' });
 
   function showHint(message: string) {
     hint.value.message = message;
     hint.value.show = true;
     setTimeout(() => {
       hint.value.show = false;
-    }, 2000);
+    }, 3000);
   }
 
   const shareText = computed(() => {
-    return `我的 Coffee ID 是 ${persona.value.name}！來看看你的風味測試結果吧！
-      風味分數：
-      酸味: ${normalizedScores.value.acidity}
-      甜味: ${normalizedScores.value.sweetness}
-      醇厚度: ${normalizedScores.value.body}
-      餘韻: ${normalizedScores.value.aftertaste}
-      澄澈度: ${normalizedScores.value.clarity}
-      推薦商品: ${persona.value.beans.join('、')}`;
+    if (!persona.value) return '';
+    return `我的 Coffee ID 是 ${persona.value.name}！
+風味分數：酸:${normalizedScores.value.acidity}, 甜:${normalizedScores.value.sweetness}, 醇:${normalizedScores.value.body}...
+來看看你的風味測試結果吧！`;
   });
 
   async function idCardToImage(): Promise<Blob | null> {
     if (!idCard.value) return null;
-    try {
-      const originalStyle = cardStyle.value;
-      cardStyle.value = '';
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const canvas = await html2canvas(idCard.value, {
-        backgroundColor: null,
-        scale: 2,
-        logging: false,
-        useCORS: true,
-      });
-      cardStyle.value = originalStyle;
-      return new Promise((resolve) => {
-        canvas.toBlob((blob) => {
-          resolve(blob);
-        }, 'image/png');
-      });
-    } catch (error) {
-      console.log('CoffeeID截圖失敗', error);
-      return null;
-    }
+    const originalStyle = cardStyle.value;
+    cardStyle.value = '';
+    await nextTick();
+    const canvas = await html2canvas(idCard.value, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+    });
+    cardStyle.value = originalStyle;
+    return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), 'image/png'));
   }
-
-  function downloadBlob(blob: Blob, name: string) {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => URL.revokeObjectURL(url), 100);
-  }
-
-  async function copyTextToClipboard(text: string) {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch (err) {
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-    }
-  }
-  const isMobile = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   async function handleMainShare() {
     if (isProcessing.value) return;
-
     isProcessing.value = true;
     showHint('正在生成 Coffee ID 圖片...');
 
     try {
       const imageBlob = await idCardToImage();
-      if (!imageBlob) throw new Error('圖片生成失敗');
+      if (!imageBlob || !persona.value) throw new Error('生成失敗');
 
-      const fileName = `coffee-id-${persona.value.name}.png`;
-      const imageFile = new File([imageBlob], fileName, { type: 'image/png' });
-      const canNativeShare = !!navigator.canShare && navigator.canShare({ files: [imageFile] });
+      const imageFile = new File([imageBlob], `coffee-id-${persona.value.name}.png`, {
+        type: 'image/png',
+      });
 
-      if (canNativeShare) {
-        // 原生分享（手機/平板）
+      if (navigator.share && navigator.canShare?.({ files: [imageFile] })) {
         await navigator.share({
           title: '我的 Coffee ID',
           text: shareText.value,
           files: [imageFile],
         });
-        showHint('分享成功！');
       } else {
-        // 電腦版用「下載圖片 + 複製文字」
-        downloadBlob(imageBlob, fileName);
-        await copyTextToClipboard(shareText.value);
-        showHint('圖片已下載，文字已複製！請貼上至社群媒體。');
-        if (!isMobile) {
-          setTimeout(() => {
-            window.open('https://www.facebook.com/', '_blank');
-          }, 2000);
-        }
+        const url = URL.createObjectURL(imageBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `coffee-id-${persona.value.name}.png`;
+        link.click();
+        await navigator.clipboard.writeText(shareText.value);
+        showHint('圖片已下載，文字已複製！');
       }
     } catch (error) {
-      if ((error as Error).name === 'AbortError') {
-        console.log('使用者取消分享');
-      } else {
-        console.error('分享失敗:', error);
-        showHint('分享失敗，請使用「儲存我的 Coffee ID」');
-      }
+      console.error(error);
+      showHint('分享失敗，請點擊儲存圖片。');
     } finally {
       isProcessing.value = false;
     }
   }
-
-  // TODO:現在是直接儲存圖片，待資料庫建好後要改成存到使用者帳號中
+  // 直接存圖片的功能
   // async function saveIdCard() {
   //   isSaving.value = true;
   //   try {
@@ -416,9 +316,8 @@
   //   }
   // }
   async function saveIdCard() {
-    if (isSaving.value) return;
+    if (isSaving.value || !persona.value) return;
     isSaving.value = true;
-
     try {
       await coffeeResultStore.saveToUserAccount({
         persona_name: persona.value.name,
@@ -426,7 +325,6 @@
         description: persona.value.description,
         normalizedScores: normalizedScores.value,
       });
-
       showHint('🎉 測驗結果已同步至您的個人帳號！');
     } catch (error: any) {
       showHint(`儲存失敗: ${error.message}`);
@@ -435,5 +333,3 @@
     }
   }
 </script>
-
-<style scoped></style>

@@ -10,4 +10,3 @@ export const quizAPI = {
     return api.post('/api/quiz/calculate', { answers });
   },
 };
-export default api;

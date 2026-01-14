@@ -9,16 +9,17 @@
         :style="{ width: progressWidth + '%' }"
       >
         <img
-          :style="{ right: 0 }"
+          style="right: 0"
           class="w-8 transition-all duration-500 invert absolute"
-          src=".\assets\img\coffeeWalk.gif"
-          alt=""
+          src="./assets/img/coffeeWalk.gif"
+          alt="Walking coffee icon"
         />
       </div>
       <div class="text-right mt-2 text-white">
         第 {{ quizData.currentIndex + 1 }} 題　/　共 {{ quizData.questions.length }} 題
       </div>
     </div>
+
     <div class="w-2/3 mx-auto flex justify-end my-3">
       <button
         v-if="quizData.currentIndex >= 1 || coffeeResultStore.hasResult"
@@ -29,6 +30,7 @@
         重新測驗
       </button>
     </div>
+
     <section
       v-if="!coffeeResultStore.hasResult"
       id="questionCard"
@@ -52,8 +54,9 @@
             type="button"
             class="text-white border-[#dccfc0] border p-2 rounded-lg hover:bg-[#a2af9b]"
           >
-            <
+            &lt;
           </button>
+
           <h3 class="text-center font-bold">
             {{ quizData.questions[quizData.currentIndex]?.quizKey }}
           </h3>
@@ -63,6 +66,7 @@
           <p class="text-center text-md font-medium text-[#090909]">
             {{ quizData.questions[quizData.currentIndex]?.subtitle }}
           </p>
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-9">
             <div
               v-for="option in quizData.questions[quizData.currentIndex]?.options"
@@ -87,29 +91,15 @@
             v-if="isLastQuestionAnswered"
             @click="showResultCard"
             type="button"
-            class="w-full border-[#dccfc0] border p-2 rounded-lg hover:bg-[#a2af9b]"
+            class="w-full border-[#dccfc0] border p-2 rounded-lg hover:bg-[#a2af9b] text-white"
           >
             看結果
           </button>
         </div>
       </div>
     </section>
-    <CoffeeID
-      v-if="coffeeResultStore.hasResult"
-      :scores="
-        coffeeResultStore.scores || { acidity: 0, sweetness: 0, body: 0, aftertaste: 0, clarity: 0 }
-      "
-      :answers="coffeeResultStore.answers"
-      :maxScores="
-        coffeeResultStore.maxScores || {
-          acidity: 0,
-          sweetness: 0,
-          body: 0,
-          aftertaste: 0,
-          clarity: 0,
-        }
-      "
-    />
+
+    <CoffeeID v-if="coffeeResultStore.hasResult" />
   </main>
 </template>
 
@@ -124,32 +114,13 @@
 
   const coffeeResultStore = useCoffeeResultStore();
   const isLoading = ref(true);
+  const emit = defineEmits(['quiz-finished']);
 
-  const quizData = reactive<{
-    currentIndex: number;
-    answers: (Answer | undefined)[];
-    scores: Scores;
-    questions: Question[];
-    showResult: boolean;
-  }>({
+  const quizData = reactive({
     currentIndex: 0,
-    answers: [],
-    showResult: false,
-    scores: {
-      acidity: 0,
-      sweetness: 0,
-      body: 0,
-      aftertaste: 0,
-      clarity: 0,
-    },
-    questions: [],
+    answers: [] as (Answer | undefined)[],
+    questions: [] as Question[],
   });
-
-  const calculatedResult = ref<{
-    scores: Scores;
-    maxScores: Scores;
-    normalizedScores: Scores;
-  } | null>(null);
 
   const fetchQuetions = async () => {
     try {
@@ -162,41 +133,14 @@
     }
   };
 
-  onMounted(async () => {
-    await fetchQuetions();
+  onMounted(fetchQuetions);
 
-    if (coffeeResultStore.hasResult) {
-      calculatedResult.value = {
-        scores: coffeeResultStore.scores ?? {
-          acidity: 0,
-          sweetness: 0,
-          body: 0,
-          aftertaste: 0,
-          clarity: 0,
-        },
-        maxScores: coffeeResultStore.maxScores ?? {
-          acidity: 0,
-          sweetness: 0,
-          body: 0,
-          aftertaste: 0,
-          clarity: 0,
-        },
-        normalizedScores: coffeeResultStore.normalizedScores ?? {
-          acidity: 0,
-          sweetness: 0,
-          body: 0,
-          aftertaste: 0,
-          clarity: 0,
-        },
-      };
-      quizData.showResult = true;
-    }
-  });
+  const answeredCount = computed(() => quizData.answers.filter((a) => a !== undefined).length);
+  const progressWidth = computed(() => (answeredCount.value / quizData.questions.length) * 100);
 
-  // 進度條
-  const answered = computed(() => quizData.answers.filter((a) => a !== undefined).length);
-  const progressWidth = computed(() => {
-    return (answered.value / quizData.questions.length) * 100;
+  const isLastQuestionAnswered = computed(() => {
+    const lastIndex = quizData.questions.length - 1;
+    return quizData.currentIndex === lastIndex && quizData.answers[lastIndex] !== undefined;
   });
 
   function selectOption(option: Option) {
@@ -207,69 +151,43 @@
 
     if (quizData.currentIndex < quizData.questions.length - 1) {
       quizData.currentIndex++;
-    } else {
-      console.log('測驗完成');
     }
   }
 
   function toPreviousQuestion() {
-    if (quizData.currentIndex > 0) {
-      quizData.currentIndex--;
-    }
+    if (quizData.currentIndex > 0) quizData.currentIndex--;
   }
+
   function resetTest() {
     quizData.currentIndex = 0;
     quizData.answers = [];
-    quizData.scores = {
-      acidity: 0,
-      sweetness: 0,
-      body: 0,
-      aftertaste: 0,
-      clarity: 0,
-    };
-    quizData.showResult = false;
-    calculatedResult.value = null;
     coffeeResultStore.clearResult();
   }
 
-  const emit = defineEmits(['quiz-finished']);
-
   async function showResultCard() {
-    if (answered.value !== quizData.questions.length) {
-      console.warn('尚未完成所有題目');
-      return;
-    }
+    if (answeredCount.value !== quizData.questions.length) return;
 
     try {
-      const validAnswers = quizData.answers.filter((a) => a !== undefined);
-
+      const validAnswers = quizData.answers.filter((a): a is Answer => a !== undefined);
       const { data } = await quizAPI.calculateScores(validAnswers);
 
       if (data.success) {
-        calculatedResult.value = data.data;
-        quizData.scores = data.data.scores;
-
-        const normalized = {
-          acidity: Math.floor((data.data.scores.acidity / data.data.maxScores.acidity) * 100) || 0,
-          sweetness:
-            Math.floor((data.data.scores.sweetness / data.data.maxScores.sweetness) * 100) || 0,
-          body: Math.floor((data.data.scores.body / data.data.maxScores.body) * 100) || 0,
-          aftertaste:
-            Math.floor((data.data.scores.aftertaste / data.data.maxScores.aftertaste) * 100) || 0,
-          clarity: Math.floor((data.data.scores.clarity / data.data.maxScores.clarity) * 100) || 0,
-        };
-
-        const persona = getPersona({ value: normalized });
-
         coffeeResultStore.setResult({
           scores: data.data.scores,
           maxScores: data.data.maxScores,
-          normalizedScores: normalized,
-          personaId: persona?.id || 'unknown',
+          personaId: '',
           answers: validAnswers,
         });
+        const scores = coffeeResultStore.normalizedScores;
 
-        quizData.showResult = true;
+        if (scores) {
+          const persona = getPersona({ value: scores });
+
+          if (persona) {
+            coffeeResultStore.personaId = persona.id;
+          }
+        }
+
         emit('quiz-finished', data.data.scores, validAnswers);
       }
     } catch (err: any) {
@@ -277,57 +195,24 @@
     }
   }
 
-  const isLastQuestionAnswered = computed(() => {
-    const lastIndex = quizData.questions.length - 1;
-    return quizData.currentIndex === lastIndex && quizData.answers[lastIndex] !== undefined;
-  });
-
-  //卡片效果
   const card = ref<HTMLElement | null>(null);
   const style = ref('');
   const glowStyle = ref('');
 
   function handleMove(e: MouseEvent) {
     if (!card.value) return;
-
     const rect = card.value.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 6;
+    const rotateX = -((y - rect.height / 2) / (rect.height / 2)) * 4;
 
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateY = ((x - centerX) / centerX) * 6;
-    const rotateX = -((y - centerY) / centerY) * 4;
-
-    style.value = `
-    transform:
-      perspective(1000px)
-      rotateY(${rotateY}deg)
-      rotateX(${rotateX}deg)
-      translateY(-4px);
-  `;
-
-    glowStyle.value = `
-    background:
-      radial-gradient(
-        500px circle at ${x}px ${y}px,
-        rgba(255,255,255,0.35),
-        transparent 45%
-      );
-  `;
+    style.value = `perspective(1000px) rotateY(${rotateY}deg) rotateX(${rotateX}deg) translateY(-4px)`;
+    glowStyle.value = `radial-gradient(500px circle at ${x}px ${y}px, rgba(255,255,255,0.35), transparent 45%)`;
   }
 
   function reset() {
-    style.value = `
-    transform:
-      perspective(1000px)
-      rotateY(0deg)
-      rotateX(0deg)
-      translateY(0);
-  `;
+    style.value = 'perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(0)';
     glowStyle.value = '';
   }
 </script>
-
-<style></style>

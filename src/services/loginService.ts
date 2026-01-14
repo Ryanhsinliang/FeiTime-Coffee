@@ -18,27 +18,12 @@ export interface AuthResponse {
 }
 
 export const loginService = {
-  async login(identifier: string, password: string): Promise<AuthResponse> {
+  async login(identifier: string, password: string, captchaToken: string): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/api/login', {
       identifier,
       password,
+      captchaToken,
     });
     return response.data;
-  },
-};
-
-export const forgotPasswordService = {
-  async forgotPassword(email: string): Promise<void> {
-    await api.post('/api/auth/forgot-password', { email });
-  },
-};
-
-export const resetPasswordService = {
-  async resetPassword(code: string, password: string, passwordConfirmation: string): Promise<void> {
-    await api.post('/api/auth/reset-password', {
-      code,
-      password,
-      passwordConfirmation,
-    });
   },
 };

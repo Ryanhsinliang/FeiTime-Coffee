@@ -75,9 +75,18 @@
                     class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 py-3.5 text-base text-text-main dark:text-white placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     id="password"
                     placeholder="••••••••"
-                    type="password"
                     required
+                    :type="isPasswordVisible ? 'text' : 'password'"
                   />
+                  <button
+                    @click="isPasswordVisible = !isPasswordVisible"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-main dark:hover:text-white transition-colors cursor-pointer flex items-center justify-center"
+                    type="button"
+                  >
+                    <span class="material-symbols-outlined text-[20px]">
+                      {{ isPasswordVisible ? 'visibility_off' : 'visibility' }}
+                    </span>
+                  </button>
                 </div>
               </div>
 
@@ -99,12 +108,20 @@
                     class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 py-3.5 text-base text-text-main dark:text-white placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     id="passwordConfirmation"
                     placeholder="••••••••"
-                    type="password"
                     required
+                    :type="isComfirmeVisible ? 'text' : 'password'"
                   />
+                  <button
+                    @click="isComfirmeVisible = !isComfirmeVisible"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-main dark:hover:text-white transition-colors cursor-pointer flex items-center justify-center"
+                    type="button"
+                  >
+                    <span class="material-symbols-outlined text-[20px]">
+                      {{ isComfirmeVisible ? 'visibility_off' : 'visibility' }}
+                    </span>
+                  </button>
                 </div>
               </div>
-
               <button
                 :disabled="isLoading || !route.query.code"
                 class="group relative flex w-full items-center justify-center rounded-xl bg-primary px-8 py-3.5 text-base font-bold hover:text-white shadow-sm hover:bg-[#8f9d89] transition-all duration-200 mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
@@ -124,7 +141,13 @@
   import { ref, reactive, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import { useAuthStore } from '../../store/auth';
+  import { useReCaptcha } from 'vue-recaptcha-v3';
 
+  const isPasswordVisible = ref(false);
+  const isComfirmeVisible = ref(false);
+  const recaptcha = useReCaptcha();
+  const executeRecaptcha = recaptcha?.executeRecaptcha;
+  const recaptchaLoaded = recaptcha?.recaptchaLoaded;
   const route = useRoute();
   const authStore = useAuthStore();
 
@@ -136,6 +159,7 @@
   const isLoading = ref(false);
   const isSuccess = ref(false);
   const errorMessage = ref('');
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,}$/;
 
   onMounted(() => {
     if (!route.query.code) {
@@ -144,7 +168,14 @@
   });
 
   const handleReset = async () => {
-    if (form.password !== form.passwordConfirmation) {
+    const cleanPassword = form.password.trim();
+    const cleanConfirm = form.passwordConfirmation.trim();
+
+    if (!passwordRegex.test(cleanPassword)) {
+      errorMessage.value = '至少 8 碼，需含大小寫字母與數字';
+      return;
+    }
+    if (cleanPassword !== cleanConfirm) {
       errorMessage.value = '兩次輸入的密碼不一致';
       return;
     }
@@ -152,17 +183,30 @@
     isLoading.value = true;
     errorMessage.value = '';
 
-    const result = await authStore.handleResetPassword(
-      route.query.code as string,
-      form.password,
-      form.passwordConfirmation
-    );
+    try {
+      if (!recaptchaLoaded || !executeRecaptcha) {
+        throw new Error('驗證插件尚未準備就緒');
+      }
+      await recaptchaLoaded();
+      const captchaToken = await executeRecaptcha('reset_password');
 
-    if (result.success) {
-      isSuccess.value = true;
-    } else {
-      errorMessage.value = '重設失敗，連結可能已過期。';
+      const result = await authStore.handleResetPassword(
+        route.query.code as string,
+        cleanPassword,
+        cleanConfirm,
+        captchaToken
+      );
+
+      if (result.success) {
+        isSuccess.value = true;
+      } else {
+        errorMessage.value = '重設失敗，連結可能已過期。';
+      }
+      isLoading.value = false;
+    } catch (err) {
+      errorMessage.value = '驗證系統異常，請稍後再試';
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   };
 </script>

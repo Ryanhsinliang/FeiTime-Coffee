@@ -1,14 +1,12 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import Cookies from 'js-cookie';
-import {
-  loginService,
-  forgotPasswordService,
-  resetPasswordService,
-  type User,
-  type AuthResponse,
-} from '../services/loginService';
+import { loginService, type User, type AuthResponse } from '../services/loginService';
 
+import { forgotPasswordService } from '@/services/forgotPasswordService';
+import { resetPasswordService } from '@/services/resetPasswordService';
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
   const token = ref<string | null>(Cookies.get('auth_token') || null);
@@ -29,9 +27,14 @@ export const useAuthStore = defineStore('auth', () => {
     return !!token.value && !!user.value;
   });
 
-  async function handleLogin(identifier: string, password: string, remember: boolean = false) {
+  async function handleLogin(
+    identifier: string,
+    password: string,
+    remember: boolean = false,
+    captchaToken: string
+  ) {
     try {
-      const data: AuthResponse = await loginService.login(identifier, password);
+      const data: AuthResponse = await loginService.login(identifier, password, captchaToken);
 
       token.value = data.jwt;
       user.value = data.user;
@@ -79,15 +82,34 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function handleResetPassword(code: string, password: string, confirmPass: string) {
+  async function handleResetPassword(
+    code: string,
+    password: string,
+    confirmPass: string,
+    captchaToken: string
+  ) {
+    const cleanPassword = password.trim();
+    const cleanConfirmPass = confirmPass.trim();
     try {
       clearBanner();
-      await resetPasswordService.resetPassword(code, password, confirmPass);
+      if (cleanPassword !== cleanConfirmPass) {
+        setBanner('兩次輸入的密碼不一致', 'error');
+        return { success: false };
+      }
+      if (!passwordRegex.test(cleanPassword)) {
+        setBanner('至少 8 碼，需含大小寫字母與數字', 'error');
+        return { success: false };
+      }
+      await resetPasswordService.resetPassword(code, cleanPassword, cleanConfirmPass, captchaToken);
       setBanner('密碼修改成功', 'success');
       return { success: true };
     } catch (error: any) {
-      const message = error.response?.data?.error?.message || '重設失敗，連結可能已過期';
-      setBanner(message, 'error');
+      let displayMessage = '重設失敗，連結可能已過期或無效';
+      const backendMessage = error.response?.data?.error?.message;
+      if (backendMessage && error.response?.status < 500) {
+        displayMessage = backendMessage;
+      }
+      setBanner(displayMessage, 'error');
       return { success: false };
     }
   }

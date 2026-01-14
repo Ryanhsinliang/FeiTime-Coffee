@@ -1,5 +1,5 @@
 <template>
-  <div 作用="全域設定" class="font-wenkai text-[#222222] bg-[--main-color]">
+  <div 作用="全域設定" class="font-wenkai text-[#705944] bg-[--main-color]">
     <!-- 【 1 】 標頭 -->
     <header class="px-[24px] py-[48px]">
       <!-- border-2 border-black -->
@@ -164,7 +164,7 @@
       </nav>
 
       <!-- 【 3 】 搜尋欄 + 排序 和 產品卡片 -->
-      <main class="border-2 border-black w-[75%]">
+      <main class="w-[75%]">
         <!-- 搜尋欄 + 排序 -->
         <div class="flex items-center justify-between">
           <!-- 搜尋欄 -->
@@ -185,7 +185,7 @@
                 v-model="sortWhich"
                 @change="takeSort"
                 id="sort-page"
-                class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
+                class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0 text-[#222222]"
               >
                 <!-- change 是DOM原生事件 當 <select> 中的 <option> 更動時觸發  -->
                 <option value="">排序</option>
@@ -200,50 +200,56 @@
             </div>
             <p
               v-if="sortHe"
-              class="oriru rounded-[4px] bg-[--heavy-brown] leading-8 px-[6px]"
+              class="oriru rounded-[4px] bg-[--heavy-brown] leading-8 px-[6px] text-[#222222]"
               @click="sortChange"
             >
               ↓高到低
             </p>
             <p
               v-else
-              class="noboru rounded-[4px] bg-[--soft-brown] leading-8 px-[6px]"
+              class="noboru rounded-[4px] bg-[--soft-brown] leading-8 px-[6px] text-[#222222]"
               @click="sortChange"
             >
               ↑低到高
             </p>
           </div>
         </div>
-        <!-- 產品卡片 -->
-        <div
-          class="grid bg-[#ffb8f4] mx-[24px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[60px]"
-        >
-          <!-- <router-link
+        <!-- 產品區 -->
+        <div class="grid mx-[24px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[60px]">
+          <!-- 產品卡片 -->
+          <router-link
             v-for="p in product"
             :key="p.pid"
             :to="`/product-detail/${p.pid}`"
-          >-->
-          <div id="之後換成v-for" class="px-[20px] bg-white rounded-[12px]">
+            class="px-[20px] bg-white rounded-[12px] relative"
+          >
+            <!-- <div id="之後換成v-for" class="px-[20px] bg-white rounded-[12px] relative"> -->
             <img
               class="aspect-[4/3] object-cover object-center rounded-[12px] mt-[20px]"
-              src="./assets/ex.2.png"
-              alt=""
+              :src="p.img[0].formats.large.url"
+              :alt="p.name"
             />
             <!-- 文字 -->
             <div class="my-[16px]">
               <div class="flex">
-                <p>國家</p>
+                <p>{{ p.origin }}</p>
                 <p>．</p>
-                <p>焙度</p>
+                <p>{{ p.roast }}</p>
               </div>
-              <p class="text-[24px] font-[600] my-[4px]">名字給我串名字來喔</p>
-              <p>串風味風味風味</p>
+              <p class="text-[24px] font-[600] my-[4px]">{{ p.name }}</p>
+              <p>{{ p.flavor_type }}</p>
             </div>
             <!-- 價錢 -->
-            <p class="text-[20px] font-[600] mt-[48px] mb-[16px]">NT$ 串價錢錢錢錢</p>
-          </div>
+            <p class="text-[20px] font-[600] mt-[48px] mb-[16px]">NT$ {{ p.price }}</p>
+            <!-- 加入購物車按紐 -->
+            <div
+              class="rounded-full bg-[#222222] inline-block px-[17px] py-[12px] absolute text-white font-bold bottom-[8px] right-[20px]"
+            >
+              <i class="fa-solid fa-plus"></i>
+            </div>
+          </router-link>
+          <!-- 產品卡片結束 -->
         </div>
-        <i class="fa-solid fa-plus"></i>
       </main>
     </div>
     <!-- 2+3的div 結束 -->
@@ -457,6 +463,8 @@
     body: number;
     aftertaste: number;
     clarity: number;
+    flavor_type: string;
+    roast: string;
   }
 
   const productCopy = ref<DataRule[]>([]); // 備份資料 【排序】功能使用

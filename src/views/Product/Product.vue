@@ -163,10 +163,57 @@
         </div>
       </nav>
 
-      <!-- 【 3 】 排序 和 產品卡片 -->
+      <!-- 【 3 】 搜尋欄 + 排序 和 產品卡片 -->
       <main class="border-2 border-black w-[75%]">
-        <!-- 排序 -->
-        <div>1</div>
+        <!-- 搜尋欄 + 排序 -->
+        <div class="flex items-center justify-between">
+          <!-- 搜尋欄 -->
+          <input
+            v-model="findWord"
+            @keyup.enter="find(findWord)"
+            class="border-2 border-solid border-[#8f745c] rounded-[8px] w-[70%] text-[24px] py-[4px] px-[8px] my-[40px] mx-[24px]"
+            placeholder="喝一杯靜謐的午後時光"
+          />
+
+          <!-- 排序 -->
+          <div class="flex mr-[24px]">
+            <div
+              class="flex bg-[var(--main-color)] px-[12px] rounded-[8px] overflow-hidden mr-[8px]"
+            >
+              <img class="IC-sort w-[32px] bg-[var(--main-color)]" src="./assets/sort.svg" alt="" />
+              <select
+                v-model="sortWhich"
+                @change="takeSort"
+                id="sort-page"
+                class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
+              >
+                <!-- change 是DOM原生事件 當 <select> 中的 <option> 更動時觸發  -->
+                <option value="">排序</option>
+                <option value="price">價錢</option>
+                <option value="popularity">熱門度</option>
+                <option value="sweetness">甜味</option>
+                <option value="acidity">酸味</option>
+                <option value="body">口感</option>
+                <option value="aftertaste">餘韻</option>
+                <option value="clarity">澄澈度</option>
+              </select>
+            </div>
+            <p
+              v-if="sortHe"
+              class="oriru rounded-[4px] bg-[--heavy-brown] leading-8 px-[6px]"
+              @click="sortChange"
+            >
+              ↓高到低
+            </p>
+            <p
+              v-else
+              class="noboru rounded-[4px] bg-[--soft-brown] leading-8 px-[6px]"
+              @click="sortChange"
+            >
+              ↑低到高
+            </p>
+          </div>
+        </div>
         <!-- 產品卡片 -->
         <div class="grid">2</div>
       </main>

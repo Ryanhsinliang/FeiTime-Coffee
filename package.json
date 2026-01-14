@@ -22,7 +22,6 @@
     "lucide-vue-next": "^0.562.0",
     "pinia": "^3.0.4",
     "vue": "^3.5.24",
-    "vue-recaptcha": "^3.0.0-alpha.6",
     "vue-recaptcha-v3": "^2.0.1",
     "vue-router": "^4.6.4"
   },

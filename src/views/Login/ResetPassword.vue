@@ -200,7 +200,7 @@
       if (result.success) {
         isSuccess.value = true;
       } else {
-        errorMessage.value = '重設失敗，連結可能已過期。';
+        errorMessage.value = authStore.banner?.message || '重設失敗，連結可能已過期。';
       }
       isLoading.value = false;
     } catch (err) {

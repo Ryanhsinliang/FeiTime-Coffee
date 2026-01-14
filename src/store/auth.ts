@@ -6,7 +6,7 @@ import { loginService, type User, type AuthResponse } from '../services/loginSer
 import { forgotPasswordService } from '@/services/forgotPasswordService';
 import { resetPasswordService } from '@/services/resetPasswordService';
 
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,}$/;
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
   const token = ref<string | null>(Cookies.get('auth_token') || null);

@@ -123,6 +123,7 @@
   import { getPersona } from '@/utils/getPersona';
 
   const coffeeResultStore = useCoffeeResultStore();
+  const isLoading = ref(true);
 
   const quizData = reactive<{
     currentIndex: number;
@@ -156,6 +157,8 @@
       quizData.questions = data;
     } catch (err) {
       console.error('獲取問題失敗:', err);
+    } finally {
+      isLoading.value = false;
     }
   };
 
@@ -212,7 +215,6 @@
   function toPreviousQuestion() {
     if (quizData.currentIndex > 0) {
       quizData.currentIndex--;
-      quizData.answers[quizData.currentIndex] = undefined;
     }
   }
   function resetTest() {

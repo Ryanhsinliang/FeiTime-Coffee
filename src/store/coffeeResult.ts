@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-
+import api from '@/services/api';
 export interface Scores {
   acidity: number;
   sweetness: number;
@@ -51,6 +51,33 @@ export const useCoffeeResultStore = defineStore('coffeeResult', {
       this.personaId = null;
       this.answers = [];
       this.calculatedAt = null;
+    },
+    async saveToUserAccount(personaData: {
+      persona_name: string;
+      persona_image: string;
+      description: string;
+      normalizedScores: Scores;
+    }) {
+      try {
+        const payload = {
+          data: {
+            persona_name: personaData.persona_name,
+            persona_image: personaData.persona_image,
+            description: personaData.description,
+            acidity: personaData.normalizedScores.acidity,
+            sweetness: personaData.normalizedScores.sweetness,
+            body: personaData.normalizedScores.body,
+            aftertaste: personaData.normalizedScores.aftertaste,
+            clarity: personaData.normalizedScores.clarity,
+            user: 19,
+          },
+        };
+        const response = await api.post('/api/coffee-results', payload);
+        return response.data;
+      } catch (error: any) {
+        console.error('儲存失敗，請檢查 Strapi Public 權限是否開啟:', error.message);
+        throw error;
+      }
     },
   },
 

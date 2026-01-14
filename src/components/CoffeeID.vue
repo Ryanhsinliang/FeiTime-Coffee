@@ -392,25 +392,44 @@
   }
 
   // TODO:現在是直接儲存圖片，待資料庫建好後要改成存到使用者帳號中
+  // async function saveIdCard() {
+  //   isSaving.value = true;
+  //   try {
+  //     const imageblob = await idCardToImage();
+  //     if (!imageblob) {
+  //       throw new Error('無法生成圖片');
+  //     }
+  //     const imageUrl = URL.createObjectURL(imageblob);
+  //     const imageLink = document.createElement('a');
+  //     imageLink.href = imageUrl;
+  //     imageLink.download = `coffee-id-${persona.value.name}-${Date.now()}.png`;
+  //     document.body.appendChild(imageLink);
+  //     imageLink.click();
+  //     document.body.removeChild(imageLink);
+  //     URL.revokeObjectURL(imageUrl);
+  //     showHint('圖片已儲存！');
+  //   } catch (error) {
+  //     console.error('儲存失敗:', error);
+  //     showHint('儲存失敗！');
+  //   } finally {
+  //     isSaving.value = false;
+  //   }
+  // }
   async function saveIdCard() {
+    if (isSaving.value) return;
     isSaving.value = true;
+
     try {
-      const imageblob = await idCardToImage();
-      if (!imageblob) {
-        throw new Error('無法生成圖片');
-      }
-      const imageUrl = URL.createObjectURL(imageblob);
-      const imageLink = document.createElement('a');
-      imageLink.href = imageUrl;
-      imageLink.download = `coffee-id-${persona.value.name}-${Date.now()}.png`;
-      document.body.appendChild(imageLink);
-      imageLink.click();
-      document.body.removeChild(imageLink);
-      URL.revokeObjectURL(imageUrl);
-      showHint('圖片已儲存！');
-    } catch (error) {
-      console.error('儲存失敗:', error);
-      showHint('儲存失敗！');
+      await coffeeResultStore.saveToUserAccount({
+        persona_name: persona.value.name,
+        persona_image: persona.value.image,
+        description: persona.value.description,
+        normalizedScores: normalizedScores.value,
+      });
+
+      showHint('🎉 測驗結果已同步至您的個人帳號！');
+    } catch (error: any) {
+      showHint(`儲存失敗: ${error.message}`);
     } finally {
       isSaving.value = false;
     }

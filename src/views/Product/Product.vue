@@ -1,290 +1,224 @@
 <template>
-  <div class="font-wenkai text-[#222222]">
-    <div v-show="sortTopbar" class="top-find-bar">
-      <div class="mb-[12px] mx-[3%] flex justify-center relative">
-        <div
-          class="relative lg:justify-center lg:w-[70%] md:w-[80%] md:justify-center w-[94%] flex justify-start"
-        >
-          <input
-            v-model="findWord"
-            @keyup.enter="find(findWord)"
-            class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] lg:w-[100%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] md:w-[100%] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[90%]"
-            type="search"
-            placeholder="喝一杯靜謐的午後時光"
-          />
-          <div
-            class="sort flex absolute md:top-[calc(100%+64px)] md:left-[24px] whitespace-nowrap lg:top-[calc(100%+8px)] lg:right-[24px] lg:left-auto"
-          >
-            <div
-              class="sort-list flex bg-[var(--main-color)] px-[12px] rounded-[8px] overflow-hidden mr-[8px]"
-            >
-              <img class="IC-sort w-[32px] bg-[var(--main-color)]" src="./assets/sort.svg" alt="" />
-              <select
-                v-model="sortWhich"
-                @change="takeSort"
-                id="sort-page"
-                class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
-              >
-                <!-- change 是DOM原生事件 當 <select> 中的 <option> 更動時觸發  -->
-                <option value="">排序</option>
-                <option value="price">價錢</option>
-                <option value="popularity">熱門度</option>
-                <option value="sweetness">甜味</option>
-                <option value="acidity">酸味</option>
-                <option value="body">口感</option>
-                <option value="aftertaste">餘韻</option>
-                <option value="clarity">澄澈度</option>
-              </select>
-            </div>
-            <p
-              v-if="sortHe"
-              class="oriru rounded-[4px] bg-[#bdeda4] leading-8 px-[6px]"
-              @click="sortChange"
-            >
-              ↓高到低
-            </p>
-            <p
-              v-else
-              class="noboru rounded-[4px] bg-[#a4e9e2] leading-8 px-[6px]"
-              @click="sortChange"
-            >
-              ↑低到高
-            </p>
-          </div>
+  <div 作用="全域設定" class="font-wenkai text-[#222222]">
+    <!-- 【 1 】 標頭 -->
+    <header class="mt-[24px] px-[24px] py-[24px]">
+      <!-- border-2 border-black -->
+      <h2 class="text-[32px] font-bold">精選單品咖啡豆</h2>
+      <p class="text-[20px]">
+        我們親自走訪產地，為您挑選最優質的咖啡豆，每一批次皆由資深烘豆師精心烘焙，呈現最完美的風味層次
+      </p>
+    </header>
+
+    <!-- 【 2 】 左側選單 -->
+    <nav class="border-2 border-black px-[24px]">
+      <div class="my-[24px]">
+        <h3 class="text-[24px] font-[600]">焙度</h3>
+
+        <div class="mt-[8px]">
+          <input type="radio" id="Light" name="roast" value="Light" />
+          <label class="ml-[8px] text-[20px]" for="Light">淺焙</label>
+        </div>
+        <div class="mt-[8px]">
+          <input type="radio" id="Medium" name="roast" value="Medium" />
+          <label class="ml-[8px] text-[20px]" for="Medium">中焙</label>
+        </div>
+
+        <div class="mt-[8px]">
+          <input type="radio" id="Dark" name="roast" value="Dark" />
+          <label class="ml-[8px] text-[20px]" for="Dark">深焙</label>
         </div>
       </div>
 
-      <div class="find lg:mx-[16.95%] md:mx-[12.4%] w-[70%] flex whitespace-nowrap">
-        <div class="filter px-[16px] flex lg:w-[70%] md:w-[80%]">
-          <div class="filter-type">
-            <p class="filter-word" tabindex="0">焙度</p>
-            <div class="type-list">
-              <p @click="goProduct('roast', 'Light')" class="list" tabindex="0" value="Light">
-                淺焙
-              </p>
-              <p @click="goProduct('roast', 'Medium')" class="list" tabindex="0" value="Medium">
-                中焙
-              </p>
-              <p @click="goProduct('roast', 'Dark')" class="list" tabindex="0" value="Dark">深焙</p>
-            </div>
-          </div>
-          <div class="filter-type">
-            <p class="filter-word" tabindex="0">風味</p>
-            <div class="type-list">
-              <p
-                @click="goProduct('flavor_type', 'Fruity')"
-                class="list"
-                tabindex="0"
-                value="Fruity"
-              >
-                果香清爽
-              </p>
-              <p @click="goProduct('flavor_type', 'Nutty')" class="list" tabindex="0" value="Nutty">
-                堅果巧克力
-              </p>
-              <p @click="goProduct('flavor_type', 'Bold')" class="list" tabindex="0" value="Bold">
-                濃郁厚實
-              </p>
-              <p
-                @click="goProduct('flavor_type', 'Floral')"
-                class="list"
-                tabindex="0"
-                value="Floral"
-              >
-                花香明亮
-              </p>
-            </div>
-          </div>
-          <div class="filter-type">
-            <p class="filter-word" tabindex="0">工法</p>
-            <div class="type-list">
-              <p
-                @click="goProduct('processing', 'Washed')"
-                class="list"
-                tabindex="0"
-                value="Washed"
-              >
-                水洗
-              </p>
-              <p
-                @click="goProduct('processing', 'Natural')"
-                class="list"
-                tabindex="0"
-                value="Natural"
-              >
-                日曬
-              </p>
-              <p @click="goProduct('processing', 'Honey')" class="list" tabindex="0" value="Honey">
-                蜜處理
-              </p>
-              <p
-                @click="goProduct('processing', 'Wet-Hulled')"
-                class="list"
-                tabindex="0"
-                value="Wet-Hulled"
-              >
-                厭氧
-              </p>
-            </div>
-          </div>
-          <div class="filter-type">
-            <p class="filter-word" tabindex="0">產地</p>
-            <div class="big-list">
-              <p
-                @click="goProduct('origin', 'Ethiopia')"
-                class="list"
-                tabindex="0"
-                value="Ethiopia"
-              >
-                衣索比亞
-              </p>
-              <p @click="goProduct('origin', 'Kenya')" class="list" tabindex="0" value="Kenya">
-                肯亞
-              </p>
-              <p @click="goProduct('origin', 'Rwanda')" class="list" tabindex="0" value="Rwanda">
-                盧安達
-              </p>
-              <p @click="goProduct('origin', 'Burundi')" class="list" tabindex="0" value="Burundi">
-                布隆迪
-              </p>
-              <p
-                @click="goProduct('origin', 'Colombia')"
-                class="list"
-                tabindex="0"
-                value="Colombia"
-              >
-                哥倫比亞
-              </p>
-              <p @click="goProduct('origin', 'Brazil')" class="list" tabindex="0" value="Brazil">
-                巴西
-              </p>
-              <p
-                @click="goProduct('origin', 'Guatemala')"
-                class="list"
-                tabindex="0"
-                value="Guatemala"
-              >
-                瓜地馬拉
-              </p>
-              <p
-                @click="goProduct('origin', 'Costa Rica')"
-                class="list"
-                tabindex="0"
-                value="Costa Rica"
-              >
-                哥斯大黎加
-              </p>
-              <p
-                @click="goProduct('origin', 'El Salvador')"
-                class="list"
-                tabindex="0"
-                value="El Salvador"
-              >
-                薩爾瓦多
-              </p>
-              <p @click="goProduct('origin', 'Panama')" class="list" tabindex="0" value="Panama">
-                巴拿馬
-              </p>
-              <p
-                @click="goProduct('origin', 'Indonesia')"
-                class="list"
-                tabindex="0"
-                value="Indonesia"
-              >
-                印尼
-              </p>
-              <p @click="goProduct('origin', 'Vietnam')" class="list" tabindex="0" value="Vietnam">
-                越南
-              </p>
-              <p @click="goProduct('origin', 'India')" class="list" tabindex="0" value="India">
-                印度
-              </p>
-              <p
-                @click="goProduct('origin', 'Thailand')"
-                class="list"
-                tabindex="0"
-                value="Thailand"
-              >
-                泰國
-              </p>
-              <p
-                @click="goProduct('origin', 'Papua New Guinea')"
-                class="list"
-                tabindex="0"
-                value="Papua New Guinea"
-              >
-                巴布亞紐幾內亞
-              </p>
-            </div>
-          </div>
+      <div class="my-[24px]">
+        <h3 class="text-[24px] font-[600]">風味</h3>
+
+        <div class="mt-[8px]">
+          <input type="radio" id="Fruity" name="flavor_type" value="Fruity" />
+          <label class="ml-[8px] text-[20px]" for="Fruity">果香清爽</label>
+        </div>
+        <div class="mt-[8px]">
+          <input type="radio" id="Nutty" name="flavor_type" value="Nutty" />
+          <label class="ml-[8px] text-[20px]" for="Nutty">堅果巧克力</label>
+        </div>
+
+        <div class="mt-[8px]">
+          <input type="radio" id="Bold" name="flavor_type" value="Bold" />
+          <label class="ml-[8px] text-[20px]" for="Bold">濃郁厚實</label>
+        </div>
+
+        <div class="mt-[8px]">
+          <input type="radio" id="Floral" name="flavor_type" value="Floral" />
+          <label class="ml-[8px] text-[20px]" for="Floral">花香明亮</label>
         </div>
       </div>
-    </div>
+    </nav>
+  </div>
+  <!-- 全域設定結束 -->
 
-    <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
-      <i class="fa-solid fa-angle-up"></i>
-    </div>
-
-    <div
-      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
-      :class="topBarSapce"
-    >
-      <!-- card start -->
-      <router-link
-        :to="{ name: 'ProductDetail', params: { pid: p.pid } }"
-        v-for="p in product"
-        :key="p.id"
+  <!-- ///// -->
+  <!-- ///// -->
+  <!-- ///// -->
+  <!-- ///// -->
+  <!-- ///// -->
+  <div v-show="sortTopbar" class="top-find-bar">
+    <div class="mb-[12px] mx-[3%] flex justify-center relative">
+      <div
+        class="relative lg:justify-center lg:w-[70%] md:w-[80%] md:justify-center w-[94%] flex justify-start"
       >
-        <div class="relative group cursor-pointer">
-          <img
-            v-if="p.img && p.img.length > 0"
-            class="w-[100%] aspect-[1/1.2] object-cover object-center"
-            :src="p.img[0].formats.large.url"
-            :alt="p.name"
-          />
-
-          <img v-else src="" alt="暫無圖片" />
-
+        <input
+          v-model="findWord"
+          @keyup.enter="find(findWord)"
+          class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] lg:w-[100%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] md:w-[100%] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[90%]"
+          type="search"
+          placeholder="喝一杯靜謐的午後時光"
+        />
+        <div
+          class="sort flex absolute md:top-[calc(100%+64px)] md:left-[24px] whitespace-nowrap lg:top-[calc(100%+8px)] lg:right-[24px] lg:left-auto"
+        >
           <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
+            class="sort-list flex bg-[var(--main-color)] px-[12px] rounded-[8px] overflow-hidden mr-[8px]"
           >
-            <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
-            <h3
-              class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
+            <img class="IC-sort w-[32px] bg-[var(--main-color)]" src="./assets/sort.svg" alt="" />
+            <select
+              v-model="sortWhich"
+              @change="takeSort"
+              id="sort-page"
+              class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
             >
-              {{ p.name }}
-            </h3>
-            <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
+              <!-- change 是DOM原生事件 當 <select> 中的 <option> 更動時觸發  -->
+              <option value="">排序</option>
+              <option value="price">價錢</option>
+              <option value="popularity">熱門度</option>
+              <option value="sweetness">甜味</option>
+              <option value="acidity">酸味</option>
+              <option value="body">口感</option>
+              <option value="aftertaste">餘韻</option>
+              <option value="clarity">澄澈度</option>
+            </select>
           </div>
-
-          <!-- Add to Cart Overlay -->
-          <div
-            class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+          <p
+            v-if="sortHe"
+            class="oriru rounded-[4px] bg-[#bdeda4] leading-8 px-[6px]"
+            @click="sortChange"
           >
-            <button
-              @click.stop="addToCart(p)"
-              class="bg-[#A2AF9B] text-white font-bold py-3 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all hover:bg-[#8f9b88] hover:scale-105 shadow-lg flex items-center gap-2"
-            >
-              <span class="material-symbols-outlined">shopping_cart</span>
-              加入購物車
-            </button>
-          </div>
+            ↓高到低
+          </p>
+          <p
+            v-else
+            class="noboru rounded-[4px] bg-[#a4e9e2] leading-8 px-[6px]"
+            @click="sortChange"
+          >
+            ↑低到高
+          </p>
         </div>
-      </router-link>
-      <!-- card end -->
+      </div>
     </div>
   </div>
 
-  <!-- 等API.get時顯示 -->
+  <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
+    <i class="fa-solid fa-angle-up"></i>
+  </div>
 
-  <p class="text-center mt-[48px] text-[40px] font-bold mt-[100px] text-[#222222]">讀取中</p>
-  <p class="text-center text-[#666666]">若加載時間太久 請重新整理</p>
-  <div class="load"></div>
+  <div
+    class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
+    :class="topBarSapce"
+  >
+    <!-- card start -->
+    <router-link
+      :to="{ name: 'ProductDetail', params: { pid: p.pid } }"
+      v-for="p in product"
+      :key="p.id"
+    >
+      <div class="relative group cursor-pointer">
+        <img
+          v-if="p.img && p.img.length > 0"
+          class="w-[100%] aspect-[1/1.2] object-cover object-center"
+          :src="p.img[0].formats.large.url"
+          :alt="p.name"
+        />
+
+        <img v-else src="" alt="暫無圖片" />
+
+        <div
+          class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
+        >
+          <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
+          <h3
+            class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
+          >
+            {{ p.name }}
+          </h3>
+          <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
+        </div>
+
+        <!-- Add to Cart Overlay -->
+        <div
+          class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+        >
+          <button
+            @click.stop="addToCart(p)"
+            class="bg-[#A2AF9B] text-white font-bold py-3 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all hover:bg-[#8f9b88] hover:scale-105 shadow-lg flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined">shopping_cart</span>
+            加入購物車
+          </button>
+        </div>
+      </div>
+    </router-link>
+    <!-- card end -->
+  </div>
+
+  <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
+    <i class="fa-solid fa-angle-up"></i>
+  </div>
+
+  <div
+    class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
+    :class="topBarSapce"
+  >
+    <!-- card start -->
+    <!-- {{ p.img[0].formats.large.url }} -->
+    <a href="#" target="_blank" v-for="p in product" :key="p.pid">
+      <!-- 待放網址 -->
+      <div class="relative">
+        <img
+          v-if="p.img && p.img.length > 0"
+          class="w-[100%] aspect-[1/1.2] object-cover object-center"
+          :src="p.img[0].formats.large.url"
+          :alt="p.name"
+        />
+
+        <img v-else src="" alt="暫無圖片" />
+
+        <div
+          class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
+        >
+          <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
+          <h3
+            class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
+          >
+            {{ p.name }}
+          </h3>
+          <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
+        </div>
+      </div>
+    </a>
+    <!-- card end -->
+  </div>
+
+  <!-- 等API.get時顯示
+    <div class="bg-[--main-color]">
+      <p
+        class="text-center mt-[48px] text-[40px] font-bold mt-[100px] text-[#222222] bg-[--main-color]"
+      >
+        讀取中
+      </p>
+      <p class="text-center text-[#666666]">若加載時間太久 請重新整理</p>
+      <div class="load"></div>
+    </div> -->
 
   <!-- input搜尋不到才顯示 -->
-  <div v-show="cannotFind" class="flex w-full justify-center mb-[100px]">
-    <img class="w-[35%]" src="./assets/sagashinai.png" alt="找不到符合的商品" />
-  </div>
+  <div v-show="cannotFind"></div>
 </template>
 
 <script setup lang="ts">
@@ -461,6 +395,12 @@
     手機版 不用特別寫
   */
 
+  /* .body {
+    background-color: var(--main-color);
+    font-family: 'LXGW WenKai TC';
+    color: #222222;
+  } */
+
   :root {
     --main-color: #faf9ee;
     /* 淡黃 */
@@ -472,10 +412,6 @@
     /* 深咖啡 */
     --light-gray: #eeeeee;
     /* 淡灰 */
-  }
-
-  body {
-    background-color: var(--main-color);
   }
 
   a {

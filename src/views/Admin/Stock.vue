@@ -10,57 +10,49 @@
     </button>
   </header>
 
-  <main class="overflow-y-auto p-6 md:p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
+  <main class="p-8 flex flex-col gap-6">
     <section>
       <h2 class="text-3xl font-bold">庫存管理</h2>
       <p class="text-gray-400 text-sm">主要管理商品庫存。</p>
     </section>
 
     <!-- 搜尋 -->
-    <div
-      class="flex flex-wrap items-end gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm"
-    >
-      <label class="min-w-60 flex-1">
-        <div class="relative">
-          <i
-            class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c]"
-          ></i>
-          <input
-            class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
-            placeholder="請輸入商品名稱或PID"
-            value=""
-          />
-        </div>
-      </label>
-      <label class="min-w-48 w-full md:w-auto">
-        <div class="relative">
-          <select
-            class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
-          >
-            <option>商品分類</option>
-            <option>咖啡豆</option>
-            <option>濾掛咖啡</option>
-          </select>
-          <i
-            class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-          ></i>
-        </div>
-      </label>
-      <label class="flex flex-col min-w-48 w-full md:w-auto">
-        <div class="relative">
-          <select
-            class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
-          >
-            <option>所有庫存狀態</option>
-            <option>無庫存</option>
-            <option>低庫存</option>
-            <option>庫存正常</option>
-          </select>
-          <i
-            class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-          ></i>
-        </div>
-      </label>
+    <div class="flex gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm">
+      <div class="relative min-w-60 flex-1">
+        <i
+          class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c] pointer-events-none"
+        ></i>
+        <input
+          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
+          placeholder="請輸入商品名稱或PID"
+          value=""
+        />
+      </div>
+      <div class="relative min-w-48 w-full md:w-auto">
+        <select
+          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+        >
+          <option>商品分類</option>
+          <option>咖啡豆</option>
+          <option>濾掛咖啡</option>
+        </select>
+        <i
+          class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+        ></i>
+      </div>
+      <div class="relative min-w-48 w-full md:w-auto">
+        <select
+          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+        >
+          <option>所有庫存狀態</option>
+          <option>無庫存</option>
+          <option>低庫存</option>
+          <option>庫存正常</option>
+        </select>
+        <i
+          class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+        ></i>
+      </div>
       <button
         class="h-12 px-6 rounded-lg bg-[#f3ede7] text-[#1b140d] hover:bg-[#e7dacf] font-bold text-sm"
       >
@@ -79,13 +71,8 @@
                 <span class="material-symbols-outlined">arrow_downward</span>
               </div>
             </th>
-            <th
-              class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-text-secondary dark:text-gray-400"
-            >
-              商品名稱
-            </th>
-            <th class="py-4 px-6 text-xs font-bold">價格</th>
-            <th class="py-4 px-6 text-xs font-bold">庫存狀態</th>
+            <th class="py-4 px-6 text-xs font-bold">商品名稱</th>
+            <th class="py-4 px-6 text-xs font-bold text-center">庫存狀態</th>
             <th class="py-4 px-6 text-xs font-bold text-center">庫存量</th>
             <th class="py-4 px-6 text-xs font-bold text-center">操作</th>
           </tr>
@@ -106,11 +93,9 @@
               <p class="text-sm font-bold">印尼 曼特寧</p>
             </td>
 
-            <td class="py-4 px-6 text-sm">$300</td>
-
             <td class="py-4 px-6 text-center">
               <p
-                class="items-center px-2.5 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800 border border-yellow-200"
+                class="inline-block items-center px-2.5 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800 border border-yellow-200"
               >
                 低庫存
               </p>
@@ -144,11 +129,9 @@
               <p class="text-sm font-bold">巴西 藝伎咖啡</p>
             </td>
 
-            <td class="py-4 px-6 text-sm">$2000</td>
-
             <td class="py-4 px-6 text-center">
               <p
-                class="items-center px-2.5 py-1 rounded-full text-xs bg-gray-100 text-gray-800 border border-gray-200"
+                class="inline-block items-center px-2.5 py-1 rounded-full text-xs bg-gray-100 text-gray-800 border border-gray-200"
               >
                 無庫存
               </p>
@@ -182,11 +165,9 @@
               <p class="text-sm font-bold">衣索比亞 厭氧</p>
             </td>
 
-            <td class="py-4 px-6 text-sm">$500</td>
-
             <td class="py-4 px-6 text-center">
               <p
-                class="items-center px-2.5 py-1 rounded-full text-xs bg-purple-100 text-purple-800 border border-purple-200"
+                class="inline-block items-center px-2.5 py-1 rounded-full text-xs bg-green-100 text-green-800 border border-green-200"
               >
                 庫存正常
               </p>

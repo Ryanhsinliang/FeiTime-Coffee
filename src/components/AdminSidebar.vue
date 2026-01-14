@@ -1,14 +1,12 @@
 <template>
-  <aside
-    class="flex flex-col w-64 border-r border-[#e7dacf] flex-shrink-0 h-screen justify-between p-4"
-  >
-    <div>
+  <aside class="flex flex-col border-r border-[#e7dacf] h-screen justify-between p-4">
+    <div class="">
       <!-- 後台標題 -->
       <div class="flex items-center gap-3 px-2 pb-6">
         <img
           src="/icons/feitime-logo.png"
           alt="FeiTime Logo"
-          class="w-14 h-14 lg:w-16 lg:h-16 object-cover aspect-square rounded-full"
+          class="w-16 h-16 object-cover aspect-square rounded-full"
         />
         <div>
           <h1 class="text-lg font-bold">後台管理</h1>
@@ -51,11 +49,11 @@
         <span class="material-symbols-outlined">settings</span>
         <span class="text-sm">設定</span>
       </a>
-      <div class="flex items-center gap-3 px-3 py-4 border-t border-[#e7dacf]">
+      <div class="flex items-center gap-3 px-3 py-2.5 border-t border-[#e7dacf]">
         <img
           src="/icons/feitime-logo.png"
           alt="FeiTime Logo"
-          class="w-14 h-14 lg:w-16 lg:h-16 object-cover aspect-square rounded-full"
+          class="w-16 h-16 object-cover aspect-square rounded-full"
         />
         <div>
           <p class="text-sm font-semibold">管理者</p>

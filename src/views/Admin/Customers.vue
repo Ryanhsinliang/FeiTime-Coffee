@@ -28,46 +28,40 @@
     <div
       class="flex flex-wrap items-end gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm"
     >
-      <label class="min-w-60 flex-1">
-        <div class="relative">
-          <i
-            class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c]"
-          ></i>
-          <input
-            class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
-            placeholder="請輸入姓名、ID或Email"
-            value=""
-          />
-        </div>
-      </label>
-      <label class="min-w-48 w-full md:w-auto">
-        <div class="relative">
-          <select
-            class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
-          >
-            <option>所有使用者</option>
-            <option>管理者</option>
-            <option>一般會員</option>
-          </select>
-          <i
-            class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-          ></i>
-        </div>
-      </label>
-      <label class="flex flex-col min-w-48 w-full md:w-auto">
-        <div class="relative">
-          <select
-            class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
-          >
-            <option>所有狀態</option>
-            <option>啟用</option>
-            <option>未啟用</option>
-          </select>
-          <i
-            class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-          ></i>
-        </div>
-      </label>
+      <div class="relative min-w-60 flex-1">
+        <i
+          class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c] pointer-events-none"
+        ></i>
+        <input
+          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
+          placeholder="請輸入姓名、ID或Email"
+          value=""
+        />
+      </div>
+      <div class="relative min-w-48 w-full md:w-auto">
+        <select
+          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+        >
+          <option>所有使用者</option>
+          <option>管理者</option>
+          <option>一般會員</option>
+        </select>
+        <i
+          class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+        ></i>
+      </div>
+      <div class="relative min-w-48 w-full md:w-auto">
+        <select
+          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+        >
+          <option>所有狀態</option>
+          <option>啟用</option>
+          <option>未啟用</option>
+        </select>
+        <i
+          class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+        ></i>
+      </div>
       <button
         class="h-12 px-6 rounded-lg bg-[#f3ede7] text-[#1b140d] hover:bg-[#e7dacf] font-bold text-sm"
       >
@@ -86,11 +80,7 @@
                 <span class="material-symbols-outlined">arrow_downward</span>
               </div>
             </th>
-            <th
-              class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-text-secondary dark:text-gray-400"
-            >
-              使用者姓名
-            </th>
+            <th class="py-4 px-6 text-xs font-bold">使用者姓名</th>
             <th class="py-4 px-6 text-xs font-bold">Email</th>
             <th class="py-4 px-6 text-xs font-bold">註冊日期</th>
             <th class="py-4 px-6 text-xs font-bold text-center">身分別</th>

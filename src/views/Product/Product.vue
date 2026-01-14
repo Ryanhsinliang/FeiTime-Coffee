@@ -13,7 +13,8 @@
     <div class="flex">
       <!-- 【 2 】 左側篩選選單 -->
       <nav
-        class="px-[24px] w-[80%] md:w-[25%] lg:w-[25%] my-[24px] absolute md:static lg:static bg-[#ffb8f4] z-10"
+        :class="have"
+        class="px-[24px] w-[80%] md:w-[25%] lg:w-[25%] my-[24px] absolute md:static lg:static z-[2]"
       >
         <!-- 焙度 -->
         <div>
@@ -161,14 +162,18 @@
             <label class="ml-[8px] text-[20px]" for="Papua New Guinea">巴布亞紐幾內亞</label>
           </div>
         </div>
-
-        <div class="inline-block md:hidden lg:hidden" :class="navHe" @click="navSwitch">
-          <i class="fa-solid fa-angle-up"></i>
-        </div>
       </nav>
+      <!-- 【>】  -->
+      <div
+        class="inline-block md:hidden lg:hidden rounded-full px-[17px] py-[12px] bg-[--soft-brown] z-[3] absolute"
+        :class="navHe"
+        @click="navSwitch"
+      >
+        <i class="fa-solid fa-angle-up text-[#222222]"></i>
+      </div>
 
       <!-- 【 3 】 搜尋欄 + 排序 和 產品卡片 -->
-      <main class="w-[75%]">
+      <main class="w-[100%] md:w-[75%] lg:w-[75%]">
         <!-- 搜尋欄 + 排序 -->
         <div
           class="flex flex-col md:flex-col lg:flex-row items-start lg:items-center justify-between"
@@ -278,7 +283,7 @@
   <!-- ///// -->
   <!-- ///// -->
   <!-- ///// -->
-  <div v-show="sortTopbar" class="top-find-bar">
+  <div class="top-find-bar">
     <div class="mb-[12px] mx-[3%] flex justify-center relative">
       <div
         class="relative lg:justify-center lg:w-[70%] md:w-[80%] md:justify-center w-[94%] flex justify-start"
@@ -388,7 +393,6 @@
 
   <div
     class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
-    :class="topBarSapce"
   >
     <!-- card start -->
     <!-- {{ p.img[0].formats.large.url }} -->
@@ -445,14 +449,17 @@
   const addToCart = cartStore.addItem;
 
   // 手機板 側邊選單開關
-  const he = ref(true); // 定義 true 為【 > 】
-  const navHe = ref('rotate-90');
+  const he = ref(true); // 定義 true 為【 < 】
+  const navHe = ref('rotate-[270deg] left-[calc(80%-24px)]'); // 初始【 < 】
+  const have = ref('block md:block lg:block');
   const navSwitch = () => {
     he.value = !he.value;
     if (he.value) {
-      navHe.value = 'rotate-90';
+      navHe.value = 'rotate-[270deg] left-[calc(80%-24px)]'; //【 < 】
+      have.value = 'block md:block lg:block';
     } else {
-      navHe.value = 'rotate-[270deg]';
+      navHe.value = 'rotate-90 left-[8px] top-[250px]'; //【 > 】
+      have.value = 'hidden  md:block lg:block';
     }
   };
 

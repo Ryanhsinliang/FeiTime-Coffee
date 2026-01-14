@@ -166,17 +166,20 @@
       <!-- 【 3 】 搜尋欄 + 排序 和 產品卡片 -->
       <main class="w-[75%]">
         <!-- 搜尋欄 + 排序 -->
-        <div class="flex items-center justify-between">
+        <div
+          class="flex flex-col md:flex-col lg:flex-row items-start lg:items-center justify-between"
+        >
           <!-- 搜尋欄 -->
+
           <input
             v-model="findWord"
             @keyup.enter="find(findWord)"
-            class="border-2 border-solid border-[#8f745c] rounded-[8px] w-[70%] text-[24px] py-[4px] px-[8px] my-[40px] mx-[24px]"
+            class="border-2 border-solid border-[#8f745c] rounded-[8px] w-[90%] lg:w-[60%] text-[24px] py-[4px] px-[8px] my-[40px] mx-[24px]"
             placeholder="喝一杯靜謐的午後時光"
           />
 
           <!-- 排序 -->
-          <div class="flex mr-[24px]">
+          <div class="flex mx-[24px] mb-[32px] md:mb-[32px] lg:mb-0">
             <div
               class="flex bg-[var(--main-color)] px-[12px] rounded-[8px] overflow-hidden mr-[8px]"
             >
@@ -253,9 +256,16 @@
       </main>
     </div>
     <!-- 2+3的div 結束 -->
-    <!-- 石頭 -->
-    <!-- 石頭 -->
-    <!-- 石頭 -->
+
+    <!-- 勿刪 VVVVVVV -->
+    <!-- 勿刪 VVVVVVV -->
+    <!-- 勿刪 VVVVVVV -->
+    <!-- <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
+    <i class="fa-solid fa-angle-up"></i>
+  </div> -->
+    <!-- 勿刪 VVVVVVV -->
+    <!-- 勿刪 VVVVVVV -->
+    <!-- 勿刪 VVVVVVV -->
   </div>
   <!-- 全域設定結束 -->
 
@@ -370,10 +380,6 @@
       </div>
     </router-link>
     <!-- card end -->
-  </div>
-
-  <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
-    <i class="fa-solid fa-angle-up"></i>
   </div>
 
   <div

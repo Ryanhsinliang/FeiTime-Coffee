@@ -85,21 +85,41 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: Admin,
+    meta: { requiresAdmin: true },
     children: [
+      // 訂單
       {
         path: 'orders',
         name: 'AdminOrders',
         component: AdminOrders,
       },
+      // TODO:測試用記得修改
+      {
+        path: 'orders/id',
+        name: 'AdminOrdersDetail',
+        component: () => import('@/views/Admin/OrderDetail.vue'),
+        props: true,
+      },
+
+      // 庫存
       {
         path: 'stocks',
         name: 'AdminStocks',
         component: AdminStocks,
       },
+
+      // 顧客
       {
         path: 'customers',
         name: 'AdminCustomers',
         component: AdminCustomers,
+      },
+      // TODO:測試用記得修改
+      {
+        path: 'customers/id',
+        name: 'AdminCustomerDetail',
+        component: () => import('@/views/Admin/CustomerDetail.vue'),
+        props: true,
       },
     ],
   },

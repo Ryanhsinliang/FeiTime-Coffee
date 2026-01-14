@@ -6,7 +6,7 @@ import { ref } from 'vue';
  * 目的: 在不影響負責 Auth 功能開發者的情況下，提供購物車開發所需的登入狀態。
  * 未來可以直接替換回真實的 Auth Store。
  */
-export const useAuthStore = defineStore('auth', () => {
+export const useAuthStore = defineStore('mock-auth', () => {
     // State - 模擬登入使用者資料
     const jwt = ref<string>('mock-jwt-token'); // 模擬 JWT Token
     const id = ref<number>(5);                 // 模擬 User ID (對應資料庫 ID)
@@ -46,5 +46,19 @@ export const useAuthStore = defineStore('auth', () => {
         logout
     };
 }, {
-    persist: true // 啟用持久化，重新整理後保持登入狀態
+    persist: {
+        key: 'mock-auth',
+        storage: localStorage,
+        beforeHydrate: (_ctx) => {
+            try {
+                const stored = localStorage.getItem('mock-auth');
+                if (stored) {
+                    JSON.parse(stored);
+                }
+            } catch (e) {
+                console.warn('[Mock Auth Store] localStorage 資料損壞，已清除:', e);
+                localStorage.removeItem('mock-auth');
+            }
+        }
+    }
 });

@@ -1,11 +1,24 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { CartItem } from '@/types/cart';
-import { useAuthStore } from './mockAuth'; // 使用模擬的 Auth Store
+import type { CartItem, StrapiCartItemData } from '@/types/cart';
+import { useAuthStore } from '@/store/auth';
+
+// Strapi API 設定
+const STRAPI_URL = 'https://accessible-dogs-da5b6a029a.strapiapp.com';
+
+// ===== 🧪 開發測試模式 =====
+// 啟用此模式可在不真實登入的情況下測試購物車與 Strapi 的整合
+const DEV_TEST_MODE = true; // 設為 false 則使用真實登入
+
+// 測試用憑證（需要從 Strapi 取得有效的 Token 和 User ID）
+const TEST_CREDENTIALS = {
+    token: 'YOUR_STRAPI_JWT_TOKEN_HERE',  // 請替換為有效的 Strapi JWT
+    userId: 1  // 請替換為有效的 User ID
+};
 
 /**
  * 購物車 Store (Hybrid 方案)
- * 特點: 
+ * 特點:
  * 1. Read: 主要讀取 Pinia State，確保 UI 反應即時。
  * 2. Write: 動作同時更新 Pinia (前端) 和呼叫 API (後端資料庫)。
  * 3. Init: 若 Pinia 為空，會嘗試從 API 載入 (實作於 App.vue 或此處初始化)。
@@ -131,31 +144,43 @@ export const useCartStore = defineStore('cart', () => {
         openCart();
 
         // 2. 同步至 Strapi (背景執行)
-        if (authStore.isLoggedIn) {
+        // 判斷使用測試模式或真實登入
+        const shouldSync = DEV_TEST_MODE || (authStore.isLoggedIn && authStore.token);
+        const authToken = DEV_TEST_MODE ? TEST_CREDENTIALS.token : authStore.token;
+        const userId = DEV_TEST_MODE ? TEST_CREDENTIALS.userId : authStore.user?.id;
+
+        if (shouldSync && authToken) {
             try {
-                await fetch('https://your-strapi.com/api/cart-items', {
+                const response = await fetch(`${STRAPI_URL}/api/cart-items`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authStore.jwt}`
+                        'Authorization': `Bearer ${authToken}`
                     },
                     body: JSON.stringify({
                         data: {
-                            user: authStore.id,
-                            product: itemToAdd.id,
+                            user: userId,                 // relation 欄位
+                            product: itemToAdd.id,        // relation 欄位（指向 PRODUCTS.id）
                             snapshot_name: itemToAdd.name,
                             snapshot_price: itemToAdd.price,
-                            snapshot_image: itemToAdd.image,
-                            snapshot_weight: itemToAdd.weight,
-                            quantity: itemToAdd.quantity, // 注意: 這裡傳的是本次「新增」的數量，或是應該傳總量？
-                            // Strapi 的邏輯通常是 Create 一筆新的 cart item record? 
-                            // 如果是這樣，傳 itemToAdd.quantity 是對的。
-                            // 但如果 Strapi 端邏輯是 "Set Quantity"，則需調整。
-                            // 假設是 "Add Item Record"，則維持原狀。
-                            item_total: itemToAdd.price * itemToAdd.quantity
+                            snapshot_image: itemToAdd.image || '',
+                            snapshot_weight: itemToAdd.weight || '半磅',
+                            quantity: existingItem ? existingItem.quantity : itemToAdd.quantity,
+                            item_total: itemToAdd.price * (existingItem ? existingItem.quantity : itemToAdd.quantity)
                         }
                     })
                 });
+
+                // 儲存 Strapi 回傳的 documentId (用於後續 update/delete)
+                if (response.ok) {
+                    const result = await response.json();
+                    const strapiData = result.data as StrapiCartItemData;
+                    // 更新 Pinia 中的 item，加入 strapiDocumentId
+                    const targetItem = items.value.find(item => item.id === itemToAdd.id);
+                    if (targetItem) {
+                        targetItem.strapiDocumentId = strapiData.documentId;
+                    }
+                }
             } catch (error) {
                 console.error('Failed to sync to CART_ITEM:', error);
             }
@@ -168,28 +193,42 @@ export const useCartStore = defineStore('cart', () => {
     async function removeItem(productId: number) {
         const authStore = useAuthStore();
 
-        // 1. 更新 Pinia
+        // 1. 更新 Pinia (並保留被刪除項目的資訊以便同步)
         const index = items.value.findIndex(item => item.id === productId);
+        let removedItem: CartItem | undefined;
         if (index > -1) {
+            removedItem = items.value[index];
             items.value.splice(index, 1);
         }
 
-        // 2. 同步至 Strapi (背景執行)
-        // 注意: 實際專案中通常需要 cart_item 的 ID 來進行 DELETE。
-        // 這裡暫時保留邏輯架構。若需完整實作，需在取得列表時保留 Strapi ID。
-        if (authStore.isLoggedIn) {
-            // console.log('Sync delete to Strapi...');
+        // 2. 同步至 Strapi (背景執行) - 使用 documentId 刪除
+        const shouldSync = DEV_TEST_MODE || (authStore.isLoggedIn && authStore.token);
+        const authToken = DEV_TEST_MODE ? TEST_CREDENTIALS.token : authStore.token;
+
+        if (shouldSync && removedItem?.strapiDocumentId && authToken) {
+            try {
+                await fetch(`${STRAPI_URL}/api/cart-items/${removedItem.strapiDocumentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to delete from CART_ITEM:', error);
+            }
         }
     }
 
     /**
      * 更新數量
      */
-    function updateQuantity(productId: number, quantity: number) {
+    async function updateQuantity(productId: number, quantity: number) {
+        const authStore = useAuthStore();
         const item = items.value.find(item => item.id === productId);
+
         if (item) {
             if (quantity <= 0) {
-                removeItem(productId);
+                await removeItem(productId);
             } else {
                 // 檢查庫存
                 const maxStock = item.stock ?? 999;
@@ -199,9 +238,32 @@ export const useCartStore = defineStore('cart', () => {
                 } else {
                     item.quantity = quantity;
                 }
+
+                // 同步至 Strapi
+                const shouldSync = DEV_TEST_MODE || (authStore.isLoggedIn && authStore.token);
+                const authToken = DEV_TEST_MODE ? TEST_CREDENTIALS.token : authStore.token;
+
+                if (shouldSync && item.strapiDocumentId && authToken) {
+                    try {
+                        await fetch(`${STRAPI_URL}/api/cart-items/${item.strapiDocumentId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`
+                            },
+                            body: JSON.stringify({
+                                data: {
+                                    quantity: item.quantity,
+                                    item_total: item.price * item.quantity
+                                }
+                            })
+                        });
+                    } catch (error) {
+                        console.error('Failed to update quantity in Strapi:', error);
+                    }
+                }
             }
         }
-        // TODO: 可在此處加入 API 同步 (Debounce 建議)
     }
 
     /**
@@ -241,5 +303,20 @@ export const useCartStore = defineStore('cart', () => {
         checkout
     };
 }, {
-    persist: true // 啟用 pinia-plugin-persistedstate，自動存入 localStorage
+    persist: {
+        key: 'cart',
+        storage: localStorage,
+        beforeHydrate: (_ctx) => {
+            // 安全地處理可能損壞的 localStorage 資料
+            try {
+                const stored = localStorage.getItem('cart');
+                if (stored) {
+                    JSON.parse(stored); // 測試是否可解析
+                }
+            } catch (e) {
+                console.warn('[Cart Store] localStorage 資料損壞，已清除:', e);
+                localStorage.removeItem('cart');
+            }
+        }
+    }
 });

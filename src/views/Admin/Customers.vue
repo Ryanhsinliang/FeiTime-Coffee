@@ -1,16 +1,19 @@
 <template>
+  <!-- TODO:測試用記得刪除 -->
+  <router-link to="/admin/customers/id">查看資料</router-link>
+
   <header
-    class="h-16 flex items-center justify-end px-6 border-b border-[#e7dacf] fix top-0 z-10 flex-shrink-0"
+    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] fix top-0 z-10 flex-shrink-0"
   >
     <button class="w-10 h-10 hover:text-[#e27312] relative">
-      <i class="fa-regular fa-bell text-xl"></i>
+      <i class="fa-regular fa-bell text-2xl"></i>
       <span
         class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"
       ></span>
     </button>
   </header>
 
-  <main class="overflow-y-auto p-6 md:p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
+  <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
     <section class="flex justify-between">
       <div>
         <h2 class="text-3xl font-bold">顧客管理</h2>
@@ -20,27 +23,26 @@
         class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm"
       >
         <i class="fa-solid fa-plus text-sm"></i>
-        <p>批次出貨</p>
+        <p>新增使用者</p>
       </button>
     </section>
 
     <!-- 搜尋 -->
-    <div
-      class="flex flex-wrap items-end gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm"
-    >
+    <div class="flex flex-wrap gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm">
       <div class="relative min-w-60 flex-1">
         <i
           class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c] pointer-events-none"
         ></i>
         <input
-          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
           placeholder="請輸入姓名、ID或Email"
+          type="text"
           value=""
         />
       </div>
       <div class="relative min-w-48 w-full md:w-auto">
         <select
-          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
           <option>所有使用者</option>
           <option>管理者</option>
@@ -52,7 +54,7 @@
       </div>
       <div class="relative min-w-48 w-full md:w-auto">
         <select
-          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
           <option>所有狀態</option>
           <option>啟用</option>
@@ -108,7 +110,7 @@
 
             <td class="py-4 px-6 text-sm">admin@coffee.com</td>
 
-            <td class="py-4 px-6 text-xs">2020-01-01</td>
+            <td class="py-4 px-6 text-sm">2020-01-01</td>
 
             <td class="py-4 px-6 text-center">
               <p
@@ -150,7 +152,7 @@
 
             <td class="py-4 px-6 text-sm">123@gmail.com</td>
 
-            <td class="py-4 px-6 text-xs">2023-10-24</td>
+            <td class="py-4 px-6 text-sm">2023-10-24</td>
 
             <td class="py-4 px-6 text-center">
               <p

@@ -1,16 +1,19 @@
 <template>
+  <!-- TODO:測試用記得刪除 -->
+  <router-link to="/admin/orders/id">查看進度</router-link>
+
   <header
-    class="h-16 flex items-center justify-end px-6 border-b border-[#e7dacf] fix top-0 z-10 flex-shrink-0"
+    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] fix top-0 z-10 flex-shrink-0"
   >
     <button class="w-10 h-10 hover:text-[#e27312] relative">
-      <i class="fa-regular fa-bell text-xl"></i>
+      <i class="fa-regular fa-bell text-2xl"></i>
       <span
         class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"
       ></span>
     </button>
   </header>
 
-  <main class="overflow-y-auto p-6 md:p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
+  <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
     <section class="flex justify-between">
       <div>
         <h2 class="text-3xl font-bold">訂單管理</h2>
@@ -25,21 +28,21 @@
     </section>
 
     <!-- 搜尋 -->
-    <section class="flex gap-4 p-5 rounded-xl border shadow-sm bg-white border-[#e7dacf]">
-      <div class="flex-1 relative min-w-[200px]">
+    <section class="flex flex-wrap gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm">
+      <div class="relative min-w-60 flex-1">
         <i
-          class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c]"
+          class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c] pointer-events-none"
         ></i>
         <input
-          class="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm focus:ring-2 placeholder:text-[#9a704c] border border-[#e7dacf] bg-[#fcfaf8]"
+          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
           placeholder="請輸入訂單編號、顧客姓名或使用者ID"
           type="text"
         />
       </div>
 
-      <div class="relative min-w-[140px]">
+      <div class="relative min-w-48 w-full md:w-auto">
         <select
-          class="w-full pl-4 pr-10 py-2.5 rounded-lg text-sm cursor-pointer focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8]"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
           <option value="">所有出貨狀態</option>
           <option value="pending">待付款</option>
@@ -53,9 +56,9 @@
         ></i>
       </div>
 
-      <div class="relative min-w-[160px]">
+      <div class="relative min-w-48 w-full md:w-auto">
         <select
-          class="w-full pl-4 pr-10 py-2.5 rounded-lg b text-sm cursor-pointer focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8]"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
           <option>今天</option>
           <option>最近7天</option>
@@ -63,7 +66,7 @@
           <option>30天以上</option>
         </select>
         <i
-          class="fa-regular fa-calendar-days absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[20px]"
+          class="fa-regular fa-calendar-days absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xl"
         ></i>
       </div>
       <button class="px-4 py-2.5 text-sm font-semibold hover:text-[#e27312]">Clear</button>

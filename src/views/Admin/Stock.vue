@@ -1,23 +1,31 @@
 <template>
   <header
-    class="h-16 flex items-center justify-end px-6 border-b border-[#e7dacf] fix top-0 z-10 flex-shrink-0"
+    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] fix top-0 z-10 flex-shrink-0"
   >
     <button class="w-10 h-10 hover:text-[#e27312] relative">
-      <i class="fa-regular fa-bell text-xl"></i>
+      <i class="fa-regular fa-bell text-2xl"></i>
       <span
         class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"
       ></span>
     </button>
   </header>
 
-  <main class="p-8 flex flex-col gap-6">
-    <section>
-      <h2 class="text-3xl font-bold">庫存管理</h2>
-      <p class="text-gray-400 text-sm">主要管理商品庫存。</p>
+  <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
+    <section class="flex justify-between">
+      <div>
+        <h2 class="text-3xl font-bold">庫存管理</h2>
+        <p class="text-gray-400 text-sm">主要管理商品庫存。</p>
+      </div>
+      <button
+        class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm"
+      >
+        <i class="fa-solid fa-plus text-sm"></i>
+        <p>新增商品</p>
+      </button>
     </section>
 
     <!-- 搜尋 -->
-    <div class="flex gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm">
+    <div class="flex flex-wrap gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm">
       <div class="relative min-w-60 flex-1">
         <i
           class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c] pointer-events-none"
@@ -25,16 +33,18 @@
         <input
           class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
           placeholder="請輸入商品名稱或PID"
+          type="text"
           value=""
         />
       </div>
       <div class="relative min-w-48 w-full md:w-auto">
         <select
-          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
           <option>商品分類</option>
-          <option>咖啡豆</option>
-          <option>濾掛咖啡</option>
+          <option>淺焙</option>
+          <option>中焙</option>
+          <option>深焙</option>
         </select>
         <i
           class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
@@ -42,7 +52,7 @@
       </div>
       <div class="relative min-w-48 w-full md:w-auto">
         <select
-          class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
           <option>所有庫存狀態</option>
           <option>無庫存</option>
@@ -53,9 +63,7 @@
           class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
         ></i>
       </div>
-      <button
-        class="h-12 px-6 rounded-lg bg-[#f3ede7] text-[#1b140d] hover:bg-[#e7dacf] font-bold text-sm"
-      >
+      <button class="h-12 px-6 rounded-lg bg-[#f3ede7] hover:bg-[#e7dacf] font-bold text-sm">
         套用
       </button>
     </div>
@@ -72,6 +80,7 @@
               </div>
             </th>
             <th class="py-4 px-6 text-xs font-bold">商品名稱</th>
+            <th class="py-4 px-6 text-xs font-bold text-center">烘焙度</th>
             <th class="py-4 px-6 text-xs font-bold text-center">庫存狀態</th>
             <th class="py-4 px-6 text-xs font-bold text-center">庫存量</th>
             <th class="py-4 px-6 text-xs font-bold text-center">操作</th>
@@ -92,6 +101,8 @@
               />
               <p class="text-sm font-bold">印尼 曼特寧</p>
             </td>
+
+            <td class="py-4 px-6 text-sm text-center">中焙</td>
 
             <td class="py-4 px-6 text-center">
               <p
@@ -129,6 +140,8 @@
               <p class="text-sm font-bold">巴西 藝伎咖啡</p>
             </td>
 
+            <td class="py-4 px-6 text-sm text-center">淺焙</td>
+
             <td class="py-4 px-6 text-center">
               <p
                 class="inline-block items-center px-2.5 py-1 rounded-full text-xs bg-gray-100 text-gray-800 border border-gray-200"
@@ -164,6 +177,8 @@
               />
               <p class="text-sm font-bold">衣索比亞 厭氧</p>
             </td>
+
+            <td class="py-4 px-6 text-sm text-center">深焙</td>
 
             <td class="py-4 px-6 text-center">
               <p

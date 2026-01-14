@@ -157,31 +157,31 @@
     let isValid = true;
     (Object.keys(errors) as Array<keyof typeof errors>).forEach((key) => (errors[key] = ''));
 
-    if (!form.email) {
+    if (!form.email.trim()) {
       errors.email = '請輸入Email';
       isValid = false;
-    } else if (!emailRegex.test(form.email)) {
+    } else if (!emailRegex.test(form.email.trim())) {
       errors.email = 'Email格式不符';
       isValid = false;
     }
 
-    if (!form.password) {
+    if (!form.password.trim()) {
       errors.password = '請輸入密碼';
       isValid = false;
-    } else if (!passwordRegex.test(form.password)) {
+    } else if (!passwordRegex.test(form.password.trim())) {
       errors.password = '至少 8 碼，需含大小寫字母與數字';
       isValid = false;
     }
 
-    if (form.confirmPassword !== form.password) {
+    if (form.confirmPassword.trim() !== form.password.trim()) {
       errors.confirmPassword = '確認密碼不符，請再次輸入';
       isValid = false;
     }
 
-    if (!form.name) {
+    if (!form.name.trim()) {
       errors.name = '請輸入姓名';
       isValid = false;
-    } else if (!nameRegex.test(form.name)) {
+    } else if (!nameRegex.test(form.name.trim())) {
       errors.name = '姓名需為 2–20 字以下中、英文';
       isValid = false;
     }
@@ -195,9 +195,9 @@
     isLoading.value = true;
     try {
       await registerUser({
-        username: form.name,
-        email: form.email,
-        password: form.password,
+        username: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password.trim(),
       });
       userStore.setPendingEmail(form.email);
       isSubmitted.value = true;

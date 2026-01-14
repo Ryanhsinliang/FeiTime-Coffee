@@ -12,12 +12,12 @@
     <!-- 2+3的div -->
     <div class="flex">
       <!-- 【 2 】 左側篩選選單 -->
-      <nav class="px-[24px] w-[25%]">
-        <!-- border-2 border-black -->
-        <div class="my-[24px]">
-          <!-- 焙度 -->
+      <nav
+        class="px-[24px] w-[80%] md:w-[25%] lg:w-[25%] my-[24px] absolute md:static lg:static bg-[#ffb8f4] z-10"
+      >
+        <!-- 焙度 -->
+        <div>
           <h3 class="text-[24px] font-[600]">焙度</h3>
-
           <div class="mt-[8px]">
             <input type="radio" id="Light" name="roast" value="Light" />
             <label class="ml-[8px] text-[20px]" for="Light">淺焙</label>
@@ -160,6 +160,10 @@
             <input type="radio" id="Papua New Guinea" name="origin" value="Papua New Guinea" />
             <label class="ml-[8px] text-[20px]" for="Papua New Guinea">巴布亞紐幾內亞</label>
           </div>
+        </div>
+
+        <div class="inline-block md:hidden lg:hidden" :class="navHe" @click="navSwitch">
+          <i class="fa-solid fa-angle-up"></i>
         </div>
       </nav>
 
@@ -440,18 +444,15 @@
   const cartStore = useCartStore();
   const addToCart = cartStore.addItem;
 
-  // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
-  const sortTopbar = ref(true);
-  const rotation = ref('');
-  const topBarSapce = ref('pt-[500px]');
-  const sortBarSwitch = () => {
-    sortTopbar.value = !sortTopbar.value;
-    if (!sortTopbar.value) {
-      rotation.value = 'rotate-180';
-      topBarSapce.value = 'pt-[50px]';
+  // 手機板 側邊選單開關
+  const he = ref(true); // 定義 true 為【 > 】
+  const navHe = ref('rotate-90');
+  const navSwitch = () => {
+    he.value = !he.value;
+    if (he.value) {
+      navHe.value = 'rotate-90';
     } else {
-      rotation.value = '';
-      topBarSapce.value = 'pt-[550px]';
+      navHe.value = 'rotate-[270deg]';
     }
   };
 

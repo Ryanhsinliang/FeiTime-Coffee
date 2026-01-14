@@ -112,12 +112,7 @@
                     Remember me
                   </span>
                 </label>
-                <a
-                  class="text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
-                  href="#"
-                >
-                  忘記密碼?
-                </a>
+                <router-link to="/forgot-password">忘記密碼?</router-link>
               </div>
 
               <button
@@ -176,9 +171,14 @@
   import { reactive, ref, onMounted } from 'vue';
   import { useAuthStore } from '../../store/auth';
   import { useRouter } from 'vue-router';
+  import { useReCaptcha } from 'vue-recaptcha-v3';
 
   const authStore = useAuthStore();
   const router = useRouter();
+
+  const recaptcha = useReCaptcha();
+  const executeRecaptcha = recaptcha?.executeRecaptcha;
+  const recaptchaLoaded = recaptcha?.recaptchaLoaded;
 
   // 表單狀態
   const form = reactive({
@@ -200,10 +200,13 @@
   });
 
   const submitForm = async () => {
-    if (!form.email) {
+    const cleanEmail = form.email.trim();
+    const cleanPassword = form.password.trim();
+
+    if (!cleanEmail) {
       errorMessage.value = '請輸入帳號';
       return;
-    } else if (!form.password) {
+    } else if (!cleanPassword) {
       errorMessage.value = '請輸入密碼';
       return;
     }
@@ -212,7 +215,17 @@
     errorMessage.value = '';
 
     try {
-      const result = await authStore.handleLogin(form.email, form.password, rememberMe.value);
+      if (!recaptchaLoaded || !executeRecaptcha) {
+        throw new Error('驗證插件尚未準備就緒');
+      }
+      await recaptchaLoaded();
+      const captchaToken = await executeRecaptcha('login');
+      const result = await authStore.handleLogin(
+        form.email,
+        form.password,
+        rememberMe.value,
+        captchaToken
+      );
 
       if (result.success) {
         if (rememberMe.value) {
@@ -220,9 +233,9 @@
         } else {
           localStorage.removeItem('rememberedEmail');
         }
-        router.push({ name: 'home' });
+        router.push({ name: 'HomePage' });
       } else {
-        errorMessage.value = result.message || '登入失敗，請稍後再試';
+        errorMessage.value = authStore.banner?.message || result.message || '登入失敗';
       }
     } catch (err) {
       errorMessage.value = '連線伺服器失敗，請稍後再試';

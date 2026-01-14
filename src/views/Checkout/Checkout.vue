@@ -1,14 +1,14 @@
 <template>
   <main class="font-wenkai flex flex-col items-center bg-[--main-color]">
-    <form action="#" class="w-[50%] pt-4 pb-8 px-[40px] justify-center">
+    <form action="#" class="w-[90%] md:w-[80%] lg:w-[50%] pt-4 pb-8 px-[40px] justify-center">
       <div class="">
         <div class="mt-[20px] mb-[28px]">
           <!-- 【 1 】 配送方式 -->
           <h2 class="text-2xl font-semibold mb-[20px]">配送方式</h2>
-          <div class="flex my-[18px]">
+          <div class="flex my-[18px] flex-col md:flex-row lg:flex-row">
             <!-- 車icon-->
             <div
-              class="cursor-pointer mx-[12px] w-[50%] flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px]"
+              class="cursor-pointer flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px] mb-[12px] md:mb-0 lg:mb-0 mx-auto md:mx-[12px] lg:mx-[12px] w-[200px] md:w-[50%] lg:w-[50%]"
             >
               <i class="fa-solid fa-truck text-[--green-gray] text-[36px]"></i>
               <p class="text-[#222222] font-[600] py-[8px] text-[20px]">宅配取貨</p>
@@ -16,7 +16,7 @@
             </div>
             <!--店icon -->
             <div
-              class="cursor-pointer mx-[12px] w-[50%] flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px]"
+              class="cursor-pointer flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px] mb-[12px] md:mb-0 lg:mb-0 mx-auto md:mx-[12px] lg:mx-[12px] w-[200px] md:w-[50%] lg:w-[50%]"
             >
               <i class="fa-solid fa-shop text-[--green-gray] text-[36px]"></i>
               <p class="text-[#222222] font-[600] py-[8px] text-[20px]">來店取貨</p>
@@ -156,19 +156,61 @@
         <!-- 【 4 】  訂單資料 -->
         <section class="">
           <h2 class="text-2xl font-semibold mb-[20px]">訂單資料</h2>
-          <div class="px-[40px]">
-            <!-- 這下面要跑v-for -->
-            <div class="flex my-[48px]">
-              <img
-                src="./assets/coffee_001.png"
-                alt="商品圖片"
-                class="w-[64px] h-full aspect-square object-cover rounded-xl"
-              />
-              <div class="mx-4 w-full">
-                <h3>耶加雪菲G1日曬</h3>
-                <p class="text-sm mt-2">200g</p>
+          <div class="px-0 md:px-[40px] lg:px-[40px]">
+            <div class="my-[48px] px-[24px] max-h-[400px] overflow-y-auto">
+              <!-- 這下面的div要跑v-for -->
+              <div class="flex flex-col md:flex-row lg:flex-row my-[20px]">
+                <img
+                  src="./assets/coffee_001.png"
+                  alt="商品圖片"
+                  class="w-[64px] h-full aspect-square object-cover rounded-xl"
+                />
+                <div class="mx-0 md:mx-[16px] lg:mx-[16px] w-full">
+                  <h3>耶加雪菲G1日曬</h3>
+                  <p class="text-sm mt-0 md:mt-[8px] lg:mt-[8px]">200g</p>
+                </div>
+                <div class="">$1,000</div>
               </div>
-              <div class="">$1,000</div>
+              <!-- v-for結束 -->
+
+              <!-- 以下假資料 -->
+              <div class="flex flex-col md:flex-row lg:flex-row my-[20px]">
+                <img
+                  src="./assets/coffee_001.png"
+                  alt="商品圖片"
+                  class="w-[64px] h-full aspect-square object-cover rounded-xl"
+                />
+                <div class="mx-0 md:mx-[16px] lg:mx-[16px] w-full">
+                  <h3>耶加雪菲G1日曬</h3>
+                  <p class="text-sm mt-0 md:mt-[8px] lg:mt-[8px]">200g</p>
+                </div>
+                <div class="">$1,000</div>
+              </div>
+              <div class="flex flex-col md:flex-row lg:flex-row my-[20px]">
+                <img
+                  src="./assets/coffee_001.png"
+                  alt="商品圖片"
+                  class="w-[64px] h-full aspect-square object-cover rounded-xl"
+                />
+                <div class="mx-0 md:mx-[16px] lg:mx-[16px] w-full">
+                  <h3>耶加雪菲G1日曬</h3>
+                  <p class="text-sm mt-0 md:mt-[8px] lg:mt-[8px]">200g</p>
+                </div>
+                <div class="">$1,000</div>
+              </div>
+              <div class="flex flex-col md:flex-row lg:flex-row my-[20px]">
+                <img
+                  src="./assets/coffee_001.png"
+                  alt="商品圖片"
+                  class="w-[64px] h-full aspect-square object-cover rounded-xl"
+                />
+                <div class="mx-0 md:mx-[16px] lg:mx-[16px] w-full">
+                  <h3>耶加雪菲G1日曬</h3>
+                  <p class="text-sm mt-0 md:mt-[8px] lg:mt-[8px]">200g</p>
+                </div>
+                <div class="">$1,000</div>
+              </div>
+              <!-- 【假資料】結束 -->
             </div>
 
             <!-- 產品小計 -->
@@ -195,7 +237,7 @@
 
         <button
           type="submit"
-          class="ml-[25%] w-[50%] p-[12px] rounded-md mt-2 mb-4 bg-[--green-gray] text-white font-bold text-[20px]"
+          class="ml-0 md:ml-[25%] lg:ml-[25%] w-[100%] md:w-[50%] lg:w-[50%] p-[12px] rounded-md mt-2 mb-4 bg-[--green-gray] text-white font-bold text-[20px]"
         >
           確認送出訂單
         </button>
@@ -256,9 +298,10 @@
   /* https://fontawesome.com/search?ic=free-collection */
 
   /*
+    先md 再lg
     先寫不會變動的樣式
-    再用lg: 寫電腦版
-    再用md: 寫平板
+    再用md: 寫平板 (>768px)
+    再用lg: 寫電腦版 (>1024px)
     手機版 不用特別寫
   */
 

@@ -10,7 +10,7 @@
     </header>
 
     <!-- 2+3的div -->
-    <div class="flex">
+    <div class="flex pb-[64px]">
       <!-- 【 2 】 左側篩選選單 -->
       <nav
         :class="have"
@@ -23,22 +23,38 @@
             <input
               type="radio"
               id="Light"
-              name="roast"
+              name="pFilter"
               value="Light"
-              @click="getcoffee({ roast: 'Light' })"
+              @click="goProduct('roast', 'Light')"
             />
-            <label class="ml-[8px] text-[20px]" for="Light" @click="getcoffee({ roast: 'Light' })">
+            <label class="ml-[8px] text-[20px]" for="Light" @click="goProduct('roast', 'Light')">
               淺焙
             </label>
           </div>
           <div class="mt-[8px]">
-            <input type="radio" id="Medium" name="roast" value="Medium" />
-            <label class="ml-[8px] text-[20px]" for="Medium">中焙</label>
+            <input
+              type="radio"
+              id="Medium"
+              name="pFilter"
+              value="Medium"
+              @click="goProduct('roast', 'Medium')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Medium" @click="goProduct('roast', 'Medium')">
+              中焙
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Dark" name="roast" value="Dark" />
-            <label class="ml-[8px] text-[20px]" for="Dark">深焙</label>
+            <input
+              type="radio"
+              id="Dark"
+              name="pFilter"
+              value="Dark"
+              @click="goProduct('roast', 'Dark')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Dark" @click="goProduct('roast', 'Dark')">
+              深焙
+            </label>
           </div>
         </div>
 
@@ -47,22 +63,70 @@
           <h3 class="text-[24px] font-[600]">風味</h3>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Fruity" name="flavor_type" value="Fruity" />
-            <label class="ml-[8px] text-[20px]" for="Fruity">果香清爽</label>
+            <input
+              type="radio"
+              id="Fruity"
+              name="pFilter"
+              value="Fruity"
+              @click="goProduct('flavor_type', 'Fruity')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Fruity"
+              @click="goProduct('flavor_type', 'Fruity')"
+            >
+              果香清爽
+            </label>
           </div>
           <div class="mt-[8px]">
-            <input type="radio" id="Nutty" name="flavor_type" value="Nutty" />
-            <label class="ml-[8px] text-[20px]" for="Nutty">堅果巧克力</label>
+            <input
+              type="radio"
+              id="Nutty"
+              name="pFilter"
+              value="Nutty"
+              @click="goProduct('flavor_type', 'Nutty')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Nutty"
+              @click="goProduct('flavor_type', 'Nutty')"
+            >
+              堅果巧克力
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Bold" name="flavor_type" value="Bold" />
-            <label class="ml-[8px] text-[20px]" for="Bold">濃郁厚實</label>
+            <input
+              type="radio"
+              id="Bold"
+              name="pFilter"
+              value="Bold"
+              @click="goProduct('flavor_type', 'Bold')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Bold"
+              @click="goProduct('flavor_type', 'Bold')"
+            >
+              濃郁厚實
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Floral" name="flavor_type" value="Floral" />
-            <label class="ml-[8px] text-[20px]" for="Floral">花香明亮</label>
+            <input
+              type="radio"
+              id="Floral"
+              name="pFilter"
+              value="Floral"
+              @click="goProduct('flavor_type', 'Floral')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Floral"
+              @click="goProduct('flavor_type', 'Floral')"
+            >
+              花香明亮
+            </label>
           </div>
         </div>
 
@@ -71,23 +135,71 @@
           <h3 class="text-[24px] font-[600]">處理法</h3>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Washed" name="processing" value="Washed" />
-            <label class="ml-[8px] text-[20px]" for="Washed">水洗</label>
+            <input
+              type="radio"
+              id="Washed"
+              name="pFilter"
+              value="Washed"
+              @click="goProduct('processing', 'Washed')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Washed"
+              @click="goProduct('processing', 'Washed')"
+            >
+              水洗
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Natural" name="processing" value="Natural" />
-            <label class="ml-[8px] text-[20px]" for="Natural">日曬</label>
+            <input
+              type="radio"
+              id="Natural"
+              name="pFilter"
+              value="Natural"
+              @click="goProduct('processing', 'Natural')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Natural"
+              @click="goProduct('processing', 'Natural')"
+            >
+              日曬
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Honey" name="processing" value="Honey" />
-            <label class="ml-[8px] text-[20px]" for="Honey">蜜處理</label>
+            <input
+              type="radio"
+              id="Honey"
+              name="pFilter"
+              value="Honey"
+              @click="goProduct('processing', 'Honey')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Honey"
+              @click="goProduct('processing', 'Honey')"
+            >
+              蜜處理
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Wet-Hulled" name="processing" value="Wet-Hulled" />
-            <label class="ml-[8px] text-[20px]" for="Wet-Hulled">厭氧</label>
+            <input
+              type="radio"
+              id="Wet-Hulled"
+              name="pFilter"
+              value="Wet-Hulled"
+              @click="goProduct('processing', 'Wet-Hulled')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Wet-Hulled"
+              @click="goProduct('processing', 'Wet-Hulled')"
+            >
+              厭氧
+            </label>
           </div>
         </div>
 
@@ -96,78 +208,238 @@
           <h3 class="text-[24px] font-[600]">產地</h3>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Ethiopia" name="origin" value="Ethiopia" />
-            <label class="ml-[8px] text-[20px]" for="Ethiopia">衣索比亞</label>
+            <input
+              type="radio"
+              id="Ethiopia"
+              name="pFilter"
+              value="Ethiopia"
+              @click="goProduct('origin', 'Ethiopia')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Ethiopia"
+              @click="goProduct('origin', 'Ethiopia')"
+            >
+              衣索比亞
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Kenya" name="origin" value="Kenya" />
-            <label class="ml-[8px] text-[20px]" for="Kenya">肯亞</label>
+            <input
+              type="radio"
+              id="Kenya"
+              name="pFilter"
+              value="Kenya"
+              @click="goProduct('origin', 'Kenya')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Kenya" @click="goProduct('origin', 'Kenya')">
+              肯亞
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Rwanda" name="origin" value="Rwanda" />
-            <label class="ml-[8px] text-[20px]" for="Rwanda">盧安達</label>
+            <input
+              type="radio"
+              id="Rwanda"
+              name="pFilter"
+              value="Rwanda"
+              @click="goProduct('origin', 'Rwanda')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Rwanda" @click="goProduct('origin', 'Rwanda')">
+              盧安達
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Burundi" name="origin" value="Burundi" />
-            <label class="ml-[8px] text-[20px]" for="Burundi">布隆迪</label>
+            <input
+              type="radio"
+              id="Burundi"
+              name="pFilter"
+              value="Burundi"
+              @click="goProduct('origin', 'Burundi')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Burundi"
+              @click="goProduct('origin', 'Burundi')"
+            >
+              布隆迪
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Colombia" name="origin" value="Colombia" />
-            <label class="ml-[8px] text-[20px]" for="Colombia">哥倫比亞</label>
+            <input
+              type="radio"
+              id="Colombia"
+              name="pFilter"
+              value="Colombia"
+              @click="goProduct('origin', 'Colombia')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Colombia"
+              @click="goProduct('origin', 'Colombia')"
+            >
+              哥倫比亞
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Brazil" name="origin" value="Brazil" />
-            <label class="ml-[8px] text-[20px]" for="Brazil">巴西</label>
+            <input
+              type="radio"
+              id="Brazil"
+              name="pFilter"
+              value="Brazil"
+              @click="goProduct('origin', 'Brazil')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Brazil" @click="goProduct('origin', 'Brazil')">
+              巴西
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Guatemala" name="origin" value="Guatemala" />
-            <label class="ml-[8px] text-[20px]" for="Guatemala">瓜地馬拉</label>
+            <input
+              type="radio"
+              id="Guatemala"
+              name="pFilter"
+              value="Guatemala"
+              @click="goProduct('origin', 'Guatemala')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Guatemala"
+              @click="goProduct('origin', 'Guatemala')"
+            >
+              瓜地馬拉
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Costa Rica" name="origin" value="Costa Rica" />
-            <label class="ml-[8px] text-[20px]" for="Costa Rica">哥斯大黎加</label>
+            <input
+              type="radio"
+              id="Costa Rica"
+              name="pFilter"
+              value="Costa Rica"
+              @click="goProduct('origin', 'Costa Rica')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Costa Rica"
+              @click="goProduct('origin', 'Costa Rica')"
+            >
+              哥斯大黎加
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="El Salvador" name="origin" value="El Salvador" />
-            <label class="ml-[8px] text-[20px]" for="El Salvador">薩爾瓦多</label>
+            <input
+              type="radio"
+              id="El Salvador"
+              name="pFilter"
+              value="El Salvador"
+              @click="goProduct('origin', 'El Salvador')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="El Salvador"
+              @click="goProduct('origin', 'El Salvador')"
+            >
+              薩爾瓦多
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Panama" name="origin" value="Panama" />
-            <label class="ml-[8px] text-[20px]" for="Panama">巴拿馬</label>
+            <input
+              type="radio"
+              id="Panama"
+              name="pFilter"
+              value="Panama"
+              @click="goProduct('origin', 'Panama')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Panama" @click="goProduct('origin', 'Panama')">
+              巴拿馬
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Indonesia" name="origin" value="Indonesia" />
-            <label class="ml-[8px] text-[20px]" for="Indonesia">印尼</label>
+            <input
+              type="radio"
+              id="Indonesia"
+              name="pFilter"
+              value="Indonesia"
+              @click="goProduct('origin', 'Indonesia')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Indonesia"
+              @click="goProduct('origin', 'Indonesia')"
+            >
+              印尼
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Vietnam" name="origin" value="Vietnam" />
-            <label class="ml-[8px] text-[20px]" for="Vietnam">越南</label>
+            <input
+              type="radio"
+              id="Vietnam"
+              name="pFilter"
+              value="Vietnam"
+              @click="goProduct('origin', 'Vietnam')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Vietnam"
+              @click="goProduct('origin', 'Vietnam')"
+            >
+              越南
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="India" name="origin" value="India" />
-            <label class="ml-[8px] text-[20px]" for="India">印度</label>
+            <input
+              type="radio"
+              id="India"
+              name="pFilter"
+              value="India"
+              @click="goProduct('origin', 'India')"
+            />
+            <label class="ml-[8px] text-[20px]" for="India" @click="goProduct('origin', 'India')">
+              印度
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Thailand" name="origin" value="Thailand" />
-            <label class="ml-[8px] text-[20px]" for="Thailand">泰國</label>
+            <input
+              type="radio"
+              id="Thailand"
+              name="pFilter"
+              value="Thailand"
+              @click="goProduct('origin', 'Thailand')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Thailand"
+              @click="goProduct('origin', 'Thailand')"
+            >
+              泰國
+            </label>
           </div>
 
           <div class="mt-[8px]">
-            <input type="radio" id="Papua New Guinea" name="origin" value="Papua New Guinea" />
-            <label class="ml-[8px] text-[20px]" for="Papua New Guinea">巴布亞紐幾內亞</label>
+            <input
+              type="radio"
+              id="Papua New Guinea"
+              name="pFilter"
+              value="Papua New Guinea"
+              @click="goProduct('origin', 'Papua New Guinea')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Papua New Guinea"
+              @click="goProduct('origin', 'Papua New Guinea')"
+            >
+              巴布亞紐幾內亞
+            </label>
           </div>
         </div>
       </nav>
@@ -277,170 +549,12 @@
   </div>
   <!-- 全域設定結束 -->
 
-  <!-- ///// -->
-  <!-- ///// -->
-  <!-- ///// -->
-  <!-- ///// -->
-  <!-- ///// -->
-  <div class="top-find-bar">
-    <div class="mb-[12px] mx-[3%] flex justify-center relative">
-      <div
-        class="relative lg:justify-center lg:w-[70%] md:w-[80%] md:justify-center w-[94%] flex justify-start"
-      >
-        <input
-          v-model="findWord"
-          @keyup.enter="find(findWord)"
-          class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] md:w-[100%] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[90%]"
-          type="search"
-          placeholder="喝一杯靜謐的午後時光"
-        />
-        <div
-          class="sort flex absolute md:top-[calc(100%+64px)] md:left-[24px] whitespace-nowrap lg:top-[calc(100%+8px)] lg:right-[24px] lg:left-auto"
-        >
-          <div
-            class="sort-list flex bg-[var(--main-color)] px-[12px] rounded-[8px] overflow-hidden mr-[8px]"
-          >
-            <img class="IC-sort w-[32px] bg-[var(--main-color)]" src="./assets/sort.svg" alt="" />
-            <select
-              v-model="sortWhich"
-              @change="takeSort"
-              id="sort-page"
-              class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
-            >
-              <!-- change 是DOM原生事件 當 <select> 中的 <option> 更動時觸發  -->
-              <option value="">排序</option>
-              <option value="price">價錢</option>
-              <option value="popularity">熱門度</option>
-              <option value="sweetness">甜味</option>
-              <option value="acidity">酸味</option>
-              <option value="body">口感</option>
-              <option value="aftertaste">餘韻</option>
-              <option value="clarity">澄澈度</option>
-            </select>
-          </div>
-          <p
-            v-if="sortHe"
-            class="oriru rounded-[4px] bg-[#bdeda4] leading-8 px-[6px]"
-            @click="sortChange"
-          >
-            ↓高到低
-          </p>
-          <p
-            v-else
-            class="noboru rounded-[4px] bg-[#a4e9e2] leading-8 px-[6px]"
-            @click="sortChange"
-          >
-            ↑低到高
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
-    <i class="fa-solid fa-angle-up"></i>
-  </div>
-
-  <div
-    class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
-    :class="topBarSapce"
-  >
-    <!-- card start -->
-    <router-link
-      :to="{ name: 'ProductDetail', params: { pid: p.pid } }"
-      v-for="p in product"
-      :key="p.id"
-    >
-      <div class="relative group cursor-pointer">
-        <img
-          v-if="p.img && p.img.length > 0"
-          class="w-[100%] aspect-[1/1.2] object-cover object-center"
-          :src="p.img[0].formats.large.url"
-          :alt="p.name"
-        />
-
-        <img v-else src="" alt="暫無圖片" />
-
-        <div
-          class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
-        >
-          <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
-          <h3
-            class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
-          >
-            {{ p.name }}
-          </h3>
-          <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
-        </div>
-
-        <!-- Add to Cart Overlay -->
-        <div
-          class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-        >
-          <button
-            @click.stop="addToCart(p)"
-            class="bg-[#A2AF9B] text-white font-bold py-3 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all hover:bg-[#8f9b88] hover:scale-105 shadow-lg flex items-center gap-2"
-          >
-            <span class="material-symbols-outlined">shopping_cart</span>
-            加入購物車
-          </button>
-        </div>
-      </div>
-    </router-link>
-    <!-- card end -->
-  </div>
-
-  <div
-    class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
-  >
-    <!-- card start -->
-    <!-- {{ p.img[0].formats.large.url }} -->
-    <a href="#" target="_blank" v-for="p in product" :key="p.pid">
-      <!-- 待放網址 -->
-      <div class="relative">
-        <img
-          v-if="p.img && p.img.length > 0"
-          class="w-[100%] aspect-[1/1.2] object-cover object-center"
-          :src="p.img[0].formats.large.url"
-          :alt="p.name"
-        />
-
-        <img v-else src="" alt="暫無圖片" />
-
-        <div
-          class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
-        >
-          <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
-          <h3
-            class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
-          >
-            {{ p.name }}
-          </h3>
-          <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
-        </div>
-      </div>
-    </a>
-    <!-- card end -->
-  </div>
-
-  <!-- 等API.get時顯示
-    <div class="bg-[--main-color]">
-      <p
-        class="text-center mt-[48px] text-[40px] font-bold mt-[100px] text-[#222222] bg-[--main-color]"
-      >
-        讀取中
-      </p>
-      <p class="text-center text-[#666666]">若加載時間太久 請重新整理</p>
-      <div class="load"></div>
-    </div> -->
-
-  <!-- input搜尋不到才顯示 -->
   <div v-show="cannotFind"></div>
 </template>
 
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
-  import { ref, watch } from 'vue';
+  import { ref, watch, onMounted } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import { useCartStore } from '@/store/cart';
 
@@ -574,12 +688,16 @@
     }
   };
 
+  onMounted(async () => {
+    await getcoffee({});
+  });
+
   // 前端路由
   const router = useRouter();
   const goProduct = (type: string, val: string) => {
     router.push({
       path: '/product',
-      query: { [type]: val }, // 把網址變成類似 ?origin=Brazil 這樣的型式
+      query: { [type]: val },
     });
   };
 
@@ -589,7 +707,6 @@
     // 預留一個地方處理route.query (若之後需傳遞數字的話 要在這邊轉型)
     getcoffee(route.query);
   };
-
   watch(
     // 如果網址變了 (按了新按鈕)  要重新抓資料
     () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值

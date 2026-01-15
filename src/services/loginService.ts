@@ -1,6 +1,7 @@
 import api from './api';
 export interface User {
   id: number;
+  documentId: string; // Strapi v5 Document ID
   username: string;
   email: string;
   confirmed: boolean;

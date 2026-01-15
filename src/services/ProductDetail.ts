@@ -15,6 +15,7 @@ export interface ProductRequest {
   stock: number; // 庫存量
   img: { formats: { large: { url: string }; medium?: { url: string } } }[]; // 產品圖片
   weight: number; // 重量（克）
+  documentId: string; // Strapi v5 Document ID
 }
 
 export interface ProductListResponse {

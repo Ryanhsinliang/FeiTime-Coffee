@@ -3,32 +3,22 @@ import { ref, computed } from 'vue';
 import type { CartItem, StrapiCartItemData } from '@/types/cart';
 import { useAuthStore } from '@/store/auth';
 
-// Strapi API 設定
-const STRAPI_URL = 'https://accessible-dogs-da5b6a029a.strapiapp.com';
-
-// ===== 🧪 開發測試模式 =====
-// 啟用此模式可在不真實登入的情況下測試購物車與 Strapi 的整合
-const DEV_TEST_MODE = false; // 設為 false 則使用真實登入
-
-// 測試用憑證（需要從 Strapi 取得有效的 Token 和 User ID）
-const TEST_CREDENTIALS = {
-    token: 'YOUR_STRAPI_JWT_TOKEN_HERE',  // 請替換為有效的 Strapi JWT
-    userId: 1  // 請替換為有效的 User ID
-};
+// Express API 設定 (使用環境變數或預設 localhost:4000)
+// VITE_API_BASE_URL 應在 .env.local 定義
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
 /**
- * 購物車 Store (Hybrid 方案)
- * 特點:
- * 1. Read: 主要讀取 Pinia State，確保 UI 反應即時。
- * 2. Write: 動作同時更新 Pinia (前端) 和呼叫 API (後端資料庫)。
- * 3. Init: 若 Pinia 為空，會嘗試從 API 載入 (實作於 App.vue 或此處初始化)。
+ * 購物車 Store (Hybrid 方案 - Express Proxy)
+ * 1. Read: 主要讀取 Pinia State。
+ * 2. Write: 更新 Pinia 並非同步呼叫 Express API (/api/cart)。
+ * 3. Init: 登入後可從 Express 載入購物車。
  */
 export const useCartStore = defineStore('cart', () => {
     // State - 購物車項目清單
     const items = ref<CartItem[]>([]);
     const isOpen = ref(false); // 控制購物車側邊欄開關
 
-    // 推薦商品 (Mock Data) - 用於測試「加入購物車」功能
+    // 推薦商品 (Mock Data)
     const recommendations = ref<CartItem[]>([
         {
             id: 999,
@@ -38,43 +28,32 @@ export const useCartStore = defineStore('cart', () => {
             quantity: 1,
             image: 'https://placehold.co/200x200',
             weight: '半磅',
-            stock: 10, // Stock limit
+            stock: 10,
             matchPercentage: 88
         }
     ]);
 
-    // Getters - 計算總金額 (Client-side calculation)
+    // Getters
     const subtotal = computed(() => {
         return items.value.reduce((total, item) => {
             return total + (item.price * item.quantity);
         }, 0);
     });
 
-    // Alias for compatibility
     const totalAmount = subtotal;
     const total = subtotal;
 
-    // Getters - 計算總件數
     const totalItems = computed(() => {
         return items.value.reduce((total, item) => {
             return total + item.quantity;
         }, 0);
     });
 
-    // Actions - UI 控制
-    function toggleCart() {
-        isOpen.value = !isOpen.value;
-    }
+    // Actions
+    function toggleCart() { isOpen.value = !isOpen.value; }
+    function openCart() { isOpen.value = true; }
+    function closeCart() { isOpen.value = false; }
 
-    function openCart() {
-        isOpen.value = true;
-    }
-
-    function closeCart() {
-        isOpen.value = false;
-    }
-
-    // 輔助函式：取得商品圖片
     function getProductImage(product: any): string {
         if (product.img && Array.isArray(product.img) && product.img.length > 0) {
             const firstImg = product.img[0];
@@ -88,47 +67,42 @@ export const useCartStore = defineStore('cart', () => {
     }
 
     /**
-     * 加入購物車 (核心邏輯)
-     * 支援傳入完整 Product 物件 (自動轉型) 或 CartItem
+     * 加入購物車
      */
     async function addItem(product: any) {
         const authStore = useAuthStore();
 
-        // 正規化商品資料
+        // 嘗試取得 Strapi Document ID (如果是從 API 來的商品資料)
+        const productDocumentId = product.documentId || product.strapiDocumentId;
+
         let itemToAdd: CartItem;
 
-        // 判斷是否為 API 回傳的原始商品資料 (有 img 陣列)
         if (product.img && Array.isArray(product.img)) {
             itemToAdd = {
                 id: product.id,
-                pid: String(product.pid), // 確保 pid 為字串
+                pid: String(product.pid),
                 name: product.name,
                 price: product.price,
-                quantity: product.quantity || 1, // 預設 1，或使用傳入的 quantity
+                quantity: product.quantity || 1,
                 image: getProductImage(product),
-                weight: product.weight || '半磅', // 預設規格
-                stock: product.stock || 50, // 預設庫存，若無則給寬鬆值
-                matchPercentage: 95 // 假設值
+                weight: product.weight || '半磅',
+                stock: product.stock || 50,
+                matchPercentage: 95
             };
         } else {
-            // 已經是 CartItem 格式
             itemToAdd = { ...product };
             if (!itemToAdd.quantity) itemToAdd.quantity = 1;
         }
 
-        // 1. 更新 Pinia (前端即時反應)
+        // 1. 更新 Pinia
         const existingItem = items.value.find(item => item.id === itemToAdd.id);
         const currentQuantity = existingItem ? existingItem.quantity : 0;
         const maxStock = itemToAdd.stock ?? 999;
 
-        // 檢查庫存上限
         if (currentQuantity + itemToAdd.quantity > maxStock) {
-            // 如果加總超過庫存，調整加入數量為 (庫存 - 目前數量)
             const allowedToAdd = Math.max(0, maxStock - currentQuantity);
             itemToAdd.quantity = allowedToAdd;
-
             if (allowedToAdd === 0) {
-                // 已達上限，不繼續執行 (或可考慮跳出提示)
                 console.warn('庫存不足，無法再加入');
                 return;
             }
@@ -140,49 +114,52 @@ export const useCartStore = defineStore('cart', () => {
             items.value.push(itemToAdd);
         }
 
-        // 打開購物車給予回饋
         openCart();
 
-        // 2. 同步至 Strapi (背景執行)
-        // 判斷使用測試模式或真實登入
-        const shouldSync = DEV_TEST_MODE || (authStore.isLoggedIn && authStore.token);
-        const authToken = DEV_TEST_MODE ? TEST_CREDENTIALS.token : authStore.token;
-        const userId = DEV_TEST_MODE ? TEST_CREDENTIALS.userId : authStore.user?.id;
+        // 2. 同步至 Express -> Strapi
+        if (authStore.isLoggedIn && authStore.user?.id) {
+            const targetItem = items.value.find(item => item.id === itemToAdd.id);
+            if (!targetItem) return;
 
-        if (shouldSync && authToken) {
+            // 如果該商品已同步過 (有 strapiDocumentId)，改呼叫 PUT 更新數量
+            if (targetItem.strapiDocumentId) {
+                await updateQuantity(targetItem.id, targetItem.quantity);
+                return;
+            }
+
+            // 否則呼叫 POST 新增
             try {
-                const response = await fetch(`${STRAPI_URL}/api/cart-items`, {
+                // Strapi v5 建議使用 Document ID 建立關聯
+                // 如果沒有 productDocumentId (例如 mock 商品)，則退回到 itemToAdd.id
+                const productRelation = productDocumentId || itemToAdd.id;
+
+                const payload = {
+                    user: authStore.user.documentId || authStore.user.id, // Prefer documentId
+                    product: productRelation,
+                    snapshot_name: itemToAdd.name,
+                    snapshot_price: itemToAdd.price,
+                    snapshot_image: itemToAdd.image || '',
+                    snapshot_weight: itemToAdd.weight || '半磅',
+                    quantity: targetItem.quantity, // 使用當前總數量
+                    item_total: itemToAdd.price * targetItem.quantity
+                };
+                console.log('🛒 準備加入購物車 Payload:', payload);
+
+                const response = await fetch(`${API_BASE_URL}/api/cart`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
-                    body: JSON.stringify({
-                        data: {
-                            user: userId,                 // relation 欄位
-                            product: itemToAdd.id,        // relation 欄位（指向 PRODUCTS.id）
-                            snapshot_name: itemToAdd.name,
-                            snapshot_price: itemToAdd.price,
-                            snapshot_image: itemToAdd.image || '',
-                            snapshot_weight: itemToAdd.weight || '半磅',
-                            quantity: existingItem ? existingItem.quantity : itemToAdd.quantity,
-                            item_total: itemToAdd.price * (existingItem ? existingItem.quantity : itemToAdd.quantity)
-                        }
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
 
-                // 儲存 Strapi 回傳的 documentId (用於後續 update/delete)
                 if (response.ok) {
                     const result = await response.json();
-                    const strapiData = result.data as StrapiCartItemData;
-                    // 更新 Pinia 中的 item，加入 strapiDocumentId
-                    const targetItem = items.value.find(item => item.id === itemToAdd.id);
-                    if (targetItem) {
-                        targetItem.strapiDocumentId = strapiData.documentId;
-                    }
+                    const strapiData = result as StrapiCartItemData;
+                    targetItem.strapiDocumentId = strapiData.documentId;
+                } else {
+                    console.error('Failed to sync to Cart via Express:', await response.json());
                 }
             } catch (error) {
-                console.error('Failed to sync to CART_ITEM:', error);
+                console.error('Failed to sync to Cart via Express:', error);
             }
         }
     }
@@ -192,29 +169,21 @@ export const useCartStore = defineStore('cart', () => {
      */
     async function removeItem(productId: number) {
         const authStore = useAuthStore();
-
-        // 1. 更新 Pinia (並保留被刪除項目的資訊以便同步)
         const index = items.value.findIndex(item => item.id === productId);
         let removedItem: CartItem | undefined;
+
         if (index > -1) {
             removedItem = items.value[index];
             items.value.splice(index, 1);
         }
 
-        // 2. 同步至 Strapi (背景執行) - 使用 documentId 刪除
-        const shouldSync = DEV_TEST_MODE || (authStore.isLoggedIn && authStore.token);
-        const authToken = DEV_TEST_MODE ? TEST_CREDENTIALS.token : authStore.token;
-
-        if (shouldSync && removedItem?.strapiDocumentId && authToken) {
+        if (authStore.isLoggedIn && removedItem?.strapiDocumentId) {
             try {
-                await fetch(`${STRAPI_URL}/api/cart-items/${removedItem.strapiDocumentId}`, {
+                await fetch(`${API_BASE_URL}/api/cart/${removedItem.strapiDocumentId}`, {
                     method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
                 });
             } catch (error) {
-                console.error('Failed to delete from CART_ITEM:', error);
+                console.error('Failed to delete from Cart via Express:', error);
             }
         }
     }
@@ -230,7 +199,6 @@ export const useCartStore = defineStore('cart', () => {
             if (quantity <= 0) {
                 await removeItem(productId);
             } else {
-                // 檢查庫存
                 const maxStock = item.stock ?? 999;
                 if (quantity > maxStock) {
                     item.quantity = maxStock;
@@ -239,60 +207,40 @@ export const useCartStore = defineStore('cart', () => {
                     item.quantity = quantity;
                 }
 
-                // 同步至 Strapi
-                const shouldSync = DEV_TEST_MODE || (authStore.isLoggedIn && authStore.token);
-                const authToken = DEV_TEST_MODE ? TEST_CREDENTIALS.token : authStore.token;
-
-                if (shouldSync && item.strapiDocumentId && authToken) {
+                if (authStore.isLoggedIn && item.strapiDocumentId) {
                     try {
-                        await fetch(`${STRAPI_URL}/api/cart-items/${item.strapiDocumentId}`, {
+                        await fetch(`${API_BASE_URL}/api/cart/${item.strapiDocumentId}`, {
                             method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${authToken}`
-                            },
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                data: {
-                                    quantity: item.quantity,
-                                    item_total: item.price * item.quantity
-                                }
+                                quantity: item.quantity,
+                                item_total: item.price * item.quantity
                             })
                         });
                     } catch (error) {
-                        console.error('Failed to update quantity in Strapi:', error);
+                        console.error('Failed to update quantity via Express:', error);
                     }
                 }
             }
         }
     }
 
-    /**
-     * 清空購物車
-     */
     function clearCart() {
         items.value = [];
-        // TODO: 同步呼叫 API 清除該使用者所有購物車項目
     }
 
-    /**
-     * 前往結帳
-     */
     function checkout() {
         console.log('Proceeding to checkout');
-        // 未來: router.push('/checkout')
     }
 
     return {
-        // State
         items,
         isOpen,
         recommendations,
-        // Getters
         totalAmount,
         subtotal,
         total,
         totalItems,
-        // Actions
         addItem,
         removeItem,
         updateQuantity,
@@ -307,12 +255,9 @@ export const useCartStore = defineStore('cart', () => {
         key: 'cart',
         storage: localStorage,
         beforeHydrate: (_ctx) => {
-            // 安全地處理可能損壞的 localStorage 資料
             try {
                 const stored = localStorage.getItem('cart');
-                if (stored) {
-                    JSON.parse(stored); // 測試是否可解析
-                }
+                if (stored) JSON.parse(stored);
             } catch (e) {
                 console.warn('[Cart Store] localStorage 資料損壞，已清除:', e);
                 localStorage.removeItem('cart');

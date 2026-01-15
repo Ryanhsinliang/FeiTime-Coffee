@@ -26,7 +26,6 @@
           :key="link.name"
           class="relative group text-sm xl:text-base tracking-widest uppercase font-jp whitespace-nowrap"
         >
-          <!-- 主連結 -->
           <RouterLink
             :to="link.to"
             class="relative block px-2 py-1"
@@ -59,24 +58,6 @@
               :style="underlineStyle"
             ></span>
           </RouterLink>
-
-          <!-- 桌面版下拉選單 (Shop) -->
-          <div
-            v-if="link.name === 'Shop'"
-            class="absolute top-full left-0 mt-1 w-36 backdrop-blur-xl rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 transform -translate-y-1 group-hover:translate-y-0"
-            :style="dropdownBgStyle"
-          >
-            <RouterLink
-              v-for="sub in shopSubLinks"
-              :key="sub.name"
-              :to="sub.to"
-              class="block px-4 py-2 text-sm text-left transition-colors duration-200 rounded hover:bg-white/20"
-              :style="{ color: textColorStyle.color }"
-              @click="mobileOpen = false"
-            >
-              {{ sub.name }}
-            </RouterLink>
-          </div>
         </div>
       </div>
 
@@ -84,8 +65,87 @@
       <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
         <!-- Desktop Icons -->
         <div class="hidden lg:flex items-center gap-4">
-          <span class="material-symbols-outlined" :style="textColorStyle">shopping_bag</span>
-          <span class="material-symbols-outlined" :style="textColorStyle">person</span>
+          <span
+            class="material-symbols-outlined cursor-pointer transition-all duration-200 hover:scale-110"
+            :style="textColorStyle"
+          >
+            shopping_bag
+          </span>
+
+          <!-- 人頭 icon 加上相對定位容器 -->
+          <div class="relative" @mouseenter="openUserMenu" @mouseleave="closeUserMenu">
+            <span
+              class="material-symbols-outlined cursor-pointer transition-all duration-200 hover:scale-110"
+              :style="textColorStyle"
+            >
+              person
+            </span>
+
+            <!-- 使用者下拉選單 -->
+            <transition name="dropdown">
+              <div
+                v-if="userMenuOpen"
+                class="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-lg border overflow-hidden"
+                :class="scrollY < bannerHeight ? 'border-[#DCCFC0]/50' : 'border-[#DCCFC0]/80'"
+                :style="dropdownMenuStyle"
+              >
+                <!-- 未登入狀態 -->
+                <div v-if="!isLoggedIn" class="p-3">
+                  <div class="flex gap-2">
+                    <button
+                      class="flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                      :style="buttonStyle"
+                      @click="handleRegister"
+                    >
+                      註冊
+                    </button>
+                    <button
+                      class="flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                      :style="buttonStyle"
+                      @click="handleLogin"
+                    >
+                      登入
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 已登入狀態 -->
+                <div v-else class="py-2">
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm font-medium transition-colors duration-200"
+                    :style="menuItemHoverStyle('member')"
+                    @mouseenter="hoveredMenuItem = 'member'"
+                    @mouseleave="hoveredMenuItem = null"
+                    @click="handleMemberArea"
+                  >
+                    <span class="flex items-center gap-2">
+                      <span class="material-symbols-outlined text-lg">account_circle</span>
+                      會員專區
+                    </span>
+                  </button>
+                  <div
+                    class="mx-3 h-px"
+                    :style="{
+                      backgroundColor: scrollY < bannerHeight ? '#DCCFC0' : '#FAF9EE',
+                      opacity: 0.3,
+                    }"
+                  ></div>
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm font-medium transition-colors duration-200"
+                    :style="menuItemHoverStyle('logout')"
+                    @mouseenter="hoveredMenuItem = 'logout'"
+                    @mouseleave="hoveredMenuItem = null"
+                    @click="handleLogout"
+                  >
+                    <span class="flex items-center gap-2">
+                      <span class="material-symbols-outlined text-lg">logout</span>
+                      登出
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </transition>
+          </div>
         </div>
 
         <!-- Mobile Hamburger -->
@@ -106,32 +166,16 @@
         class="lg:hidden backdrop-blur-xl border-t border-[#DCCFC0]/50"
         :style="dropdownBgStyle"
       >
-        <div v-for="link in links" :key="link.name">
-          <!-- 主連結 -->
-          <RouterLink
-            :to="link.to"
-            class="block px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
-            :style="textColorStyle"
-            @click="toggleMobileSubmenu(link.name)"
-          >
-            {{ link.zh }}
-          </RouterLink>
-
-          <!-- 手機版下拉選單 (Shop) -->
-          <transition name="expand-height">
-            <div v-if="link.name === 'Shop' && mobileSubOpen" class="overflow-hidden">
-              <RouterLink
-                v-for="sub in shopSubLinks"
-                :key="sub.name"
-                :to="sub.to"
-                class="block px-10 py-3 text-base border-b border-[#DCCFC0]/20"
-                @click="mobileOpen = false"
-              >
-                {{ sub.name }}
-              </RouterLink>
-            </div>
-          </transition>
-        </div>
+        <RouterLink
+          v-for="link in links"
+          :key="link.name"
+          :to="link.to"
+          class="block px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
+          :style="textColorStyle"
+          @click="mobileOpen = false"
+        >
+          {{ link.zh }}
+        </RouterLink>
       </div>
     </transition>
   </nav>
@@ -139,9 +183,12 @@
 
 <script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
+  import { useAuthStore } from '@/store/auth';
 
   const route = useRoute();
+  const router = useRouter();
+  const authStore = useAuthStore();
 
   /* ===== 型別定義 ===== */
   interface NavLink {
@@ -164,24 +211,17 @@
     },
   ];
 
-  const shopSubLinks = [
-    { name: '單品咖啡豆', to: '/product/beans' },
-    { name: '濾掛咖啡', to: '/product/drip' },
-    { name: '沖煮器具', to: '/product/tools' },
-  ];
-
   /* ===== State ===== */
   const hoveredLink = ref<string | null>(null);
   const mobileOpen = ref<boolean>(false);
-  const mobileSubOpen = ref<boolean>(false);
+  const userMenuOpen = ref<boolean>(false);
+  const hoveredMenuItem = ref<string | null>(null);
 
-  const toggleMobileSubmenu = (name: string) => {
-    if (name === 'Shop') mobileSubOpen.value = !mobileSubOpen.value;
-  };
+  // 從 authStore 取得登入狀態
+  const isLoggedIn = computed(() => authStore.isLoggedIn);
 
   /* ===== Scroll Effect ===== */
   const scrollY = ref<number>(0);
-  // 🔥 使用 computed 自動計算 banner 高度（94vh）
   const bannerHeight = computed(() => window.innerHeight * 0.94);
 
   const onScroll = () => {
@@ -189,7 +229,6 @@
   };
 
   onMounted(() => {
-    // 🔥 初始化當前滾動位置
     scrollY.value = window.scrollY;
     window.addEventListener('scroll', onScroll);
   });
@@ -203,7 +242,7 @@
     const t = Math.min(scrollY.value / (bannerHeight.value || 1), 1);
     const r = Math.round(26 + (250 - 26) * t);
     const g = Math.round(30 + (249 - 30) * t);
-    const b = Math.round(23 + (238 - 23) * t);
+    const b = Math.round(23 + (250 - 23) * t);
     return { color: `rgb(${r}, ${g}, ${b})` };
   });
 
@@ -226,9 +265,78 @@
     }
   });
 
+  const dropdownMenuStyle = computed(() => {
+    const baseOpacity = scrollY.value < bannerHeight.value ? 0.98 : 0.95;
+    return {
+      backgroundColor: `rgba(162, 175, 155, ${baseOpacity})`,
+      backdropFilter: 'blur(12px)',
+      color: scrollY.value < bannerHeight.value ? '#1A1E17' : '#FAF9EE',
+    };
+  });
+
+  const buttonStyle = computed(() => {
+    if (scrollY.value < bannerHeight.value) {
+      return {
+        backgroundColor: '#CDBE9A',
+        color: '#1A1E17',
+        border: '1px solid #DCCFC0',
+      };
+    }
+    return {
+      backgroundColor: 'rgba(250, 249, 238, 0.95)',
+      color: '#1A1E17',
+      border: '1px solid #FAF9EE',
+    };
+  });
+
+  const menuItemHoverStyle = (itemName: string) => {
+    const isHovered = hoveredMenuItem.value === itemName;
+    if (scrollY.value < bannerHeight.value) {
+      return {
+        color: '#1A1E17',
+        backgroundColor: isHovered ? 'rgba(205, 190, 154, 0.3)' : 'transparent',
+      };
+    }
+    return {
+      color: '#FAF9EE',
+      backgroundColor: isHovered ? 'rgba(250, 249, 238, 0.15)' : 'transparent',
+    };
+  };
+
   /* ===== Utils ===== */
   const isActive = (link: NavLink): boolean => route.path === link.to;
   const activeStyle = { fontWeight: '700' };
+
+  /* ===== 使用者選單相關功能 ===== */
+  const openUserMenu = () => {
+    userMenuOpen.value = true;
+  };
+
+  const closeUserMenu = () => {
+    userMenuOpen.value = false;
+    hoveredMenuItem.value = null;
+  };
+
+  const handleRegister = () => {
+    userMenuOpen.value = false;
+    router.push('/register');
+  };
+
+  const handleLogin = () => {
+    userMenuOpen.value = false;
+    router.push('/login');
+  };
+
+  const handleMemberArea = () => {
+    userMenuOpen.value = false;
+    router.push('/member');
+  };
+
+  const handleLogout = async () => {
+    userMenuOpen.value = false;
+    await authStore.logout();
+    router.push('/home');
+  };
 </script>
 
 <style scoped>
@@ -243,17 +351,17 @@
     transform: translateY(-8px);
   }
 
-  /* 手機子選單平滑高度展開 */
-  .expand-height-enter-active,
-  .expand-height-leave-active {
-    transition: max-height 0.3s ease;
+  /* 下拉選單動畫 */
+  .dropdown-enter-active,
+  .dropdown-leave-active {
+    transition: all 0.2s ease;
   }
-  .expand-height-enter-from,
-  .expand-height-leave-to {
-    max-height: 0;
+  .dropdown-enter-from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
   }
-  .expand-height-enter-to,
-  .expand-height-leave-from {
-    max-height: 500px; /* 根據子選單高度調整 */
+  .dropdown-leave-to {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.98);
   }
 </style>

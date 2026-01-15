@@ -82,7 +82,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/Email-confirmed',
+    path: '/email-confirmed',
     name: 'EmailConfirmed',
     component: EmailConfirmed,
   },

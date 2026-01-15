@@ -202,7 +202,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
   import type { ProductRequest } from '@/services/ProductDetail';
-  import { useCartStore } from '@/stores/cart';
+  import { useCartStore } from '@/store/cart';
 
   // 1. 靜態對照表
   const originMap: Record<string, string> = {

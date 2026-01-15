@@ -149,7 +149,7 @@
 import { computed } from 'vue'
 import CartItem from './cart/CartItem.vue'
 import RecommendationCard from './cart/RecommendationCard.vue'
-import { useCartStore } from '@/stores/cart'
+import { useCartStore } from '@/store/cart'
 
 // Pinia Store 整合
 // 使用 useCartStore 取得購物車狀態與方法

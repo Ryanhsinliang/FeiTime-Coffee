@@ -288,7 +288,7 @@
   import { getProducts } from '../../services/product';
   import { ref, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
-  import { useCartStore } from '@/stores/cart';
+  import { useCartStore } from '@/store/cart';
 
   const cartStore = useCartStore();
   const addToCart = cartStore.addItem;

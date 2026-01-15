@@ -148,7 +148,7 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted } from 'vue';
   import { useRoute } from 'vue-router';
-  import { useCartStore } from '@/stores/cart';
+  import { useCartStore } from '@/store/cart';
 
   const route = useRoute();
   

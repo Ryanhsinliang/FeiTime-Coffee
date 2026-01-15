@@ -5,40 +5,66 @@
 
     <!-- Logo Container -->
     <div class="relative z-10 flex flex-col items-center justify-center logo-fade-in">
-      <div class="relative flex items-center justify-center">
-        <img
-          alt="FeiTime Logo"
-          class="h-auto w-auto max-w-md max-h-96 object-contain logo-shadow"
-          src="@/views/HomePage/assets/feitime-logo.webp"
-        />
-        <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 w-48 h-24 glow-effect"></div>
-      </div>
+      <!-- 科技感框線容器 - 包含所有內容 -->
+      <div class="relative px-24 py-16 tech-frame-container">
+        <!-- 玻璃背景 -->
+        <div class="tech-bg"></div>
 
-      <!-- Title Section -->
-      <div class="mt-8 flex flex-col items-center space-y-3 text-center text-fade-in">
-        <p class="text-white/20 text-[9px] font-normal tracking-[0.5em] uppercase">
-          Artisanal Roastery
-        </p>
-      </div>
-    </div>
+        <!-- 四條邊框線（分開以便動畫） -->
+        <div class="tech-border tech-border-top"></div>
+        <div class="tech-border tech-border-right"></div>
+        <div class="tech-border tech-border-bottom"></div>
+        <div class="tech-border tech-border-left"></div>
 
-    <!-- Skip Button -->
-    <div class="absolute bottom-12 right-12 z-20">
-      <button
-        @click="goToHome"
-        class="group flex items-center gap-3 px-4 py-2 bg-transparent transition-all duration-700 cursor-pointer"
-      >
-        <span
-          class="text-[10px] font-light tracking-[0.3em] text-white/30 group-hover:text-white/70 uppercase transition-colors"
-        >
-          Skip
-        </span>
-        <span
-          class="material-symbols-outlined text-white/10 group-hover:text-white/40 text-[14px] transition-all transform group-hover:translate-x-1"
-        >
-          arrow_forward
-        </span>
-      </button>
+        <!-- 四個角落發光三角形 -->
+        <div class="tech-corner-glow tech-corner-glow-tl"></div>
+        <div class="tech-corner-glow tech-corner-glow-tr"></div>
+        <div class="tech-corner-glow tech-corner-glow-bl"></div>
+        <div class="tech-corner-glow tech-corner-glow-br"></div>
+
+        <!-- 內容區 -->
+        <div class="relative z-10 flex flex-col items-center gap-8">
+          <!-- Logo -->
+          <div class="relative flex items-center justify-center">
+            <img
+              alt="FeiTime Logo"
+              class="h-auto w-auto max-w-[160px] max-h-40 object-contain logo-shadow"
+              src="@/views/HomePage/assets/feitime-logo.webp"
+            />
+            <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 w-48 h-24 glow-effect"></div>
+          </div>
+
+          <!-- 文字區 -->
+          <div class="flex flex-col items-center space-y-3 text-center text-fade-in">
+            <!-- FeiTime 文字 -->
+            <h1 class="font-notoserif text-5xl font-medium tracking-wide title-glow">FeiTime</h1>
+
+            <!-- 標語 -->
+            <p class="text-xs font-light tracking-[0.3em] uppercase subtitle-glow">
+              Enjoy your Fei Time
+            </p>
+
+            <!-- 進入官網按鈕 -->
+            <button
+              @click="goToHome"
+              class="group mt-8 px-8 py-3 border border-white/30 rounded-full bg-white/15 backdrop-blur-sm hover:bg-white/25 hover:border-white/50 transition-all duration-500 cursor-pointer"
+            >
+              <span class="flex items-center gap-3">
+                <span
+                  class="text-sm font-light tracking-[0.2em] text-white/95 group-hover:text-white transition-colors"
+                >
+                  進入官網
+                </span>
+                <span
+                  class="material-symbols-outlined text-white/80 group-hover:text-white text-base transition-all transform group-hover:translate-x-1"
+                >
+                  arrow_forward
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Radial Gradient Overlay -->
@@ -51,8 +77,6 @@
     ArcRotateCamera,
     Color3,
     Color4,
-    DefaultRenderingPipeline,
-    DepthOfFieldEffectBlurLevel,
     Engine,
     HemisphericLight,
     NoiseProceduralTexture,
@@ -79,9 +103,8 @@
     scene?.dispose();
   });
 
-  // Navigate to home page
   const goToHome = () => {
-    router.push('/home'); // 修改成你的首頁路由
+    router.push('/home');
   };
 
   function initBabylonScene() {
@@ -94,56 +117,41 @@
     });
 
     scene = new Scene(engine);
-    scene.clearColor = new Color4(0, 0, 0, 0.01); // 背景透明
+    scene.clearColor = new Color4(0, 0, 0, 0.01);
 
-    // 創建相機
     const camera = new ArcRotateCamera('camera', 0, 0, 0, Vector3.Zero(), scene);
     const rect = canvas.getBoundingClientRect();
     camera.radius = Math.min(rect.width, rect.height);
 
-    // 創建光源
     const light = new HemisphericLight('light', new Vector3(0.5, 1, 0), scene);
     light.intensity = 1;
     light.diffuse = new Color3(1, 1, 1);
     light.groundColor = new Color3(1, 1, 1);
 
-    // 初始化渲染管線（景深效果）
     initRenderingPipeline(scene, camera, canvas);
-
-    // 初始化粒子系統（螢火蟲）
     initParticleSystem(scene, canvas);
 
-    // 渲染循環
     engine.runRenderLoop(() => {
       scene?.render();
     });
 
-    // 響應視窗大小變化
     window.addEventListener('resize', () => {
       engine?.resize();
     });
   }
 
   function initRenderingPipeline(scene: Scene, camera: ArcRotateCamera, canvas: HTMLCanvasElement) {
-    const rect = canvas.getBoundingClientRect();
-    const pipeline = new DefaultRenderingPipeline('defaultPipeline', true, scene, [camera]);
-
-    const focusDistance = Math.min(rect.width, rect.height) * 1000;
-
-    pipeline.depthOfFieldEnabled = true;
-    pipeline.depthOfField.focusDistance = focusDistance;
-    pipeline.depthOfField.focalLength = 800;
-    pipeline.depthOfField.fStop = 0.5;
-    pipeline.depthOfFieldBlurLevel = DepthOfFieldEffectBlurLevel.Low;
+    // 移除景深效果以提升效能
+    // 景深效果雖然好看，但在粒子系統中會造成明顯的效能負擔
   }
 
   function initParticleSystem(scene: Scene, canvas: HTMLCanvasElement) {
     const rect = canvas.getBoundingClientRect();
     const { width, height } = rect;
 
-    const particleSystem = new ParticleSystem('fireflies', 5000, scene);
+    // 優化：減少粒子數量從 5000 到 2500，減輕效能負擔
+    const particleSystem = new ParticleSystem('fireflies', 2500, scene);
 
-    // 使用程式生成材質（不需要外部文件）
     const textureCanvas = document.createElement('canvas');
     textureCanvas.width = 256;
     textureCanvas.height = 256;
@@ -156,48 +164,37 @@
     ctx.fillRect(0, 0, 256, 256);
     particleSystem.particleTexture = new Texture(textureCanvas.toDataURL(), scene);
 
-    particleSystem.emitter = new Vector3(0, -height / 2, 0); // 發射器位置
-
-    particleSystem.emitRate = 100;
-
-    // 粒子尺寸
+    particleSystem.emitter = new Vector3(0, -height / 2, 0);
+    // 優化：降低發射速率從 100 到 60
+    particleSystem.emitRate = 60;
     particleSystem.minSize = 4;
     particleSystem.maxSize = 10;
-
     particleSystem.maxLifeTime = 20;
     particleSystem.minLifeTime = 10;
-
-    // 設定粒子向上飄的速度
     particleSystem.minEmitPower = height / 15;
     particleSystem.maxEmitPower = height / 10;
     particleSystem.updateSpeed = 0.01;
-
-    // 設定重力（向上的力，讓螢火蟲持續上升）
     particleSystem.gravity = new Vector3(0, height / 30, 0);
 
-    // 從底部整個寬度向上發散
     particleSystem.createBoxEmitter(
-      new Vector3(-0.8, 1, -0.8), // 最小方向（X和Z擴散更快）
-      new Vector3(0.8, 1.5, 0.8), // 最大方向（X和Z擴散更快）
-      new Vector3(-width / 2, -height / 2, -100), // 發射區域左下角
-      new Vector3(width / 2, -height / 2, 100) // 發射區域右下角
+      new Vector3(-0.8, 1, -0.8),
+      new Vector3(0.8, 1.5, 0.8),
+      new Vector3(-width / 2, -height / 2, -100),
+      new Vector3(width / 2, -height / 2, 100)
     );
 
-    // 隨機移動（加強橫向擴散）
     const noiseTexture = new NoiseProceduralTexture('noise', 256, scene);
-    noiseTexture.octaves = 6;
+    // 優化：減少 octaves 從 6 到 4，降低計算複雜度
+    noiseTexture.octaves = 4;
     noiseTexture.persistence = 2;
     noiseTexture.animationSpeedFactor = 2;
     noiseTexture.brightness = 0.5;
 
     particleSystem.noiseTexture = noiseTexture;
-    particleSystem.noiseStrength = new Vector3(100, 20, 100); // X和Z方向加強
+    particleSystem.noiseStrength = new Vector3(100, 20, 100);
 
-    // 金色螢火蟲（單一色系）
-    const goldColor1 = Color3.FromHexString('#d4af37').toColor4(); // 標準金色
-    const goldColor2 = Color3.FromHexString('#f4d03f').toColor4(); // 亮金色
-
-    // 閃爍效果
+    const goldColor1 = Color3.FromHexString('#d4af37').toColor4();
+    const goldColor2 = Color3.FromHexString('#f4d03f').toColor4();
     const blinkMaxStep = 50;
     const hideColor = new Color4(0, 0, 0, 0);
 
@@ -210,15 +207,13 @@
       }
     }
     particleSystem.addColorGradient(1, hideColor);
-
     particleSystem.start();
   }
 </script>
 
 <style scoped>
-  /* Logo fade in - 簡單淡入，正常速度 2 秒 */
   .logo-fade-in {
-    animation: logoFadeIn 2s ease-out forwards;
+    animation: logoFadeIn 0.8s ease-out forwards;
   }
 
   @keyframes logoFadeIn {
@@ -230,11 +225,9 @@
     }
   }
 
-  /* Logo shadow - 淡金色光暈 + 超淡白色煙霧 */
   .logo-shadow {
-    filter: 
-      /* 淡金色光暈 */ drop-shadow(0 0 10px rgba(212, 175, 55, 0.25))
-      drop-shadow(0 0 20px rgba(212, 175, 55, 0.15)) /* 白色煙霧 - 非常淡 */
+    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.25))
+      drop-shadow(0 0 20px rgba(212, 175, 55, 0.15))
       drop-shadow(2px 2px 5px rgba(255, 255, 255, 0.1))
       drop-shadow(-2px -2px 5px rgba(255, 255, 255, 0.1))
       drop-shadow(3px -3px 6px rgba(255, 255, 255, 0.08))
@@ -262,7 +255,6 @@
     }
   }
 
-  /* Glow effect - 底部煙霧效果 */
   .glow-effect {
     background: radial-gradient(
       ellipse at center,
@@ -288,10 +280,9 @@
     }
   }
 
-  /* Text fade in animation */
   .text-fade-in {
     opacity: 0;
-    animation: fadeIn 2s ease-out 1s forwards;
+    animation: fadeIn 0.6s ease-out 0.5s forwards;
   }
 
   @keyframes fadeIn {
@@ -305,7 +296,6 @@
     }
   }
 
-  /* Text shimmer animation */
   .text-shimmer {
     animation: text-shimmer 8s linear infinite;
   }
@@ -322,8 +312,181 @@
     }
   }
 
-  /* Vignette overlay */
   .vignette {
     background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+  }
+
+  .title-glow {
+    color: #f5e6d3;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.9), 0 0 20px rgba(212, 175, 55, 0.7),
+      0 0 40px rgba(212, 175, 55, 0.5), 0 0 60px rgba(212, 175, 55, 0.3);
+  }
+
+  .subtitle-glow {
+    color: #d4af37;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.8), 0 0 16px rgba(212, 175, 55, 0.6),
+      0 0 30px rgba(212, 175, 55, 0.4), 0 0 50px rgba(212, 175, 55, 0.2);
+  }
+
+  /* 玻璃背景 */
+  .tech-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(16px);
+    border-radius: 4px;
+    box-shadow: inset 0 0 80px rgba(255, 255, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  /* 邊框線 - 四條分開以便動畫，直接連到角落 */
+  .tech-border {
+    position: absolute;
+    background: rgba(212, 175, 55, 0.5);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    z-index: 1;
+    transition: clip-path 0.3s ease-out;
+  }
+
+  .tech-border-top {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    animation: borderGrowOutwardX 1.2s ease-out 0.3s both;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .tech-border-bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    animation: borderGrowOutwardX 1.2s ease-out 0.3s both;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .tech-border-left {
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    animation: borderGrowOutwardY 1.2s ease-out 0.3s both;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .tech-border-right {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    animation: borderGrowOutwardY 1.2s ease-out 0.3s both;
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* Hover 效果 - 邊框線從兩端縮短 */
+  .tech-frame-container:hover .tech-border-top {
+    clip-path: inset(0 12px 0 12px);
+  }
+
+  .tech-frame-container:hover .tech-border-bottom {
+    clip-path: inset(0 12px 0 12px);
+  }
+
+  .tech-frame-container:hover .tech-border-left {
+    clip-path: inset(12px 0 12px 0);
+  }
+
+  .tech-frame-container:hover .tech-border-right {
+    clip-path: inset(12px 0 12px 0);
+  }
+
+  @keyframes borderGrowOutwardX {
+    from {
+      transform: scaleX(0);
+      opacity: 0;
+    }
+    to {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes borderGrowOutwardY {
+    from {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+    to {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  /* 角落發光三角形 - 蓋住線條製造切角效果（不透明） */
+  .tech-corner-glow {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: rgba(212, 175, 55, 1);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
+    z-index: 2;
+    opacity: 0;
+    animation: cornerFadeIn 0.2s ease-out 1.5s both;
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  }
+
+  /* Hover 效果 - 四個角往外擴張 */
+  .tech-frame-container:hover .tech-corner-glow-tl {
+    transform: translate(-6px, -6px);
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.8);
+  }
+
+  .tech-frame-container:hover .tech-corner-glow-tr {
+    transform: translate(6px, -6px);
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.8);
+  }
+
+  .tech-frame-container:hover .tech-corner-glow-bl {
+    transform: translate(-6px, 6px);
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.8);
+  }
+
+  .tech-frame-container:hover .tech-corner-glow-br {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.8);
+  }
+
+  @keyframes cornerFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .tech-corner-glow-tl {
+    top: -1px;
+    left: -1px;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+  }
+
+  .tech-corner-glow-tr {
+    top: -1px;
+    right: -1px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+  }
+
+  .tech-corner-glow-bl {
+    bottom: -1px;
+    left: -1px;
+    clip-path: polygon(0 0, 0 100%, 100% 100%);
+  }
+
+  .tech-corner-glow-br {
+    bottom: -1px;
+    right: -1px;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
   }
 </style>

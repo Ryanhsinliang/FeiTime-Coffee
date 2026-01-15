@@ -14,14 +14,22 @@
       <!-- 【 2 】 左側篩選選單 -->
       <nav
         :class="have"
-        class="px-[24px] w-[80%] md:w-[25%] lg:w-[25%] my-[24px] absolute md:static lg:static z-[2]"
+        class="px-[24px] w-[80%] md:w-[25%] lg:w-[25%] my-[24px] absolute md:static lg:static z-[2] bg-[--main-color]"
       >
         <!-- 焙度 -->
         <div>
           <h3 class="text-[24px] font-[600]">焙度</h3>
           <div class="mt-[8px]">
-            <input type="radio" id="Light" name="roast" value="Light" />
-            <label class="ml-[8px] text-[20px]" for="Light">淺焙</label>
+            <input
+              type="radio"
+              id="Light"
+              name="roast"
+              value="Light"
+              @click="getcoffee({ roast: 'Light' })"
+            />
+            <label class="ml-[8px] text-[20px]" for="Light" @click="getcoffee({ roast: 'Light' })">
+              淺焙
+            </label>
           </div>
           <div class="mt-[8px]">
             <input type="radio" id="Medium" name="roast" value="Medium" />
@@ -235,7 +243,6 @@
             :to="`/product-detail/${p.pid}`"
             class="px-[20px] bg-white rounded-[12px] relative"
           >
-            <!-- <div id="之後換成v-for" class="px-[20px] bg-white rounded-[12px] relative"> -->
             <img
               class="aspect-[4/3] object-cover object-center rounded-[12px] mt-[20px]"
               :src="p.img[0].formats.large.url"
@@ -255,8 +262,10 @@
             <p class="text-[20px] font-[600] mt-[48px] mb-[16px]">NT$ {{ p.price }}</p>
             <!-- 加入購物車按紐 -->
             <div
-              class="rounded-full bg-[#222222] inline-block px-[17px] py-[12px] absolute text-white font-bold bottom-[8px] right-[20px]"
+              class="rounded-full bg-[#222222] inline-block px-[17px] py-[12px] absolute text-white font-bold bottom-[16px] right-[20px] z-10"
+              @click.stop.prevent=""
             >
+              <!-- 使用.stop.prevent 讓事件止於【 + 】不要擴散到跳轉 -->
               <i class="fa-solid fa-plus"></i>
             </div>
           </router-link>
@@ -265,16 +274,6 @@
       </main>
     </div>
     <!-- 2+3的div 結束 -->
-
-    <!-- 勿刪 VVVVVVV -->
-    <!-- 勿刪 VVVVVVV -->
-    <!-- 勿刪 VVVVVVV -->
-    <!-- <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
-    <i class="fa-solid fa-angle-up"></i>
-  </div> -->
-    <!-- 勿刪 VVVVVVV -->
-    <!-- 勿刪 VVVVVVV -->
-    <!-- 勿刪 VVVVVVV -->
   </div>
   <!-- 全域設定結束 -->
 

@@ -251,11 +251,12 @@
     </form>
   </main>
   <p class="text-[48px] bg-[#ffb8f4] p-3" @click="useLinePay">測試linepay</p>
+  <p class="text-[48px] bg-[#67EBEF] p-3" @click="cart">測試購物車</p>
 </template>
 
 <script setup lang="ts">
   import axios from 'axios';
-  import { ref, reactive, computed } from 'vue';
+  import { reactive } from 'vue';
 
   const form = reactive({
     name: '',
@@ -287,6 +288,12 @@
     } catch (error: any) {
       console.error('結帳出錯：', error.response?.data || error.message);
     }
+  };
+
+  import { getCart } from '@/services/checkout';
+  const cart = async () => {
+    const cartData = await getCart();
+    console.log(cartData);
   };
 </script>
 

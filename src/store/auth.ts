@@ -5,12 +5,15 @@ import { loginService, type User, type AuthResponse } from '../services/loginSer
 
 import { forgotPasswordService } from '@/services/forgotPasswordService';
 import { resetPasswordService } from '@/services/resetPasswordService';
+import { googleAuthService } from '@/services/googleAuthService';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,}$/;
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
   const token = ref<string | null>(Cookies.get('auth_token') || null);
-  const isAdmin = computed(() => user.value?.user_role === 'Admin');
+  const isAdmin = computed(() => {
+    return user.value?.user_role === 'Admin' || user.value?.role?.type === 'admin';
+  });
   const banner = ref<{ message: string; type: 'success' | 'error' | 'warning' | null } | null>(
     null
   );
@@ -113,6 +116,36 @@ export const useAuthStore = defineStore('auth', () => {
       return { success: false };
     }
   }
+  function handleGoogleLogin() {
+    try {
+      clearBanner();
+      googleAuthService.initiateGoogleLogin();
+      // 直接重新導向，不需要 return
+    } catch (error: any) {
+      const message = error.message || 'Google 登入失敗';
+      setBanner(message, 'error');
+      return { success: false, message };
+    }
+  }
+
+  function handleGoogleCallbackData(jwt: string, userData: User) {
+    try {
+      clearBanner();
+
+      token.value = jwt;
+      user.value = userData;
+
+      // 儲存 token 和使用者資訊
+      Cookies.set('auth_token', jwt, { sameSite: 'strict' });
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      return { success: true };
+    } catch (error: any) {
+      const message = error.message || 'Google 登入處理失敗';
+      setBanner(message, 'error');
+      return { success: false, message };
+    }
+  }
 
   return {
     user,
@@ -121,6 +154,8 @@ export const useAuthStore = defineStore('auth', () => {
     isLoggedIn,
     banner,
     handleLogin,
+    handleGoogleLogin,
+    handleGoogleCallbackData,
     handleForgotPassword,
     handleResetPassword,
     logout,

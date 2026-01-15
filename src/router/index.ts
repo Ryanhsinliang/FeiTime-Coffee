@@ -17,6 +17,7 @@ import ForgotPassword from '@/views/Login/ForgotPassword.vue';
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
 import ResetPassword from '@/views/Login/ResetPassword.vue';
+import GoogleCallback from '@/views/Login/GoogleCallback.vue';
 
 const routes = [
   {
@@ -69,6 +70,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
+  },
+  {
+    path: '/auth/google/callback',
+    name: 'GoogleCallback',
+    component: GoogleCallback,
   },
   {
     path: '/register',

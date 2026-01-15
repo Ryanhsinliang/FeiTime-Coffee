@@ -1,6 +1,8 @@
+import axios from 'axios';
 import api from './api';
 export interface User {
   id: number;
+  documentId: string;
   username: string;
   email: string;
   confirmed: boolean;
@@ -8,6 +10,8 @@ export interface User {
   user_role: 'Member' | 'Admin';
 
   role?: {
+    id: number;
+    name: string;
     type: string;
   };
 }

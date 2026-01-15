@@ -20,7 +20,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
-    const isLoginPage = window.location.pathname.includes('/login');
+    const pathname = window.location.pathname;
+    const isLoginPage = pathname.includes('/login');
 
     if (status === 401 && !isLoginPage) {
       localStorage.clear();

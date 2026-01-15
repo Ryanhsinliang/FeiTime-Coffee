@@ -3,7 +3,7 @@
   <router-link to="/admin/orders/id">查看進度</router-link>
 
   <header
-    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] fix top-0 z-10 flex-shrink-0"
+    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-10 flex-shrink-0"
   >
     <button class="w-10 h-10 hover:text-[#e27312] relative">
       <i class="fa-regular fa-bell text-2xl"></i>
@@ -97,11 +97,11 @@
                 <span class="material-symbols-outlined">arrow_downward</span>
               </div>
             </th>
-            <th class="py-4 px-6 text-xs font-bold">顧客姓名</th>
+            <th class="py-4 px-6 text-xs font-bold">訂購者姓名</th>
             <th class="py-4 px-6 text-xs font-bold">下訂商品名稱</th>
             <th class="py-4 px-6 text-xs font-bold">日期</th>
             <th class="py-4 px-6 text-xs font-bold text-center">出貨狀態</th>
-            <th class="py-4 px-6 text-xs font-bold text-center">總金額</th>
+            <th class="py-4 px-6 text-xs font-bold text-right">總金額</th>
             <th class="py-4 px-6 text-xs font-bold text-center">操作</th>
           </tr>
         </thead>
@@ -354,5 +354,7 @@
       </div>
     </div>
   </main>
+
+  <!-- TEST -->
 </template>
 <script setup></script>

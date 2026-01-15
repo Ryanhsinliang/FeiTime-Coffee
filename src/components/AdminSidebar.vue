@@ -35,7 +35,9 @@
           class="flex items-center gap-3 px-3 py-2.5 hover:bg-[#f3ede7] hover:text-[#e27312]"
         >
           <span class="material-symbols-outlined">group</span>
-          <p class="text-sm" :class="{ 'font-semibold': isActive('/admin/customers') }">顧客管理</p>
+          <p class="text-sm" :class="{ 'font-semibold': isActive('/admin/customers') }">
+            使用者管理
+          </p>
         </RouterLink>
       </nav>
     </div>

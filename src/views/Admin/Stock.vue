@@ -1,6 +1,6 @@
 <template>
   <header
-    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] fix top-0 z-10 flex-shrink-0"
+    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-10 flex-shrink-0"
   >
     <button class="w-10 h-10 hover:text-[#e27312] relative">
       <i class="fa-regular fa-bell text-2xl"></i>
@@ -37,7 +37,7 @@
           value=""
         />
       </div>
-      <div class="relative min-w-48 w-full md:w-auto">
+      <!-- <div class="relative min-w-48 w-full md:w-auto">
         <select
           class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
@@ -49,7 +49,7 @@
         <i
           class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
         ></i>
-      </div>
+      </div> -->
       <div class="relative min-w-48 w-full md:w-auto">
         <select
           class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
@@ -80,7 +80,7 @@
               </div>
             </th>
             <th class="py-4 px-6 text-xs font-bold">商品名稱</th>
-            <th class="py-4 px-6 text-xs font-bold text-center">烘焙度</th>
+            <th class="py-4 px-6 text-xs font-bold text-center">價格</th>
             <th class="py-4 px-6 text-xs font-bold text-center">庫存狀態</th>
             <th class="py-4 px-6 text-xs font-bold text-center">庫存量</th>
             <th class="py-4 px-6 text-xs font-bold text-center">操作</th>
@@ -102,7 +102,7 @@
               <p class="text-sm font-bold">印尼 曼特寧</p>
             </td>
 
-            <td class="py-4 px-6 text-sm text-center">中焙</td>
+            <td class="py-4 px-6 text-sm text-center">$300</td>
 
             <td class="py-4 px-6 text-center">
               <p
@@ -140,7 +140,7 @@
               <p class="text-sm font-bold">巴西 藝伎咖啡</p>
             </td>
 
-            <td class="py-4 px-6 text-sm text-center">淺焙</td>
+            <td class="py-4 px-6 text-sm text-center">$2000</td>
 
             <td class="py-4 px-6 text-center">
               <p
@@ -178,7 +178,7 @@
               <p class="text-sm font-bold">衣索比亞 厭氧</p>
             </td>
 
-            <td class="py-4 px-6 text-sm text-center">深焙</td>
+            <td class="py-4 px-6 text-sm text-center">$500</td>
 
             <td class="py-4 px-6 text-center">
               <p

@@ -8,7 +8,7 @@ const STRAPI_URL = 'https://accessible-dogs-da5b6a029a.strapiapp.com';
 
 // ===== 🧪 開發測試模式 =====
 // 啟用此模式可在不真實登入的情況下測試購物車與 Strapi 的整合
-const DEV_TEST_MODE = true; // 設為 false 則使用真實登入
+const DEV_TEST_MODE = false; // 設為 false 則使用真實登入
 
 // 測試用憑證（需要從 Strapi 取得有效的 Token 和 User ID）
 const TEST_CREDENTIALS = {

@@ -31,13 +31,27 @@
   import CustomCursor from './components/common/CustomCursor.vue';
   import GlobalBanner from './components/GlobalBanner.vue';
   import { useRoute } from 'vue-router';
-  import { computed } from 'vue';
+  import { computed, onMounted } from 'vue';
+  import { useCartStore } from '@/store/cart';
+  import { useAuthStore } from '@/store/auth';
 
   // 取得當前路由
   const route = useRoute();
 
   // 判斷是否顯示 Header/Footer
   const showHeaderFooter = computed(() => route.name !== 'Intro');
+
+  // App 初始化邏輯
+  onMounted(async () => {
+    const authStore = useAuthStore();
+    const cartStore = useCartStore();
+
+    // 如果使用者已登入 (LocalStorage 還原)，則同步最新的購物車資料
+    if (authStore.isLoggedIn) {
+      console.log('🚀 App Mounted: 同步購物車資料...');
+      await cartStore.loadCartFromStrapi();
+    }
+  });
 </script>
 
 <style>

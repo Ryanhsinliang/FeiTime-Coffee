@@ -179,12 +179,20 @@ export const useCartStore = defineStore('cart', () => {
 
         if (authStore.isLoggedIn && removedItem?.strapiDocumentId) {
             try {
-                await fetch(`${API_BASE_URL}/api/cart/${removedItem.strapiDocumentId}`, {
+                console.log('🗑️ Deleting from Strapi:', removedItem.strapiDocumentId);
+                const res = await fetch(`${API_BASE_URL}/api/cart/${removedItem.strapiDocumentId}`, {
                     method: 'DELETE',
                 });
+                if (res.ok) {
+                    console.log('✅ Delete success');
+                } else {
+                    console.error('❌ Delete failed:', await res.json());
+                }
             } catch (error) {
                 console.error('Failed to delete from Cart via Express:', error);
             }
+        } else if (authStore.isLoggedIn && removedItem) {
+            console.warn('⚠️ Item has no strapiDocumentId, cannot delete from Strapi:', removedItem);
         }
     }
 
@@ -209,7 +217,8 @@ export const useCartStore = defineStore('cart', () => {
 
                 if (authStore.isLoggedIn && item.strapiDocumentId) {
                     try {
-                        await fetch(`${API_BASE_URL}/api/cart/${item.strapiDocumentId}`, {
+                        console.log('📝 Updating Strapi quantity:', item.strapiDocumentId, 'to', item.quantity);
+                        const res = await fetch(`${API_BASE_URL}/api/cart/${item.strapiDocumentId}`, {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -217,9 +226,16 @@ export const useCartStore = defineStore('cart', () => {
                                 item_total: item.price * item.quantity
                             })
                         });
+                        if (res.ok) {
+                            console.log('✅ Update success');
+                        } else {
+                            console.error('❌ Update failed:', await res.json());
+                        }
                     } catch (error) {
                         console.error('Failed to update quantity via Express:', error);
                     }
+                } else if (authStore.isLoggedIn && item) {
+                    console.warn('⚠️ Item has no strapiDocumentId, cannot update in Strapi:', item);
                 }
             }
         }
@@ -231,6 +247,54 @@ export const useCartStore = defineStore('cart', () => {
 
     function checkout() {
         console.log('Proceeding to checkout');
+    }
+
+    /**
+     * 從 Strapi 載入購物車資料 (登入後呼叫)
+     * 用於同步資料庫裡的購物車狀態到 Pinia
+     */
+    async function loadCartFromStrapi() {
+        const authStore = useAuthStore();
+
+        if (!authStore.isLoggedIn || !authStore.user?.id) {
+            console.warn('[Cart] 未登入，無法從 Strapi 載入購物車');
+            return;
+        }
+
+        try {
+            console.log('🔄 從 Strapi 載入購物車...');
+            const userId = authStore.user.id;
+            const response = await fetch(`${API_BASE_URL}/api/cart?userId=${userId}`);
+
+            if (!response.ok) {
+                console.error('❌ 載入購物車失敗:', await response.json());
+                return;
+            }
+
+            const strapiItems: StrapiCartItemData[] = await response.json();
+            console.log(`📦 從 Strapi 取得 ${strapiItems.length} 筆購物車資料`);
+
+            // 將 Strapi 格式轉換為 CartItem 格式
+            const mappedItems: CartItem[] = strapiItems.map((item: StrapiCartItemData) => ({
+                id: typeof item.product === 'object' ? (item.product as any).id : item.product,
+                pid: String(item.id), // 使用 Strapi ID 作為唯一識別
+                name: item.snapshot_name,
+                price: item.snapshot_price,
+                quantity: item.quantity,
+                image: item.snapshot_image,
+                weight: item.snapshot_weight,
+                stock: 999, // 從 Strapi 載入的暫時設為無限制
+                strapiDocumentId: item.documentId, // 關鍵：確保 documentId 被設置
+                item_total: item.item_total
+            }));
+
+            // 替換 Pinia 狀態
+            items.value = mappedItems;
+            console.log('✅ 購物車同步完成');
+
+        } catch (error) {
+            console.error('[Cart] 從 Strapi 載入購物車失敗:', error);
+        }
     }
 
     return {
@@ -248,7 +312,8 @@ export const useCartStore = defineStore('cart', () => {
         toggleCart,
         openCart,
         closeCart,
-        checkout
+        checkout,
+        loadCartFromStrapi
     };
 }, {
     persist: {

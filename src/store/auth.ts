@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import Cookies from 'js-cookie';
 import { loginService, type User, type AuthResponse } from '../services/loginService';
+import { useCartStore } from './cart';
 
 import { forgotPasswordService } from '@/services/forgotPasswordService';
 import { resetPasswordService } from '@/services/resetPasswordService';
@@ -45,6 +46,10 @@ export const useAuthStore = defineStore('auth', () => {
         Cookies.set('auth_token', data.jwt, { sameSite: 'strict' });
       }
       localStorage.setItem('user', JSON.stringify(data.user));
+
+      // 登入成功後，從 Strapi 載入購物車
+      const cartStore = useCartStore();
+      await cartStore.loadCartFromStrapi();
 
       return { success: true };
     } catch (err: any) {

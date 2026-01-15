@@ -9,8 +9,12 @@ import CoffeeIdTestCard from '@/views/CoffeeIdTest/CoffeeIdTestCard.vue';
 import CoffeeSimulatorT1T from '@/views/CoffeeLabT1-T/CoffeeSimulatorT1T.vue';
 import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.vue';
 import Login from '@/views/Login/Login.vue';
-import Register from '@/views/Login/Register.vue';
+import Register from '@/views/Register/Register.vue';
 import Member from '@/views/Member/Member.vue';
+import { useAuthStore } from '@/store/auth';
+import EmailConfirmed from '@/views/Register/EmailConfirmed.vue';
+import ForgotPassword from '@/views/Login/ForgotPassword.vue';
+import ResetPassword from '@/views/Login/ResetPassword.vue';
 
 const routes = [
   {
@@ -33,7 +37,6 @@ const routes = [
     name: 'Product',
     component: Product,
   },
-
   {
     path: '/product-detail/:pid',
     name: 'ProductDetail',
@@ -73,6 +76,22 @@ const routes = [
     path: '/member',
     name: 'Member',
     component: Member,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/Email-confirmed',
+    name: 'EmailConfirmed',
+    component: EmailConfirmed,
+  },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: ForgotPassword,
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword,
   },
 ];
 
@@ -85,5 +104,25 @@ const router = createRouter({
     return { top: 0, behavior: 'smooth' };
   },
 });
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
 
+  if (authStore.isLoggedIn && (to.path === '/login' || to.path === '/register')) {
+    return next({ name: 'HomePage' });
+  }
+  if (to.meta.requiresAdmin) {
+    if (authStore.isLoggedIn && authStore.isAdmin) {
+      next();
+    } else {
+      authStore.setBanner('請先登入帳號', 'warning');
+      next(authStore.isLoggedIn ? { name: 'HomePage' } : { name: 'Login' });
+    }
+  } else if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+    authStore.setBanner('請先登入帳號', 'warning');
+    next({ name: 'Login' });
+  } else {
+    authStore.clearBanner();
+    next();
+  }
+});
 export default router;

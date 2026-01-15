@@ -1,21 +1,23 @@
 <template>
-  <p class="text-center mt-[48px] text-[40px] font-bold mt-[100px] text-[#222222]">讀取中</p>
-  <p class="text-center text-[#666666]">若加載時間太久 請重新整理</p>
-  <div class="loader"></div>
-  <div class="flex flex-col items-center w-[300px] mx-auto mb-[48px]">
-    <router-link
-      to="/Checkout"
-      class="text-xl bg-[var(--green-gray)] px-[48px] py-[20px] rounded-full text-[var(--main-color)] font-[600] w-full text-center"
-    >
-      返回結帳
-    </router-link>
+  <div class="bg-[--main-color]">
+    <p class="text-center pt-[100px] text-[40px] font-bold text-[#222222]">讀取中</p>
+    <p class="text-center text-[#666666]">若加載時間太久 請重新整理</p>
+    <div class="loader"></div>
+    <div class="flex flex-col items-center w-[300px] mx-auto pb-[48px]">
+      <router-link
+        to="/Checkout"
+        class="text-xl bg-[var(--green-gray)] px-[48px] py-[20px] rounded-full text-[var(--main-color)] font-[600] w-full text-center"
+      >
+        返回結帳
+      </router-link>
 
-    <router-link
-      to="/home"
-      class="mt-[20px] text-xl border-2 border-[var(--green-gray)] px-[48px] py-[20px] rounded-full text-[var(--green-gray)] font-[600] w-full text-center"
-    >
-      前往首頁
-    </router-link>
+      <router-link
+        to="/home"
+        class="mt-[20px] text-xl border-2 border-[var(--green-gray)] px-[48px] py-[20px] rounded-full text-[var(--green-gray)] font-[600] w-full text-center"
+      >
+        前往首頁
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -84,11 +86,6 @@
     style.innerHTML = `* { cursor: auto !important; }`;
     document.head.appendChild(style); 
   */
-
-  .SS {
-    display: flex;
-    align-items: center;
-  }
 
   :root {
     --main-color: #faf9ee;

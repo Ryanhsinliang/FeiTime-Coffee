@@ -1,28 +1,30 @@
 <template>
-  <!-- 打叉 -->
-  <div class="flex flex-col items-center my-[64px] w-[450px] mx-auto">
-    <div
-      class="rounded-full bg-red-800 inline-block w-[100px] h-[100px] text-center leading-[100px] text-[24px] text-white shadow-[0_0_20px_20px_rgba(255,85,85,0.2)]"
-    >
-      <i class="fa-solid fa-xmark fa-2xl"></i>
+  <div class="bg-[--main-color]">
+    <!-- 打叉 -->
+    <div class="flex flex-col items-center py-[64px] w-[450px] mx-auto">
+      <div
+        class="rounded-full bg-red-800 inline-block w-[100px] h-[100px] text-center leading-[100px] text-[24px] text-white shadow-[0_0_20px_20px_rgba(255,85,85,0.2)]"
+      >
+        <i class="fa-solid fa-xmark fa-2xl"></i>
+      </div>
+
+      <p class="text-4xl font-bold text-[#222222] mt-[32px] mb-[24px]">付款失敗</p>
+      <p class="text-[#666666] mb-[40px]">伺服器錯誤 請稍後再試</p>
+
+      <router-link
+        to="/Checkout"
+        class="text-xl bg-[var(--green-gray)] px-[48px] py-[20px] rounded-full text-[var(--main-color)] font-[600] w-full text-center"
+      >
+        返回結帳
+      </router-link>
+
+      <router-link
+        to="/home"
+        class="mt-[20px] text-xl border-2 border-[var(--green-gray)] px-[48px] py-[20px] rounded-full text-[var(--green-gray)] font-[600] w-full text-center"
+      >
+        前往首頁
+      </router-link>
     </div>
-
-    <p class="text-4xl font-bold text-[#222222] mt-[32px] mb-[24px]">付款失敗</p>
-    <p class="text-[#666666] mb-[40px]">伺服器錯誤 請稍後再試</p>
-
-    <router-link
-      to="/Checkout"
-      class="text-xl bg-[var(--green-gray)] px-[48px] py-[20px] rounded-full text-[var(--main-color)] font-[600] w-full text-center"
-    >
-      返回結帳
-    </router-link>
-
-    <router-link
-      to="/home"
-      class="mt-[20px] text-xl border-2 border-[var(--green-gray)] px-[48px] py-[20px] rounded-full text-[var(--green-gray)] font-[600] w-full text-center"
-    >
-      前往首頁
-    </router-link>
   </div>
 </template>
 

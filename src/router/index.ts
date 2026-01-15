@@ -105,7 +105,7 @@ const routes = [
       },
       // TODO:測試用記得修改
       {
-        path: 'orders/id',
+        path: 'orders/:order_number',
         name: 'AdminOrdersDetail',
         component: () => import('@/views/Admin/OrderDetail.vue'),
         props: true,

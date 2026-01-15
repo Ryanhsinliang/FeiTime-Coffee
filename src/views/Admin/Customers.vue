@@ -3,7 +3,7 @@
   <router-link to="/admin/customers/id">查看資料</router-link>
 
   <header
-    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] fix top-0 z-10 flex-shrink-0"
+    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-10 flex-shrink-0"
   >
     <button class="w-10 h-10 hover:text-[#e27312] relative">
       <i class="fa-regular fa-bell text-2xl"></i>
@@ -16,7 +16,7 @@
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
     <section class="flex justify-between">
       <div>
-        <h2 class="text-3xl font-bold">顧客管理</h2>
+        <h2 class="text-3xl font-bold">使用者管理</h2>
         <p class="text-gray-400 text-sm">主要管理使用者權限與資料。</p>
       </div>
       <button

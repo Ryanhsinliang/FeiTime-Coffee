@@ -44,7 +44,7 @@
           class="w-[60px] h-5 bg-[#d9cfc7] absolute bottom-2.5 left-1/2 -translate-x-1/2 rounded-[20px] opacity-50 flex justify-center items-center gap-2"
         >
           <div
-            v-for="(dot, index) in product.img"
+            v-for="(_, index) in product.img"
             :key="index"
             class="w-2 h-2 rounded-full"
             :class="index === currentIndex ? 'bg-[#141e0e]' : 'bg-[#a2af9b]'"
@@ -53,10 +53,11 @@
       </div>
 
       <!-- Product Form -->
-      <form class="py-24 px-32 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-16 text-[#6d654f]">
-        <p id="origin">{{ originText }}</p>
-        <h2 class="text-4xl py-4 font-semibold">{{ product.name }}</h2>
-        <p id="price" class="text-lg font-semibold">{{ `$${price}` }}</p>
+      <form class="py-24 px-32 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-12 text-[#6d654f]">
+        <p id="origin">{{ originText }} • Single Origin</p>
+        <h2 class="text-4xl pt-3 font-semibold">{{ product.name }}</h2>
+        <h3 class="pt-2 pb-4">{{ product.english_name }}</h3>
+        <p id="price" class="text-xl font-semibold">{{ `$${price}` }}</p>
 
         <div class="py-4">
           <label for="quantity" class="block font-semibold">數量</label>
@@ -65,24 +66,22 @@
             name="quantity"
             id="quantity"
             value="1"
-            min="1"
+            :min="1"
+            :max="product.stock"
             class="border border-gray-300 px-3 py-2 rounded w-1/2"
             v-model.number="quantity"
           />
+          <p v-if="isSoldOut" class="text-red-500 font-semibold">已售完</p>
+          <p v-else-if="isLowStock" class="text-red-500 font-semibold">
+            剩餘庫存：{{ product.stock }}
+          </p>
+          <!-- TODO:做完庫存管理記得刪掉庫存顯示(售完和低庫存不用刪) -->
+          <p v-else>目前庫存：{{ product.stock }}</p>
         </div>
 
         <div>
-          <label for="weight" class="block font-semibold">重量</label>
-          <select
-            v-model.number="weight"
-            name="weight"
-            id="weight"
-            class="border border-gray-300 px-3 py-2 rounded w-1/2"
-          >
-            <option value="100">100g</option>
-            <option value="250">250g</option>
-            <option value="500">500g</option>
-          </select>
+          <p class="block font-semibold">重量</p>
+          <p class="pt-1">{{ product.weight }}</p>
         </div>
 
         <div class="py-4">
@@ -92,7 +91,7 @@
             class="w-1/2 py-2 flex justify-between font-semibold"
           >
             烘焙度
-            <i class="fa-solid fa-plus"></i>
+            <i :class="showRoast ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
           </button>
           <p v-show="showRoast" class="pb-2">{{ roastText }}</p>
           <button
@@ -101,7 +100,7 @@
             class="w-1/2 py-2 flex justify-between font-semibold"
           >
             處理方式
-            <i class="fa-solid fa-plus"></i>
+            <i :class="showProcess ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
           </button>
           <p v-show="showProcess" class="pb-2">{{ processingText }}</p>
           <button
@@ -110,7 +109,7 @@
             class="w-1/2 py-2 flex justify-between font-semibold"
           >
             風味特性
-            <i class="fa-solid fa-plus"></i>
+            <i :class="showFlavor ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
           </button>
           <p v-show="showFlavor" class="pb-2">
             {{ descriptionFlavor }}
@@ -121,31 +120,18 @@
 
         <div>
           <button
-            @click="toggleHeart"
-            v-show="!heartBtn"
-            type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 rounded hover:bg-[#ABB7A5]"
-          >
-            <i class="fa-regular fa-heart"></i>
-          </button>
-          <button
-            @click="toggleHeart"
-            v-show="heartBtn"
-            type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 rounded hover:bg-[#ABB7A5]"
-          >
-            <i class="fa-solid fa-heart"></i>
-          </button>
-          <button
             @click="addToCart"
+            :disabled="isSoldOut"
             type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 mx-2 rounded font-bold hover:bg-[#ABB7A5]"
+            class="bg-[#6d654f] text-white text-sm p-3.5 mr-2 rounded-md w-32 font-bold hover:bg-[#ABB7A5] disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             加到購物車
           </button>
           <button
-            type="submit"
-            class="bg-[#6d654f] text-white text-sm p-3.5 rounded w-24 font-bold hover:bg-[#ABB7A5]"
+            type="button"
+            :disabled="isSoldOut"
+            @click="buyNow"
+            class="bg-[#6d654f] text-white text-sm p-3.5 rounded-md w-32 font-bold hover:bg-[#ABB7A5] disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             立即購買
           </button>
@@ -213,7 +199,7 @@
 
 <script setup lang="ts">
   import { ref, computed, onMounted, watch } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
   import type { ProductRequest } from '@/services/ProductDetail';
 
@@ -308,8 +294,9 @@
       recommendations.value = recommendationsRes.data;
       console.log('✅ 推薦商品數量:', recommendations.value.length);
 
-      // 重置圖片輪播索引
+      // 重置圖片輪播索引、重置數量
       currentIndex.value = 0;
+      quantity.value = 1;
     } catch (err: unknown) {
       console.error('❌ API載入失敗', err);
       error.value = '商品載入失敗';
@@ -348,30 +335,44 @@
 
   // 重量對應價格
   const quantity = ref(1);
-  const weight = ref(250);
   const price = computed(() => {
     if (!product.value) {
       return 0;
     }
-    if (weight.value === 100) {
-      return (product.value.price * quantity.value) / 2;
-    } else if (weight.value === 250) {
-      return product.value.price * quantity.value;
-    } else if (weight.value === 500) {
-      return product.value.price * quantity.value * 2;
-    } else {
-      return 0;
+    return product.value.price * quantity.value;
+  });
+
+  // 庫存顯示(無庫存/低庫存)
+  const isSoldOut = computed(() => {
+    if (!product.value) return false;
+    return product.value.stock === 0;
+  });
+  const isLowStock = computed(() => {
+    if (!product.value) return false;
+    return product.value.stock > 0 && product.value.stock < 21;
+  });
+
+  // 防止使用者手動輸入違規數字
+  watch(quantity, (newVal) => {
+    if (!product.value) return;
+    if (newVal > product.value.stock) {
+      quantity.value = product.value.stock;
+    } else if (newVal < 1) {
+      quantity.value = 1;
     }
   });
 
-  // 加入收藏與購物車提示
-  const heartBtn = ref(false);
-  const toggleHeart = () => {
-    heartBtn.value = !heartBtn.value;
-    alert(heartBtn.value ? '已加入收藏' : '已從收藏移除');
-  };
+  // TODO:加入購物車
   const addToCart = () => {
     alert('已加入購物車');
+  };
+
+  // TODO:立即購買：檢驗登入狀態，並導向結帳頁
+  const router = useRouter();
+  const buyNow = () => {
+    if (!product.value) return;
+    // 導向結帳頁面
+    router.push('/Checkout');
   };
 
   // 商品資訊欄位展開

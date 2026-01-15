@@ -1,16 +1,16 @@
 <template>
-  <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+  <main class="flex-1 flex flex-col h-full relative">
     <header
-      class="h-16 flex items-center justify-between px-6 border-b backdrop-blur-md sticky top-0 z-20"
+      class="h-16 flex items-center justify-between px-6 border-b backdrop-blur-md sticky top-0 z-20 flex-shrink-0"
     >
       <div class="flex items-center gap-4">
         <button class="md:hidden p-2">
           <span class="material-symbols-outlined">menu</span>
         </button>
         <div class="flex items-center text-sm gap-2">
-          <span>訂單管理</span>
+          <p>訂單管理</p>
           <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-          <span class="font-semibold">訂單編號 #ORD-7352</span>
+          <p class="font-semibold">訂單編號 #ORD-7352</p>
         </div>
       </div>
       <div class="flex items-center gap-4">
@@ -18,55 +18,56 @@
           class="flex items-center justify-center gap-2 h-9 px-4 border rounded-lg text-xs font-semibold hover:bg-gray-50"
         >
           <span class="material-symbols-outlined text-[18px]">print</span>
-          <span>列印收據</span>
+          <p>列印收據</p>
         </button>
       </div>
     </header>
 
     <div class="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth">
       <div class="max-w-[1200px] mx-auto flex flex-col gap-8">
-        <div class="bg-surface-light rounded-xl p-6 shadow-sm border border-[#e7dacf] bg-white">
+        <div class="rounded-xl p-6 shadow-sm border border-[#e7dacf] bg-white">
           <div
             class="flex flex-col md:flex-row items-center justify-between gap-6 overflow-x-auto pb-4 md:pb-0 scrollbar-hide"
           >
             <div class="flex flex-col items-center gap-2 min-w-[100px] step-completed">
-              <span class="material-symbols-outlined icon-fill text-2xl text-emerald-500">
-                check_circle
-              </span>
-              <span class="text-xs text-emerald-500">未付款</span>
+              <span class="material-symbols-outlined text-2xl text-emerald-500">check_circle</span>
+              <span class="material-symbols-outlined text-2xl text-[#e7dacf]">money_off</span>
+              <p class="text-xs text-emerald-500">待付款</p>
             </div>
             <div class="hidden md:block h-[2px] flex-1 bg-emerald-500"></div>
             <div class="flex flex-col items-center gap-2 min-w-[100px] step-completed">
-              <span class="material-symbols-outlined icon-fill text-2xl text-emerald-500">
-                check_circle
-              </span>
-              <span class="text-xs text-emerald-500">已付款</span>
+              <span class="material-symbols-outlined text-2xl text-emerald-500">check_circle</span>
+              <span class="material-symbols-outlined text-2xl text-[#e7dacf]">payments</span>
+              <p class="text-xs text-emerald-500">已付款</p>
             </div>
             <div class="hidden md:block h-[2px] flex-1 bg-[#e27312]"></div>
             <div class="flex flex-col items-center gap-2 min-w-[100px] step-active">
               <span class="material-symbols-outlined icon-fill text-2xl text-[#e27312]">
                 autorenew
               </span>
-              <span class="text-xs text-[#e27312]">Processing</span>
+              <p class="text-xs text-[#e27312]">備貨中</p>
             </div>
             <div class="hidden md:block h-[2px] flex-1 bg-[#e7dacf]"></div>
             <div class="flex flex-col items-center gap-2 min-w-[100px] step-pending">
               <span class="material-symbols-outlined text-2xl text-[#e7dacf]">local_shipping</span>
-              <span class="text-xs text-[#e7dacf]">已出貨</span>
+              <p class="text-xs text-[#e7dacf]">已出貨</p>
             </div>
             <div class="hidden md:block h-[2px] flex-1 bg-[#e7dacf]"></div>
             <div class="flex flex-col items-center gap-2 min-w-[100px] step-pending">
               <span class="material-symbols-outlined text-2xl text-[#e7dacf]">verified</span>
-              <span class="text-xs text-[#e7dacf]">已完成</span>
+              <p class="text-xs text-[#e7dacf]">已完成</p>
+            </div>
+            <div class="hidden md:block h-[2px] flex-1 bg-[#e7dacf]"></div>
+            <div class="flex flex-col items-center gap-2 min-w-[100px] step-pending">
+              <span class="material-symbols-outlined text-2xl text-[#e7dacf]">cancel</span>
+              <p class="text-xs text-[#e7dacf]">已取消</p>
             </div>
           </div>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div class="lg:col-span-2 flex flex-col gap-8">
             <div class="border border-[#e7dacf] bg-white rounded-xl overflow-hidden shadow-sm">
-              <div
-                class="px-6 py-4 border-b border-[#e7dacf] flex justify-between items-center bg-background-light/30"
-              >
+              <div class="px-6 py-4 border-b border-[#e7dacf] flex justify-between items-center">
                 <h3 class="font-bold flex items-center gap-2">
                   <span class="material-symbols-outlined">receipt_long</span>
                   訂購商品

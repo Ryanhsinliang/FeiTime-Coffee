@@ -28,7 +28,7 @@
         >
           <RouterLink
             :to="link.to"
-            class="relative block px-2 py-1"
+            class="relative block px-2 py-1 cursor-pointer"
             :style="[textColorStyle, isActive(link) ? activeStyle : {}]"
             @mouseenter="hoveredLink = link.name"
             @mouseleave="hoveredLink = null"

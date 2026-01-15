@@ -104,10 +104,11 @@
     const target = e.target;
     if (!target) return;
 
-    // 檢查元素本身或其父層是否為可點擊元件
+    // 更完整的檢測
     const isClickable =
-      target.closest('a, button, input, select, [role="button"]') ||
-      window.getComputedStyle(target).cursor === 'pointer';
+      target.closest('a, button, input, select, textarea, [role="button"], [onclick]') ||
+      target.classList.contains('cursor-pointer') ||
+      target.hasAttribute('data-clickable');
 
     isHover.value = !!isClickable;
   };

@@ -241,7 +241,27 @@ export const useCartStore = defineStore('cart', () => {
         }
     }
 
-    function clearCart() {
+    async function clearCart() {
+        // 1. 同步清除後端 (如果已登入)
+        const authStore = useAuthStore();
+        if (authStore.isLoggedIn && authStore.user?.id) {
+            try {
+                console.log('🧹 Clearing backend cart for user:', authStore.user.id);
+                // 使用 query param 傳遞 userId
+                const response = await fetch(`${API_BASE_URL}/api/cart?userId=${authStore.user.id}`, {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    console.log('✅ Backend cart cleared');
+                } else {
+                    console.warn('❌ Failed to clear backend cart:', await response.json());
+                }
+            } catch (error) {
+                console.error('Failed to clear backend cart:', error);
+            }
+        }
+
+        // 2. 清除前端
         items.value = [];
     }
 

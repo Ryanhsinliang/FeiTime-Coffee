@@ -61,10 +61,9 @@
   const memberBuyArr = ref<CartRule[]>([]); // 裝有同一個id的人買的所有產品物件 的陣列
   const fontAmount = ref(0); //總價錢
 
-  // 計算總價錢 準備給後端
+  // 計算總價錢 準備給後端再打一次賴佩
   onMounted(async () => {
-    // 打API拿這個user.id的人 買的所有產品的物件 的陣列
-
+    // 【 1 】 用userid再抓一次資料
     const buyId = 26; // 假參數 之後用user.id 到時候把參數放進()
     const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列
     const idCart = cartData.filter((obj: CartRule) => {
@@ -77,21 +76,19 @@
 
     // 總價錢 (不含運)
     const totalCost = memberBuyArr.value.reduce((sum, obj) => {
-      return sum + Number(obj.product.price);
+      return sum + Number(obj.product.price) * Number(obj.quantity);
     }, 0);
 
     if (totalCost < 350) {
       alert('沒有訂單');
       return;
-      // 防呆 總金額會 >= 最低價產品的價格
+      // 防呆 總金額 會 >= 最低價產品的價格
     } else {
       fontAmount.value = totalCost + 250;
       // 運費 250
     }
-  });
 
-  // 【 linepay 】
-  onMounted(async () => {
+    // 【 2 】 把資料給後端
     const transactionId = route.query.transactionId;
     // 付款成功後 linepay 會幫忙導回成功頁 並透過網址傳遞  transactionId (交易編號)
 
@@ -118,8 +115,9 @@
           router.push('/payment-cancel');
         }
       } catch (error: any) {
-        console.log('失敗');
-        console.error('確認失敗：', error.res?.data || error.message);
+        // console.log('失敗');
+        // console.error('確認失敗：', error.res?.data || error.message);
+        router.push('/payment-cancel');
       }
     }
   });

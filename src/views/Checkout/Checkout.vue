@@ -273,11 +273,10 @@
     }); // 篩選出 所有user.id是buyId 的物件 的陣列 [{},{},{}]
 
     memberBuyArr.value = idCart;
-    console.log(memberBuyArr.value);
 
     // 總價錢 (不含運)
     const totalCost = memberBuyArr.value.reduce((sum, obj) => {
-      return sum + Number(obj.product.price) * Number(obj.product.quantity);
+      return sum + Number(obj.product.price) * Number(obj.quantity);
     }, 0);
     productTotal.value = totalCost;
 
@@ -292,6 +291,8 @@
     // 概念釐清 : 一個table 只是user.id=1買的一個其中產品
     // user.id = 1 可能買很多個不同的商品 所以會有很多個table
     // 我要找出這些table 加總 總金額 並加上【運費】
+    console.log(memberBuyArr.value);
+    console.log(fontAmount.value);
   });
 
   // 【 串linepay 】
@@ -308,7 +309,7 @@
       const response = await axios.post(`${linepayUrl}/linepay/gobuy`, {
         amount: fontAmount.value,
         productName: 'FeiTime 咖啡購物',
-        products: memberBuyArr.value,
+        products: memberBuyArr.value, // 整包丟給後端
       });
 
       if (response.data.returnCode === '0000') {

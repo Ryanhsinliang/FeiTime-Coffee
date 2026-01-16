@@ -30,7 +30,7 @@
           <h2 class="text-2xl font-semibold mb-[20px]">收件人資訊</h2>
           <label for="name" class="block">姓名</label>
           <input
-            v-model="form.name"
+            v-model="form.recipient_name"
             type="text"
             id="name"
             placeholder="姓名"
@@ -40,7 +40,7 @@
 
           <label for="phone" class="block">電話</label>
           <input
-            v-model="form.phone"
+            v-model="form.recipient_phone"
             type="tel"
             id="phone"
             placeholder="電話"
@@ -48,19 +48,9 @@
             class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
           />
 
-          <label for="email" class="block">電子郵件</label>
-          <input
-            v-model="form.email"
-            type="email"
-            id="email"
-            placeholder="電子郵件"
-            required
-            class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
-          />
-
           <label for="address" class="block">收件人地址</label>
           <input
-            v-model="form.address"
+            v-model="form.recipient_address"
             type="text"
             id="address"
             placeholder="收件地址"
@@ -70,7 +60,7 @@
 
           <label for="remark" class="block">備註</label>
           <input
-            v-model="form.remark"
+            v-model="form.customer_note"
             type="text"
             id="remark"
             placeholder="請輸入備註（ 最多200字 ）"
@@ -90,6 +80,8 @@
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
+              v-model="form.shipping_method"
+              value="linepay"
             />
             <label for="m-linepay" class="pl-[20px]">
               <img src="./assets/linepay.svg" alt="linepay支付" class="w-[160px] h-[60px]" />
@@ -103,6 +95,8 @@
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
+              v-model="form.shipping_method"
+              value="paypay"
             />
             <label for="m-paypay" class="pl-[20px]">
               <img src="./assets/paypay.svg" alt="paypay支付" class="w-[160px] h-[60px]" />
@@ -116,6 +110,8 @@
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
+              v-model="form.shipping_method"
+              value="card"
             />
             <label for="m-card" class="pl-[20px]">
               <img
@@ -133,6 +129,8 @@
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
+              v-model="form.shipping_method"
+              value="convenience"
             />
             <label for="m-ok711" class="pl-[20px]">
               <img src="./assets/ok711.svg" alt="超商付款" class="w-[160px] h-[60px]" />
@@ -146,6 +144,8 @@
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
+              v-model="form.shipping_method"
+              value="myseif"
             />
             <label for="m-come" class="pl-[20px]">
               <img src="./assets/come.svg" alt="貨到付款" class="w-[160px] h-[60px]" />
@@ -220,20 +220,13 @@
     </form>
   </main>
   <p class="text-[48px] bg-[#ffb8f4] p-3" @click="useLinePay">測試linepay</p>
+  <p class="text-[48px] bg-[#b8f3ff] p-3" @click="formPost">測試form</p>
 </template>
 
 <script setup lang="ts">
   import axios from 'axios';
   import { ref, reactive, onMounted } from 'vue';
   import { getCart } from '@/services/checkout';
-
-  const form = reactive({
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
-    remark: '',
-  });
 
   // 【 抓購物車 】
   interface UserRule {
@@ -298,6 +291,32 @@
     console.log(memberBuyArr.value);
     console.log(fontAmount.value);
   });
+
+  // interface FormData {
+  //   name: string;
+  //   phone: string;
+  //   email: string;
+  //   address: string;
+  //   remark: string;
+  // }
+
+  // 送資料去DB 的order
+  const form = reactive({
+    subtotal: productTotal, // 只有商品的價錢
+    shipping_fee: 250, //運費
+    total_amount: fontAmount, // 總價錢
+    payment_method: '', // 付款方式
+    recipient_name: '',
+    recipient_phone: '',
+    recipient_address: '',
+    customer_note: '',
+    shipping_method: '',
+  });
+
+  // 打post
+  const formPost = () => {
+    console.log(form);
+  };
 
   // 【 串linepay 】
   const linepayUrl = import.meta.env.VITE_LINK;

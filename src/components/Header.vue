@@ -85,22 +85,22 @@
             <transition name="dropdown">
               <div
                 v-if="userMenuOpen"
-                class="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-lg border overflow-hidden"
+                class="absolute right-0 top-full mt-2 w-36 rounded-lg shadow-lg border overflow-hidden"
                 :class="scrollY < bannerHeight ? 'border-[#DCCFC0]/50' : 'border-[#DCCFC0]/80'"
                 :style="dropdownMenuStyle"
               >
                 <!-- 未登入狀態 -->
-                <div v-if="!isLoggedIn" class="p-3">
+                <div v-if="!isLoggedIn" class="p-2.5">
                   <div class="flex gap-2">
                     <button
-                      class="flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                      class="flex-1 py-1.5 px-2.5 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
                       :style="buttonStyle"
                       @click="handleRegister"
                     >
                       註冊
                     </button>
                     <button
-                      class="flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                      class="flex-1 py-1.5 px-2.5 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
                       :style="buttonStyle"
                       @click="handleLogin"
                     >
@@ -110,9 +110,9 @@
                 </div>
 
                 <!-- 已登入狀態 -->
-                <div v-else class="py-2">
+                <div v-else class="py-1.5">
                   <button
-                    class="w-full text-left px-4 py-3 text-sm font-medium transition-colors duration-200"
+                    class="w-full text-left px-3 py-2.5 text-sm font-medium transition-colors duration-200"
                     :style="menuItemHoverStyle('member')"
                     @mouseenter="hoveredMenuItem = 'member'"
                     @mouseleave="hoveredMenuItem = null"
@@ -124,14 +124,14 @@
                     </span>
                   </button>
                   <div
-                    class="mx-3 h-px"
+                    class="mx-2.5 h-px"
                     :style="{
                       backgroundColor: scrollY < bannerHeight ? '#DCCFC0' : '#FAF9EE',
                       opacity: 0.3,
                     }"
                   ></div>
                   <button
-                    class="w-full text-left px-4 py-3 text-sm font-medium transition-colors duration-200"
+                    class="w-full text-left px-3 py-2.5 text-sm font-medium transition-colors duration-200"
                     :style="menuItemHoverStyle('logout')"
                     @mouseenter="hoveredMenuItem = 'logout'"
                     @mouseleave="hoveredMenuItem = null"

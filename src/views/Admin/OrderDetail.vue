@@ -280,5 +280,147 @@
       </div>
     </div>
   </main>
+
+  <!-- 測試用 -->
+  <div class="p-4">
+    <button @click="$router.back()" class="mb-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+      ← 返回列表
+    </button>
+
+    <!-- Loading / Error -->
+    <p v-if="loading">載入中...</p>
+    <p v-else-if="error" class="text-red-500">{{ error }}</p>
+
+    <!-- 訂單明細 -->
+    <div v-else-if="order" class="bg-white rounded-lg shadow p-6">
+      <h1 class="text-2xl font-bold mb-6">🧾 訂單明細</h1>
+
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="text-sm text-gray-600">訂單編號</label>
+          <div class="font-bold">{{ order.order_number }}</div>
+        </div>
+        <div>
+          <label class="text-sm text-gray-600">訂單狀態</label>
+          <div>{{ order.order_status }}</div>
+        </div>
+        <div>
+          <label class="text-sm text-gray-600">付款狀態</label>
+          <div>{{ order.payment_status }}</div>
+        </div>
+        <div>
+          <label class="text-sm text-gray-600">付款方式</label>
+          <div>{{ order.payment_method }}</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-600">訂購商品</label>
+        <div>{{ order.order_items }}</div>
+      </div>
+
+      <hr class="my-6" />
+
+      <h2 class="text-lg font-bold mb-4">收件資訊</h2>
+      <div class="space-y-2">
+        <div>
+          <strong>收件人:</strong>
+          {{ order.recipient_name }}
+        </div>
+        <div>
+          <strong>電話:</strong>
+          {{ order.recipient_phone }}
+        </div>
+        <div>
+          <strong>地址:</strong>
+          {{ order.recipient_address }}
+        </div>
+        <div>
+          <strong>配送方式:</strong>
+          {{ order.shipping_method }}
+        </div>
+        <div v-if="order.tracking_number">
+          <strong>物流單號:</strong>
+          {{ order.tracking_number }}
+        </div>
+      </div>
+
+      <hr class="my-6" />
+
+      <h2 class="text-lg font-bold mb-4">金額明細</h2>
+      <div class="space-y-2">
+        <div class="flex justify-between">
+          <span>商品小計</span>
+          <span>${{ order.subtotal }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span>運費</span>
+          <span>${{ order.shipping_fee }}</span>
+        </div>
+        <hr />
+        <div class="flex justify-between text-lg font-bold">
+          <span>總金額</span>
+          <span>${{ order.total_amount }}</span>
+        </div>
+      </div>
+
+      <hr class="my-6" />
+
+      <div class="text-sm text-gray-600 space-y-1">
+        <div>建立時間: {{ new Date(order.createdAt).toLocaleString('zh-TW') }}</div>
+        <div v-if="order.paid_at">
+          付款時間: {{ new Date(order.paid_at).toLocaleString('zh-TW') }}
+        </div>
+        <div v-if="order.shipped_at">
+          出貨時間: {{ new Date(order.shipped_at).toLocaleString('zh-TW') }}
+        </div>
+      </div>
+
+      <div v-if="order.customer_note" class="mt-4 p-3 bg-yellow-50 rounded">
+        <strong>買家備註:</strong>
+        {{ order.customer_note }}
+      </div>
+    </div>
+  </div>
 </template>
-<script></script>
+
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue';
+  import { useRoute } from 'vue-router';
+  import { callSingleOrder } from '@/services/adminOrderService';
+  import type { OrderRequest } from '@/services/adminOrderService';
+
+  const route = useRoute();
+
+  const order = ref<OrderRequest | null>(null);
+  const loading = ref(false);
+  const error = ref('');
+
+  async function loadOrder(order_number: string) {
+    loading.value = true;
+    error.value = '';
+
+    try {
+      console.log('🔍 載入訂單明細:', order_number);
+      const res = await callSingleOrder(order_number);
+      order.value = res.data;
+      console.log('✅ 載入成功:', order.value);
+    } catch (err: any) {
+      console.error('❌ 載入失敗:', err);
+      error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  onMounted(() => {
+    const orderNumber = route.params.order_number as string;
+    console.log('訂單編號:', orderNumber);
+
+    if (orderNumber) {
+      loadOrder(orderNumber);
+    } else {
+      error.value = '缺少訂單編號';
+    }
+  });
+</script>

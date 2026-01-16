@@ -18,8 +18,10 @@ import ResetPassword from '@/views/Login/ResetPassword.vue';
 import GoogleCallback from '@/views/Login/GoogleCallback.vue';
 import Admin from '@/views/Admin/Admin.vue';
 import AdminOrders from '@/views/Admin/Orders.vue';
+import AdminOrderDetail from '@/views/Admin/OrderDetail.vue';
 import AdminStocks from '@/views/Admin/Stock.vue';
 import AdminCustomers from '@/views/Admin/Customers.vue';
+import AdminCustomerDetail from '@/views/Admin/CustomerDetail.vue';
 
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
@@ -103,11 +105,10 @@ const routes = [
         name: 'AdminOrders',
         component: AdminOrders,
       },
-      // TODO:測試用記得修改
       {
         path: 'orders/:order_number',
         name: 'AdminOrdersDetail',
-        component: () => import('@/views/Admin/OrderDetail.vue'),
+        component: AdminOrderDetail,
         props: true,
       },
 
@@ -128,7 +129,7 @@ const routes = [
       {
         path: 'customers/id',
         name: 'AdminCustomerDetail',
-        component: () => import('@/views/Admin/CustomerDetail.vue'),
+        component: AdminCustomerDetail,
         props: true,
       },
     ],

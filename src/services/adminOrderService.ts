@@ -1,6 +1,6 @@
 import api from '@/services/api';
 
-// 定義商品型別
+// 定義訂單型別
 export interface OrderRequest {
   order_number: string; //  訂單編號(唯一)
   subtotal: number; // 商品小計
@@ -20,6 +20,26 @@ export interface OrderRequest {
   publishedAt: string;
   paid_at: string;
   shipped_at: string;
+  user: OrderUser;
+  order_item: OrderItem[];
+}
+
+export interface OrderItem {
+  id: number;
+  pid: string;
+  quantity: number;
+  snapshot_name: string;
+  snapshot_price: number;
+  snapshot_image: string | null;
+  snapshot_weight: string;
+  item_total: number;
+}
+
+export interface OrderUser {
+  id: number;
+  username: string;
+  email: string;
+  user_role: 'Admin' | 'Member';
 }
 
 export interface OrderListResponse {
@@ -37,7 +57,7 @@ export interface SingleOrderResponse {
 
 //呼叫 後端 Express 的 API
 export async function callOrders(page = 1, pageSize = 100): Promise<OrderListResponse> {
-  const res = await api.get<OrderListResponse>('/api/admin/orders', {
+  const res = await api.get<OrderListResponse>('/api/admin-orders', {
     params: {
       page,
       pageSize,
@@ -48,6 +68,6 @@ export async function callOrders(page = 1, pageSize = 100): Promise<OrderListRes
 
 // 取得單筆訂單
 export async function callSingleOrder(order_number: string): Promise<SingleOrderResponse> {
-  const res = await api.get<SingleOrderResponse>(`/api/admin/orders/${order_number}`);
+  const res = await api.get<SingleOrderResponse>(`/api/admin-orders/${order_number}`);
   return res.data;
 }

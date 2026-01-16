@@ -150,5 +150,3 @@
     object-fit: cover;
   }
 </style>
-
-<style></style>

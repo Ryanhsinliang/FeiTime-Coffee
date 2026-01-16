@@ -226,7 +226,7 @@
 <script setup lang="ts">
   import axios from 'axios';
   import { ref, reactive, onMounted } from 'vue';
-  import { getCart } from '@/services/checkout';
+  import { getCart, formGoPost } from '@/services/checkout';
 
   // 【 抓購物車 】
   interface UserRule {
@@ -314,8 +314,9 @@
   });
 
   // 打post
-  const formPost = () => {
+  const formPost = async () => {
     console.log(form);
+    await formGoPost();
   };
 
   // 【 串linepay 】

@@ -267,7 +267,7 @@
     remark: '',
   });
 
-  // 串linepay
+  // 【 串linepay 】
   const linepayUrl = import.meta.env.VITE_LINK;
   const useLinePay = async () => {
     try {
@@ -291,41 +291,55 @@
     }
   };
 
-  // 抓購物車
-  interface cartProductRule {
-    // 購物車物件 內的 陣列 的規範
+  // 【 抓購物車 】
+  interface UserRule {
+    // 購物車物件內的 user物件 的規範
+    id: number;
+  }
+
+  interface ProductRule {
+    // 購物車物件內的 product物件 的規範
+    id: number;
     name: string;
     price: number;
     quantity: number;
   }
 
-  interface cartRule {
+  interface CartRule {
     // 購物車物件 的規範
     id: number;
     item_total: number; // 總價錢
-    product: cartProductRule[];
+    product: ProductRule;
+    user: UserRule;
     quantity: number;
-    snapshot_price: number;
   }
 
-  const memberCart = ref<Partial<cartRule>>({}); // 一個產品資訊的物件
+  const memberBuyArr = ref<CartRule[]>([]); // 裝有同一個id的人買的所有產品物件 的陣列
+  const amount = ref(0);
 
+  // 打API拿這個user.id的人 買的所有產品的物件 的陣列
   const cart = async () => {
-    const AAA = 12; // 假參數 之後用user.id 到時候把參數放進()
+    const buyId = 26; // 假參數 之後用user.id 到時候把參數放進()
+    const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列
+    const idCart = cartData.filter((obj: CartRule) => {
+      if (Number(obj?.user?.id)) {
+        return obj.user.id == buyId;
+      }
+    }); // 篩選出 所有user.id是buyId 的物件 的陣列 [{},{},{}]
 
-    const cartData = await getCart(); // 它是陣列
-    const idCart = cartData.filter((obj: cartRule) => {
-      return Number(obj.id) == AAA;
-    }); // 這會篩選出 裝有所有user.id(AAA)是12的物件 的陣列 [ {},{},{}]
-    console.log(idCart);
+    memberBuyArr.value = idCart;
+    console.log(memberBuyArr);
+
+    // 總價錢 (不含運)
+    const totalCost = memberBuyArr.value.reduce((sum, obj) => {
+      return sum + Number(obj.product.price);
+    }, 0);
+
+    console.log(totalCost);
   };
-  // 概念釐清 : 一個table 只是id=1買的一個其中產品
-  // id = 1 可能買很多個不同的商品 所以會有很多個table
+  // 概念釐清 : 一個table 只是user.id=1買的一個其中產品
+  // user.id = 1 可能買很多個不同的商品 所以會有很多個table
   // 我要找出這些table 加總 總金額 並加上【運費】
-
-  // 之後慈會加一個欄位 <付款狀態>
-  // 當它成功結帳後 我要把 <付款狀態> 改成已付款
-  // 避免每次在撈資料時 撈到之前已結帳的單
 </script>
 
 <style>

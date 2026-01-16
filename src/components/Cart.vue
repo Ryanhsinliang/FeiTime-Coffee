@@ -127,12 +127,23 @@
             <span class="font-extrabold text-2xl text-[#1a2e26] font-notoserif">${{ total.toFixed(2) }}</span>
           </div>
         </div>
+        <!-- 庫存不明警告 -->
+        <div v-if="hasInvalidStockItems" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p class="text-sm text-red-600 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px]">warning</span>
+            <span>部分商品庫存不明，無法結帳</span>
+          </p>
+        </div>
         <button
-          class="w-full group relative flex items-center justify-center gap-2 bg-[#1a2e26] hover:bg-[#A2AF9B] hover:text-white text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-glow font-notoserif"
+          class="w-full group relative flex items-center justify-center gap-2 font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg font-notoserif"
+          :class="hasInvalidStockItems 
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+            : 'bg-[#1a2e26] hover:bg-[#A2AF9B] hover:text-white text-white hover:shadow-glow'"
+          :disabled="hasInvalidStockItems"
           @click="handleCheckout"
         >
-          <span>前往結帳</span>
-          <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          <span>{{ hasInvalidStockItems ? '無法結帳' : '前往結帳' }}</span>
+          <span v-if="!hasInvalidStockItems" class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
         </button>
         <button
           class="w-full mt-4 text-center text-sm font-semibold text-[#546e63] hover:text-[#1a2e26] transition-colors"
@@ -165,6 +176,8 @@ const recommendations = computed(() => cartStore.recommendations)
 const subtotal = computed(() => cartStore.subtotal)
 const total = computed(() => cartStore.total)
 const totalItems = computed(() => cartStore.totalItems)
+const hasInvalidStockItems = computed(() => cartStore.hasInvalidStockItems)
+const invalidStockItemNames = computed(() => cartStore.invalidStockItemNames)
 
 // Actions - 綁定 Store 的操作方法
 const closeCart = cartStore.closeCart

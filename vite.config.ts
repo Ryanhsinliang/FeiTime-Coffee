@@ -28,6 +28,15 @@ export default defineConfig({
   },
   test: {
     projects: [
+      // Unit tests project
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          include: ['src/**/*.spec.ts', 'src/**/*.test.ts'],
+          environment: 'jsdom',
+        },
+      },
       {
         extends: true,
         plugins: [

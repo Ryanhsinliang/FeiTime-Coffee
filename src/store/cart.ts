@@ -49,6 +49,28 @@ export const useCartStore = defineStore('cart', () => {
         }, 0);
     });
 
+    // 檢查購物車是否有庫存不明的商品 (阻擋結帳用)
+    const hasInvalidStockItems = computed(() => {
+        return items.value.some(item =>
+            item.stock === undefined ||
+            item.stock === null ||
+            item.stock === 9999 ||
+            item.stock === Infinity
+        );
+    });
+
+    // 取得所有庫存不明的商品名稱
+    const invalidStockItemNames = computed(() => {
+        return items.value
+            .filter(item =>
+                item.stock === undefined ||
+                item.stock === null ||
+                item.stock === 9999 ||
+                item.stock === Infinity
+            )
+            .map(item => item.name);
+    });
+
     // Actions
     function toggleCart() { isOpen.value = !isOpen.value; }
     function openCart() { isOpen.value = true; }
@@ -97,7 +119,7 @@ export const useCartStore = defineStore('cart', () => {
         // 1. 更新 Pinia
         const existingItem = items.value.find(item => item.id === itemToAdd.id);
         const currentQuantity = existingItem ? existingItem.quantity : 0;
-        const maxStock = itemToAdd.stock ?? 999;
+        const maxStock = itemToAdd.stock ?? Infinity; // 若無庫存欄位則不限制
 
         if (currentQuantity + itemToAdd.quantity > maxStock) {
             const allowedToAdd = Math.max(0, maxStock - currentQuantity);
@@ -207,7 +229,7 @@ export const useCartStore = defineStore('cart', () => {
             if (quantity <= 0) {
                 await removeItem(productId);
             } else {
-                const maxStock = item.stock ?? 999;
+                const maxStock = item.stock ?? Infinity; // 若無庫存欄位則不限制
                 if (quantity > maxStock) {
                     item.quantity = maxStock;
                     console.warn(`數量已達庫存上限 (${maxStock})`);
@@ -303,7 +325,7 @@ export const useCartStore = defineStore('cart', () => {
                 quantity: item.quantity,
                 image: item.snapshot_image,
                 weight: item.snapshot_weight,
-                stock: 999, // 從 Strapi 載入的暫時設為無限制
+                stock: (item.product as any)?.stock ?? undefined, // 從關聯的 Product 取得即時庫存
                 strapiDocumentId: item.documentId, // 關鍵：確保 documentId 被設置
                 item_total: item.item_total
             }));
@@ -325,6 +347,8 @@ export const useCartStore = defineStore('cart', () => {
         subtotal,
         total,
         totalItems,
+        hasInvalidStockItems,
+        invalidStockItemNames,
         addItem,
         removeItem,
         updateQuantity,

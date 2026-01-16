@@ -260,6 +260,7 @@
   const productTotal = ref(0); // 全部商品價錢
   const fontAmount = ref(0); //總價錢
 
+  // 畫面開始時 抓購物車的一條條 list 渲染畫面 並計算價錢 準備給後端
   onMounted(async () => {
     // 打API拿這個user.id的人 買的所有產品的物件 的陣列
 
@@ -272,13 +273,12 @@
     }); // 篩選出 所有user.id是buyId 的物件 的陣列 [{},{},{}]
 
     memberBuyArr.value = idCart;
-    console.log(memberBuyArr);
+    console.log(memberBuyArr.value);
 
     // 總價錢 (不含運)
     const totalCost = memberBuyArr.value.reduce((sum, obj) => {
-      return sum + Number(obj.product.price);
+      return sum + Number(obj.product.price) * Number(obj.product.quantity);
     }, 0);
-
     productTotal.value = totalCost;
 
     if (productTotal.value < 350) {
@@ -289,9 +289,6 @@
       fontAmount.value = productTotal.value + 250;
       // 運費 250
     }
-
-    console.log(fontAmount.value);
-
     // 概念釐清 : 一個table 只是user.id=1買的一個其中產品
     // user.id = 1 可能買很多個不同的商品 所以會有很多個table
     // 我要找出這些table 加總 總金額 並加上【運費】
@@ -301,10 +298,17 @@
   const linepayUrl = import.meta.env.VITE_LINK;
   const useLinePay = async () => {
     try {
-      // 前往後端
+      // 防呆
+      if (memberBuyArr.value.length === 0) {
+        alert('購物車沒有物品QAQ');
+        return;
+      }
+
+      // 把資料給後端
       const response = await axios.post(`${linepayUrl}/linepay/gobuy`, {
-        amount: 3, // 這邊之後拉資料庫
-        productName: '美味咖啡豆', // 這邊之後拉資料庫
+        amount: fontAmount.value,
+        productName: 'FeiTime 咖啡購物',
+        products: memberBuyArr.value,
       });
 
       if (response.data.returnCode === '0000') {

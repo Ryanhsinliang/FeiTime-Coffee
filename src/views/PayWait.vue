@@ -25,6 +25,7 @@
   import axios from 'axios';
   import { ref, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { getCart } from '@/services/checkout';
 
   const route = useRoute();
   const linepayUrl = import.meta.env.VITE_LINK;
@@ -32,6 +33,64 @@
   let pay = ref('');
   const router = useRouter();
 
+  // 【 抓購物車 】
+  interface UserRule {
+    // 購物車物件內的 user物件 的規範
+    id: number;
+  }
+
+  interface ProductRule {
+    // 購物車物件內的 product物件 的規範
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+    weight: string;
+  }
+
+  interface CartRule {
+    // 購物車物件 的規範
+    id: number;
+    item_total: number; // 總價錢
+    product: ProductRule;
+    user: UserRule;
+    quantity: number;
+    snapshot_image: string;
+  }
+
+  const memberBuyArr = ref<CartRule[]>([]); // 裝有同一個id的人買的所有產品物件 的陣列
+  const fontAmount = ref(0); //總價錢
+
+  // 計算總價錢 準備給後端
+  onMounted(async () => {
+    // 打API拿這個user.id的人 買的所有產品的物件 的陣列
+
+    const buyId = 26; // 假參數 之後用user.id 到時候把參數放進()
+    const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列
+    const idCart = cartData.filter((obj: CartRule) => {
+      if (Number(obj?.user?.id)) {
+        return obj.user.id == buyId;
+      }
+    }); // 篩選出 所有user.id是buyId 的物件 的陣列 [{},{},{}]
+
+    memberBuyArr.value = idCart;
+
+    // 總價錢 (不含運)
+    const totalCost = memberBuyArr.value.reduce((sum, obj) => {
+      return sum + Number(obj.product.price);
+    }, 0);
+
+    if (totalCost < 350) {
+      alert('沒有訂單');
+      return;
+      // 防呆 總金額會 >= 最低價產品的價格
+    } else {
+      fontAmount.value = totalCost + 250;
+      // 運費 250
+    }
+  });
+
+  // 【 linepay 】
   onMounted(async () => {
     const transactionId = route.query.transactionId;
     // 付款成功後 linepay 會幫忙導回成功頁 並透過網址傳遞  transactionId (交易編號)
@@ -41,7 +100,7 @@
       try {
         const res = await axios.post(`${linepayUrl}/linePay/confirm`, {
           transactionId: transactionId,
-          amount: 3, // 這邊之後串資料庫拿總金額
+          amount: fontAmount.value, // 這邊之後串資料庫拿總金額
           // linepay要求要再傳一次 amount 給它  所以這邊再傳一次給後端
         });
         console.log('成功');

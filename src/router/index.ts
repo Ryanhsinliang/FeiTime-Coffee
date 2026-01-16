@@ -13,8 +13,10 @@ import Register from '@/views/Register/Register.vue';
 import Member from '@/views/Member/Member.vue';
 import Admin from '@/views/Admin/Admin.vue';
 import AdminOrders from '@/views/Admin/Orders.vue';
+import AdminOrderDetail from '@/views/Admin/OrderDetail.vue';
 import AdminStocks from '@/views/Admin/Stock.vue';
 import AdminCustomers from '@/views/Admin/Customers.vue';
+import AdminCustomerDetail from '@/views/Admin/CustomerDetail.vue';
 
 import { useAuthStore } from '@/store/auth';
 import EmailConfirmed from '@/views/Register/EmailConfirmed.vue';
@@ -113,11 +115,10 @@ const routes = [
         name: 'AdminOrders',
         component: AdminOrders,
       },
-      // TODO:測試用記得修改
       {
         path: 'orders/:order_number',
         name: 'AdminOrdersDetail',
-        component: () => import('@/views/Admin/OrderDetail.vue'),
+        component: AdminOrderDetail,
         props: true,
       },
 
@@ -138,7 +139,7 @@ const routes = [
       {
         path: 'customers/id',
         name: 'AdminCustomerDetail',
-        component: () => import('@/views/Admin/CustomerDetail.vue'),
+        component: AdminCustomerDetail,
         props: true,
       },
     ],

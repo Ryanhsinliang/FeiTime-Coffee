@@ -27,7 +27,6 @@
   import { ref, onMounted } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import { useAuthStore } from '@/store/auth';
-  import type { User } from '@/services/loginService';
 
   const router = useRouter();
   const route = useRoute();
@@ -37,55 +36,48 @@
   const error = ref('');
 
   onMounted(async () => {
-    const jwt = route.query.jwt as string;
+    const googleAccessToken = (route.query.access_token || route.query.id_token) as string;
+    const finalJwt = route.query.jwt as string;
     const userStr = route.query.user as string;
-    const errorParam = route.query.error as string;
+    if (finalJwt && userStr) {
+      try {
+        const userData = JSON.parse(decodeURIComponent(userStr));
+        authStore.handleGoogleCallbackData(finalJwt, userData);
+        if (authStore.isLoggedIn) {
+          authStore.setBanner('登入成功！', 'success');
+          let redirectPath = localStorage.getItem('redirectAfterLogin') || '/';
+          localStorage.removeItem('redirectAfterLogin');
+          const lowerPath = redirectPath.toLowerCase();
+          if (
+            lowerPath === '/login' ||
+            lowerPath === '/register' ||
+            lowerPath.includes('callback')
+          ) {
+            redirectPath = '/';
+          }
 
-    if (errorParam) {
-      let errorMessage = 'Google 登入失敗';
-      if (errorParam === 'no_token') {
-        errorMessage = '缺少授權資訊';
-      } else if (errorParam === 'auth_failed') {
-        errorMessage = '驗證失敗，請重試';
+          console.log('最終跳轉目標:', redirectPath);
+          setTimeout(() => {
+            if (redirectPath === '/') {
+              router.replace({ name: 'HomePage' });
+            } else {
+              router.replace(redirectPath);
+            }
+          }, 200);
+        }
+        return;
+      } catch (e) {
+        console.error('解析失敗', e);
       }
+    }
 
-      error.value = errorMessage;
-      loading.value = false;
-      setTimeout(() => router.push('/login'), 2000);
+    if (googleAccessToken) {
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+      const backendUrl = `${apiBaseUrl}/api/auth/google/callback?access_token=${googleAccessToken}`;
+      window.location.href = backendUrl;
       return;
     }
 
-    if (!jwt || !userStr) {
-      error.value = '登入資訊不完整';
-      loading.value = false;
-      setTimeout(() => router.push('/login'), 2000);
-      return;
-    }
-
-    try {
-      const userData: User = JSON.parse(decodeURIComponent(userStr));
-      const result = authStore.handleGoogleCallbackData(jwt, userData);
-
-      loading.value = false;
-
-      if (result.success) {
-        authStore.setBanner('登入成功！', 'success');
-
-        const redirectPath = localStorage.getItem('redirectAfterLogin') || '/';
-        localStorage.removeItem('redirectAfterLogin');
-
-        setTimeout(() => {
-          router.push(redirectPath);
-        }, 500);
-      } else {
-        error.value = '登入失敗，請重試';
-        setTimeout(() => router.push('/login'), 2000);
-      }
-    } catch (err) {
-      console.error('Parse error:', err);
-      error.value = '處理登入資訊時發生錯誤';
-      loading.value = false;
-      setTimeout(() => router.push('/login'), 2000);
-    }
+    console.error('缺少憑證資訊');
   });
 </script>

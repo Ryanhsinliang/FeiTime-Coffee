@@ -1,11 +1,16 @@
-export const googleAuthService = {
-  // 發起 Google 登入（透過 Express）
-  initiateGoogleLogin(): void {
-    // 儲存當前路徑，登入後可以導回
-    localStorage.setItem('redirectAfterLogin', window.location.pathname);
+import axios from 'axios';
 
-    // 導向 Express 的 Google connect endpoint
+export const googleAuthService = {
+  initiateGoogleLogin(): void {
+    localStorage.setItem('redirectAfterLogin', window.location.pathname);
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     window.location.href = `${apiBaseUrl}/api/connect/google`;
+  },
+  async authenticateWithGoogle(accessToken: string) {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.get(`${apiBaseUrl}/api/auth/google/callback`, {
+      params: { access_token: accessToken },
+    });
+    return response.data;
   },
 };

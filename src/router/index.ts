@@ -121,6 +121,7 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
+  console.log(`正在前往: ${to.path}, 登入狀態: ${authStore.isLoggedIn}`);
 
   if (authStore.isLoggedIn && (to.path === '/login' || to.path === '/register')) {
     return next({ name: 'HomePage' });

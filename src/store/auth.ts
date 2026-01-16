@@ -119,6 +119,12 @@ export const useAuthStore = defineStore('auth', () => {
   function handleGoogleLogin() {
     try {
       clearBanner();
+      const currentPath = window.location.pathname;
+      const safeRedirectPath =
+        currentPath === '/login' || currentPath === '/register' || currentPath === '/Login'
+          ? '/'
+          : currentPath;
+      localStorage.setItem('redirectAfterLogin', safeRedirectPath);
       googleAuthService.initiateGoogleLogin();
       // 直接重新導向，不需要 return
     } catch (error: any) {

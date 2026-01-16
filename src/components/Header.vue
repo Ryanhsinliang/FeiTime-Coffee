@@ -85,34 +85,37 @@
             <transition name="dropdown">
               <div
                 v-if="userMenuOpen"
-                class="absolute right-0 top-full mt-2 w-36 rounded-lg shadow-lg border overflow-hidden"
+                class="absolute left-1/2 -translate-x-1/2 top-full mt-1 rounded-lg shadow-lg border overflow-hidden whitespace-nowrap"
                 :class="scrollY < bannerHeight ? 'border-[#DCCFC0]/50' : 'border-[#DCCFC0]/80'"
                 :style="dropdownMenuStyle"
               >
+                <!-- 透明的連接區域，填補icon和選單之間的空隙 -->
+                <div class="absolute bottom-full left-0 right-0 h-2"></div>
+
                 <!-- 未登入狀態 -->
-                <div v-if="!isLoggedIn" class="p-2.5">
-                  <div class="flex gap-2">
+                <div v-if="!isLoggedIn" class="p-2">
+                  <div class="flex flex-col gap-1.5">
                     <button
-                      class="flex-1 py-1.5 px-2.5 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
-                      :style="buttonStyle"
-                      @click="handleRegister"
-                    >
-                      註冊
-                    </button>
-                    <button
-                      class="flex-1 py-1.5 px-2.5 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                      class="py-1.5 px-4 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
                       :style="buttonStyle"
                       @click="handleLogin"
                     >
                       登入
                     </button>
+                    <button
+                      class="py-1.5 px-4 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                      :style="buttonStyle"
+                      @click="handleRegister"
+                    >
+                      註冊
+                    </button>
                   </div>
                 </div>
 
                 <!-- 已登入狀態 -->
-                <div v-else class="py-1.5">
+                <div v-else class="py-1">
                   <button
-                    class="w-full text-left px-3 py-2.5 text-sm font-medium transition-colors duration-200"
+                    class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
                     :style="menuItemHoverStyle('member')"
                     @mouseenter="hoveredMenuItem = 'member'"
                     @mouseleave="hoveredMenuItem = null"
@@ -124,14 +127,14 @@
                     </span>
                   </button>
                   <div
-                    class="mx-2.5 h-px"
+                    class="mx-2 h-px"
                     :style="{
                       backgroundColor: scrollY < bannerHeight ? '#DCCFC0' : '#FAF9EE',
                       opacity: 0.3,
                     }"
                   ></div>
                   <button
-                    class="w-full text-left px-3 py-2.5 text-sm font-medium transition-colors duration-200"
+                    class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
                     :style="menuItemHoverStyle('logout')"
                     @mouseenter="hoveredMenuItem = 'logout'"
                     @mouseleave="hoveredMenuItem = null"
@@ -266,9 +269,13 @@
   });
 
   const dropdownMenuStyle = computed(() => {
-    const baseOpacity = scrollY.value < bannerHeight.value ? 0.98 : 0.95;
+    // 計算漸層進度 (0 到 1)
+    const t = Math.min(scrollY.value / (bannerHeight.value || 1), 1);
+    // 背景透明度從 0.92 漸變到 0.98，比 navbar 更不透明以確保可讀性
+    const bgOpacity = 0.92 + (0.98 - 0.92) * t;
+
     return {
-      backgroundColor: `rgba(162, 175, 155, ${baseOpacity})`,
+      backgroundColor: `rgba(162, 175, 155, ${bgOpacity})`,
       backdropFilter: 'blur(12px)',
       color: scrollY.value < bannerHeight.value ? '#1A1E17' : '#FAF9EE',
     };

@@ -170,10 +170,14 @@
                   class="w-[64px] h-full aspect-square object-cover rounded-xl"
                 />
                 <div class="mx-0 md:mx-[16px] lg:mx-[16px] w-full">
+                  <div class="flex"></div>
                   <h3>{{ list.product.name }}</h3>
                   <p class="text-sm mt-0 md:mt-[8px] lg:mt-[8px]">{{ list.product.weight }}</p>
                 </div>
-                <div class="">$&nbsp;{{ list.product.price }}</div>
+                <div class="shrink-0">
+                  <div>$&nbsp;{{ list.product.price }}</div>
+                  <div class="text-left md:text-right lg:text-right">{{ list.quantity }}個</div>
+                </div>
               </div>
               <!-- v-for結束 -->
             </div>

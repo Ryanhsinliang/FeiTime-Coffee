@@ -69,11 +69,6 @@
     document.head.appendChild(style); 
   */
 
-  .SS {
-    display: flex;
-    align-items: center;
-  }
-
   :root {
     --main-color: #faf9ee;
     /* 淡黃 */

@@ -159,58 +159,23 @@
           <div class="px-0 md:px-[40px] lg:px-[40px]">
             <div class="my-[48px] px-[24px] max-h-[400px] overflow-y-auto">
               <!-- 這下面的div要跑v-for -->
-              <div class="flex flex-col md:flex-row lg:flex-row my-[20px]">
+              <div
+                v-for="list in memberBuyArr"
+                :key="list.id"
+                class="flex flex-col md:flex-row lg:flex-row my-[20px]"
+              >
                 <img
-                  src="./assets/coffee_001.png"
-                  alt="商品圖片"
+                  :src="list.snapshot_image"
+                  :alt="list.product.name"
                   class="w-[64px] h-full aspect-square object-cover rounded-xl"
                 />
                 <div class="mx-0 md:mx-[16px] lg:mx-[16px] w-full">
-                  <h3>耶加雪菲G1日曬</h3>
-                  <p class="text-sm mt-0 md:mt-[8px] lg:mt-[8px]">200g</p>
+                  <h3>{{ list.product.name }}</h3>
+                  <p class="text-sm mt-0 md:mt-[8px] lg:mt-[8px]">{{ list.product.weight }}</p>
                 </div>
-                <div class="">$1,000</div>
+                <div class="">$&nbsp;{{ list.product.price }}</div>
               </div>
               <!-- v-for結束 -->
-
-              <!-- 以下假資料 -->
-              <div class="flex flex-col md:flex-row lg:flex-row my-[20px]">
-                <img
-                  src="./assets/coffee_001.png"
-                  alt="商品圖片"
-                  class="w-[64px] h-full aspect-square object-cover rounded-xl"
-                />
-                <div class="mx-0 md:mx-[16px] lg:mx-[16px] w-full">
-                  <h3>耶加雪菲G1日曬</h3>
-                  <p class="text-sm mt-0 md:mt-[8px] lg:mt-[8px]">200g</p>
-                </div>
-                <div class="">$1,000</div>
-              </div>
-              <div class="flex flex-col md:flex-row lg:flex-row my-[20px]">
-                <img
-                  src="./assets/coffee_001.png"
-                  alt="商品圖片"
-                  class="w-[64px] h-full aspect-square object-cover rounded-xl"
-                />
-                <div class="mx-0 md:mx-[16px] lg:mx-[16px] w-full">
-                  <h3>耶加雪菲G1日曬</h3>
-                  <p class="text-sm mt-0 md:mt-[8px] lg:mt-[8px]">200g</p>
-                </div>
-                <div class="">$1,000</div>
-              </div>
-              <div class="flex flex-col md:flex-row lg:flex-row my-[20px]">
-                <img
-                  src="./assets/coffee_001.png"
-                  alt="商品圖片"
-                  class="w-[64px] h-full aspect-square object-cover rounded-xl"
-                />
-                <div class="mx-0 md:mx-[16px] lg:mx-[16px] w-full">
-                  <h3>耶加雪菲G1日曬</h3>
-                  <p class="text-sm mt-0 md:mt-[8px] lg:mt-[8px]">200g</p>
-                </div>
-                <div class="">$1,000</div>
-              </div>
-              <!-- 【假資料】結束 -->
             </div>
 
             <!-- 產品小計 -->
@@ -219,17 +184,17 @@
             >
               <div class="flex justify-between text-[20px]">
                 <p class="">商品金額</p>
-                <p id="price" class="">$1,000</p>
+                <p id="price" class="">$&nbsp;{{ productTotal }}</p>
               </div>
 
               <div class="flex justify-between text-[20px]">
                 <p>運費</p>
-                <p id="shippingFee">$130</p>
+                <p id="shippingFee">$&nbsp;250</p>
               </div>
 
               <div class="flex justify-between my-4 text-[24px] font-bold">
                 <p>總金額</p>
-                <p>$1,130</p>
+                <p>$&nbsp;{{ fontAmount }}</p>
               </div>
             </div>
           </div>
@@ -251,12 +216,11 @@
     </form>
   </main>
   <p class="text-[48px] bg-[#ffb8f4] p-3" @click="useLinePay">測試linepay</p>
-  <p class="text-[48px] bg-[#67EBEF] p-3" @click="cart">測試購物車</p>
 </template>
 
 <script setup lang="ts">
   import axios from 'axios';
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, onMounted } from 'vue';
   import { getCart } from '@/services/checkout';
 
   const form = reactive({
@@ -279,6 +243,7 @@
     name: string;
     price: number;
     quantity: number;
+    weight: string;
   }
 
   interface CartRule {
@@ -288,13 +253,16 @@
     product: ProductRule;
     user: UserRule;
     quantity: number;
+    snapshot_image: string;
   }
 
   const memberBuyArr = ref<CartRule[]>([]); // 裝有同一個id的人買的所有產品物件 的陣列
-  const fontAmount = ref(0);
+  const productTotal = ref(0); // 全部商品價錢
+  const fontAmount = ref(0); //總價錢
 
-  // 打API拿這個user.id的人 買的所有產品的物件 的陣列
-  const cart = async () => {
+  onMounted(async () => {
+    // 打API拿這個user.id的人 買的所有產品的物件 的陣列
+
     const buyId = 26; // 假參數 之後用user.id 到時候把參數放進()
     const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列
     const idCart = cartData.filter((obj: CartRule) => {
@@ -311,22 +279,23 @@
       return sum + Number(obj.product.price);
     }, 0);
 
-    if (totalCost < 350) {
+    productTotal.value = totalCost;
+
+    if (productTotal.value < 350) {
       alert('沒有訂單');
       return;
       // 防呆 總金額會 >= 最低價產品的價格
-    } else if (totalCost < 3000) {
-      fontAmount.value = totalCost + 250;
-      // 買太少要付運費 250
     } else {
-      fontAmount.value = totalCost;
+      fontAmount.value = productTotal.value + 250;
+      // 運費 250
     }
 
     console.log(fontAmount.value);
-  };
-  // 概念釐清 : 一個table 只是user.id=1買的一個其中產品
-  // user.id = 1 可能買很多個不同的商品 所以會有很多個table
-  // 我要找出這些table 加總 總金額 並加上【運費】
+
+    // 概念釐清 : 一個table 只是user.id=1買的一個其中產品
+    // user.id = 1 可能買很多個不同的商品 所以會有很多個table
+    // 我要找出這些table 加總 總金額 並加上【運費】
+  });
 
   // 【 串linepay 】
   const linepayUrl = import.meta.env.VITE_LINK;

@@ -1,7 +1,4 @@
 <template>
-  <!-- TODO:測試用記得刪除 -->
-  <router-link to="/admin/orders/id">查看進度</router-link>
-
   <header
     class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-10 flex-shrink-0"
   >
@@ -356,98 +353,76 @@
   </main>
 
   <!-- 測試用 -->
-  <!-- Loading / Error -->
-  <p v-if="loading">載入中...</p>
-  <p v-else-if="error" class="text-red-500">{{ error }}</p>
+  <div class="p-4">
+    <h1 class="text-2xl font-bold mb-4">📦 訂單管理</h1>
 
-  <!-- 訂單列表（測試 orders） -->
-  <section v-if="orders.length">
-    <h2 class="font-bold mb-2">📦 訂單列表</h2>
-    <ul class="space-y-1">
-      <li v-for="order in orders" :key="order.order_number" class="border p-2 rounded">
-        <div>訂單編號：{{ order.order_number }}</div>
-        <div>狀態：{{ order.order_status }} / {{ order.payment_status }}</div>
-        <div>總金額：${{ order.total_amount }}</div>
-      </li>
-    </ul>
-  </section>
+    <!-- Loading / Error -->
+    <p v-if="loading">載入中...</p>
+    <p v-else-if="error" class="text-red-500">{{ error }}</p>
 
-  <!-- 單筆訂單（測試 singleOrder） -->
-  <section v-if="singleOrder" class="border-t pt-4">
-    <h2 class="font-bold mb-2">🧾 訂單明細</h2>
-
-    <div>訂單編號：{{ singleOrder.order_number }}</div>
-    <div>收件人：{{ singleOrder.recipient_name }}</div>
-    <div>電話：{{ singleOrder.recipient_phone }}</div>
-    <div>地址：{{ singleOrder.recipient_address }}</div>
-
-    <div class="mt-2">
-      金額：{{ singleOrder.subtotal }} + {{ singleOrder.shipping_fee }} =
-      <strong>{{ singleOrder.total_amount }}</strong>
+    <!-- 訂單列表 -->
+    <div v-else>
+      <ul class="space-y-2">
+        <li
+          v-for="order in orders"
+          :key="order.order_number"
+          class="border p-4 rounded hover:bg-gray-50 cursor-pointer"
+          @click="goToDetail(order.order_number)"
+        >
+          <div class="flex justify-between items-center">
+            <div>
+              <div class="font-bold">訂單編號: {{ order.order_number }}</div>
+              <div class="text-sm text-gray-600">
+                狀態: {{ order.order_status }} / {{ order.payment_status }}
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-bold text-lg">${{ order.total_amount }}</div>
+              <div class="text-xs text-gray-500">
+                {{ new Date(order.createdAt).toLocaleDateString('zh-TW') }}
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
-
-    <div class="mt-2">
-      付款時間：
-      <span v-if="singleOrder.paid_at">
-        {{ new Date(singleOrder.paid_at).toLocaleString('zh-TW') }}
-      </span>
-      <span v-else>尚未付款</span>
-    </div>
-
-    <button class="mt-4 px-4 py-2 bg-gray-300 rounded" :disabled="loading">
-      測試按鈕（loading 時 disabled）
-    </button>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, watch } from 'vue';
-  import { useRoute } from 'vue-router';
-  import { callOrders, callSingleOrder } from '@/services/adminOrderService';
+  import { ref, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { callOrders } from '@/services/adminOrderService';
   import type { OrderRequest } from '@/services/adminOrderService';
 
-  const route = useRoute();
+  const router = useRouter();
 
   const orders = ref<OrderRequest[]>([]);
-  const singleOrder = ref<OrderRequest | null>(null);
   const loading = ref(false);
   const error = ref('');
 
-  // 呼叫 API
-  async function loadOrderData(order_number: string) {
+  async function loadOrders() {
     loading.value = true;
     error.value = '';
 
     try {
-      const [ordersRes, singleOrderRes] = await Promise.all([
-        callOrders(),
-        callSingleOrder(order_number),
-      ]);
-
-      orders.value = ordersRes.data;
-      console.log('✅ 成功載入訂單列表:', orders.value.length);
-
-      singleOrder.value = singleOrderRes.data;
-      // console.log('✅ 訂單商品數量:', singleOrder.value.length);
-    } catch (err) {
-      console.error('❌ API 載入失敗', err);
-      error.value = '訂單載入失敗';
+      console.log('🔍 載入訂單列表...');
+      const res = await callOrders();
+      orders.value = res.data || [];
+      console.log('✅ 成功載入訂單:', orders.value.length, '筆');
+    } catch (err: any) {
+      console.error('❌ 載入失敗:', err);
+      error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
     } finally {
       loading.value = false;
     }
   }
 
-  onMounted(() => {
-    const orderNumber = route.params.order_number as string;
-    if (orderNumber) loadOrderData(orderNumber);
-  });
+  function goToDetail(order_number: string) {
+    router.push({ name: 'AdminOrdersDetail', params: { order_number } });
+  }
 
-  watch(
-    () => route.params.order_number,
-    (newOrderNumber) => {
-      if (typeof newOrderNumber === 'string' && newOrderNumber) {
-        loadOrderData(newOrderNumber);
-      }
-    }
-  );
+  onMounted(() => {
+    loadOrders();
+  });
 </script>

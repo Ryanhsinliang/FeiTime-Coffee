@@ -267,30 +267,6 @@
     remark: '',
   });
 
-  // 【 串linepay 】
-  const linepayUrl = import.meta.env.VITE_LINK;
-  const useLinePay = async () => {
-    try {
-      // 前往後端
-      const response = await axios.post(`${linepayUrl}/linepay/gobuy`, {
-        amount: 3, // 這邊之後拉資料庫
-        productName: '美味咖啡豆', // 這邊之後拉資料庫
-      });
-
-      if (response.data.returnCode === '0000') {
-        // linepay回傳物件給後端  後端再丟回物件給前端 從物件中抓出狀態碼
-        // linepay定義狀態碼為字串 "0000" 才是成功
-        window.location.href = response.data.info.paymentUrl.web;
-        // window.location.href 可以跳轉至寫進去的網址 執行後瀏覽器會立刻跳轉過去 就像是在瀏覽器輸入網址並按 Enter 一樣
-        // 從物件中抓出網址 跳轉到linepay付款頁面 網址每次都不一樣
-      } else {
-        alert('建立交易失敗：' + response.data.returnMessage); // 從物件中抓出錯誤訊息
-      }
-    } catch (error: any) {
-      console.error('結帳出錯：', error.response?.data || error.message);
-    }
-  };
-
   // 【 抓購物車 】
   interface UserRule {
     // 購物車物件內的 user物件 的規範
@@ -315,7 +291,7 @@
   }
 
   const memberBuyArr = ref<CartRule[]>([]); // 裝有同一個id的人買的所有產品物件 的陣列
-  const amount = ref(0);
+  const fontAmount = ref(0);
 
   // 打API拿這個user.id的人 買的所有產品的物件 的陣列
   const cart = async () => {
@@ -335,11 +311,46 @@
       return sum + Number(obj.product.price);
     }, 0);
 
-    console.log(totalCost);
+    if (totalCost < 350) {
+      alert('沒有訂單');
+      return;
+      // 防呆 總金額會 >= 最低價產品的價格
+    } else if (totalCost < 3000) {
+      fontAmount.value = totalCost + 250;
+      // 買太少要付運費 250
+    } else {
+      fontAmount.value = totalCost;
+    }
+
+    console.log(fontAmount.value);
   };
   // 概念釐清 : 一個table 只是user.id=1買的一個其中產品
   // user.id = 1 可能買很多個不同的商品 所以會有很多個table
   // 我要找出這些table 加總 總金額 並加上【運費】
+
+  // 【 串linepay 】
+  const linepayUrl = import.meta.env.VITE_LINK;
+  const useLinePay = async () => {
+    try {
+      // 前往後端
+      const response = await axios.post(`${linepayUrl}/linepay/gobuy`, {
+        amount: 3, // 這邊之後拉資料庫
+        productName: '美味咖啡豆', // 這邊之後拉資料庫
+      });
+
+      if (response.data.returnCode === '0000') {
+        // linepay回傳物件給後端  後端再丟回物件給前端 從物件中抓出狀態碼
+        // linepay定義狀態碼為字串 "0000" 才是成功
+        window.location.href = response.data.info.paymentUrl.web;
+        // window.location.href 可以跳轉至寫進去的網址 執行後瀏覽器會立刻跳轉過去 就像是在瀏覽器輸入網址並按 Enter 一樣
+        // 從物件中抓出網址 跳轉到linepay付款頁面 網址每次都不一樣
+      } else {
+        alert('建立交易失敗：' + response.data.returnMessage); // 從物件中抓出錯誤訊息
+      }
+    } catch (error: any) {
+      console.error('結帳出錯：', error.response?.data || error.message);
+    }
+  };
 </script>
 
 <style>

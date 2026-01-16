@@ -72,8 +72,12 @@
             shopping_bag
           </span>
 
-          <!-- 人頭 icon 加上相對定位容器 -->
-          <div class="relative" @mouseenter="openUserMenu" @mouseleave="closeUserMenu">
+          <!-- 人頭 icon 加上相對定位容器 - 加入 inline-flex items-center -->
+          <div
+            class="relative inline-flex items-center"
+            @mouseenter="openUserMenu"
+            @mouseleave="closeUserMenu"
+          >
             <span
               class="material-symbols-outlined cursor-pointer transition-all duration-200 hover:scale-110"
               :style="textColorStyle"
@@ -83,68 +87,70 @@
 
             <!-- 使用者下拉選單 -->
             <transition name="dropdown">
-              <div
-                v-if="userMenuOpen"
-                class="absolute left-1/2 -translate-x-1/2 top-full mt-1 rounded-lg shadow-lg border overflow-hidden whitespace-nowrap"
-                :class="scrollY < bannerHeight ? 'border-[#DCCFC0]/50' : 'border-[#DCCFC0]/80'"
-                :style="dropdownMenuStyle"
-              >
-                <!-- 透明的連接區域，填補icon和選單之間的空隙 -->
-                <div class="absolute bottom-full left-0 right-0 h-2"></div>
+              <div v-if="userMenuOpen" class="absolute left-1/2 -translate-x-1/2 top-full">
+                <!-- 透明橋接區域，只需要很小的間距 -->
+                <div class="h-1"></div>
 
-                <!-- 未登入狀態 -->
-                <div v-if="!isLoggedIn" class="p-2">
-                  <div class="flex flex-col gap-1.5">
+                <!-- 選單本體 -->
+                <div
+                  class="rounded-lg shadow-lg border overflow-hidden whitespace-nowrap"
+                  :class="scrollY < bannerHeight ? 'border-[#DCCFC0]/50' : 'border-[#DCCFC0]/80'"
+                  :style="dropdownMenuStyle"
+                >
+                  <!-- 未登入狀態 -->
+                  <div v-if="!isLoggedIn" class="p-3">
+                    <div class="flex flex-col gap-2.5">
+                      <button
+                        class="py-2 px-6 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                        :style="buttonStyle"
+                        @click="handleLogin"
+                      >
+                        登入
+                      </button>
+                      <button
+                        class="py-2 px-6 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                        :style="buttonStyle"
+                        @click="handleRegister"
+                      >
+                        註冊
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 已登入狀態 -->
+                  <div v-else class="py-1">
                     <button
-                      class="py-1.5 px-4 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
-                      :style="buttonStyle"
-                      @click="handleLogin"
+                      class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
+                      :style="menuItemHoverStyle('member')"
+                      @mouseenter="hoveredMenuItem = 'member'"
+                      @mouseleave="hoveredMenuItem = null"
+                      @click="handleMemberArea"
                     >
-                      登入
+                      <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">account_circle</span>
+                        會員專區
+                      </span>
                     </button>
+                    <div
+                      class="mx-2 h-px"
+                      :style="{
+                        backgroundColor: scrollY < bannerHeight ? '#DCCFC0' : '#FAF9EE',
+                        opacity: 0.3,
+                      }"
+                    ></div>
                     <button
-                      class="py-1.5 px-4 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
-                      :style="buttonStyle"
-                      @click="handleRegister"
+                      class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
+                      :style="menuItemHoverStyle('logout')"
+                      @mouseenter="hoveredMenuItem = 'logout'"
+                      @mouseleave="hoveredMenuItem = null"
+                      @click="handleLogout"
                     >
-                      註冊
+                      <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">logout</span>
+                        登出
+                      </span>
                     </button>
                   </div>
-                </div>
-
-                <!-- 已登入狀態 -->
-                <div v-else class="py-1">
-                  <button
-                    class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
-                    :style="menuItemHoverStyle('member')"
-                    @mouseenter="hoveredMenuItem = 'member'"
-                    @mouseleave="hoveredMenuItem = null"
-                    @click="handleMemberArea"
-                  >
-                    <span class="flex items-center gap-2">
-                      <span class="material-symbols-outlined text-lg">account_circle</span>
-                      會員專區
-                    </span>
-                  </button>
-                  <div
-                    class="mx-2 h-px"
-                    :style="{
-                      backgroundColor: scrollY < bannerHeight ? '#DCCFC0' : '#FAF9EE',
-                      opacity: 0.3,
-                    }"
-                  ></div>
-                  <button
-                    class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
-                    :style="menuItemHoverStyle('logout')"
-                    @mouseenter="hoveredMenuItem = 'logout'"
-                    @mouseleave="hoveredMenuItem = null"
-                    @click="handleLogout"
-                  >
-                    <span class="flex items-center gap-2">
-                      <span class="material-symbols-outlined text-lg">logout</span>
-                      登出
-                    </span>
-                  </button>
                 </div>
               </div>
             </transition>
@@ -358,17 +364,19 @@
     transform: translateY(-8px);
   }
 
-  /* 下拉選單動畫 */
-  .dropdown-enter-active,
+  /* 下拉選單動畫 - 保持置中同時向下滑動 */
+  .dropdown-enter-active {
+    transition: all 0.25s ease-out;
+  }
   .dropdown-leave-active {
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-in;
   }
   .dropdown-enter-from {
     opacity: 0;
-    transform: translateY(-10px) scale(0.95);
+    transform: translateX(-50%) translateY(-20px);
   }
   .dropdown-leave-to {
     opacity: 0;
-    transform: translateY(-5px) scale(0.98);
+    transform: translateX(-50%) translateY(-10px);
   }
 </style>

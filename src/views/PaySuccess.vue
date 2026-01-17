@@ -17,15 +17,15 @@
       >
         <div class="flex justify-between">
           <p class="text-[#666666]">訂單編號</p>
-          <p class="text-[--heavy-brown]">{{ orderNo }}</p>
+          <p class="text-[--heavy-brown]">{{ orderThing?.order_number }}</p>
         </div>
         <div class="flex justify-between my-[16px]">
           <p class="text-[#666666]">總金額</p>
-          <p class="text-[--heavy-brown]">NT$ 7890</p>
+          <p class="text-[--heavy-brown]">$ {{ orderThing?.total_amount }}</p>
         </div>
         <div class="flex justify-between">
           <p class="text-[#666666]">購買日期</p>
-          <p class="text-[--heavy-brown]">2065/10/3 18:16</p>
+          <p class="text-[--heavy-brown]">{{ taiwanTime }}</p>
         </div>
       </div>
 
@@ -81,19 +81,15 @@
 
   const piniaGet = orderList();
   const { orderThing } = storeToRefs(piniaGet);
-
-  const orderNo = ref(''); // 從pinia拿到訂單編號
+  const taiwanTime = ref('');
 
   onMounted(async () => {
     if (orderThing.value) {
-      orderNo.value = orderThing.value.order_number;
+      taiwanTime.value = new Date(orderThing.value.createdAt).toLocaleString('zh-TW', {
+        timeZone: 'Asia/Taipei',
+        hour12: false, // 使用 24 小時制，若要 12 小時制可改為 true
+      });
     }
-
-    const orderGet = await getOrder();
-    const idBuy = orderGet.filter((obj: OrderRule) => {
-      return obj.order_number == orderNo.value;
-    });
-    console.log(idBuy[0]); // 抓到這筆訂單的物件
   });
 </script>
 

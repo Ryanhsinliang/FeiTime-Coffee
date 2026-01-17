@@ -351,7 +351,7 @@
     recipient_phone: '',
     recipient_address: '',
     customer_note: '',
-    shipping_method: '',
+    shipping_method: '', // 配送方式
   });
 
   // 【 POST + 導到linepay 、成功頁 、 失敗頁 】
@@ -370,7 +370,10 @@
       return;
     }
 
-    form.order_items = postProducts.value; // 確保在送出前，最新的購物車品項已經放入 form
+    // 確保在送出前 是最新的資料
+    form.subtotal = productTotal.value;
+    form.total_amount = fontAmount.value;
+    form.order_items = postProducts.value;
 
     if (!form.order_items) {
       alert('購物車是空的');

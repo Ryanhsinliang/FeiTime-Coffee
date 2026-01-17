@@ -229,6 +229,7 @@
   import { ref, reactive, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { getCart, formGoPost } from '@/services/checkout';
+  import { orderList } from '@/store/order';
   const router = useRouter();
 
   interface UserRule {
@@ -301,9 +302,7 @@
       fontAmount.value = productTotal.value + 250;
       // 運費 250
     }
-    // 概念釐清 : 一個table 只是user.id=1買的一個其中產品
-    // user.id = 1 可能買很多個不同的商品 所以會有很多個table
-    // 我要找出這些table 加總 總金額 並加上【運費】
+
     // console.log(memberBuyArr.value);
     // console.log(postProducts.value);
   });
@@ -379,8 +378,11 @@
     }
     try {
       const result = await formGoPost(form);
-      console.log('訂單建立成功', result);
-      // alert('訂單已成功送出！');
+      console.log('訂單建立成功');
+      console.log(result);
+
+      const orderStore = orderList();
+      orderStore.orderAfter(result.data);
       if (form.shipping_method == 'linepay') {
         await useLinePay();
       } else {

@@ -49,10 +49,23 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
   import { getOrder } from '@/services/checkout';
+  import { orderList } from '@/store/order';
+  import { storeToRefs } from 'pinia';
+
+  const piniaGet = orderList();
+  const { orderThing } = storeToRefs(piniaGet);
+
+  const orderNo = ref('');
 
   onMounted(async () => {
-    const orderGet = await getOrder();
-    console.log(orderGet);
+    if (orderThing.value) {
+      console.log(orderThing.value);
+      console.log(orderThing.value.createdAt);
+      console.log(orderThing.value.order_number);
+    }
+
+    // const orderGet = await getOrder();
+    // console.log(orderGet);
   });
 </script>
 

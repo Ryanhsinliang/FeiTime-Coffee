@@ -71,16 +71,26 @@
       </div>
     </div>
 
-    <!-- 訂購商品 -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Loading status -->
+    <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
+      <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
+      <p>載入產品中...</p>
+    </div>
+    <!-- Error status -->
+    <div v-else-if="error">{{ error }}</div>
+
+    <!-- 訂單明細 -->
+    <div v-else-if="order" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 flex flex-col gap-8">
         <div class="border border-[#e7dacf] bg-white rounded-xl overflow-hidden shadow-sm">
           <div class="px-6 py-4 border-b border-[#e7dacf] flex justify-between items-center">
             <h3 class="font-bold flex items-center gap-2">
               <p class="material-symbols-outlined">receipt_long</p>
               訂購商品
+              <span class="material-symbols-outlined text-lg">chevron_right</span>
+              <p class="font-semibold">訂單編號: {{ order.order_number }}</p>
             </h3>
-            <p class="text-xs">下單日期：2023-10-25 10:32</p>
+            <p class="text-xs">下單時間：{{ new Date(order.createdAt).toLocaleString('zh-TW') }}</p>
           </div>
 
           <table class="w-full text-left">
@@ -88,52 +98,43 @@
               <tr class="text-xs border-b border-[#e7dacf] bg-[#fcfaf8]">
                 <th class="py-3 px-6">商品名稱</th>
                 <th class="py-3 px-6 text-center">數量</th>
-                <th class="py-3 px-6 text-right">價錢</th>
+                <th class="py-3 px-6 text-right">單價</th>
                 <th class="py-3 px-6 text-right">小計</th>
               </tr>
             </thead>
 
-            <tbody class="border-b border-[#e7dacf]">
+            <tbody
+              class="border-b border-[#e7dacf]"
+              v-for="item in order.order_items"
+              :key="item.id"
+            >
               <tr>
                 <td class="py-4 px-6">
                   <div class="flex items-center gap-3">
-                    <div class="size-12 rounded overflow-hidden shrink-0">
+                    <div class="size-14 bg-gray-200 rounded overflow-hidden shrink-0">
                       <img
-                        alt="Coffee"
-                        class="w-full h-full object-cover"
-                        src="./assets/coffee_001.png"
+                        v-if="item.snapshot_image"
+                        :src="item.snapshot_image"
+                        :alt="item.snapshot_name"
+                        class="w-full h-full object-cover rounded"
                       />
+                      <div
+                        v-else
+                        class="w-full h-full text-sm flex items-center justify-center text-gray-400"
+                      >
+                        無圖片
+                      </div>
                     </div>
                     <div>
-                      <p class="text-sm font-bold">衣索比亞 爺家雪菲</p>
-                      <p class="text-xs">250g</p>
+                      <p class="text-sm font-bold">{{ item.snapshot_name }}</p>
+                      <p class="text-xs">{{ item.snapshot_weight }}</p>
+                      <p class="text-xs text-gray-600">{{ item.pid }}</p>
                     </div>
                   </div>
                 </td>
-                <td class="py-4 px-6 text-sm text-center">1</td>
-                <td class="py-4 px-6 text-sm text-right">$300</td>
-                <td class="py-4 px-6 text-sm font-bold text-right">$300</td>
-              </tr>
-
-              <tr>
-                <td class="py-4 px-6">
-                  <div class="flex items-center gap-3">
-                    <div class="size-12 rounded overflow-hidden shrink-0">
-                      <img
-                        alt="V60"
-                        class="w-full h-full object-cover"
-                        src="./assets/coffee_001.png"
-                      />
-                    </div>
-                    <div>
-                      <p class="text-sm font-bold">印尼 曼特寧</p>
-                      <p class="text-xs">250g</p>
-                    </div>
-                  </div>
-                </td>
-                <td class="py-4 px-6 text-sm text-center">2</td>
-                <td class="py-4 px-6 text-sm text-right">$300</td>
-                <td class="py-4 px-6 text-sm font-bold text-right">$600</td>
+                <td class="py-4 px-6 text-sm text-center">{{ item.quantity }}</td>
+                <td class="py-4 px-6 text-sm text-right">${{ item.snapshot_price }}</td>
+                <td class="py-4 px-6 text-sm font-bold text-right">${{ item.item_total }}</td>
               </tr>
             </tbody>
           </table>
@@ -142,62 +143,74 @@
             <div class="w-full max-w-[240px] flex flex-col gap-2">
               <div class="flex justify-between text-sm">
                 <p>商品金額</p>
-                <p>$900</p>
+                <p>${{ order.subtotal }}</p>
               </div>
               <div class="flex justify-between text-sm">
                 <p>運費</p>
-                <p>$125</p>
+                <p>${{ order.shipping_fee }}</p>
               </div>
               <div class="h-px my-1"></div>
               <div class="flex justify-between font-bold">
                 <p>總金額</p>
-                <p>$1025</p>
+                <p>${{ order.total_amount }}</p>
               </div>
             </div>
           </div>
         </div>
 
         <div class="border border-[#e7dacf] bg-white rounded-xl p-6 shadow-sm">
-          <h3 class="font-bold flex items-center gap-2 mb-6">
+          <h2 class="font-bold flex items-center gap-2 mb-5 text-lg">
+            <span class="material-symbols-outlined">account_circle</span>
+            訂購人資訊
+          </h2>
+          <div class="grid grid-cols-2 gap-2">
+            <p class="text-sm">會員姓名：{{ order.user?.username || '無' }}</p>
+            <p class="text-sm">信箱：{{ order.user?.email || '無' }}</p>
+            <p class="text-sm">會員ID：{{ order.user?.user_id || '無' }}</p>
+          </div>
+        </div>
+
+        <div class="border border-[#e7dacf] bg-white rounded-xl p-6 shadow-sm">
+          <h3 class="font-bold flex items-center gap-2 mb-5 text-lg">
             <span class="material-symbols-outlined">person</span>
             收件資訊
           </h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="flex items-start gap-4">
-              <div class="flex flex-col gap-1">
-                <p class="text-sm font-bold">收件人: John Doe</p>
-                <p class="text-xs">ID: #89932</p>
-                <p class="text-xs">Email: john.doe@example.com</p>
-                <p class="text-xs">電話: 0900-000-000</p>
-              </div>
-            </div>
-            <div class="flex flex-col gap-1">
-              <h3 class="text-xs font-bold mb-1">收件地址</h3>
-              <p class="text-sm">104 臺北市中山區民生東路三段67號</p>
-            </div>
+          <div class="flex flex-col gap-1">
+            <p class="text-sm">收件人: {{ order.recipient_name }}</p>
+            <p class="text-sm">電話: {{ order.recipient_phone }}</p>
+            <p class="text-sm">地址: {{ order.recipient_address }}</p>
+            <p class="text-sm">配送方式: {{ order.shipping_method }}</p>
+            <p class="text-sm">訂單狀態: {{ order.order_status }}</p>
+            <p class="font-bold flex items-center gap-2 px-2 py-4 rounded-lg bg-[#fcfaf8]">
+              <i class="fa-regular fa-comment-dots text-lg"></i>
+              買家備註： {{ order.customer_note }}
+            </p>
           </div>
-        </div>
-
-        <div class="border border-[#e7dacf] bg-white rounded-xl p-6 shadow-sm">
-          <h3 class="font-bold flex items-center gap-2 mb-6">
-            <i class="fa-regular fa-comment-dots text-lg"></i>
-            買家備註
-          </h3>
-          <p class="text-sm">我要送禮，請幫我包裝</p>
         </div>
       </div>
 
       <div class="flex flex-col gap-8">
         <!-- 運送資訊 -->
+
         <form class="border border-[#e7dacf] bg-white rounded-xl p-6 shadow-sm ring-2">
-          <h3 class="font-bold flex items-center gap-2 mb-6">
-            <span class="material-symbols-outlined">local_shipping</span>
-            運送資訊
-          </h3>
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="font-bold text-lg flex items-center gap-2">
+              <span class="material-symbols-outlined">local_shipping</span>
+              運送資訊
+            </h3>
+            <a
+              class="text-sm font-bold text-[#e27312] flex items-center gap-1"
+              href="https://www.t-cat.com.tw/inquire/trace.aspx"
+              target="_blank"
+            >
+              <span class="material-symbols-outlined text-[14px]">search</span>
+              貨態查詢
+            </a>
+          </div>
 
           <div class="flex flex-col gap-4">
             <div>
-              <label class="block text-xs font-bold mb-1.5">運送方式</label>
+              <label class="block text-sm font-bold mb-1.5">運送方式</label>
               <select
                 class="w-full px-4 py-2.5 rounded-lg border border-[#e7dacf] bg-[#fcfaf8] focus:ring-0 text-sm"
               >
@@ -250,18 +263,18 @@
               <p
                 class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200"
               >
-                已付款
+                {{ order.payment_status }}
               </p>
             </div>
 
             <div class="flex justify-between items-center">
               <p class="text-xs">付款方式</p>
-              <p class="text-sm flex items-center gap-1">line pay</p>
+              <p class="text-sm flex items-center gap-1">{{ order.payment_method }}</p>
             </div>
 
             <div class="flex justify-between items-center">
               <p class="text-xs">付款時間</p>
-              <p class="text-sm">2023-10-25 10:32</p>
+              <p class="text-sm">{{ new Date(order.paid_at).toLocaleString('zh-TW') }}</p>
             </div>
 
             <button
@@ -273,6 +286,8 @@
         </div>
 
         <button
+          @click="$router.back()"
+          type="button"
           class="w-full text-white bg-[#e27312] white py-2.5 rounded-lg text-sm font-bold shadow-sm hover:bg-[#e6a974] active:scale-95"
         >
           返回訂單管理
@@ -280,108 +295,6 @@
       </div>
     </div>
   </main>
-
-  <!-- 測試用 -->
-  <div class="p-4">
-    <button @click="$router.back()" class="mb-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-      ← 返回列表
-    </button>
-
-    <!-- Loading / Error -->
-    <p v-if="loading">載入中...</p>
-    <p v-else-if="error" class="text-red-500">{{ error }}</p>
-
-    <!-- 訂單明細 -->
-    <div v-else-if="order" class="bg-white rounded-lg shadow p-6">
-      <h1 class="text-2xl font-bold mb-6">🧾 訂單明細</h1>
-
-      <div class="grid grid-cols-2 gap-4 mb-6">
-        <div>
-          <label class="text-sm text-gray-600">訂單編號</label>
-          <div class="font-bold">{{ order.order_number }}</div>
-        </div>
-        <div>
-          <label class="text-sm text-gray-600">訂單狀態</label>
-          <div>{{ order.order_status }}</div>
-        </div>
-        <div>
-          <label class="text-sm text-gray-600">付款狀態</label>
-          <div>{{ order.payment_status }}</div>
-        </div>
-        <div>
-          <label class="text-sm text-gray-600">付款方式</label>
-          <div>{{ order.payment_method }}</div>
-        </div>
-      </div>
-
-      <div>
-        <label class="text-sm text-gray-600">訂購商品</label>
-        <div>{{ order.order_items }}</div>
-      </div>
-
-      <hr class="my-6" />
-
-      <h2 class="text-lg font-bold mb-4">收件資訊</h2>
-      <div class="space-y-2">
-        <div>
-          <strong>收件人:</strong>
-          {{ order.recipient_name }}
-        </div>
-        <div>
-          <strong>電話:</strong>
-          {{ order.recipient_phone }}
-        </div>
-        <div>
-          <strong>地址:</strong>
-          {{ order.recipient_address }}
-        </div>
-        <div>
-          <strong>配送方式:</strong>
-          {{ order.shipping_method }}
-        </div>
-        <div v-if="order.tracking_number">
-          <strong>物流單號:</strong>
-          {{ order.tracking_number }}
-        </div>
-      </div>
-
-      <hr class="my-6" />
-
-      <h2 class="text-lg font-bold mb-4">金額明細</h2>
-      <div class="space-y-2">
-        <div class="flex justify-between">
-          <span>商品小計</span>
-          <span>${{ order.subtotal }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span>運費</span>
-          <span>${{ order.shipping_fee }}</span>
-        </div>
-        <hr />
-        <div class="flex justify-between text-lg font-bold">
-          <span>總金額</span>
-          <span>${{ order.total_amount }}</span>
-        </div>
-      </div>
-
-      <hr class="my-6" />
-
-      <div class="text-sm text-gray-600 space-y-1">
-        <div>建立時間: {{ new Date(order.createdAt).toLocaleString('zh-TW') }}</div>
-        <div v-if="order.paid_at">
-          付款時間: {{ new Date(order.paid_at).toLocaleString('zh-TW') }}
-        </div>
-        <div v-if="order.shipped_at">
-          出貨時間: {{ new Date(order.shipped_at).toLocaleString('zh-TW') }}
-        </div>
-      </div>
-
-      <div v-if="order.customer_note" class="mt-4 p-3 bg-yellow-50 rounded">
-        <strong>買家備註:</strong>
-        {{ order.customer_note }}
-      </div>
-    </div>
-  </div>
 </template>
 
 <script setup lang="ts">

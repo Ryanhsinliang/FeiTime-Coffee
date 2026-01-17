@@ -42,5 +42,10 @@ export const orderList = defineStore('order', {
     orderAfter(data: OrderRule) {
       this.orderThing = data;
     },
+    // 清空功能
+    orderReset() {
+      this.orderThing = null;
+    },
   },
+  persist: true, // 跨網域也不會丟失資料
 });

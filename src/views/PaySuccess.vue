@@ -47,11 +47,10 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
-  import { getOrder } from '@/services/checkout';
+  import { ref, computed, onMounted } from 'vue';
   import { orderList } from '@/store/order';
-  import { storeToRefs } from 'pinia';
 
+  /*
   interface ProductRule {
     pid: string;
     quantity: number;
@@ -78,9 +77,11 @@
     updatedAt: string;
     order_items: ProductRule[];
   }
+*/
 
   const piniaGet = orderList();
-  const { orderThing } = storeToRefs(piniaGet);
+  const orderThing = computed(() => piniaGet.orderThing);
+
   const taiwanTime = ref('');
 
   onMounted(async () => {

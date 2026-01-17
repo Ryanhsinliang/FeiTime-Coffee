@@ -51,16 +51,9 @@
         <span class="material-symbols-outlined">settings</span>
         <span class="text-sm">設定</span>
       </a>
-      <div class="flex items-center gap-3 px-3 py-2.5 border-t border-[#e7dacf]">
-        <img
-          src="/icons/feitime-logo.png"
-          alt="FeiTime Logo"
-          class="w-16 h-16 object-cover aspect-square rounded-full"
-        />
-        <div>
-          <p class="text-sm font-semibold">管理者</p>
-          <p class="text-xs">admin@coffee.com</p>
-        </div>
+      <div class="px-3 py-3 border-t border-[#e7dacf]">
+        <p class="text-sm font-semibold">管理者</p>
+        <p class="text-xs">admin@coffee.com</p>
       </div>
     </div>
   </aside>

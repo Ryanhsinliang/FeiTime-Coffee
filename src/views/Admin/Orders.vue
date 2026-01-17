@@ -109,16 +109,9 @@
               <p class="text-sm font-bold font-mono">#ORD-7352</p>
             </td>
 
-            <td class="py-4 px-6 flex items-start gap-3">
-              <div
-                class="size-8 rounded-full bg-orange-100 flex items-center justify-center font-bold text-xs mt-1 shrink-0"
-              >
-                JD
-              </div>
-              <div>
-                <p class="text-sm font-semibold">John Doe</p>
-                <p class="text-xs">UID: 89932</p>
-              </div>
+            <td class="py-4 px-6 flex flex-col items-start">
+              <p class="text-sm font-semibold">John Doe</p>
+              <p class="text-xs">ID: 89932</p>
             </td>
 
             <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
@@ -152,16 +145,9 @@
               <p class="text-sm font-bold font-mono">#ORD-7352</p>
             </td>
 
-            <td class="py-4 px-6 flex items-start gap-3">
-              <div
-                class="size-8 rounded-full bg-orange-100 flex items-center justify-center font-bold text-xs mt-1 shrink-0"
-              >
-                JD
-              </div>
-              <div>
-                <p class="text-sm font-semibold">John Doe</p>
-                <p class="text-xs">UID: 89932</p>
-              </div>
+            <td class="py-4 px-6 flex flex-col items-start">
+              <p class="text-sm font-semibold">John Doe</p>
+              <p class="text-xs">ID: 89932</p>
             </td>
 
             <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
@@ -195,16 +181,9 @@
               <p class="text-sm font-bold font-mono">#ORD-7352</p>
             </td>
 
-            <td class="py-4 px-6 flex items-start gap-3">
-              <div
-                class="size-8 rounded-full bg-orange-100 flex items-center justify-center font-bold text-xs mt-1 shrink-0"
-              >
-                JD
-              </div>
-              <div>
-                <p class="text-sm font-semibold">John Doe</p>
-                <p class="text-xs">UID: 89932</p>
-              </div>
+            <td class="py-4 px-6 flex flex-col items-start">
+              <p class="text-sm font-semibold">John Doe</p>
+              <p class="text-xs">ID: 89932</p>
             </td>
 
             <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
@@ -238,16 +217,9 @@
               <p class="text-sm font-bold font-mono">#ORD-7352</p>
             </td>
 
-            <td class="py-4 px-6 flex items-start gap-3">
-              <div
-                class="size-8 rounded-full bg-orange-100 flex items-center justify-center font-bold text-xs mt-1 shrink-0"
-              >
-                JD
-              </div>
-              <div>
-                <p class="text-sm font-semibold">John Doe</p>
-                <p class="text-xs">UID: 89932</p>
-              </div>
+            <td class="py-4 px-6 flex flex-col items-start">
+              <p class="text-sm font-semibold">John Doe</p>
+              <p class="text-xs">ID: 89932</p>
             </td>
 
             <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
@@ -281,16 +253,9 @@
               <p class="text-sm font-bold font-mono">#ORD-7352</p>
             </td>
 
-            <td class="py-4 px-6 flex items-start gap-3">
-              <div
-                class="size-8 rounded-full bg-orange-100 flex items-center justify-center font-bold text-xs mt-1 shrink-0"
-              >
-                JD
-              </div>
-              <div>
-                <p class="text-sm font-semibold">John Doe</p>
-                <p class="text-xs">UID: 89932</p>
-              </div>
+            <td class="py-4 px-6 flex flex-col items-start">
+              <p class="text-sm font-semibold">John Doe</p>
+              <p class="text-xs">ID: 89932</p>
             </td>
 
             <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
@@ -356,12 +321,16 @@
   <div class="p-4">
     <h1 class="text-2xl font-bold mb-4">📦 訂單管理</h1>
 
-    <!-- Loading / Error -->
-    <p v-if="loading">載入中...</p>
-    <p v-else-if="error" class="text-red-500">{{ error }}</p>
+    <!-- Loading status -->
+    <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
+      <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
+      <p>載入產品中...</p>
+    </div>
+    <!-- Error status -->
+    <div v-else-if="error">{{ error }}</div>
 
     <!-- 訂單列表 -->
-    <div v-else>
+    <div v-else-if="orders">
       <ul class="space-y-2">
         <li
           v-for="order in orders"

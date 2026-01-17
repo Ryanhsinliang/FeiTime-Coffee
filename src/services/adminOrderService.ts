@@ -21,7 +21,7 @@ export interface OrderRequest {
   paid_at: string;
   shipped_at: string;
   user: OrderUser;
-  order_item: OrderItem[];
+  order_items: OrderItem[];
 }
 
 export interface OrderItem {
@@ -36,10 +36,15 @@ export interface OrderItem {
 }
 
 export interface OrderUser {
-  id: number;
+  user_id: string;
   username: string;
   email: string;
-  user_role: 'Admin' | 'Member';
+  role: 'Admin' | 'Authenticated';
+  password: string;
+  confirmed: boolean;
+  blocked: boolean;
+  phone_number: string;
+  shipping_address: string;
 }
 
 export interface OrderListResponse {

@@ -26,3 +26,16 @@ export async function formGoPost(formData: any) {
     throw err;
   }
 }
+
+export async function getOrder() {
+  try {
+    const res = await api.get('/api/order/giveme');
+    return res.data;
+  } catch (err: any) {
+    console.error('API 串接出錯：', err.message);
+    console.error(err.res.error);
+    console.error(err.res.message);
+    console.error(err.res.detail);
+    throw err;
+  }
+}

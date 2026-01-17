@@ -355,7 +355,7 @@
     shipping_method: '',
   });
 
-  // 【 POST + 導到linepay或成功頁 】
+  // 【 POST + 導到linepay 、成功頁 、 失敗頁 】
   const formPost = async () => {
     if (form.recipient_name == '') {
       alert('請填寫姓名');
@@ -388,6 +388,7 @@
       }
     } catch (error) {
       console.error('送出失敗', error);
+      router.push('/payment-cancel');
     }
   };
 </script>

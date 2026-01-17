@@ -46,7 +46,15 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue';
+  import { getOrder } from '@/services/checkout';
+
+  onMounted(async () => {
+    const orderGet = await getOrder();
+    console.log(orderGet);
+  });
+</script>
 
 <style>
   /* Tailwind 3.4 官網 */

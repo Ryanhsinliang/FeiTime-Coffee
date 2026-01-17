@@ -17,7 +17,7 @@
       >
         <div class="flex justify-between">
           <p class="text-[#666666]">訂單編號</p>
-          <p class="text-[--heavy-brown]">6658876876465454656</p>
+          <p class="text-[--heavy-brown]">{{ orderNo }}</p>
         </div>
         <div class="flex justify-between my-[16px]">
           <p class="text-[#666666]">總金額</p>
@@ -52,20 +52,48 @@
   import { orderList } from '@/store/order';
   import { storeToRefs } from 'pinia';
 
+  interface ProductRule {
+    pid: string;
+    quantity: number;
+    snapshot_name: string;
+    snapshot_price: number;
+    snapshot_image: string;
+    snapshot_weight: string;
+    item_total: number;
+  }
+
+  interface OrderRule {
+    id: number;
+    order_number: string;
+    subtotal: number;
+    shipping_fee: number;
+    total_amount: number;
+    order_status: string;
+    payment_status: string;
+    recipient_name: string;
+    recipient_phone: string;
+    recipient_address: string;
+    shipping_method: string;
+    createdAt: string;
+    updatedAt: string;
+    order_items: ProductRule[];
+  }
+
   const piniaGet = orderList();
   const { orderThing } = storeToRefs(piniaGet);
 
-  const orderNo = ref('');
+  const orderNo = ref(''); // 從pinia拿到訂單編號
 
   onMounted(async () => {
     if (orderThing.value) {
-      console.log(orderThing.value);
-      console.log(orderThing.value.createdAt);
-      console.log(orderThing.value.order_number);
+      orderNo.value = orderThing.value.order_number;
     }
 
-    // const orderGet = await getOrder();
-    // console.log(orderGet);
+    const orderGet = await getOrder();
+    const idBuy = orderGet.filter((obj: OrderRule) => {
+      return obj.order_number == orderNo.value;
+    });
+    console.log(idBuy[0]); // 抓到這筆訂單的物件
   });
 </script>
 

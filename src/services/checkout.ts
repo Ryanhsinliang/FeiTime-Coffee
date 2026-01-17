@@ -14,9 +14,9 @@ export async function getCart() {
   }
 }
 
-export async function formGoPost() {
+export async function formGoPost(formData: any) {
   try {
-    const res = await api.get('/api/orders/checkout');
+    const res = await api.post('/api/orders/checkout', formData);
     return res.data;
   } catch (err: any) {
     console.error('API 串接出錯：', err.message);

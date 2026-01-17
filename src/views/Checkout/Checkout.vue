@@ -205,7 +205,8 @@
         </section>
 
         <button
-          type="submit"
+          @click="formPost"
+          type="button"
           class="ml-0 md:ml-[25%] lg:ml-[25%] w-[100%] md:w-[50%] lg:w-[50%] p-[12px] rounded-md mt-2 mb-4 bg-[--green-gray] text-white font-bold text-[20px]"
         >
           確認送出訂單
@@ -226,9 +227,10 @@
 <script setup lang="ts">
   import axios from 'axios';
   import { ref, reactive, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import { getCart, formGoPost } from '@/services/checkout';
+  const router = useRouter();
 
-  // 【 抓購物車 】
   interface UserRule {
     // 購物車物件內的 user物件 的規範
     id: number;
@@ -258,7 +260,7 @@
   const fontAmount = ref(0); //總價錢
   const postProducts = ref({});
 
-  // 畫面開始時 抓購物車的一條條 list 渲染畫面 並計算價錢 準備給後端
+  // 【 渲染畫面 + 抓取資料 】 抓DB購物車的資料 渲染畫面 並計算價錢 準備給後端
   onMounted(async () => {
     // 打API拿這個user.id的人 買的所有產品的物件 的陣列
 
@@ -302,42 +304,9 @@
     // 概念釐清 : 一個table 只是user.id=1買的一個其中產品
     // user.id = 1 可能買很多個不同的商品 所以會有很多個table
     // 我要找出這些table 加總 總金額 並加上【運費】
-    console.log(memberBuyArr.value);
-    console.log(postProducts.value);
+    // console.log(memberBuyArr.value);
+    // console.log(postProducts.value);
   });
-
-  // 送資料去DB的order那邊
-  const form = reactive({
-    order_items: postProducts.value,
-    subtotal: productTotal.value, // 只有商品的價錢
-    shipping_fee: 250, //運費
-    total_amount: fontAmount.value, // 總價錢
-    order_status: 'pending',
-    payment_status: 'unpaid',
-    payment_method: '', // 付款方式
-    recipient_name: '',
-    recipient_phone: '',
-    recipient_address: '',
-    customer_note: '',
-    shipping_method: '',
-  });
-
-  // 打post
-  const formPost = async () => {
-    form.order_items = postProducts.value; // 確保在送出前，最新的購物車品項已經放入 form
-
-    if (!form.order_items) {
-      alert('購物車是空的');
-      return;
-    }
-    try {
-      const result = await formGoPost(form);
-      console.log('訂單建立成功', result);
-      alert('訂單已成功送出！');
-    } catch (error) {
-      console.error('送出失敗', error);
-    }
-  };
 
   // 【 串linepay 】
   const linepayUrl = import.meta.env.VITE_LINK;
@@ -367,6 +336,58 @@
       }
     } catch (error: any) {
       console.error('結帳出錯：', error.response?.data || error.message);
+    }
+  };
+
+  // 給 後端 > DB 的訂單資料
+  const form = reactive({
+    order_items: postProducts.value,
+    subtotal: productTotal.value, // 只有商品的價錢
+    shipping_fee: 250, //運費
+    total_amount: fontAmount.value, // 總價錢
+    order_status: 'pending',
+    payment_status: 'unpaid',
+    payment_method: '', // 付款方式
+    recipient_name: '',
+    recipient_phone: '',
+    recipient_address: '',
+    customer_note: '',
+    shipping_method: '',
+  });
+
+  // 【 POST + 導到linepay或成功頁 】
+  const formPost = async () => {
+    if (form.recipient_name == '') {
+      alert('請填寫姓名');
+      return;
+    } else if (form.recipient_phone == '') {
+      alert('請填寫電話');
+      return;
+    } else if (form.recipient_address == '') {
+      alert('請填寫收件人地址');
+      return;
+    } else if (form.shipping_method == '') {
+      alert('請選擇付款方式');
+      return;
+    }
+
+    form.order_items = postProducts.value; // 確保在送出前，最新的購物車品項已經放入 form
+
+    if (!form.order_items) {
+      alert('購物車是空的');
+      return;
+    }
+    try {
+      const result = await formGoPost(form);
+      console.log('訂單建立成功', result);
+      // alert('訂單已成功送出！');
+      if (form.shipping_method == 'linepay') {
+        await useLinePay();
+      } else {
+        router.push('/payment-success');
+      }
+    } catch (error) {
+      console.error('送出失敗', error);
     }
   };
 </script>

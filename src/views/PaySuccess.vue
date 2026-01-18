@@ -44,11 +44,13 @@
       </router-link>
     </div>
   </div>
+  <div @click="A" class="text-[48px] bg-[#ffb8f4]">測試put</div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
   import { orderList } from '@/store/order';
+  import { updateOrder } from '@/services/checkout';
 
   /*
   interface ProductRule {
@@ -81,8 +83,10 @@
 
   const piniaGet = orderList();
   const orderThing = computed(() => piniaGet.orderThing);
-
   const taiwanTime = ref('');
+
+  // order_status: 'processing'    訂單狀態 (處理中)
+  // payment_status: 'paid'  付款狀態 (已付款)
 
   onMounted(async () => {
     if (orderThing.value) {
@@ -90,8 +94,31 @@
         timeZone: 'Asia/Taipei',
         hour12: false, // 使用 24 小時制，若要 12 小時制可改為 true
       });
+      // orderThing.value.id
     }
   });
+
+  const A = async () => {
+    const orderId = orderThing.value?.order_number;
+    if (!orderId) {
+      return;
+    }
+
+    const buyAfter = {
+      order_number: orderId,
+      payment_status: 'paid',
+    };
+
+    try {
+      const putAfter = await updateOrder(buyAfter);
+      console.log(putAfter.data);
+    } catch (err: any) {
+      console.error('API 串接出錯：', err.message);
+      console.error(err.res.error);
+      console.error(err.res.message);
+      console.error(err.res.detail);
+    }
+  };
 </script>
 
 <style>

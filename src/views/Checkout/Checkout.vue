@@ -271,7 +271,7 @@
       if (Number(obj?.user?.id)) {
         return obj.user.id == buyId;
       }
-    }); // 篩選出 所有user.id是buyId 的物件 的陣列 [{},{},{}]
+    }); // 篩選出 所有user.id是buyId 的物件 的陣列 [{},{},...]
 
     memberBuyArr.value = idCart;
 
@@ -344,8 +344,8 @@
     subtotal: productTotal.value, // 只有商品的價錢
     shipping_fee: 250, //運費
     total_amount: fontAmount.value, // 總價錢
-    order_status: 'pending',
-    payment_status: 'unpaid',
+    order_status: 'pending', // 訂單狀態 (待處理)
+    payment_status: 'unpaid', // 付款狀態 (未付款)
     payment_method: '', // 付款方式
     recipient_name: '',
     recipient_phone: '',

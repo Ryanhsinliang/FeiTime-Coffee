@@ -40,7 +40,6 @@ export interface OrderUser {
   username: string;
   email: string;
   role: 'Admin' | 'Authenticated';
-  password: string;
   confirmed: boolean;
   blocked: boolean;
   phone_number: string;
@@ -60,6 +59,12 @@ export interface SingleOrderResponse {
   data: OrderRequest;
 }
 
+// 出貨資訊請求(前端傳給後端)
+export interface updateOrderRequest {
+  tracking_number: string;
+  shipped_at: string;
+}
+
 //呼叫 後端 Express 的 API
 export async function callOrders(page = 1, pageSize = 100): Promise<OrderListResponse> {
   const res = await api.get<OrderListResponse>('/api/admin-orders', {
@@ -74,5 +79,16 @@ export async function callOrders(page = 1, pageSize = 100): Promise<OrderListRes
 // 取得單筆訂單
 export async function callSingleOrder(order_number: string): Promise<SingleOrderResponse> {
   const res = await api.get<SingleOrderResponse>(`/api/admin-orders/${order_number}`);
+  return res.data;
+}
+
+// 出貨 API
+export async function callUpdateOrder(
+  // 前端傳給後端的東西
+  order_number: string,
+  data: updateOrderRequest
+  // 後端處理完後，回來跟我說的結果
+): Promise<{ success: boolean; message: string; data: OrderRequest }> {
+  const res = await api.put(`/api/admin-orders/${order_number}`, data);
   return res.data;
 }

@@ -6,7 +6,7 @@
       <div class="flex items-center text-sm gap-2">
         <p>訂單管理</p>
         <span class="material-symbols-outlined text-lg">chevron_right</span>
-        <p class="font-semibold">訂單編號 #{{ order?.order_number || 'ORD-7352' }}</p>
+        <p class="font-semibold">訂單編號 #ORD-7352</p>
       </div>
     </div>
     <div class="flex items-center gap-4">
@@ -21,80 +21,52 @@
 
   <main class="max-w-[1200px] mx-auto flex flex-col gap-8 flex-1 overflow-y-auto p-8">
     <!-- 運送狀態 -->
-    <div v-if="order" class="rounded-xl p-6 shadow-sm border border-[#e7dacf] bg-white">
+    <div class="rounded-xl p-6 shadow-sm border border-[#e7dacf] bg-white">
       <div
         class="flex flex-col md:flex-row items-center justify-between gap-6 overflow-x-auto pb-4 md:pb-0"
       >
-        <!-- 待付款 (只有 Line Pay 會顯示此階段) -->
         <div class="flex flex-col items-center gap-2 min-w-[100px]">
-          <span
-            class="material-symbols-outlined text-2xl"
-            :class="isPending ? 'text-emerald-500' : 'text-[#e7dacf]'"
-          >
-            pending_actions
-          </span>
-          <p class="text-xs" :class="isPending ? 'text-emerald-500' : 'text-[#e7dacf]'">待付款</p>
+          <span class="material-symbols-outlined text-2xl text-emerald-500">check_circle</span>
+          <!-- <span class="material-symbols-outlined text-2xl text-[#e7dacf]">pending_actions</span> -->
+          <p class="text-xs text-emerald-500">待付款</p>
         </div>
 
-        <div
-          class="hidden md:block h-[2px] flex-1"
-          :class="isPaid ? 'bg-emerald-500' : 'bg-[#e7dacf]'"
-        ></div>
+        <div class="hidden md:block h-[2px] flex-1 bg-emerald-500"></div>
 
-        <!-- 待出貨 -->
-        <div class="flex flex-col items-center gap-2 min-w-[100px]">
-          <span
-            class="material-symbols-outlined text-2xl"
-            :class="isPaid ? 'text-emerald-500' : 'text-[#e7dacf]'"
-          >
-            deployed_code_history
-          </span>
-          <p class="text-xs" :class="isPaid ? 'text-emerald-500' : 'text-[#e7dacf]'">待出貨</p>
+        <div class="flex flex-col items-center gap-2 min-w-[100px] step-completed">
+          <span class="material-symbols-outlined text-2xl text-emerald-500">check_circle</span>
+          <!-- <span class="material-symbols-outlined text-2xl text-[#e7dacf]">payments</span> -->
+          <p class="text-xs text-emerald-500">已付款</p>
         </div>
 
-        <div
-          class="hidden md:block h-[2px] flex-1"
-          :class="isShipped ? 'bg-emerald-500' : 'bg-[#e7dacf]'"
-        ></div>
+        <!-- <div class="hidden md:block h-[2px] flex-1 bg-emerald-500"></div>
 
-        <!-- 已出貨 -->
-        <div class="flex flex-col items-center gap-2 min-w-[100px]">
-          <span
-            class="material-symbols-outlined text-2xl"
-            :class="isShipped ? 'text-emerald-500' : 'text-[#e7dacf]'"
-          >
-            local_shipping
+        <div class="flex flex-col items-center gap-2 min-w-[100px] step-active">
+          <span class="material-symbols-outlined icon-fill text-2xl text-emerald-500">
+            autorenew
           </span>
-          <p class="text-xs" :class="isShipped ? 'text-emerald-500' : 'text-[#e7dacf]'">已出貨</p>
-        </div>
+          <p class="text-xs text-emerald-500">備貨中</p>
+        </div> -->
 
-        <div
-          class="hidden md:block h-[2px] flex-1"
-          :class="isDelivered ? 'bg-emerald-500' : 'bg-[#e7dacf]'"
-        ></div>
+        <div class="hidden md:block h-[2px] flex-1 bg-[#e7dacf]"></div>
 
-        <!-- 已完成 -->
-        <div class="flex flex-col items-center gap-2 min-w-[100px]">
-          <span
-            class="material-symbols-outlined text-2xl"
-            :class="isDelivered ? 'text-emerald-500' : 'text-[#e7dacf]'"
-          >
-            verified
-          </span>
-          <p class="text-xs" :class="isDelivered ? 'text-emerald-500' : 'text-[#e7dacf]'">已完成</p>
+        <div class="flex flex-col items-center gap-2 min-w-[100px] step-pending">
+          <span class="material-symbols-outlined text-2xl text-[#e7dacf]">local_shipping</span>
+          <p class="text-xs text-[#e7dacf]">已出貨</p>
         </div>
 
         <div class="hidden md:block h-[2px] flex-1 bg-[#e7dacf]"></div>
 
-        <!-- 已取消 -->
-        <div class="flex flex-col items-center gap-2 min-w-[100px]">
-          <span
-            class="material-symbols-outlined text-2xl"
-            :class="isCancelled ? 'text-red-500' : 'text-[#e7dacf]'"
-          >
-            cancel
-          </span>
-          <p class="text-xs" :class="isCancelled ? 'text-red-500' : 'text-[#e7dacf]'">已取消</p>
+        <div class="flex flex-col items-center gap-2 min-w-[100px] step-pending">
+          <span class="material-symbols-outlined text-2xl text-[#e7dacf]">verified</span>
+          <p class="text-xs text-[#e7dacf]">已完成</p>
+        </div>
+
+        <div class="hidden md:block h-[2px] flex-1 bg-[#e7dacf]"></div>
+
+        <div class="flex flex-col items-center gap-2 min-w-[100px] step-pending">
+          <span class="material-symbols-outlined text-2xl text-[#e7dacf]">cancel</span>
+          <p class="text-xs text-[#e7dacf]">已取消</p>
         </div>
       </div>
     </div>
@@ -105,7 +77,7 @@
       <p>載入產品中...</p>
     </div>
     <!-- Error status -->
-    <div v-else-if="error" class="text-red-600 text-center py-8">{{ error }}</div>
+    <div v-else-if="error">{{ error }}</div>
 
     <!-- 訂單明細 -->
     <div v-else-if="order" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -209,16 +181,13 @@
             <p class="text-sm">地址: {{ order.recipient_address }}</p>
             <p class="text-sm">配送方式: {{ order.shipping_method }}</p>
             <p class="text-sm">訂單狀態: {{ order.order_status }}</p>
-            <p class="text-sm">物流單號: {{ order.tracking_number || '尚未出貨' }}</p>
+            <p class="text-sm">物流單號: {{ order.tracking_number }}</p>
             <p class="text-sm">
-              出貨時間:
-              {{
-                order.shipped_at ? new Date(order.shipped_at).toLocaleString('zh-TW') : '尚未出貨'
-              }}
+              出貨時間: {{ new Date(order.shipped_at).toLocaleString('zh-TW') }}
             </p>
             <p class="font-bold flex items-center gap-2 px-2 py-4 rounded-lg bg-[#fcfaf8]">
               <i class="fa-regular fa-comment-dots text-lg"></i>
-              買家備註： {{ order.customer_note || '無' }}
+              買家備註： {{ order.customer_note }}
             </p>
           </div>
         </div>
@@ -226,10 +195,8 @@
 
       <div class="flex flex-col gap-8">
         <!-- 運送資訊 -->
-        <form
-          @submit.prevent="handleUpdateShipping"
-          class="border border-[#e7dacf] bg-white rounded-xl p-6 shadow-sm ring-2"
-        >
+
+        <form class="border border-[#e7dacf] bg-white rounded-xl p-6 shadow-sm ring-2">
           <div class="flex items-center justify-between mb-6">
             <h3 class="font-bold text-lg flex items-center gap-2">
               <span class="material-symbols-outlined">local_shipping</span>
@@ -246,43 +213,44 @@
           </div>
 
           <div class="flex flex-col gap-4">
+            <!-- <div>
+              <label class="block text-sm font-bold mb-1.5">運送方式</label>
+              <select
+                class="w-full px-4 py-2.5 rounded-lg border border-[#e7dacf] bg-[#fcfaf8] focus:ring-0 text-sm"
+              >
+                <option>黑貓宅急便</option>
+                <option>郵局</option>
+                <option>宅配通</option>
+              </select>
+            </div> -->
+
             <div>
               <label class="block text-sm font-bold mb-1.5">物流單號</label>
-              <input
-                v-model="shippingForm.tracking_number"
-                class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-[#e7dacf] bg-[#fcfaf8] focus:ring-0 text-sm font-mono"
-                type="text"
-                placeholder="請輸入物流單號"
-                required
-              />
+              <div class="relative">
+                <input
+                  class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-[#e7dacf] bg-[#fcfaf8] focus:ring-0 text-sm font-mono"
+                  type="text"
+                  value="TRK-9823104859"
+                />
+                <button class="absolute right-3 top-1/2 -translate-y-1/2">
+                  <span class="material-symbols-outlined text-lg">auto_fix</span>
+                </button>
+              </div>
             </div>
 
             <div>
               <label class="block text-sm font-bold mb-1.5">出貨時間</label>
               <input
-                v-model="shippingForm.shipped_at"
                 class="w-full px-4 py-2.5 rounded-lg focus:ring-0 text-sm border border-[#e7dacf] bg-[#fcfaf8]"
                 type="datetime-local"
-                required
               />
             </div>
 
             <button
-              type="submit"
-              :disabled="updating"
-              class="w-full text-white bg-[#e27312] py-2.5 rounded-lg text-sm font-bold shadow-sm hover:bg-[#e6a974] active:scale-95 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full text-white bg-[#e27312] white py-2.5 rounded-lg text-sm font-bold shadow-sm hover:bg-[#e6a974] active:scale-95 mt-4"
             >
-              {{ updating ? '更新中...' : '更新物流狀態' }}
+              更新物流狀態
             </button>
-
-            <!-- 成功/錯誤提示 -->
-            <div
-              v-if="updateMessage"
-              class="text-sm text-center py-2 px-3 rounded-lg"
-              :class="updateSuccess ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-            >
-              {{ updateMessage }}
-            </div>
           </div>
         </form>
 
@@ -310,9 +278,7 @@
 
             <div class="flex justify-between items-center">
               <p class="text-xs">付款時間</p>
-              <p class="text-sm">
-                {{ order.paid_at ? new Date(order.paid_at).toLocaleString('zh-TW') : '尚未付款' }}
-              </p>
+              <p class="text-sm">{{ new Date(order.paid_at).toLocaleString('zh-TW') }}</p>
             </div>
 
             <button
@@ -326,17 +292,19 @@
         <button
           @click="$router.back()"
           type="button"
-          class="w-full text-white bg-[#e27312] py-2.5 rounded-lg text-sm font-bold shadow-sm hover:bg-[#e6a974] active:scale-95"
+          class="w-full text-white bg-[#e27312] white py-2.5 rounded-lg text-sm font-bold shadow-sm hover:bg-[#e6a974] active:scale-95"
         >
           返回訂單管理
         </button>
       </div>
     </div>
   </main>
+
+  <!-- test -->
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue';
+  import { ref, onMounted, computed, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { callSingleOrder, callUpdateOrder } from '@/services/adminOrderService';
   import type { OrderRequest } from '@/services/adminOrderService';
@@ -346,144 +314,20 @@
   const order = ref<OrderRequest | null>(null);
   const loading = ref(false);
   const error = ref('');
-  const updating = ref(false);
-  const updateMessage = ref('');
-  const updateSuccess = ref(false);
 
-  // 物流表單資料
-  const shippingForm = ref({
-    tracking_number: '',
-    shipped_at: '',
-  });
-
-  // 判斷付款方式是否為取貨付款
-  const isCashOnDelivery = computed(() => {
-    return (
-      order.value?.payment_method === '取貨付款' ||
-      order.value?.payment_method === 'cash_on_delivery'
-    );
-  });
-
-  const isPending = computed(() => {
-    if (!order.value) return false;
-    const status = order.value.order_status;
-
-    // Line Pay：只要走到 paid 之後就算「待付款完成」
-    return ['pending', 'paid', 'shipped', 'delivered'].includes(status);
-    // 取貨付款：不顯示待付款（你原本就這樣設計），所以這裡回 false 就好
-    if (isCashOnDelivery.value) return false;
-  });
-
-  // 判斷是否已付款(待出貨階段)
-  const isPaid = computed(() => {
-    if (!order.value) return false;
-    const status = order.value.order_status;
-
-    // Line Pay: paid, shipped, delivered 都算已付款
-    if (!isCashOnDelivery.value) {
-      return ['paid', 'shipped', 'delivered'].includes(status);
-    }
-    // 取貨付款: pending 就算進入待出貨階段
-    return ['pending', 'paid', 'shipped', 'delivered'].includes(status);
-  });
-
-  // 判斷是否已出貨
-  const isShipped = computed(() => {
-    if (!order.value) return false;
-    const status = order.value.order_status;
-    return ['shipped', 'delivered'].includes(status);
-  });
-
-  // 判斷是否已完成(已送達)
-  const isDelivered = computed(() => {
-    return order.value?.order_status === 'delivered';
-  });
-
-  // 判斷是否已取消
-  const isCancelled = computed(() => {
-    return order.value?.order_status === 'cancelled';
-  });
-
-  // 載入訂單資料
   async function loadOrder(order_number: string) {
     loading.value = true;
     error.value = '';
     try {
+      console.log('🔍 載入訂單明細:', order_number);
       const res = await callSingleOrder(order_number);
       order.value = res.data;
-      console.log('🔍 載入訂單明細:', order_number);
       console.log('✅ 載入成功:', order.value);
-
-      // 如果訂單已有物流資訊，填入表單
-      if (order.value.tracking_number) {
-        shippingForm.value.tracking_number = order.value.tracking_number;
-      }
-      if (order.value.shipped_at) {
-        // 轉換為 datetime-local 格式
-        const date = new Date(order.value.shipped_at);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        shippingForm.value.shipped_at = `${year}-${month}-${day}T${hours}:${minutes}`;
-      }
     } catch (err: any) {
       console.error('❌ 載入失敗:', err);
       error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
     } finally {
       loading.value = false;
-    }
-  }
-
-  // 處理物流更新
-  async function handleUpdateShipping() {
-    if (!order.value) return;
-
-    // 驗證表單
-    if (!shippingForm.value.tracking_number.trim()) {
-      updateMessage.value = '請輸入物流單號';
-      updateSuccess.value = false;
-      return;
-    }
-    if (!shippingForm.value.shipped_at) {
-      updateMessage.value = '請選擇出貨時間';
-      updateSuccess.value = false;
-      return;
-    }
-
-    updating.value = true;
-    updateMessage.value = '';
-
-    try {
-      console.log('📦 更新物流資訊:', {
-        order_number: order.value.order_number,
-        ...shippingForm.value,
-      });
-
-      const res = await callUpdateOrder(order.value.order_number, {
-        tracking_number: shippingForm.value.tracking_number,
-        shipped_at: new Date(shippingForm.value.shipped_at).toISOString(),
-      });
-
-      console.log('✅ 更新成功:', res);
-
-      updateMessage.value = '物流資訊更新成功！';
-      updateSuccess.value = true;
-
-      // 重新載入訂單資料
-      await loadOrder(order.value.order_number);
-
-      // 3秒後清除提示訊息
-      setTimeout(() => {
-        updateMessage.value = '';
-      }, 3000);
-    } catch (err: any) {
-      console.error('❌ 更新失敗:', err);
-      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
-      updateSuccess.value = false;
-    } finally {
-      updating.value = false;
     }
   }
 

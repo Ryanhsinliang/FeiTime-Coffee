@@ -96,39 +96,58 @@
             </th>
             <th class="py-4 px-6 text-xs font-bold">訂購者姓名</th>
             <th class="py-4 px-6 text-xs font-bold">下訂商品名稱</th>
-            <th class="py-4 px-6 text-xs font-bold">日期</th>
+            <th class="py-4 px-6 text-xs font-bold">訂購日期</th>
             <th class="py-4 px-6 text-xs font-bold text-center">出貨狀態</th>
             <th class="py-4 px-6 text-xs font-bold text-right">總金額</th>
             <th class="py-4 px-6 text-xs font-bold text-center">操作</th>
           </tr>
         </thead>
 
-        <tbody>
-          <tr>
+        <!-- Loading status -->
+        <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
+          <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
+          <p>載入產品中...</p>
+        </div>
+        <!-- Error status -->
+        <div v-else-if="error">{{ error }}</div>
+
+        <!-- 訂單列表 -->
+        <tbody v-else-if="orders">
+          <tr
+            v-for="order in orders"
+            :key="order.order_number"
+            @click="goToDetail(order.order_number)"
+            class="hover:bg-gray-100 cursor-pointer"
+          >
             <td class="py-4 px-6">
-              <p class="text-sm font-bold font-mono">#ORD-7352</p>
+              <p class="text-sm font-bold font-mono">{{ order.order_number }}</p>
             </td>
 
             <td class="py-4 px-6 flex flex-col items-start">
-              <p class="text-sm font-semibold">John Doe</p>
-              <p class="text-xs">ID: 89932</p>
+              <p class="text-sm font-semibold">{{ order.user?.username || '無' }}</p>
+              <p class="text-xs">ID: {{ order.user?.user_id || '無' }}</p>
             </td>
 
-            <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
+            <td class="py-4 px-6 text-sm">
+              {{ order.order_items[0]?.quantity }}x {{ order.order_items[0]?.snapshot_name }}
+              {{ order.order_items[0]?.snapshot_weight }}
+              <span v-if="order.order_items.length > 1" class="text-gray-400">
+                ＋其他 {{ order.order_items.length - 1 }} 件
+              </span>
+            </td>
             <td class="py-4 px-6 text-xs">
-              <p class="">下單日期: 2023-10-24</p>
-              <p class="text-gray-500">付款日期: --</p>
+              {{ order.createdAt?.slice(0, 10) }}
             </td>
 
             <td class="py-4 px-6 text-center">
               <p
                 class="items-center px-2.5 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800 border border-yellow-200"
               >
-                未付款
+                {{ order.order_status }}
               </p>
             </td>
 
-            <td class="py-4 px-6 text-right text-sm font-bold">$600</td>
+            <td class="py-4 px-6 text-right text-sm font-bold">${{ order.total_amount }}</td>
 
             <td class="py-4 px-6 flex justify-center gap-5">
               <button type="button">
@@ -316,46 +335,6 @@
       </div>
     </div>
   </main>
-
-  <!-- 測試用 -->
-  <div class="p-4">
-    <h1 class="text-2xl font-bold mb-4">📦 訂單管理</h1>
-
-    <!-- Loading status -->
-    <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
-      <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
-      <p>載入產品中...</p>
-    </div>
-    <!-- Error status -->
-    <div v-else-if="error">{{ error }}</div>
-
-    <!-- 訂單列表 -->
-    <div v-else-if="orders">
-      <ul class="space-y-2">
-        <li
-          v-for="order in orders"
-          :key="order.order_number"
-          class="border p-4 rounded hover:bg-gray-50 cursor-pointer"
-          @click="goToDetail(order.order_number)"
-        >
-          <div class="flex justify-between items-center">
-            <div>
-              <div class="font-bold">訂單編號: {{ order.order_number }}</div>
-              <div class="text-sm text-gray-600">
-                狀態: {{ order.order_status }} / {{ order.payment_status }}
-              </div>
-            </div>
-            <div class="text-right">
-              <div class="font-bold text-lg">${{ order.total_amount }}</div>
-              <div class="text-xs text-gray-500">
-                {{ new Date(order.createdAt).toLocaleDateString('zh-TW') }}
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
 </template>
 
 <script setup lang="ts">

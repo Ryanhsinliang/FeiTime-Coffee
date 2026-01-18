@@ -19,7 +19,8 @@ import GoogleCallback from '@/views/Login/GoogleCallback.vue';
 import Admin from '@/views/Admin/Admin.vue';
 import AdminOrders from '@/views/Admin/Orders.vue';
 import AdminOrderDetail from '@/views/Admin/OrderDetail.vue';
-import AdminStocks from '@/views/Admin/Stock.vue';
+import AdminStocks from '@/views/Admin/Stocks.vue';
+import AdminStockDetail from '@/views/Admin/StockDetail.vue';
 import AdminCustomers from '@/views/Admin/Customers.vue';
 import AdminCustomerDetail from '@/views/Admin/CustomerDetail.vue';
 
@@ -107,7 +108,7 @@ const routes = [
       },
       {
         path: 'orders/:order_number',
-        name: 'AdminOrdersDetail',
+        name: 'AdminOrderDetail',
         component: AdminOrderDetail,
         props: true,
       },
@@ -117,6 +118,11 @@ const routes = [
         path: 'stocks',
         name: 'AdminStocks',
         component: AdminStocks,
+      },
+      {
+        path: 'stocks/:pid',
+        name: 'AdminStockDetail',
+        component: AdminStockDetail,
       },
 
       // 顧客

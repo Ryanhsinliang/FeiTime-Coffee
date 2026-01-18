@@ -99,7 +99,6 @@
             <th class="py-4 px-6 text-xs font-bold">訂購日期</th>
             <th class="py-4 px-6 text-xs font-bold text-center">出貨狀態</th>
             <th class="py-4 px-6 text-xs font-bold text-right">總金額</th>
-            <th class="py-4 px-6 text-xs font-bold text-center">操作</th>
           </tr>
         </thead>
 
@@ -116,7 +115,7 @@
           <tr
             v-for="order in orders"
             :key="order.order_number"
-            @click="goToDetail(order.order_number)"
+            @click="goToOrderDetail(order.order_number)"
             class="hover:bg-gray-100 cursor-pointer"
           >
             <td class="py-4 px-6">
@@ -148,159 +147,6 @@
             </td>
 
             <td class="py-4 px-6 text-right text-sm font-bold">${{ order.total_amount }}</td>
-
-            <td class="py-4 px-6 flex justify-center gap-5">
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px]">visibility</span>
-              </button>
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px]">attach_money</span>
-              </button>
-            </td>
-          </tr>
-
-          <tr>
-            <td class="py-4 px-6">
-              <p class="text-sm font-bold font-mono">#ORD-7352</p>
-            </td>
-
-            <td class="py-4 px-6 flex flex-col items-start">
-              <p class="text-sm font-semibold">John Doe</p>
-              <p class="text-xs">ID: 89932</p>
-            </td>
-
-            <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
-            <td class="py-4 px-6 text-xs">
-              <p class="">下單日期: 2023-10-24</p>
-              <p class="text-gray-500">付款日期: 2023-10-24</p>
-            </td>
-
-            <td class="py-4 px-6 text-center">
-              <p
-                class="items-center px-2.5 py-1 rounded-full text-xs bg-blue-100 text-blue-800 border border-blue-200"
-              >
-                已付款
-              </p>
-            </td>
-
-            <td class="py-4 px-6 text-right text-sm font-bold">$600</td>
-
-            <td class="py-4 px-6 flex justify-center gap-5">
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px]">visibility</span>
-              </button>
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px]">local_shipping</span>
-              </button>
-            </td>
-          </tr>
-
-          <tr>
-            <td class="py-4 px-6">
-              <p class="text-sm font-bold font-mono">#ORD-7352</p>
-            </td>
-
-            <td class="py-4 px-6 flex flex-col items-start">
-              <p class="text-sm font-semibold">John Doe</p>
-              <p class="text-xs">ID: 89932</p>
-            </td>
-
-            <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
-            <td class="py-4 px-6 text-xs">
-              <p class="">下單日期: 2023-10-24</p>
-              <p class="text-gray-500">出貨日期: 2023-10-25</p>
-            </td>
-
-            <td class="py-4 px-6 text-center">
-              <p
-                class="items-center px-2.5 py-1 rounded-full text-xs bg-purple-100 text-purple-800 border border-purple-200"
-              >
-                已出貨
-              </p>
-            </td>
-
-            <td class="py-4 px-6 text-right text-sm font-bold">$600</td>
-
-            <td class="py-4 px-6 flex justify-center gap-5">
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px]">visibility</span>
-              </button>
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px]">location_on</span>
-              </button>
-            </td>
-          </tr>
-
-          <tr>
-            <td class="py-4 px-6">
-              <p class="text-sm font-bold font-mono">#ORD-7352</p>
-            </td>
-
-            <td class="py-4 px-6 flex flex-col items-start">
-              <p class="text-sm font-semibold">John Doe</p>
-              <p class="text-xs">ID: 89932</p>
-            </td>
-
-            <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
-            <td class="py-4 px-6 text-xs">
-              <p class="">下單日期: 2023-10-24</p>
-              <p class="text-gray-500">出貨日期: 2023-10-25</p>
-            </td>
-
-            <td class="py-4 px-6 text-center">
-              <p
-                class="items-center px-2.5 py-1 rounded-full text-xs bg-green-100 text-green-800 border border-green-200"
-              >
-                已完成
-              </p>
-            </td>
-
-            <td class="py-4 px-6 text-right text-sm font-bold">$600</td>
-
-            <td class="py-4 px-6 flex justify-center gap-5">
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px]">visibility</span>
-              </button>
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px]">receipt</span>
-              </button>
-            </td>
-          </tr>
-
-          <tr>
-            <td class="py-4 px-6">
-              <p class="text-sm font-bold font-mono">#ORD-7352</p>
-            </td>
-
-            <td class="py-4 px-6 flex flex-col items-start">
-              <p class="text-sm font-semibold">John Doe</p>
-              <p class="text-xs">ID: 89932</p>
-            </td>
-
-            <td class="py-4 px-6 text-sm">1x 阿拉比卡 (250g)</td>
-            <td class="py-4 px-6 text-xs">
-              <p class="">下單日期: 2023-10-24</p>
-              <p class="text-gray-500">出貨日期: 2023-10-25</p>
-            </td>
-
-            <td class="py-4 px-6 text-center">
-              <p
-                class="items-center px-2.5 py-1 rounded-full text-xs bg-red-100 text-red-800 border-red-200"
-              >
-                已取消
-              </p>
-            </td>
-
-            <td class="py-4 px-6 text-right text-sm font-bold">$600</td>
-
-            <td class="py-4 px-6 flex justify-center gap-5">
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px]">visibility</span>
-              </button>
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px]">info</span>
-              </button>
-            </td>
           </tr>
         </tbody>
       </table>
@@ -354,7 +200,6 @@
     error.value = '';
 
     try {
-      console.log('🔍 載入訂單列表...');
       const res = await callOrders();
       orders.value = res.data || [];
       console.log('✅ 成功載入訂單:', orders.value.length, '筆');
@@ -366,8 +211,8 @@
     }
   }
 
-  function goToDetail(order_number: string) {
-    router.push({ name: 'AdminOrdersDetail', params: { order_number } });
+  function goToOrderDetail(order_number: string) {
+    router.push({ name: 'AdminOrderDetail', params: { order_number } });
   }
 
   onMounted(() => {

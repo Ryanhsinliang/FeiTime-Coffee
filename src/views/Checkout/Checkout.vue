@@ -80,7 +80,7 @@
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
-              v-model="form.shipping_method"
+              v-model="form.payment_method"
               value="linepay"
             />
             <label for="m-linepay" class="pl-[20px]">
@@ -95,7 +95,7 @@
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
-              v-model="form.shipping_method"
+              v-model="form.payment_method"
               value="paypay"
             />
             <label for="m-paypay" class="pl-[20px]">
@@ -110,7 +110,7 @@
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
-              v-model="form.shipping_method"
+              v-model="form.payment_method"
               value="card"
             />
             <label for="m-card" class="pl-[20px]">
@@ -129,7 +129,7 @@
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
-              v-model="form.shipping_method"
+              v-model="form.payment_method"
               value="convenience"
             />
             <label for="m-ok711" class="pl-[20px]">
@@ -144,7 +144,7 @@
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
-              v-model="form.shipping_method"
+              v-model="form.payment_method"
               value="myself"
             />
             <label for="m-come" class="pl-[20px]">
@@ -365,7 +365,7 @@
     } else if (form.recipient_address == '') {
       alert('請填寫收件人地址');
       return;
-    } else if (form.shipping_method == '') {
+    } else if (form.payment_method == '') {
       alert('請選擇付款方式');
       return;
     }
@@ -386,7 +386,7 @@
 
       const orderStore = orderList();
       orderStore.orderAfter(result.data);
-      if (form.shipping_method == 'linepay') {
+      if (form.payment_method == 'linepay') {
         await useLinePay();
       } else {
         router.push('/payment-success');

@@ -44,7 +44,6 @@
       </router-link>
     </div>
   </div>
-  <div @click="putTest" class="text-[48px] bg-[#ffb8f4]">測試put</div>
 </template>
 
 <script setup lang="ts">
@@ -85,19 +84,39 @@
   const orderThing = computed(() => piniaGet.orderThing);
   const taiwanTime = ref('');
 
-  // order_status: 'processing'    訂單狀態 (處理中)
-  // payment_status: 'paid'  付款狀態 (已付款)
-
   onMounted(async () => {
+    // 把pinia時間 轉成臺灣時區 + 常人閱讀格式
     if (orderThing.value) {
       taiwanTime.value = new Date(orderThing.value.createdAt).toLocaleString('zh-TW', {
         timeZone: 'Asia/Taipei',
         hour12: false, // 使用 24 小時制，若要 12 小時制可改為 true
       });
-      console.log(orderThing.value.documentId);
+
+      const documentId = orderThing.value?.documentId; // 從pinia抓 documentId 來 put (strapi 現在是用 documentId 而不是 id ！)
+      if (!documentId) {
+        return;
+      }
+
+      // 要更新的資料
+      const buyAfter = {
+        payment_status: 'paid',
+        order_status: 'processing',
+        paid_at: new Date().toISOString(),
+      };
+
+      // 打put
+      try {
+        const putAfter = await updateOrder(documentId, buyAfter);
+        console.log(putAfter.data);
+      } catch (err: any) {
+        const errorDetail = err.response?.data?.detail || err.message;
+        console.error('API 串接出錯：', errorDetail);
+        throw err;
+      }
     }
   });
 
+  /*
   const putTest = async () => {
     const documentId = orderThing.value?.documentId;
     if (!documentId) {
@@ -119,6 +138,8 @@
       throw err;
     }
   };
+
+  */
 </script>
 
 <style>

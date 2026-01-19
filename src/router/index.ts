@@ -15,8 +15,6 @@ import Member from '@/views/Member/Member.vue';
 import { useAuthStore } from '@/store/auth';
 import EmailConfirmed from '@/views/Register/EmailConfirmed.vue';
 import ForgotPassword from '@/views/Login/ForgotPassword.vue';
-//後端串接測試用
-import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
 import ResetPassword from '@/views/Login/ResetPassword.vue';
 
 const routes = [
@@ -40,7 +38,6 @@ const routes = [
     name: 'Product',
     component: Product,
   },
-
   {
     path: '/product-detail/:pid',
     name: 'ProductDetail',
@@ -101,12 +98,6 @@ const routes = [
     path: '/reset-password',
     name: 'ResetPassword',
     component: ResetPassword,
-  },
-  //測試用
-  {
-    path: '/cTest',
-    name: 'CTest',
-    component: CTest,
   },
 ];
 

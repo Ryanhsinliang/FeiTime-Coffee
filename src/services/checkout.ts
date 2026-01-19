@@ -46,5 +46,6 @@ export async function updateOrder(id: number | string, updateData: any) {
     return res.data;
   } catch (err: any) {
     console.error('後端回傳的錯誤內容:', err.response?.data || err.message || err);
+    throw err;
   }
 }

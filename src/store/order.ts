@@ -25,6 +25,7 @@ interface OrderRule {
   createdAt: string;
   updatedAt: string;
   order_items: ProductRule[];
+  documentId: string;
 }
 
 // 成功送出訂單後 得到的訂單資料

@@ -94,13 +94,13 @@
         timeZone: 'Asia/Taipei',
         hour12: false, // 使用 24 小時制，若要 12 小時制可改為 true
       });
-      console.log(orderThing.value.id);
+      console.log(orderThing.value.documentId);
     }
   });
 
   const putTest = async () => {
-    const orderId = orderThing.value?.id;
-    if (!orderId) {
+    const documentId = orderThing.value?.documentId;
+    if (!documentId) {
       return;
     }
 
@@ -111,7 +111,7 @@
     };
 
     try {
-      const putAfter = await updateOrder(orderId, buyAfter);
+      const putAfter = await updateOrder(documentId, buyAfter);
       console.log(putAfter.data);
     } catch (err: any) {
       const errorDetail = err.response?.data?.detail || err.message;

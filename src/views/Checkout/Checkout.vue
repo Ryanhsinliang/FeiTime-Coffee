@@ -145,7 +145,7 @@
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
               v-model="form.shipping_method"
-              value="myseif"
+              value="myself"
             />
             <label for="m-come" class="pl-[20px]">
               <img src="./assets/come.svg" alt="貨到付款" class="w-[160px] h-[60px]" />

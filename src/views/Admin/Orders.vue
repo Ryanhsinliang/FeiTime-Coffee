@@ -37,7 +37,7 @@
         />
       </div>
 
-      <div class="relative min-w-48 w-full md:w-auto">
+      <!-- <div class="relative min-w-48 w-full md:w-auto">
         <select
           class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
@@ -51,7 +51,7 @@
         <i
           class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
         ></i>
-      </div>
+      </div> -->
 
       <div class="relative min-w-48 w-full md:w-auto">
         <select
@@ -71,12 +71,48 @@
 
     <section class="border-b flex items-center justify-between">
       <div class="flex">
-        <button class="px-6 py-4 text-sm font-bold border-b-2">全部</button>
-        <button class="px-6 py-4 text-sm">待付款</button>
-        <button class="px-6 py-4 text-sm">已付款</button>
-        <button class="px-6 py-4 text-sm">已出貨</button>
-        <button class="px-6 py-4 text-sm">已完成</button>
-        <button class="px-6 py-4 text-sm">已取消</button>
+        <button
+          class="px-6 py-4 text-sm"
+          :class="activeStatus === 'all' ? 'font-bold border-b-2' : ''"
+          @click="activeStatus = 'all'"
+        >
+          全部
+        </button>
+        <button
+          class="px-6 py-4 text-sm"
+          :class="activeStatus === 'pending' ? 'font-bold border-b-2' : ''"
+          @click="activeStatus = 'pending'"
+        >
+          待付款
+        </button>
+        <button
+          class="px-6 py-4 text-sm"
+          :class="activeStatus === 'paid' ? 'font-bold border-b-2' : ''"
+          @click="activeStatus = 'paid'"
+        >
+          待出貨
+        </button>
+        <button
+          class="px-6 py-4 text-sm"
+          :class="activeStatus === 'shipped' ? 'font-bold border-b-2' : ''"
+          @click="activeStatus = 'shipped'"
+        >
+          已出貨
+        </button>
+        <button
+          class="px-6 py-4 text-sm"
+          :class="activeStatus === 'delivered' ? 'font-bold border-b-2' : ''"
+          @click="activeStatus = 'delivered'"
+        >
+          已完成
+        </button>
+        <button
+          class="px-6 py-4 text-sm"
+          :class="activeStatus === 'cancelled' ? 'font-bold border-b-2' : ''"
+          @click="activeStatus = 'cancelled'"
+        >
+          已取消
+        </button>
       </div>
       <div class="hidden lg:flex items-center gap-2 text-xs text-text-secondary px-4">
         <span class="flex size-2 bg-emerald-500 rounded-full"></span>
@@ -84,7 +120,19 @@
       </div>
     </section>
 
-    <div class="overflow-hidden rounded-xl border border-[#e7dacf] bg-white shadow-sm">
+    <!-- Loading status -->
+    <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
+      <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
+      <p>載入產品中...</p>
+    </div>
+    <!-- Error status -->
+    <div v-else-if="error">{{ error }}</div>
+
+    <!-- 訂單列表 -->
+    <div
+      class="overflow-hidden rounded-xl border border-[#e7dacf] bg-white shadow-sm"
+      v-else-if="orders"
+    >
       <table class="w-full text-left">
         <thead>
           <tr class="border-b border-[#e7dacf] bg-[#fcfaf8]">
@@ -102,18 +150,9 @@
           </tr>
         </thead>
 
-        <!-- Loading status -->
-        <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
-          <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
-          <p>載入產品中...</p>
-        </div>
-        <!-- Error status -->
-        <div v-else-if="error">{{ error }}</div>
-
-        <!-- 訂單列表 -->
-        <tbody v-else-if="orders">
+        <tbody>
           <tr
-            v-for="order in orders"
+            v-for="order in filteredOrders"
             :key="order.order_number"
             @click="goToOrderDetail(order.order_number)"
             class="hover:bg-gray-100 cursor-pointer"
@@ -138,15 +177,17 @@
               {{ order.createdAt?.slice(0, 10) }}
             </td>
 
-            <td class="py-4 px-6 text-center">
-              <p
-                class="items-center px-2.5 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800 border border-yellow-200"
-              >
-                {{ order.order_status }}
-              </p>
+            <td class="py-4 px-6 text-center text-sm font-semibold">
+              {{ order.order_status }}
             </td>
 
             <td class="py-4 px-6 text-right text-sm font-bold">${{ order.total_amount }}</td>
+          </tr>
+
+          <tr v-if="!filteredOrders.length">
+            <td class="py-10 text-center text-sm text-gray-400" colspan="6">
+              目前沒有符合條件的訂單
+            </td>
           </tr>
         </tbody>
       </table>
@@ -184,7 +225,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, computed } from 'vue';
   import { useRouter } from 'vue-router';
   import { callOrders } from '@/services/adminOrderService';
   import type { OrderRequest } from '@/services/adminOrderService';
@@ -194,6 +235,10 @@
   const orders = ref<OrderRequest[]>([]);
   const loading = ref(false);
   const error = ref('');
+
+  // 目前選到的 tab 狀態
+  type TabStatus = 'all' | 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
+  const activeStatus = ref<TabStatus>('all');
 
   async function loadOrders() {
     loading.value = true;
@@ -210,6 +255,12 @@
       loading.value = false;
     }
   }
+
+  // 篩選訂單狀態
+  const filteredOrders = computed(() => {
+    if (activeStatus.value === 'all') return orders.value;
+    return orders.value.filter((o) => o.order_status === activeStatus.value);
+  });
 
   function goToOrderDetail(order_number: string) {
     router.push({ name: 'AdminOrderDetail', params: { order_number } });

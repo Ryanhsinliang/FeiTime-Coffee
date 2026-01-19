@@ -108,8 +108,8 @@
 
       // 打put
       try {
-        const putAfter = await updateOrder(documentId, buyAfter);
-        // console.log(putAfter.data);
+        const res = await updateOrder(documentId, buyAfter);
+        console.log(res.data);
       } catch (err: any) {
         const errorDetail = err.response?.data?.detail || err.message;
         console.error('API 串接出錯：', errorDetail);
@@ -119,8 +119,17 @@
   });
 
   const B = async () => {
-    console.log(orderThing.value);
-    console.log(buyProducts.value); // 產品資料 拿來調庫存
+    // console.log(buyProducts.value); // 完整的 訂購的 產品資料
+
+    // 要扣庫存的資料
+    const changeData = buyProducts.value.map((obj) => {
+      return {
+        pid: obj.pid,
+        quantity: obj.quantity,
+      };
+    });
+    console.log(changeData);
+    // 從這開始 準備await
   };
 </script>
 

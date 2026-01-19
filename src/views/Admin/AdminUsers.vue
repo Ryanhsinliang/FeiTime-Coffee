@@ -1,6 +1,6 @@
 <template>
   <!-- TODO:測試用記得刪除 -->
-  <router-link to="/admin/customers/id">查看資料</router-link>
+  <!-- <router-link to="/admin/customers/id">查看資料</router-link> -->
 
   <header
     class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-10 flex-shrink-0"
@@ -34,10 +34,10 @@
           class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c] pointer-events-none"
         ></i>
         <input
+          v-model="keyword"
           class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
-          placeholder="請輸入姓名、ID或Email"
+          placeholder="請輸入使用者姓名、ID或Email"
           type="text"
-          value=""
         />
       </div>
       <div class="relative min-w-48 w-full md:w-auto">
@@ -71,8 +71,18 @@
       </button>
     </div>
 
+    <!-- Loading status -->
+    <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
+      <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
+      <p>載入產品中...</p>
+    </div>
+    <!-- Error status -->
+    <div v-else-if="error">{{ error }}</div>
     <!-- 表格 -->
-    <div class="overflow-hidden rounded-xl border border-[#e7dacf] bg-white shadow-sm">
+    <div
+      v-else-if="users"
+      class="overflow-hidden rounded-xl border border-[#e7dacf] bg-white shadow-sm"
+    >
       <table class="w-full text-left">
         <thead>
           <tr class="border-b border-[#e7dacf] bg-[#fcfaf8]">
@@ -92,77 +102,43 @@
         </thead>
 
         <tbody>
-          <tr>
+          <tr
+            v-for="user in filteredUsers"
+            :key="user.id"
+            @click="goToUserDetail(user.id)"
+            class="hover:bg-gray-100 cursor-pointer"
+          >
             <td class="py-4 px-6">
-              <p class="text-sm font-bold font-mono">#00000</p>
+              <p class="text-sm font-bold font-mono">{{ user.user_id }}</p>
             </td>
 
-            <td class="py-4 px-6 flex items-center gap-3">
-              <div
-                class="size-8 rounded-full bg-orange-100 flex items-center justify-center font-bold text-xs mt-1 shrink-0"
-              >
-                管
-              </div>
-              <div>
-                <p class="text-sm font-semibold">管理者</p>
-              </div>
+            <td class="py-4 px-6 text-sm font-semibold">
+              {{ user.username }}
             </td>
 
-            <td class="py-4 px-6 text-sm">admin@coffee.com</td>
+            <td class="py-4 px-6 text-sm">{{ user.email }}</td>
 
-            <td class="py-4 px-6 text-sm">2020-01-01</td>
+            <td class="py-4 px-6 text-sm">{{ formatDate(user.updatedAt) }}</td>
 
             <td class="py-4 px-6 text-center">
               <p
-                class="items-center px-2.5 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800 border border-yellow-200"
+                class="items-center px-2.5 py-1 rounded-full text-xs border"
+                :class="
+                  user.user_role === 'Admin'
+                    ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                    : 'bg-purple-100 text-purple-800 border-purple-200'
+                "
               >
-                管理者
+                {{ user.user_role }}
               </p>
             </td>
 
-            <td class="py-4 px-6 text-center text-sm font-bold text-emerald-700">啟用中</td>
-
-            <td class="py-4 px-6 text-right flex justify-center gap-5">
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px] hover:text-[#9a704c]">
-                  visibility
-                </span>
-              </button>
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px] hover:text-[#9a704c]">edit</span>
-              </button>
+            <td
+              class="py-4 px-6 text-center text-sm font-bold"
+              :class="user.confirmed ? ' text-emerald-700' : ' text-orange-700'"
+            >
+              {{ user.confirmed ? '已驗證' : '未驗證' }}
             </td>
-          </tr>
-
-          <tr>
-            <td class="py-4 px-6">
-              <p class="text-sm font-bold font-mono">#73523</p>
-            </td>
-
-            <td class="py-4 px-6 flex items-center gap-3">
-              <div
-                class="size-8 rounded-full bg-orange-100 flex items-center justify-center font-bold text-xs mt-1 shrink-0"
-              >
-                JD
-              </div>
-              <div>
-                <p class="text-sm font-semibold">John Doe</p>
-              </div>
-            </td>
-
-            <td class="py-4 px-6 text-sm">123@gmail.com</td>
-
-            <td class="py-4 px-6 text-sm">2023-10-24</td>
-
-            <td class="py-4 px-6 text-center">
-              <p
-                class="items-center px-2.5 py-1 rounded-full text-xs bg-purple-100 text-purple-800 border border-purple-200"
-              >
-                一般會員
-              </p>
-            </td>
-
-            <td class="py-4 px-6 text-center text-sm font-bold text-red-500">未啟用</td>
 
             <td class="py-4 px-6 text-right flex justify-center gap-5">
               <button type="button">
@@ -181,12 +157,12 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">1 - 10 筆 / 共 24 筆</p>
+        <p class="text-sm">1 - 10 筆 / 共 {{ filteredUsers.length }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button
             class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
-            disabled=""
+            disabled="false"
           >
             <i class="fa-solid fa-chevron-left text-sm"></i>
           </button>
@@ -209,4 +185,63 @@
     </div>
   </main>
 </template>
-<script setup></script>
+
+<script setup lang="ts">
+  import { computed, onMounted, ref } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { getAllUsers } from '@/services/adminUserService';
+  import type { UserRequest } from '@/services/adminUserService';
+
+  const router = useRouter();
+
+  const users = ref<UserRequest[]>([]);
+  const loading = ref(false);
+  const error = ref('');
+  const keyword = ref('');
+
+  function formatDate(iso: string) {
+    if (!iso) return '-';
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? iso : d.toLocaleString();
+  }
+
+  // 搜尋欄檢索
+  const filteredUsers = computed(() => {
+    const key = keyword.value.trim().toLowerCase();
+    if (!key) return users.value;
+
+    return users.value.filter((user) => {
+      const hay = [
+        user.username,
+        user.email,
+        user.phone_number,
+        user.user_role,
+        user.user_id,
+        String(user.id),
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return hay.includes(key);
+    });
+  });
+
+  async function fetchUsers() {
+    loading.value = true;
+    error.value = '';
+    try {
+      const res = await getAllUsers();
+      users.value = res.data || [];
+    } catch (err: any) {
+      error.value = err?.response?.data?.message || err?.message || '取得使用者列表失敗';
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  function goToUserDetail(id: number) {
+    router.push({ name: 'AdminUserDetail', params: { id } });
+  }
+
+  onMounted(fetchUsers);
+</script>

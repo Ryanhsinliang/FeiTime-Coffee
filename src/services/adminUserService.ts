@@ -1,24 +1,6 @@
-import axios from 'axios';
+import api from '@/services/api';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
-const apiClient = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// 自動添加 token
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export interface User {
+export interface UserRequest {
   id: number;
   username: string;
   email: string;
@@ -26,35 +8,77 @@ export interface User {
   blocked: boolean;
   createdAt: string;
   updatedAt: string;
+  publishedAt: string;
+  phone_number: string;
+  shipping_address: string;
+  user_role: string;
+  user_id: string;
+}
+
+export interface UserListResponse {
+  data: UserRequest[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+  };
+}
+
+export interface SingleUserResponse {
+  data: UserRequest;
+}
+
+// 出貨資訊請求(前端傳給後端)
+export interface updateUserRequest {
+  data: UserRequest;
+}
+
+//呼叫 後端 Express 的 API
+export async function getAllUsers(page = 1, pageSize = 100): Promise<UserListResponse> {
+  const res = await api.get<UserListResponse>('/api/admin-users', {
+    params: {
+      page,
+      pageSize,
+    },
+  });
+  return res.data;
+}
+
+// 取得單筆訂單
+export async function getUserById(id: string): Promise<SingleUserResponse> {
+  const res = await api.get<SingleUserResponse>(`/api/admin-users/${id}`);
+  return res.data;
+}
+
+// 出貨 API
+export async function updateUser(
+  // 前端傳給後端的東西
+  id: string | number,
+  data: Partial<updateUserRequest>
+  // 後端處理完後，回來跟我說的結果
+): Promise<{ success: boolean; message: string; data: UserRequest }> {
+  const res = await api.put(`/api/admin-users/${id}`, data);
+  return res.data;
 }
 
 export const userService = {
-  // 取得所有用戶
-  async getAllUsers(): Promise<User[]> {
-    const response = await apiClient.get('/api/admin-users');
-    return response.data.data;
+  // async getAllUsers(): Promise<UserRequest[]> {
+  //   const res = await api.get('/api/admin-users');
+  //   return res.data.data;
+  // },
+
+  // async getUserById(id: string | number): Promise<UserRequest> {
+  //   const res = await api.get(`/api/admin-users/${id}`);
+  //   return res.data.data;
+  // },
+
+  async getCurrentUser(): Promise<UserRequest> {
+    const res = await api.get('/api/admin-users/me');
+    return res.data.data;
   },
 
-  // 取得單一用戶
-  async getUserById(id: string | number): Promise<User> {
-    const response = await apiClient.get(`/api/admin-users/${id}`);
-    return response.data.data;
-  },
-
-  // 取得當前登入用戶
-  async getCurrentUser(): Promise<User> {
-    const response = await apiClient.get('/api/admin-users/me');
-    return response.data.data;
-  },
-
-  // 更新用戶資訊
-  async updateUser(id: string | number, data: Partial<User>): Promise<User> {
-    const response = await apiClient.put(`/api/admin-users/${id}`, data);
-    // 如果更新的是當前用戶，更新 localStorage
-    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    if (currentUser.id === id) {
-      localStorage.setItem('user', JSON.stringify(response.data.data));
-    }
-    return response.data.data;
-  },
+  // async updateUser(id: string | number, data: Partial<UserRequest>): Promise<UserRequest> {
+  //   const res = await api.put(`/api/admin-users/${id}`, data);
+  //   return res.data.data;
+  // },
 };

@@ -208,6 +208,7 @@
             <p class="text-sm">電話: {{ order.recipient_phone }}</p>
             <p class="text-sm">地址: {{ order.recipient_address }}</p>
             <p class="text-sm">配送方式: {{ order.shipping_method }}</p>
+            <p class="text-sm">付款方式: {{ order.payment_method }}</p>
             <p class="text-sm">訂單狀態: {{ order.order_status }}</p>
             <p class="text-sm">物流單號: {{ order.tracking_number || '尚未出貨' }}</p>
             <p class="text-sm">

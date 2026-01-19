@@ -40,15 +40,11 @@ export async function formGoPost(formData: any) {
   }
 }
 
-export async function updateOrder(updateData: any) {
+export async function updateOrder(id: number | string, updateData: any) {
   try {
-    const res = await api.put('/api/order/updata', updateData);
+    const res = await api.put(`/api/orders/${id}`, updateData);
     return res.data;
   } catch (err: any) {
-    console.error('API 串接出錯：', err.message);
-    console.error(err.res.error);
-    console.error(err.res.message);
-    console.error(err.res.detail);
-    throw err;
+    console.error('後端回傳的錯誤內容:', err.response?.data || err.message || err);
   }
 }

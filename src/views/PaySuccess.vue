@@ -44,7 +44,7 @@
       </router-link>
     </div>
   </div>
-  <div @click="A" class="text-[48px] bg-[#ffb8f4]">測試put</div>
+  <div @click="putTest" class="text-[48px] bg-[#ffb8f4]">測試put</div>
 </template>
 
 <script setup lang="ts">
@@ -94,29 +94,29 @@
         timeZone: 'Asia/Taipei',
         hour12: false, // 使用 24 小時制，若要 12 小時制可改為 true
       });
-      // orderThing.value.id
+      console.log(orderThing.value.id);
     }
   });
 
-  const A = async () => {
-    const orderId = orderThing.value?.order_number;
+  const putTest = async () => {
+    const orderId = orderThing.value?.id;
     if (!orderId) {
       return;
     }
 
     const buyAfter = {
-      order_number: orderId,
       payment_status: 'paid',
+      order_status: 'processing',
+      paid_at: new Date().toISOString(),
     };
 
     try {
-      const putAfter = await updateOrder(buyAfter);
+      const putAfter = await updateOrder(orderId, buyAfter);
       console.log(putAfter.data);
     } catch (err: any) {
-      console.error('API 串接出錯：', err.message);
-      console.error(err.res.error);
-      console.error(err.res.message);
-      console.error(err.res.detail);
+      const errorDetail = err.response?.data?.detail || err.message;
+      console.error('API 串接出錯：', errorDetail);
+      throw err;
     }
   };
 </script>

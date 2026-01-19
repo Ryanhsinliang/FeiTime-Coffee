@@ -50,12 +50,22 @@ export async function updateOrder(id: number | string, updateData: any) {
   }
 }
 
-// export async function updateProduct(id: number | string, updateData: any) {
-//   try {
-//     const res = await api.put(`/api/orders/${id}`, updateData);
-//     return res.data;
-//   } catch (err: any) {
-//     console.error('後端回傳的錯誤內容:', err.response?.data || err.message || err);
-//     throw err;
-//   }
-// }
+export async function productsGet() {
+  try {
+    const product = await api.get('/api/products/get');
+    return product.data;
+  } catch (err: any) {
+    console.error('後端回傳的錯誤內容:', err.response?.data || err.message || err);
+    throw err;
+  }
+}
+
+export async function updateProduct(pid: number | string, updateData: any) {
+  try {
+    const res = await api.put(`/api/orders/$`, updateData);
+    return res.data;
+  } catch (err: any) {
+    console.error('後端回傳的錯誤內容:', err.response?.data || err.message || err);
+    throw err;
+  }
+}

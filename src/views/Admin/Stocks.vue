@@ -31,10 +31,10 @@
           class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c] pointer-events-none"
         ></i>
         <input
+          v-model="keyword"
           class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
           placeholder="請輸入商品名稱或PID"
           type="text"
-          value=""
         />
       </div>
       <div class="relative min-w-48 w-full md:w-auto">
@@ -86,7 +86,7 @@
 
         <tbody>
           <tr
-            v-for="product in products"
+            v-for="product in filteredProducts"
             :key="product.pid"
             @click="goToStockDetail(product.pid)"
             class="hover:bg-gray-100 cursor-pointer"
@@ -188,6 +188,21 @@
   const products = ref<ProductRequest[]>([]);
   const loading = ref(false);
   const error = ref('');
+  const keyword = ref('');
+
+  // 搜尋欄檢索
+  const filteredProducts = computed(() => {
+    const key = keyword.value.trim().toLowerCase();
+    if (!key) return products.value;
+
+    return products.value.filter((product) => {
+      const hay = [product.pid, product.name, String(product.pid)]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return hay.includes(key);
+    });
+  });
 
   async function loadProducts() {
     loading.value = true;

@@ -21,8 +21,8 @@ import AdminOrders from '@/views/Admin/Orders.vue';
 import AdminOrderDetail from '@/views/Admin/OrderDetail.vue';
 import AdminStocks from '@/views/Admin/Stocks.vue';
 import AdminStockDetail from '@/views/Admin/StockDetail.vue';
-import AdminCustomers from '@/views/Admin/Customers.vue';
-import AdminCustomerDetail from '@/views/Admin/CustomerDetail.vue';
+import AdminUsers from '@/views/Admin/AdminUsers.vue';
+import AdminUserDetail from '@/views/Admin/AdminUserDetail.vue';
 
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
@@ -127,15 +127,14 @@ const routes = [
 
       // 顧客
       {
-        path: 'customers',
-        name: 'AdminCustomers',
-        component: AdminCustomers,
+        path: 'users',
+        name: 'AdminUsers',
+        component: AdminUsers,
       },
-      // TODO:測試用記得修改
       {
-        path: 'customers/id',
-        name: 'AdminCustomerDetail',
-        component: AdminCustomerDetail,
+        path: 'users/:id',
+        name: 'AdminUserDetail',
+        component: AdminUserDetail,
         props: true,
       },
     ],

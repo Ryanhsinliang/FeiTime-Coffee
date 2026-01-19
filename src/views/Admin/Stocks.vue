@@ -25,7 +25,7 @@
     </section>
 
     <!-- 搜尋 -->
-    <div class="flex flex-wrap gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm">
+    <section class="flex flex-wrap gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm">
       <div class="relative min-w-60 flex-1">
         <i
           class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c] pointer-events-none"
@@ -39,21 +39,22 @@
       </div>
       <div class="relative min-w-48 w-full md:w-auto">
         <select
+          v-model="stockStatus"
           class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
-          <option>所有庫存狀態</option>
-          <option>無庫存</option>
-          <option>低庫存</option>
-          <option>庫存正常</option>
+          <option value="all">所有庫存狀態</option>
+          <option value="soldout">無庫存</option>
+          <option value="lowstock">低庫存</option>
+          <option value="normal">庫存正常</option>
         </select>
         <i
           class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
         ></i>
       </div>
-      <button class="h-12 px-6 rounded-lg bg-[#f3ede7] hover:bg-[#e7dacf] font-bold text-sm">
-        套用
+      <button class="px-4 py-2.5 text-sm font-semibold hover:text-[#e27312]" @click="clearFilters">
+        Clear
       </button>
-    </div>
+    </section>
 
     <!-- Loading status -->
     <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
@@ -190,18 +191,35 @@
   const error = ref('');
   const keyword = ref('');
 
+  // 庫存狀態 tab
+  type StockStatus = 'all' | 'soldout' | 'lowstock' | 'normal';
+  const stockStatus = ref<StockStatus>('all');
+
   // 搜尋欄檢索
   const filteredProducts = computed(() => {
-    const key = keyword.value.trim().toLowerCase();
-    if (!key) return products.value;
+    let result = products.value;
 
-    return products.value.filter((product) => {
-      const hay = [product.pid, product.name, String(product.pid)]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-      return hay.includes(key);
-    });
+    // 篩庫存狀態
+    if (stockStatus.value !== 'all') {
+      result = result.filter((p) => {
+        const stock = Number(p.stock ?? 0);
+
+        if (stockStatus.value === 'soldout') return stock === 0;
+        if (stockStatus.value === 'lowstock') return stock > 0 && stock <= 20;
+        if (stockStatus.value === 'normal') return stock > 20;
+        return true;
+      });
+    }
+
+    // 篩關鍵字
+    const key = keyword.value.trim().toLowerCase();
+    if (key) {
+      result = result.filter((p) => {
+        const hay = [p.pid, p.name, String(p.pid)].filter(Boolean).join(' ').toLowerCase();
+        return hay.includes(key);
+      });
+    }
+    return result;
   });
 
   async function loadProducts() {
@@ -220,15 +238,11 @@
     }
   }
 
-  // // 庫存顯示(無庫存/低庫存)
-  // const isSoldOut = computed(() => {
-  //   if (!product.value) return false;
-  //   return product.value.stock === 0;
-  // });
-  // const isLowStock = computed(() => {
-  //   if (!product.value) return false;
-  //   return product.value.stock > 0 && product.value.stock < 21;
-  // });
+  // 清除篩選
+  function clearFilters() {
+    keyword.value = '';
+    stockStatus.value = 'all';
+  }
 
   function goToStockDetail(pid: string) {
     router.push({ name: 'AdminStockDetail', params: { pid } });

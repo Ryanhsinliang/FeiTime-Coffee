@@ -31,8 +31,9 @@
           class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c] pointer-events-none"
         ></i>
         <input
+          v-model="keyword"
           class="w-full rounded-lg text-[#1b140d] focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 placeholder:text-[#9a704c] pl-10 pr-4 text-sm"
-          placeholder="請輸入訂單編號、顧客姓名或使用者ID"
+          placeholder="請輸入訂單編號、訂購者姓名或ID"
           type="text"
         />
       </div>
@@ -235,6 +236,7 @@
   const orders = ref<OrderRequest[]>([]);
   const loading = ref(false);
   const error = ref('');
+  const keyword = ref('');
 
   // 目前選到的 tab 狀態
   type TabStatus = 'all' | 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
@@ -258,8 +260,33 @@
 
   // 篩選訂單狀態
   const filteredOrders = computed(() => {
-    if (activeStatus.value === 'all') return orders.value;
-    return orders.value.filter((o) => o.order_status === activeStatus.value);
+    let result = orders.value;
+
+    // 1️⃣ 先依 tab 狀態篩選
+    if (activeStatus.value !== 'all') {
+      result = result.filter((order) => order.order_status === activeStatus.value);
+    }
+
+    // 2️⃣ 再依關鍵字篩選
+    const key = keyword.value.trim().toLowerCase();
+    if (key) {
+      result = result.filter((order) => {
+        const hay = [
+          order.order_number,
+          order.recipient_name,
+          order.user?.username,
+          order.user?.user_id,
+          String(order.user?.user_id),
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+
+        return hay.includes(key);
+      });
+    }
+
+    return result;
   });
 
   function goToOrderDetail(order_number: string) {

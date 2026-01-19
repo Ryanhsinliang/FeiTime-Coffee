@@ -369,7 +369,7 @@
     const status = order.value.order_status;
 
     // Line Pay：只要走到 paid 之後就算「待付款完成」
-    return ['pending', 'paid', 'shipped', 'delivered'].includes(status);
+    return ['pending', 'paid', 'progressing', 'shipped', 'delivered'].includes(status);
     // 取貨付款：不顯示待付款（你原本就這樣設計），所以這裡回 false 就好
     if (isCashOnDelivery.value) return false;
   });
@@ -381,10 +381,10 @@
 
     // Line Pay: paid, shipped, delivered 都算已付款
     if (!isCashOnDelivery.value) {
-      return ['paid', 'shipped', 'delivered'].includes(status);
+      return ['paid', 'progressing', 'shipped', 'delivered'].includes(status);
     }
     // 取貨付款: pending 就算進入待出貨階段
-    return ['pending', 'paid', 'shipped', 'delivered'].includes(status);
+    return ['pending', 'paid', 'progressing', 'shipped', 'delivered'].includes(status);
   });
 
   // 判斷是否已出貨

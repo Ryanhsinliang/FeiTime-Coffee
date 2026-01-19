@@ -55,8 +55,18 @@
       </button>
     </div>
 
+    <!-- Loading status -->
+    <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
+      <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
+      <p>載入產品中...</p>
+    </div>
+    <!-- Error status -->
+    <div v-else-if="error">{{ error }}</div>
     <!-- 表格 -->
-    <div class="overflow-hidden rounded-xl border border-[#e7dacf] bg-white shadow-sm">
+    <div
+      class="overflow-hidden rounded-xl border border-[#e7dacf] bg-white shadow-sm"
+      v-else-if="products"
+    >
       <table class="w-full text-left">
         <thead>
           <tr class="border-b border-[#e7dacf] bg-[#fcfaf8]">
@@ -74,14 +84,7 @@
           </tr>
         </thead>
 
-        <!-- Loading status -->
-        <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
-          <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
-          <p>載入產品中...</p>
-        </div>
-        <!-- Error status -->
-        <div v-else-if="error">{{ error }}</div>
-        <tbody v-else-if="products">
+        <tbody>
           <tr
             v-for="product in products"
             :key="product.pid"
@@ -110,7 +113,7 @@
             <td class="py-4 px-6 text-center">
               <p
                 v-if="product.stock === 0"
-                class="inline-block items-center px-2.5 py-1 rounded-full text-xs bg-gray-100 text-gray-800 border border-gray-200"
+                class="inline-block items-center px-2.5 py-1 rounded-full text-xs bg-red-100 text-red-800 border border-red-200"
               >
                 無庫存
               </p>

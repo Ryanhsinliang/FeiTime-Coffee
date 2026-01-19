@@ -33,19 +33,24 @@ export const orderList = defineStore('order', {
   // data
   state: () => ({
     orderThing: null as OrderRule | null,
+    buyProducts: [] as ProductRule[],
   }),
-
-  // computed
-  /* getters:{}, */
 
   // method
   actions: {
+    // DB > 後端 回傳的訂單資料
     orderAfter(data: OrderRule) {
       this.orderThing = data;
+    },
+
+    // 買的產品資料
+    productAfter(data: ProductRule[]) {
+      this.buyProducts = data;
     },
     // 清空功能
     orderReset() {
       this.orderThing = null;
+      this.buyProducts = [];
     },
   },
   persist: true, // 跨網域也不會丟失資料

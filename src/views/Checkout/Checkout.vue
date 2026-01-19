@@ -256,10 +256,20 @@
     snapshot_image: string;
   }
 
+  interface GivePiniaRule {
+    pid: string;
+    quantity: number;
+    snapshot_name: string;
+    snapshot_price: number;
+    snapshot_image: string;
+    snapshot_weight: string;
+    item_total: number;
+  }
+
   const memberBuyArr = ref<CartRule[]>([]); // 裝有同一個id的人買的所有產品物件 的陣列
   const productTotal = ref(0); // 全部商品價錢
-  const fontAmount = ref(0); //總價錢
-  const postProducts = ref({});
+  const fontAmount = ref(0); // 總價錢
+  const postProducts = ref<GivePiniaRule[]>([]); // 裝有把所有訂單物件的陣列 [{},{},...]
 
   // 【 渲染畫面 + 抓取資料 】 抓DB購物車的資料 渲染畫面 並計算價錢 準備給後端
   onMounted(async () => {
@@ -278,7 +288,7 @@
     // 依照post需求 做一個符合他規範的 [{},{}...]
     postProducts.value = idCart.map((obj: CartRule) => {
       return {
-        pid: obj.product.id.toString,
+        pid: obj.product.id.toString(),
         quantity: obj.quantity,
         snapshot_name: obj.product.name,
         snapshot_price: obj.product.price,
@@ -382,10 +392,14 @@
     try {
       const result = await formGoPost(form);
       console.log('訂單建立成功');
-      console.log(result);
+      // console.log(result);
+      // console.log(postProducts.value);
 
+      // 把資料存入pinia
       const orderStore = orderList();
-      orderStore.orderAfter(result.data);
+      orderStore.orderAfter(result.data); // DB>後端 回傳的訂單資料
+      orderStore.productAfter(postProducts.value); // 買的產品資料
+
       if (form.payment_method == 'linepay') {
         await useLinePay();
       } else {
@@ -393,6 +407,7 @@
       }
     } catch (error) {
       console.error('送出失敗', error);
+
       router.push('/payment-cancel');
     }
   };

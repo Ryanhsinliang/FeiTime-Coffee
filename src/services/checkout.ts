@@ -49,3 +49,13 @@ export async function updateOrder(id: number | string, updateData: any) {
     throw err;
   }
 }
+
+// export async function updateProduct(id: number | string, updateData: any) {
+//   try {
+//     const res = await api.put(`/api/orders/${id}`, updateData);
+//     return res.data;
+//   } catch (err: any) {
+//     console.error('後端回傳的錯誤內容:', err.response?.data || err.message || err);
+//     throw err;
+//   }
+// }

@@ -44,6 +44,7 @@
       </router-link>
     </div>
   </div>
+  <div @click="B" class="text-[48px] bg-[#ffb8f4]">測試產品put</div>
 </template>
 
 <script setup lang="ts">
@@ -52,36 +53,37 @@
   import { updateOrder } from '@/services/checkout';
 
   /*
-  interface ProductRule {
-    pid: string;
-    quantity: number;
-    snapshot_name: string;
-    snapshot_price: number;
-    snapshot_image: string;
-    snapshot_weight: string;
-    item_total: number;
-  }
+    interface ProductRule {
+      pid: string;
+      quantity: number;
+      snapshot_name: string;
+      snapshot_price: number;
+      snapshot_image: string;
+      snapshot_weight: string;
+      item_total: number;
+    }
 
-  interface OrderRule {
-    id: number;
-    order_number: string;
-    subtotal: number;
-    shipping_fee: number;
-    total_amount: number;
-    order_status: string;
-    payment_status: string;
-    recipient_name: string;
-    recipient_phone: string;
-    recipient_address: string;
-    shipping_method: string;
-    createdAt: string;
-    updatedAt: string;
-    order_items: ProductRule[];
-  }
-*/
+    interface OrderRule {
+      id: number;
+      order_number: string;
+      subtotal: number;
+      shipping_fee: number;
+      total_amount: number;
+      order_status: string;
+      payment_status: string;
+      recipient_name: string;
+      recipient_phone: string;
+      recipient_address: string;
+      shipping_method: string;
+      createdAt: string;
+      updatedAt: string;
+      order_items: ProductRule[];
+    }
+  */
 
   const piniaGet = orderList();
-  const orderThing = computed(() => piniaGet.orderThing);
+  const orderThing = computed(() => piniaGet.orderThing); // 從 pinia 抓 訂單訊息
+  const buyProducts = computed(() => piniaGet.buyProducts); // 從 pinia 抓 剛剛買的產品 的訊息
   const taiwanTime = ref('');
 
   onMounted(async () => {
@@ -107,7 +109,7 @@
       // 打put
       try {
         const putAfter = await updateOrder(documentId, buyAfter);
-        console.log(putAfter.data);
+        // console.log(putAfter.data);
       } catch (err: any) {
         const errorDetail = err.response?.data?.detail || err.message;
         console.error('API 串接出錯：', errorDetail);
@@ -116,30 +118,10 @@
     }
   });
 
-  /*
-  const putTest = async () => {
-    const documentId = orderThing.value?.documentId;
-    if (!documentId) {
-      return;
-    }
-
-    const buyAfter = {
-      payment_status: 'paid',
-      order_status: 'processing',
-      paid_at: new Date().toISOString(),
-    };
-
-    try {
-      const putAfter = await updateOrder(documentId, buyAfter);
-      console.log(putAfter.data);
-    } catch (err: any) {
-      const errorDetail = err.response?.data?.detail || err.message;
-      console.error('API 串接出錯：', errorDetail);
-      throw err;
-    }
+  const B = async () => {
+    console.log(orderThing.value);
+    console.log(buyProducts.value); // 產品資料 拿來調庫存
   };
-
-  */
 </script>
 
 <style>

@@ -14,21 +14,13 @@
   </header>
 
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
-    <section class="flex justify-between">
-      <div>
-        <h2 class="text-3xl font-bold">使用者管理</h2>
-        <p class="text-gray-400 text-sm">主要管理使用者權限與資料。</p>
-      </div>
-      <button
-        class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm"
-      >
-        <i class="fa-solid fa-plus text-sm"></i>
-        <p>新增使用者</p>
-      </button>
+    <section>
+      <h2 class="text-3xl font-bold">使用者管理</h2>
+      <p class="text-gray-400 text-sm">主要管理使用者權限與資料。</p>
     </section>
 
     <!-- 搜尋 -->
-    <div class="flex flex-wrap gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm">
+    <section class="flex flex-wrap gap-4 p-5 rounded-xl bg-white border border-[#e7dacf] shadow-sm">
       <div class="relative min-w-60 flex-1">
         <i
           class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#9a704c] pointer-events-none"
@@ -42,11 +34,12 @@
       </div>
       <div class="relative min-w-48 w-full md:w-auto">
         <select
+          v-model="roleFilter"
           class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
-          <option>所有使用者</option>
-          <option>管理者</option>
-          <option>一般會員</option>
+          <option value="all">所有使用者</option>
+          <option value="Admin">管理者</option>
+          <option value="Member">一般會員</option>
         </select>
         <i
           class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
@@ -54,22 +47,22 @@
       </div>
       <div class="relative min-w-48 w-full md:w-auto">
         <select
+          v-model="statusFilter"
           class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
-          <option>所有狀態</option>
-          <option>啟用</option>
-          <option>未啟用</option>
+          <option value="all">所有狀態</option>
+          <option value="active">已驗證</option>
+          <option value="unverified">未驗證</option>
+          <option value="blocked">已封鎖</option>
         </select>
         <i
           class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
         ></i>
       </div>
-      <button
-        class="h-12 px-6 rounded-lg bg-[#f3ede7] text-[#1b140d] hover:bg-[#e7dacf] font-bold text-sm"
-      >
-        套用
+      <button class="px-4 py-2.5 text-sm font-semibold hover:text-[#e27312]" @click="clearFilters">
+        Clear
       </button>
-    </div>
+    </section>
 
     <!-- Loading status -->
     <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
@@ -96,7 +89,7 @@
             <th class="py-4 px-6 text-xs font-bold">Email</th>
             <th class="py-4 px-6 text-xs font-bold">註冊日期</th>
             <th class="py-4 px-6 text-xs font-bold text-center">身分別</th>
-            <th class="py-4 px-6 text-xs font-bold text-center">狀態</th>
+            <th class="py-4 px-6 text-xs font-bold text-center">帳號狀態</th>
             <th class="py-4 px-6 text-xs font-bold text-center">操作</th>
           </tr>
         </thead>
@@ -133,11 +126,14 @@
               </p>
             </td>
 
-            <td
-              class="py-4 px-6 text-center text-sm font-bold"
-              :class="user.confirmed ? ' text-emerald-700' : ' text-orange-700'"
-            >
-              {{ user.confirmed ? '已驗證' : '未驗證' }}
+            <td class="py-4 px-6 text-center text-sm font-bold">
+              {{
+                getAccountStatus(user) === 'blocked'
+                  ? '已封鎖'
+                  : getAccountStatus(user) === 'active'
+                    ? '已驗證'
+                    : '未驗證'
+              }}
             </td>
 
             <td class="py-4 px-6 text-right flex justify-center gap-5">
@@ -199,6 +195,19 @@
   const error = ref('');
   const keyword = ref('');
 
+  type RoleFilter = 'all' | 'Admin' | 'Member';
+  const roleFilter = ref<RoleFilter>('all');
+
+  type StatusFilter = 'all' | 'active' | 'unverified' | 'blocked';
+  const statusFilter = ref<StatusFilter>('all');
+
+  function getAccountStatus(u: UserRequest) {
+    if (u.blocked) return 'blocked';
+    if (u.confirmed) return 'active';
+    return 'unverified';
+  }
+
+  // 日期
   function formatDate(iso: string) {
     if (!iso) return '-';
     const d = new Date(iso);
@@ -207,23 +216,38 @@
 
   // 搜尋欄檢索
   const filteredUsers = computed(() => {
-    const key = keyword.value.trim().toLowerCase();
-    if (!key) return users.value;
+    let result = users.value;
 
-    return users.value.filter((user) => {
-      const hay = [
-        user.username,
-        user.email,
-        user.phone_number,
-        user.user_role,
-        user.user_id,
-        String(user.id),
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-      return hay.includes(key);
-    });
+    // 身分別篩選
+    if (roleFilter.value !== 'all') {
+      result = result.filter((u) => u.user_role === roleFilter.value);
+    }
+
+    // 帳號狀態篩選（confirmed + blocked）
+    if (statusFilter.value !== 'all') {
+      result = result.filter((u) => getAccountStatus(u) === statusFilter.value);
+    }
+
+    // 關鍵字搜尋
+    const key = keyword.value.trim().toLowerCase();
+    if (key) {
+      result = result.filter((user) => {
+        const hay = [
+          user.username,
+          user.email,
+          user.phone_number,
+          user.user_role,
+          user.user_id,
+          String(user.id),
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        return hay.includes(key);
+      });
+    }
+
+    return result;
   });
 
   async function fetchUsers() {
@@ -237,6 +261,13 @@
     } finally {
       loading.value = false;
     }
+  }
+
+  // 清除篩選
+  function clearFilters() {
+    keyword.value = '';
+    statusFilter.value = 'all';
+    roleFilter.value = 'all';
   }
 
   function goToUserDetail(id: number) {

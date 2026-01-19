@@ -133,11 +133,11 @@
             </td>
 
             <td class="py-4 px-6 text-right flex justify-center gap-5">
-              <button type="button">
+              <!-- <button type="button">
                 <span class="material-symbols-outlined text-[20px] hover:text-[#9a704c]">
                   visibility
                 </span>
-              </button>
+              </button> -->
               <button type="button">
                 <span class="material-symbols-outlined text-[20px] hover:text-[#9a704c]">edit</span>
               </button>
@@ -204,6 +204,16 @@
       loading.value = false;
     }
   }
+
+  // // 庫存顯示(無庫存/低庫存)
+  // const isSoldOut = computed(() => {
+  //   if (!product.value) return false;
+  //   return product.value.stock === 0;
+  // });
+  // const isLowStock = computed(() => {
+  //   if (!product.value) return false;
+  //   return product.value.stock > 0 && product.value.stock < 21;
+  // });
 
   function goToStockDetail(pid: string) {
     router.push({ name: 'AdminStockDetail', params: { pid } });

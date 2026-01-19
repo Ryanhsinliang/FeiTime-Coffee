@@ -38,36 +38,24 @@
         />
       </div>
 
-      <!-- <div class="relative min-w-48 w-full md:w-auto">
-        <select
-          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
-        >
-          <option value="">所有出貨狀態</option>
-          <option value="pending">待付款</option>
-          <option value="paid">已付款</option>
-          <option value="shipped">已出貨</option>
-          <option value="completed">已完成</option>
-          <option value="cancelled">已取消</option>
-        </select>
-        <i
-          class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-        ></i>
-      </div> -->
-
       <div class="relative min-w-48 w-full md:w-auto">
         <select
+          v-model="dateRange"
           class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
         >
-          <option>今天</option>
-          <option>最近7天</option>
-          <option>最近30天</option>
-          <option>30天以上</option>
+          <option value="all">全部</option>
+          <option value="today">今天</option>
+          <option value="last7">最近7天</option>
+          <option value="last30">最近30天</option>
+          <option value="older30">30天以上</option>
         </select>
         <i
           class="fa-regular fa-calendar-days absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xl"
         ></i>
       </div>
-      <button class="px-4 py-2.5 text-sm font-semibold hover:text-[#e27312]">Clear</button>
+      <button class="px-4 py-2.5 text-sm font-semibold hover:text-[#e27312]" @click="clearFilters">
+        Clear
+      </button>
     </section>
 
     <section class="border-b flex items-center justify-between">
@@ -242,6 +230,18 @@
   type TabStatus = 'all' | 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
   const activeStatus = ref<TabStatus>('all');
 
+  // 訂購日期篩選
+  type DateRange = 'all' | 'today' | 'last7' | 'last30' | 'older30';
+  const dateRange = ref<DateRange>('all');
+
+  function isSameLocalDate(a: Date, b: Date) {
+    return (
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate()
+    );
+  }
+
   async function loadOrders() {
     loading.value = true;
     error.value = '';
@@ -262,12 +262,37 @@
   const filteredOrders = computed(() => {
     let result = orders.value;
 
-    // 1️⃣ 先依 tab 狀態篩選
+    // 狀態 tab
     if (activeStatus.value !== 'all') {
-      result = result.filter((order) => order.order_status === activeStatus.value);
+      result = result.filter((o) => o.order_status === activeStatus.value);
     }
 
-    // 2️⃣ 再依關鍵字篩選
+    // 訂購日期篩選（createdAt）
+    const now = new Date();
+
+    result = result.filter((o) => {
+      if (dateRange.value === 'all') return true;
+      if (!o.createdAt) return false;
+
+      const created = new Date(o.createdAt);
+      if (isNaN(created.getTime())) return false;
+
+      if (dateRange.value === 'today') {
+        return isSameLocalDate(created, now);
+      }
+
+      // 用「距今幾天」判斷（避免時區/跨日）
+      const diffMs = now.getTime() - created.getTime();
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+      if (dateRange.value === 'last7') return diffDays <= 7;
+      if (dateRange.value === 'last30') return diffDays <= 30;
+      if (dateRange.value === 'older30') return diffDays > 30;
+
+      return true;
+    });
+
+    // 關鍵字搜尋
     const key = keyword.value.trim().toLowerCase();
     if (key) {
       result = result.filter((order) => {
@@ -285,9 +310,15 @@
         return hay.includes(key);
       });
     }
-
     return result;
   });
+
+  // 清除篩選
+  function clearFilters() {
+    keyword.value = '';
+    activeStatus.value = 'all';
+    dateRange.value = 'all';
+  }
 
   function goToOrderDetail(order_number: string) {
     router.push({ name: 'AdminOrderDetail', params: { order_number } });

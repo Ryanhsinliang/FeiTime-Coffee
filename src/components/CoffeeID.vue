@@ -69,6 +69,20 @@
         class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover/option:scale-100"
       ></span>
     </button>
+    <button
+      @click="saveAsImage"
+      :disabled="isSaving"
+      type="button"
+      class="group/option relative flex items-center justify-center h-14 px-10 bg-white/20 text-white tracking-widest uppercase rounded-xl shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300 mt-3"
+    >
+      {{ isSaving ? '儲存中...' : '儲存成圖片' }}
+      <span
+        class="pointer-events-none absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-white scale-0 origin-top-left transition-transform duration-300 group-hover/option:scale-100"
+      ></span>
+      <span
+        class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover/option:scale-100"
+      ></span>
+    </button>
 
     <button
       @click="saveIdCard"
@@ -84,19 +98,6 @@
         class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover/option:scale-100"
       ></span>
     </button>
-
-    <a
-      href="/coffeeLabT1-T-P1"
-      class="group/option relative flex items-center justify-center h-14 px-10 bg-white/20 text-white tracking-widest uppercase rounded-xl shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300 mt-3"
-    >
-      試試沖煮模擬器
-      <span
-        class="pointer-events-none absolute top-0 left-0 w-full h-full border-t-2 border-l-2 border-white scale-0 origin-top-left transition-transform duration-300 group-hover/option:scale-100"
-      ></span>
-      <span
-        class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover/option:scale-100"
-      ></span>
-    </a>
   </section>
 
   <div
@@ -118,13 +119,16 @@
     Filler,
     Tooltip,
     Legend,
+    ChartData,
   } from 'chart.js';
   import { useCoffeeResultStore } from '@/store/coffeeResult';
+  import { useAuthStore } from '@/store/auth';
   import { getPersona } from '@/utils/getPersona';
   import html2canvas from 'html2canvas';
+  import router from '@/router';
 
+  const authStore = useAuthStore();
   const coffeeResultStore = useCoffeeResultStore();
-
   const normalizedScores = computed(() => {
     return (
       coffeeResultStore.normalizedScores || {
@@ -150,35 +154,39 @@
     Tooltip,
     Legend
   );
+
   const radarCanvas = ref<HTMLCanvasElement | null>(null);
   let radarChart: Chart | null = null;
 
-  function renderRadar() {
+  const chartData = computed<ChartData<'radar'>>(() => {
+    return {
+      labels: ['酸味', '甜味', '醇厚度', '餘韻', '澄澈度'],
+      datasets: [
+        {
+          label: 'Coffee Taste Score',
+          data: [
+            normalizedScores.value.acidity,
+            normalizedScores.value.sweetness,
+            normalizedScores.value.body,
+            normalizedScores.value.aftertaste,
+            normalizedScores.value.clarity,
+          ],
+          backgroundColor: 'rgba(162,175,155,0.4)',
+          borderColor: 'rgba(91, 70, 54, 0.95)',
+          borderWidth: 2,
+          pointBackgroundColor: 'rgba(121,145,110,1)',
+          pointRadius: 4,
+        },
+      ],
+    };
+  });
+
+  const initChart = () => {
     if (!radarCanvas.value) return;
     if (radarChart) radarChart.destroy();
-
-    radarChart = new Chart(radarCanvas.value, {
+    radarChart = new Chart(radarCanvas.value as HTMLCanvasElement, {
       type: 'radar',
-      data: {
-        labels: ['酸味', '甜味', '醇厚度', '餘韻', '澄澈度'],
-        datasets: [
-          {
-            label: 'Coffee Taste Score',
-            data: [
-              normalizedScores.value.acidity,
-              normalizedScores.value.sweetness,
-              normalizedScores.value.body,
-              normalizedScores.value.aftertaste,
-              normalizedScores.value.clarity,
-            ],
-            backgroundColor: 'rgba(162,175,155,0.4)',
-            borderColor: 'rgba(91, 70, 54, 0.95)',
-            borderWidth: 2,
-            pointBackgroundColor: 'rgba(121,145,110,1)',
-            pointRadius: 4,
-          },
-        ],
-      },
+      data: chartData.value as ChartData<'radar'>,
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -195,10 +203,29 @@
         plugins: { legend: { display: false } },
       },
     });
-  }
+  };
 
-  watch(normalizedScores, renderRadar, { deep: true });
-  onMounted(renderRadar);
+  watch(
+    chartData,
+    (newData) => {
+      if (radarChart) {
+        radarChart.data = newData as ChartData<'radar'>;
+        radarChart.update();
+      }
+    },
+    { deep: true }
+  );
+  onMounted(() => {
+    initChart();
+  });
+
+  onMounted(() => {
+    if (authStore.isLoggedIn && coffeeResultStore.hasResult) {
+      setTimeout(() => {
+        saveIdCard();
+      }, 500);
+    }
+  });
 
   const idCard = ref<HTMLElement | null>(null);
   const cardStyle = ref('');
@@ -238,8 +265,8 @@
   const shareText = computed(() => {
     if (!persona.value) return '';
     return `我的 Coffee ID 是 ${persona.value.name}！
-風味分數：酸:${normalizedScores.value.acidity}, 甜:${normalizedScores.value.sweetness}, 醇:${normalizedScores.value.body}...
-來看看你的風味測試結果吧！`;
+  風味分數：酸:${normalizedScores.value.acidity}, 甜:${normalizedScores.value.sweetness}, 醇:${normalizedScores.value.body}...
+  來看看你的風味測試結果吧！`;
   });
 
   async function idCardToImage(): Promise<Blob | null> {
@@ -291,32 +318,40 @@
       isProcessing.value = false;
     }
   }
-  // 直接存圖片的功能
-  // async function saveIdCard() {
-  //   isSaving.value = true;
-  //   try {
-  //     const imageblob = await idCardToImage();
-  //     if (!imageblob) {
-  //       throw new Error('無法生成圖片');
-  //     }
-  //     const imageUrl = URL.createObjectURL(imageblob);
-  //     const imageLink = document.createElement('a');
-  //     imageLink.href = imageUrl;
-  //     imageLink.download = `coffee-id-${persona.value.name}-${Date.now()}.png`;
-  //     document.body.appendChild(imageLink);
-  //     imageLink.click();
-  //     document.body.removeChild(imageLink);
-  //     URL.revokeObjectURL(imageUrl);
-  //     showHint('圖片已儲存！');
-  //   } catch (error) {
-  //     console.error('儲存失敗:', error);
-  //     showHint('儲存失敗！');
-  //   } finally {
-  //     isSaving.value = false;
-  //   }
-  // }
+
+  async function saveAsImage() {
+    isSaving.value = true;
+    try {
+      const imageblob = await idCardToImage();
+      if (!imageblob) {
+        throw new Error('無法生成圖片');
+      }
+      const imageUrl = URL.createObjectURL(imageblob);
+      const imageLink = document.createElement('a');
+      imageLink.href = imageUrl;
+      imageLink.download = `coffee-id-${persona.value!.name}-${Date.now()}.png`;
+      document.body.appendChild(imageLink);
+      imageLink.click();
+      document.body.removeChild(imageLink);
+      URL.revokeObjectURL(imageUrl);
+      showHint('圖片已儲存！');
+    } catch (error) {
+      console.error('儲存失敗:', error);
+      showHint('儲存失敗！');
+    } finally {
+      isSaving.value = false;
+    }
+  }
   async function saveIdCard() {
-    if (isSaving.value || !persona.value) return;
+    if (!authStore.isLoggedIn) {
+      showHint('請先登入以儲存您的 Coffee ID！');
+      router.push({
+        name: 'Login',
+        query: { redirect: router.currentRoute.value.fullPath },
+      });
+      return;
+    }
+    if (isSaving.value || !persona.value || !coffeeResultStore.hasResult) return;
     isSaving.value = true;
     try {
       await coffeeResultStore.saveToUserAccount({
@@ -325,7 +360,8 @@
         description: persona.value.description,
         normalizedScores: normalizedScores.value,
       });
-      showHint('🎉 測驗結果已同步至您的個人帳號！');
+      showHint('測驗結果已同步至您的個人帳號！');
+      coffeeResultStore.clearResult();
     } catch (error: any) {
       showHint(`儲存失敗: ${error.message}`);
     } finally {

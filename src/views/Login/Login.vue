@@ -29,12 +29,10 @@
         <div class="flex-1 flex items-center justify-center p-6 md:p-12 lg:p-24 overflow-y-auto">
           <div class="w-full max-w-md flex flex-col gap-8">
             <div class="flex flex-col gap-2 text-center lg:text-left">
-              <h1
-                class="text-3xl font-bold tracking-tight text-text-main dark:text-white lg:text-4xl"
-              >
+              <h1 class="text-3xl font-bold tracking-tight text-text-main lg:text-4xl">
                 喝下一杯專屬於您的個性
               </h1>
-              <p class="text-text-muted dark:text-white/60 text-base">歡迎光臨FeiTime Coffee</p>
+              <p class="text-text-muted text-base">歡迎光臨FeiTime Coffee</p>
             </div>
 
             <div
@@ -49,9 +47,7 @@
 
             <form @submit.prevent="submitForm" class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
-                <label class="text-sm font-semibold text-text-main dark:text-white" for="email">
-                  Email / 帳號
-                </label>
+                <label class="text-sm font-semibold text-text-main" for="email">Email / 帳號</label>
                 <div class="relative">
                   <span
                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted select-none pointer-events-none text-[20px]"
@@ -60,7 +56,7 @@
                   </span>
                   <input
                     v-model="form.email"
-                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 py-3.5 text-base text-text-main dark:text-white placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 py-3.5 text-base text-text-main placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     id="email"
                     placeholder="barista@coffeeco.com"
                     type="text"
@@ -70,9 +66,7 @@
               </div>
 
               <div class="flex flex-col gap-2">
-                <label class="text-sm font-semibold text-text-main dark:text-white" for="password">
-                  密碼
-                </label>
+                <label class="text-sm font-semibold text-text-main" for="password">密碼</label>
                 <div class="relative group">
                   <span
                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted select-none pointer-events-none text-[20px]"
@@ -81,7 +75,7 @@
                   </span>
                   <input
                     v-model="form.password"
-                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 pr-11 py-3.5 text-base text-text-main dark:text-white placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 pr-11 py-3.5 text-base text-text-main placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     id="password"
                     placeholder="••••••••"
                     :type="isPasswordVisible ? 'text' : 'password'"
@@ -107,7 +101,7 @@
                     type="checkbox"
                   />
                   <span
-                    class="text-sm font-medium text-text-main dark:text-white/80 group-hover:text-primary transition-colors"
+                    class="text-sm font-medium text-text-main group-hover:text-primary transition-colors"
                   >
                     Remember me
                   </span>
@@ -138,14 +132,14 @@
 
             <div class="grid grid-cols-2 gap-4">
               <button
-                class="flex items-center justify-center gap-3 rounded-xl border border-border-gray bg-white dark:bg-white/5 dark:border-white/10 px-4 py-3 text-sm font-medium text-text-main dark:text-white hover:bg-background-light dark:hover:bg-white/10 transition-colors"
+                class="flex items-center justify-center gap-3 rounded-xl border border-border-gray bg-white dark:bg-white/5 dark:border-white/10 px-4 py-3 text-sm font-medium text-text-main hover:bg-background-light dark:hover:bg-[#abb7a5] transition-colors"
                 type="button"
               >
                 <i class="fa-brands fa-google" style="color: #abb7a5"></i>
                 Google
               </button>
               <button
-                class="flex items-center justify-center gap-3 rounded-xl border border-border-gray bg-white dark:bg-white/5 dark:border-white/10 px-4 py-3 text-sm font-medium text-text-main dark:text-white hover:bg-background-light dark:hover:bg-white/10 transition-colors"
+                class="flex items-center justify-center gap-3 rounded-xl border border-border-gray bg-white dark:bg-white/5 dark:border-white/10 px-4 py-3 text-sm font-medium text-text-main hover:bg-background-light dark:hover:bg-[#abb7a5] transition-colors"
                 type="button"
               >
                 <i class="fa-brands fa-apple" style="color: #abb7a5"></i>
@@ -154,7 +148,7 @@
             </div>
 
             <div class="text-center mt-4">
-              <p class="text-base text-text-muted dark:text-white/60">
+              <p class="text-base text-text-muted">
                 還沒有帳號?
                 <router-link to="/Register" class="text-[#ABB7A5] hover:underline">
                   點我註冊
@@ -170,11 +164,12 @@
 <script setup lang="ts">
   import { reactive, ref, onMounted } from 'vue';
   import { useAuthStore } from '../../store/auth';
-  import { useRouter } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { useReCaptcha } from 'vue-recaptcha-v3';
 
   const authStore = useAuthStore();
   const router = useRouter();
+  const route = useRoute();
 
   const recaptcha = useReCaptcha();
   const executeRecaptcha = recaptcha?.executeRecaptcha;
@@ -233,7 +228,12 @@
         } else {
           localStorage.removeItem('rememberedEmail');
         }
-        router.push({ name: 'HomePage' });
+        const redirectTo = route.query.redirect as string;
+        if (redirectTo) {
+          router.push(redirectTo);
+        } else {
+          router.push({ name: 'HomePage' });
+        }
       } else {
         errorMessage.value = authStore.banner?.message || result.message || '登入失敗';
       }

@@ -79,6 +79,7 @@
   const musicLoading = ref<boolean>(false);
   const musicError = ref<string | null>(null);
   const aiRecommendation = ref<string>('選擇風味，開始音樂之旅');
+  const isFetchingNext = ref<boolean>(false); // 正在獲取下一輪推薦
 
   // YouTube 播放器狀態
   const isPlaying = ref<boolean>(false);
@@ -136,14 +137,16 @@
   // 黑膠旋轉動畫
   // ============================================
   const rotateVinyl = () => {
-    if (isPlaying.value) {
+    // 只有在播放且不在 loading 狀態時才旋轉
+    if (isPlaying.value && !musicLoading.value) {
       vinylRotation.value = (vinylRotation.value + 0.5) % 360;
+      // 液體容器不旋轉，始終保持在底部
       animationFrameId = requestAnimationFrame(rotateVinyl);
     }
   };
 
   watch(isPlaying, (newValue) => {
-    if (newValue) {
+    if (newValue && !musicLoading.value) {
       if (!animationFrameId) {
         rotateVinyl();
       }
@@ -155,30 +158,48 @@
     }
   });
 
+  // 監聽 musicLoading 變化，確保 loading 時停止旋轉
+  watch(musicLoading, (newValue) => {
+    if (newValue && animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    } else if (!newValue && isPlaying.value && !animationFrameId) {
+      rotateVinyl();
+    }
+  });
+
   // ============================================
-  // 播放進度檢查
+  // 播放進度檢查 - 檢測快進/後退並調整黑膠角度
   // ============================================
   const checkPlaybackProgress = () => {
-    if (!youtubePlayer || !youtubePlayer.getCurrentTime) return;
+    if (!isPlayerAvailable()) return;
 
     try {
-      const currentTime = youtubePlayer.getCurrentTime();
-      const duration = youtubePlayer.getDuration();
+      const currentTime = youtubePlayer!.getCurrentTime();
 
-      if (currentTime && duration && currentTime !== lastPlaybackTime.value) {
-        const timeDiff = Math.abs(currentTime - lastPlaybackTime.value);
+      if (currentTime && lastPlaybackTime.value > 0) {
+        // 計算時間差（秒）
+        const timeDiff = currentTime - lastPlaybackTime.value;
 
-        if (timeDiff > 2) {
-          const rotationPerSecond = 30;
-          const angleDiff = timeDiff * rotationPerSecond;
+        // 如果時間差大於 1.5 秒（考慮到 500ms 檢查間隔），認為是快進/後退
+        if (Math.abs(timeDiff) > 1.5) {
+          // 根據時間差計算角度變化
+          // 設定：1 秒 = 36 度（可以調整這個比例來改變轉動幅度）
+          const angleDelta = timeDiff * 36;
 
-          if (currentTime > lastPlaybackTime.value) {
-            vinylRotation.value = (vinylRotation.value + angleDiff) % 360;
-          } else {
-            vinylRotation.value = (vinylRotation.value - angleDiff + 360) % 360;
-          }
+          // 調整黑膠角度 - 確保結果始終為正數（0-359）
+          vinylRotation.value = (((vinylRotation.value + angleDelta) % 360) + 360) % 360;
+
+          // 液體容器不調整角度，始終保持在底部（0度）
+
+          console.log(
+            `⏩ Time jump detected: ${timeDiff.toFixed(2)}s, rotating: ${angleDelta.toFixed(0)}°`
+          );
         }
+      }
 
+      // 更新時間記錄
+      if (currentTime) {
         lastPlaybackTime.value = currentTime;
       }
     } catch (err) {
@@ -217,6 +238,18 @@
   // ============================================
   // 播放器管理 - 完全重構版本
   // ============================================
+
+  // 檢查播放器是否真正可用
+  const isPlayerAvailable = (): boolean => {
+    return !!(
+      youtubePlayer &&
+      playerReady.value &&
+      typeof youtubePlayer.loadVideoById === 'function' &&
+      typeof youtubePlayer.playVideo === 'function' &&
+      typeof youtubePlayer.pauseVideo === 'function'
+    );
+  };
+
   const destroyPlayer = () => {
     console.log('🗑️ Destroying player...');
 
@@ -263,6 +296,16 @@
       // 清空容器
       container.innerHTML = '<div id="youtube-player"></div>';
 
+      // 等待一小段時間確保 DOM 已更新
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // 再次檢查容器
+      const playerElement = document.getElementById('youtube-player');
+      if (!playerElement) {
+        console.error('❌ Player element not found after DOM update');
+        return;
+      }
+
       youtubePlayer = new window.YT.Player('youtube-player', {
         height: '100%',
         width: '100%',
@@ -275,7 +318,17 @@
         },
         events: {
           onStateChange: (event: YTPlayerEvent) => {
-            console.log('🎵 Player state changed:', event.data);
+            const stateNames: Record<number, string> = {
+              '-1': 'unstarted',
+              '0': 'ended',
+              '1': 'playing',
+              '2': 'paused',
+              '3': 'buffering',
+              '5': 'cued',
+            };
+            console.log(
+              `🎵 Player state changed: ${event.data} (${stateNames[event.data] || 'unknown'})`
+            );
 
             // YouTube Player States
             // -1: unstarted
@@ -286,40 +339,61 @@
             // 5: video cued
 
             const wasPlaying = isPlaying.value;
-            isPlaying.value = event.data === 1;
-            isLoadingVideo.value = event.data === 3; // buffering
 
-            if (isPlaying.value && !wasPlaying) {
+            // 更新播放狀態
+            isPlaying.value = event.data === 1;
+
+            // 更新 loading 狀態
+            // 只在 buffering 時顯示 loading，unstarted 不算（避免初始化時閃爍）
+            if (event.data === 3) {
+              isLoadingVideo.value = true;
+            } else if (event.data === 1 || event.data === 2 || event.data === 5) {
+              // playing, paused, or cued - 清除 loading
+              isLoadingVideo.value = false;
+            }
+
+            // 當開始播放時，初始化播放時間
+            if (event.data === 1 && !wasPlaying) {
               lastPlaybackTime.value = event.target.getCurrentTime() || 0;
+              console.log('▶️ Playback started');
+            }
+
+            // 當暫停時
+            if (event.data === 2) {
+              console.log('⏸️ Playback paused');
             }
 
             // 如果影片結束，自動播放下一首
             if (event.data === 0) {
               console.log('🎵 Video ended, playing next...');
+              isPlaying.value = false;
               setTimeout(() => nextRecommendation(), 1000);
             }
           },
           onReady: (event: YTPlayerEvent) => {
             console.log('✅ YouTube player ready');
+
+            // 關鍵修復：先更新播放器引用
             youtubePlayer = event.target;
-            playerReady.value = true;
-            isLoadingVideo.value = false;
 
-            // 開始進度檢查
-            if (progressCheckInterval) {
-              clearInterval(progressCheckInterval);
-            }
-            progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
-
-            // 嘗試自動播放
+            // 等待一小段時間確保播放器完全附加到 DOM
             setTimeout(() => {
-              try {
-                event.target.playVideo();
-                console.log('✅ Auto-play triggered');
-              } catch (err) {
-                console.warn('⚠️ Auto-play blocked:', err);
+              // 再次確認播放器仍然存在
+              if (!youtubePlayer) {
+                console.error('❌ Player lost after onReady');
+                return;
               }
-            }, 300);
+
+              // 現在才設置 playerReady，確保其他代碼不會過早調用 API
+              playerReady.value = true;
+              console.log('✅ Player ready flag set');
+
+              // 開始進度檢查
+              if (progressCheckInterval) {
+                clearInterval(progressCheckInterval);
+              }
+              progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
+            }, 200);
           },
           onError: (event: any) => {
             console.error('❌ YouTube player error:', event.data);
@@ -359,36 +433,40 @@
     }
 
     musicError.value = null;
-    isLoadingVideo.value = true;
 
     // 如果播放器已經存在且準備好，直接切換影片
-    if (youtubePlayer && playerReady.value) {
+    if (isPlayerAvailable()) {
       try {
         console.log('🔄 Using existing player to load new video');
-        isPlaying.value = false;
+
+        // 先重置播放時間，但保持旋轉角度
         lastPlaybackTime.value = 0;
 
-        youtubePlayer.loadVideoById(videoId);
+        // 等待下一個 tick 確保 DOM 已更新
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
-        // 等待一下確保載入
-        setTimeout(() => {
-          try {
-            youtubePlayer?.playVideo();
-            console.log('✅ Video loaded and playing');
-          } catch (err) {
-            console.warn('⚠️ Could not auto-play:', err);
-          }
-          isLoadingVideo.value = false;
-        }, 1000);
+        // 再次檢查播放器是否仍然可用
+        if (!isPlayerAvailable()) {
+          throw new Error('Player no longer available');
+        }
+
+        // 使用 loadVideoById 並自動播放
+        youtubePlayer!.loadVideoById(videoId);
+
+        // onStateChange 會處理所有狀態更新
+        console.log('✅ Video load initiated');
 
         return;
       } catch (err) {
         console.error('❌ Failed to load video, reinitializing player:', err);
+        // 如果切換失敗，銷毀並重建播放器
         destroyPlayer();
       }
     }
 
     // 如果播放器不存在或出錯，重新初始化
+    console.log('🔧 Reinitializing player for video:', videoId);
+    isLoadingVideo.value = true;
     isPlaying.value = false;
     lastPlaybackTime.value = 0;
 
@@ -451,6 +529,7 @@
     // 如果還有下一首歌曲在當前列表中
     if (currentVideoIndex.value < currentVideos.value.length - 1) {
       console.log('📋 Playing next video from current list');
+      // 直接切換到下一首
       currentVideoIndex.value++;
       return;
     }
@@ -461,9 +540,15 @@
       return;
     }
 
+    // 防止重複請求
+    if (isFetchingNext.value) {
+      console.warn('⚠️ Already fetching next recommendations');
+      return;
+    }
+
     try {
       console.log('🔄 Fetching new music recommendations');
-      musicLoading.value = true;
+      isFetchingNext.value = true;
       musicError.value = null;
 
       const data = await getRandomMusic({
@@ -482,7 +567,7 @@
       console.error('❌ Next recommendation error:', err);
       musicError.value = '無法取得更多推薦';
     } finally {
-      musicLoading.value = false;
+      isFetchingNext.value = false;
     }
   };
 
@@ -518,58 +603,6 @@
         <!-- Vinyl Record -->
         <div class="flex-shrink-0 flex items-center justify-center relative p-8 lg:p-12">
           <div class="relative animate-float">
-            <!-- 液體容器層 - 獨立於旋轉之外，始終固定 -->
-            <div
-              class="liquid-container absolute rounded-full overflow-hidden pointer-events-none w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] lg:w-[280px] lg:h-[280px]"
-              :class="{ 'liquid-container-active': isPlaying }"
-            >
-              <!-- 液體本體 -->
-              <div class="liquid-body">
-                <!-- 液體表面波動 -->
-                <svg class="liquid-wave" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="liquidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop
-                        offset="0%"
-                        style="stop-color: rgba(162, 175, 155, 0.7); stop-opacity: 1"
-                      />
-                      <stop
-                        offset="50%"
-                        style="stop-color: rgba(182, 195, 175, 0.6); stop-opacity: 1"
-                      />
-                      <stop
-                        offset="100%"
-                        style="stop-color: rgba(139, 158, 135, 0.8); stop-opacity: 1"
-                      />
-                    </linearGradient>
-                  </defs>
-
-                  <!-- 液體主體 -->
-                  <path
-                    class="wave-path wave-back"
-                    d="M0,150 Q75,130 150,150 T300,150 L300,300 L0,300 Z"
-                    fill="url(#liquidGradient)"
-                    opacity="0.6"
-                  />
-                  <path
-                    class="wave-path wave-front"
-                    d="M0,150 Q75,170 150,150 T300,150 L300,300 L0,300 Z"
-                    fill="url(#liquidGradient)"
-                    opacity="0.8"
-                  />
-                </svg>
-
-                <!-- 液體光澤 -->
-                <div class="liquid-shine"></div>
-
-                <!-- 液體氣泡 -->
-                <div class="bubble bubble-1"></div>
-                <div class="bubble bubble-2"></div>
-                <div class="bubble bubble-3"></div>
-              </div>
-            </div>
-
-            <!-- 黑膠碟片層 - 可旋轉 -->
             <div
               class="vinyl-disc relative w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] lg:w-[280px] lg:h-[280px] rounded-full shadow-[0_25px_60px_rgba(162,175,155,0.5)] border-[3px] border-[#A2AF9B]/40 flex items-center justify-center overflow-hidden bg-white/10 backdrop-blur-sm"
               :style="{ transform: `rotate(${vinylRotation}deg)` }"
@@ -578,6 +611,58 @@
               <div
                 class="absolute inset-0 rounded-full bg-gradient-to-br from-[#E8F5E9]/30 via-transparent to-[#C8D6C5]/20"
               ></div>
+
+              <!-- 液體容器 - 固定在底部不旋轉，反向抵消黑膠旋轉 -->
+              <div
+                class="liquid-container absolute inset-0 rounded-full overflow-hidden"
+                :class="{ 'liquid-container-active': isPlaying }"
+                :style="{ transform: `rotate(-${vinylRotation}deg)` }"
+              >
+                <!-- 液體本體 -->
+                <div class="liquid-body">
+                  <!-- 液體表面波動 -->
+                  <svg class="liquid-wave" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="liquidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop
+                          offset="0%"
+                          style="stop-color: rgba(162, 175, 155, 0.7); stop-opacity: 1"
+                        />
+                        <stop
+                          offset="50%"
+                          style="stop-color: rgba(182, 195, 175, 0.6); stop-opacity: 1"
+                        />
+                        <stop
+                          offset="100%"
+                          style="stop-color: rgba(139, 158, 135, 0.8); stop-opacity: 1"
+                        />
+                      </linearGradient>
+                    </defs>
+
+                    <!-- 液體主體 -->
+                    <path
+                      class="wave-path wave-back"
+                      d="M0,150 Q75,130 150,150 T300,150 L300,300 L0,300 Z"
+                      fill="url(#liquidGradient)"
+                      opacity="0.6"
+                    />
+                    <path
+                      class="wave-path wave-front"
+                      d="M0,150 Q75,170 150,150 T300,150 L300,300 L0,300 Z"
+                      fill="url(#liquidGradient)"
+                      opacity="0.8"
+                    />
+                  </svg>
+
+                  <!-- 液體光澤 -->
+                  <div class="liquid-shine"></div>
+
+                  <!-- 液體氣泡 -->
+                  <div class="bubble bubble-1"></div>
+                  <div class="bubble bubble-2"></div>
+                  <div class="bubble bubble-3"></div>
+                </div>
+              </div>
 
               <!-- FeiTime 環繞文字 -->
               <div class="absolute inset-0 pointer-events-none">
@@ -754,16 +839,10 @@
                 class="w-10 h-10 rounded-full bg-sage flex-shrink-0 flex items-center justify-center text-white shadow-md relative"
               >
                 <span
-                  v-if="!musicError && !musicLoading"
+                  v-if="!musicError"
                   class="absolute inset-0 rounded-full bg-sage animate-ping opacity-20"
                 ></span>
-                <img
-                  v-if="!musicError && !musicLoading"
-                  :src="feiDJ"
-                  class="w-6 h-6 object-contain"
-                  alt="Fei DJ"
-                />
-                <span v-else class="material-symbols-outlined text-xl text-[#171412]">error</span>
+                <img :src="feiDJ" class="w-6 h-6 object-contain" alt="Fei DJ" />
               </div>
               <div class="flex flex-col min-w-0 flex-1">
                 <div class="flex items-center gap-2">
@@ -772,9 +851,15 @@
                   >
                     FEI DJ
                   </span>
+                  <!-- 修復1&2：狀態指示器 - 紅色=未播放/暫停，黃色=loading，綠色=播放中 -->
                   <span
-                    v-if="!musicError && !musicLoading"
-                    class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"
+                    v-if="!musicError"
+                    class="w-1.5 h-1.5 rounded-full animate-pulse"
+                    :class="{
+                      'bg-red-500': !isPlaying && !musicLoading && !isLoadingVideo,
+                      'bg-yellow-500': musicLoading || isLoadingVideo,
+                      'bg-green-500': isPlaying && !musicLoading && !isLoadingVideo,
+                    }"
                   ></span>
                 </div>
                 <span class="text-sm font-bold text-[#171412] leading-tight truncate">
@@ -784,7 +869,7 @@
             </div>
             <button
               @click="nextRecommendation"
-              :disabled="musicLoading || !selectedFlavor || musicError !== null || isLoadingVideo"
+              :disabled="musicLoading || isFetchingNext || !selectedFlavor || musicError !== null"
               class="flex items-center justify-center gap-2 bg-[#DCCFC0] text-[#171412] px-4 py-2 rounded-lg hover:bg-[#C4B5A0] hover:shadow-lg transition-all duration-300 shadow-md group flex-shrink-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none hover:disabled:bg-gray-200"
             >
               <span class="text-xs font-bold tracking-wide hidden sm:inline">Next</span>
@@ -864,7 +949,11 @@
     opacity: 0.8;
   }
 
-  /* 液體容器 - 始終固定不旋轉，不再需要額外樣式 */
+  /* 液體容器 - JavaScript 控制反向旋轉 */
+  .liquid-container {
+    transform-origin: center center;
+    /* 不使用 transition，避免快進時液體快速旋轉 */
+  }
 
   .liquid-body {
     position: absolute;

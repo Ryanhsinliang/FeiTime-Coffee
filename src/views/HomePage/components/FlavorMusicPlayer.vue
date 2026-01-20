@@ -79,6 +79,7 @@
   const musicLoading = ref<boolean>(false);
   const musicError = ref<string | null>(null);
   const aiRecommendation = ref<string>('選擇風味，開始音樂之旅');
+  const isFetchingNext = ref<boolean>(false); // 正在獲取下一輪推薦
 
   // YouTube 播放器狀態
   const isPlaying = ref<boolean>(false);
@@ -139,6 +140,7 @@
     // 只有在播放且不在 loading 狀態時才旋轉
     if (isPlaying.value && !musicLoading.value) {
       vinylRotation.value = (vinylRotation.value + 0.5) % 360;
+      // 液體容器不旋轉，始終保持在底部
       animationFrameId = requestAnimationFrame(rotateVinyl);
     }
   };
@@ -170,10 +172,10 @@
   // 播放進度檢查 - 檢測快進/後退並調整黑膠角度
   // ============================================
   const checkPlaybackProgress = () => {
-    if (!youtubePlayer || !youtubePlayer.getCurrentTime) return;
+    if (!isPlayerAvailable()) return;
 
     try {
-      const currentTime = youtubePlayer.getCurrentTime();
+      const currentTime = youtubePlayer!.getCurrentTime();
 
       if (currentTime && lastPlaybackTime.value > 0) {
         // 計算時間差（秒）
@@ -187,6 +189,8 @@
 
           // 調整黑膠角度 - 確保結果始終為正數（0-359）
           vinylRotation.value = (((vinylRotation.value + angleDelta) % 360) + 360) % 360;
+
+          // 液體容器不調整角度，始終保持在底部（0度）
 
           console.log(
             `⏩ Time jump detected: ${timeDiff.toFixed(2)}s, rotating: ${angleDelta.toFixed(0)}°`
@@ -234,6 +238,18 @@
   // ============================================
   // 播放器管理 - 完全重構版本
   // ============================================
+
+  // 檢查播放器是否真正可用
+  const isPlayerAvailable = (): boolean => {
+    return !!(
+      youtubePlayer &&
+      playerReady.value &&
+      typeof youtubePlayer.loadVideoById === 'function' &&
+      typeof youtubePlayer.playVideo === 'function' &&
+      typeof youtubePlayer.pauseVideo === 'function'
+    );
+  };
+
   const destroyPlayer = () => {
     console.log('🗑️ Destroying player...');
 
@@ -280,6 +296,16 @@
       // 清空容器
       container.innerHTML = '<div id="youtube-player"></div>';
 
+      // 等待一小段時間確保 DOM 已更新
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // 再次檢查容器
+      const playerElement = document.getElementById('youtube-player');
+      if (!playerElement) {
+        console.error('❌ Player element not found after DOM update');
+        return;
+      }
+
       youtubePlayer = new window.YT.Player('youtube-player', {
         height: '100%',
         width: '100%',
@@ -292,7 +318,17 @@
         },
         events: {
           onStateChange: (event: YTPlayerEvent) => {
-            console.log('🎵 Player state changed:', event.data);
+            const stateNames: Record<number, string> = {
+              '-1': 'unstarted',
+              '0': 'ended',
+              '1': 'playing',
+              '2': 'paused',
+              '3': 'buffering',
+              '5': 'cued',
+            };
+            console.log(
+              `🎵 Player state changed: ${event.data} (${stateNames[event.data] || 'unknown'})`
+            );
 
             // YouTube Player States
             // -1: unstarted
@@ -303,40 +339,61 @@
             // 5: video cued
 
             const wasPlaying = isPlaying.value;
-            isPlaying.value = event.data === 1;
-            isLoadingVideo.value = event.data === 3; // buffering
 
-            if (isPlaying.value && !wasPlaying) {
+            // 更新播放狀態
+            isPlaying.value = event.data === 1;
+
+            // 更新 loading 狀態
+            // 只在 buffering 時顯示 loading，unstarted 不算（避免初始化時閃爍）
+            if (event.data === 3) {
+              isLoadingVideo.value = true;
+            } else if (event.data === 1 || event.data === 2 || event.data === 5) {
+              // playing, paused, or cued - 清除 loading
+              isLoadingVideo.value = false;
+            }
+
+            // 當開始播放時，初始化播放時間
+            if (event.data === 1 && !wasPlaying) {
               lastPlaybackTime.value = event.target.getCurrentTime() || 0;
+              console.log('▶️ Playback started');
+            }
+
+            // 當暫停時
+            if (event.data === 2) {
+              console.log('⏸️ Playback paused');
             }
 
             // 如果影片結束，自動播放下一首
             if (event.data === 0) {
               console.log('🎵 Video ended, playing next...');
+              isPlaying.value = false;
               setTimeout(() => nextRecommendation(), 1000);
             }
           },
           onReady: (event: YTPlayerEvent) => {
             console.log('✅ YouTube player ready');
+
+            // 關鍵修復：先更新播放器引用
             youtubePlayer = event.target;
-            playerReady.value = true;
-            isLoadingVideo.value = false;
 
-            // 開始進度檢查
-            if (progressCheckInterval) {
-              clearInterval(progressCheckInterval);
-            }
-            progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
-
-            // 嘗試自動播放
+            // 等待一小段時間確保播放器完全附加到 DOM
             setTimeout(() => {
-              try {
-                event.target.playVideo();
-                console.log('✅ Auto-play triggered');
-              } catch (err) {
-                console.warn('⚠️ Auto-play blocked:', err);
+              // 再次確認播放器仍然存在
+              if (!youtubePlayer) {
+                console.error('❌ Player lost after onReady');
+                return;
               }
-            }, 300);
+
+              // 現在才設置 playerReady，確保其他代碼不會過早調用 API
+              playerReady.value = true;
+              console.log('✅ Player ready flag set');
+
+              // 開始進度檢查
+              if (progressCheckInterval) {
+                clearInterval(progressCheckInterval);
+              }
+              progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
+            }, 200);
           },
           onError: (event: any) => {
             console.error('❌ YouTube player error:', event.data);
@@ -376,36 +433,40 @@
     }
 
     musicError.value = null;
-    isLoadingVideo.value = true;
 
     // 如果播放器已經存在且準備好，直接切換影片
-    if (youtubePlayer && playerReady.value) {
+    if (isPlayerAvailable()) {
       try {
         console.log('🔄 Using existing player to load new video');
-        isPlaying.value = false;
+
+        // 先重置播放時間，但保持旋轉角度
         lastPlaybackTime.value = 0;
 
-        youtubePlayer.loadVideoById(videoId);
+        // 等待下一個 tick 確保 DOM 已更新
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
-        // 等待一下確保載入
-        setTimeout(() => {
-          try {
-            youtubePlayer?.playVideo();
-            console.log('✅ Video loaded and playing');
-          } catch (err) {
-            console.warn('⚠️ Could not auto-play:', err);
-          }
-          isLoadingVideo.value = false;
-        }, 1000);
+        // 再次檢查播放器是否仍然可用
+        if (!isPlayerAvailable()) {
+          throw new Error('Player no longer available');
+        }
+
+        // 使用 loadVideoById 並自動播放
+        youtubePlayer!.loadVideoById(videoId);
+
+        // onStateChange 會處理所有狀態更新
+        console.log('✅ Video load initiated');
 
         return;
       } catch (err) {
         console.error('❌ Failed to load video, reinitializing player:', err);
+        // 如果切換失敗，銷毀並重建播放器
         destroyPlayer();
       }
     }
 
     // 如果播放器不存在或出錯，重新初始化
+    console.log('🔧 Reinitializing player for video:', videoId);
+    isLoadingVideo.value = true;
     isPlaying.value = false;
     lastPlaybackTime.value = 0;
 
@@ -468,6 +529,7 @@
     // 如果還有下一首歌曲在當前列表中
     if (currentVideoIndex.value < currentVideos.value.length - 1) {
       console.log('📋 Playing next video from current list');
+      // 直接切換到下一首
       currentVideoIndex.value++;
       return;
     }
@@ -478,9 +540,15 @@
       return;
     }
 
+    // 防止重複請求
+    if (isFetchingNext.value) {
+      console.warn('⚠️ Already fetching next recommendations');
+      return;
+    }
+
     try {
       console.log('🔄 Fetching new music recommendations');
-      musicLoading.value = true;
+      isFetchingNext.value = true;
       musicError.value = null;
 
       const data = await getRandomMusic({
@@ -499,7 +567,7 @@
       console.error('❌ Next recommendation error:', err);
       musicError.value = '無法取得更多推薦';
     } finally {
-      musicLoading.value = false;
+      isFetchingNext.value = false;
     }
   };
 
@@ -544,10 +612,11 @@
                 class="absolute inset-0 rounded-full bg-gradient-to-br from-[#E8F5E9]/30 via-transparent to-[#C8D6C5]/20"
               ></div>
 
-              <!-- 液體容器 - 保持靜止不旋轉 -->
+              <!-- 液體容器 - 固定在底部不旋轉，反向抵消黑膠旋轉 -->
               <div
                 class="liquid-container absolute inset-0 rounded-full overflow-hidden"
                 :class="{ 'liquid-container-active': isPlaying }"
+                :style="{ transform: `rotate(-${vinylRotation}deg)` }"
               >
                 <!-- 液體本體 -->
                 <div class="liquid-body">
@@ -787,9 +856,9 @@
                     v-if="!musicError"
                     class="w-1.5 h-1.5 rounded-full animate-pulse"
                     :class="{
-                      'bg-red-500': !isPlaying && !musicLoading,
-                      'bg-yellow-500': musicLoading,
-                      'bg-green-500': isPlaying && !musicLoading,
+                      'bg-red-500': !isPlaying && !musicLoading && !isLoadingVideo,
+                      'bg-yellow-500': musicLoading || isLoadingVideo,
+                      'bg-green-500': isPlaying && !musicLoading && !isLoadingVideo,
                     }"
                   ></span>
                 </div>
@@ -800,7 +869,7 @@
             </div>
             <button
               @click="nextRecommendation"
-              :disabled="musicLoading || !selectedFlavor || musicError !== null || isLoadingVideo"
+              :disabled="musicLoading || isFetchingNext || !selectedFlavor || musicError !== null"
               class="flex items-center justify-center gap-2 bg-[#DCCFC0] text-[#171412] px-4 py-2 rounded-lg hover:bg-[#C4B5A0] hover:shadow-lg transition-all duration-300 shadow-md group flex-shrink-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none hover:disabled:bg-gray-200"
             >
               <span class="text-xs font-bold tracking-wide hidden sm:inline">Next</span>
@@ -880,10 +949,10 @@
     opacity: 0.8;
   }
 
-  /* 液體容器 */
+  /* 液體容器 - JavaScript 控制反向旋轉 */
   .liquid-container {
-    transition: transform 0.1s linear;
     transform-origin: center center;
+    /* 不使用 transition，避免快進時液體快速旋轉 */
   }
 
   .liquid-body {

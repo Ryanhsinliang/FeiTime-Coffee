@@ -53,7 +53,7 @@
           <option value="all">所有狀態</option>
           <option value="active">已驗證</option>
           <option value="unverified">未驗證</option>
-          <option value="blocked">已封鎖</option>
+          <option value="blocked">已停用</option>
         </select>
         <i
           class="fa-solid fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
@@ -90,7 +90,6 @@
             <th class="py-4 px-6 text-xs font-bold">註冊日期</th>
             <th class="py-4 px-6 text-xs font-bold text-center">身分別</th>
             <th class="py-4 px-6 text-xs font-bold text-center">帳號狀態</th>
-            <th class="py-4 px-6 text-xs font-bold text-center">操作</th>
           </tr>
         </thead>
 
@@ -129,22 +128,11 @@
             <td class="py-4 px-6 text-center text-sm font-bold">
               {{
                 getAccountStatus(user) === 'blocked'
-                  ? '已封鎖'
+                  ? '已停用'
                   : getAccountStatus(user) === 'active'
                     ? '已驗證'
                     : '未驗證'
               }}
-            </td>
-
-            <td class="py-4 px-6 text-right flex justify-center gap-5">
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px] hover:text-[#9a704c]">
-                  visibility
-                </span>
-              </button>
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px] hover:text-[#9a704c]">edit</span>
-              </button>
             </td>
           </tr>
         </tbody>
@@ -153,7 +141,7 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">1 - 10 筆 / 共 {{ filteredUsers.length }} 筆</p>
+        <p class="text-sm">每頁 20 筆 / 共 {{ filteredUsers.length }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button

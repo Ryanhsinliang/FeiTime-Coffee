@@ -579,7 +579,7 @@
   interface DataRule {
     // 設定data規格
     id: number;
-    pid: number;
+    pid: string;
     name: string;
     price: number;
     origin: string;

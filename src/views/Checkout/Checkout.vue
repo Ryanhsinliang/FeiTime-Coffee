@@ -211,25 +211,20 @@
         >
           確認送出訂單
         </button>
-
-        <!-- 備用 文字版linepay -->
-        <!-- <button @click="useLinePay" class="flex text-[36px] mx-auto">
-          <p class="font-[700] px-[12px] py-[8px]">LINE</p>
-          <p class="font-[600] px-[12px] py-[8px] rounded-[4px] bg-[#00C34D] text-white">Pay</p>
-        </button> -->
       </div>
     </form>
   </main>
-  <p class="text-[48px] bg-[#ffb8f4] p-3" @click="useLinePay">測試linepay</p>
-  <p class="text-[48px] bg-[#b8f3ff] p-3" @click="formPost">測試form</p>
+
+  <div @click="C" class="text-[48px] bg-[#ffb8f4]">測試庫存</div>
 </template>
 
 <script setup lang="ts">
   import axios from 'axios';
   import { ref, reactive, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { getCart, formGoPost } from '@/services/checkout';
+  import { getCart, formGoPost, productsGet } from '@/services/checkout';
   import { orderList } from '@/store/order';
+
   const router = useRouter();
 
   interface UserRule {
@@ -410,6 +405,69 @@
 
       router.push('/payment-cancel');
     }
+  };
+
+  // 檢查庫存
+  interface AllProductRule {
+    // 設定data規格
+    id: number;
+    pid: string;
+    name: string;
+    price: number;
+    origin: string;
+    img: any[];
+    popularity: number;
+    sweetness: number;
+    acidity: number;
+    body: number;
+    aftertaste: number;
+    clarity: number;
+    flavor_type: string;
+    roast: string;
+    stock: number;
+  }
+
+  interface LittleProductRule {
+    // 設定data規格
+    id: number;
+    pid: string;
+    name: string;
+    stock: number;
+  }
+  const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
+
+  // 判斷庫存的函數
+  const stockHave = (id: number, quantity: number, jsonArr: LittleProductRule[]) => {
+    const buy = jsonArr.filter((obj: LittleProductRule) => {
+      return obj.id == id;
+    });
+    if (quantity <= Number(buy[0].stock)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const C = async () => {
+    try {
+      const res = await productsGet(); // 能抓到所有產品
+
+      // 所有產品 抓出我要的資訊 組成一個小物件
+      productsNow.value = res.map((obj: AllProductRule) => {
+        return {
+          id: obj.id,
+          pid: obj.pid,
+          name: obj.name,
+          stock: Number(obj.stock),
+        };
+      });
+    } catch (err: any) {
+      const errorDetail = err.response?.data?.detail || err.message;
+      console.error('API 串接出錯：', errorDetail);
+      throw err;
+    }
+
+    console.log(stockHave(789, 190, productsNow.value));
   };
 </script>
 

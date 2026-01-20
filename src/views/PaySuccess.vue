@@ -50,7 +50,7 @@
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
   import { orderList } from '@/store/order';
-  import { updateOrder, productsGet, updateProduct } from '@/services/checkout';
+  import { updateOrder, updateProduct } from '@/services/checkout';
 
   /*
     interface ProductRule {
@@ -120,7 +120,6 @@
 
   const B = async () => {
     // console.log(buyProducts.value); // 完整的 訂購的 產品資料
-
     // // 要扣庫存的資料
     // const changeData = buyProducts.value.map((obj) => {
     //   return {
@@ -129,20 +128,8 @@
     //   };
     // });
     //  console.log(changeData);
-
     // const productId = '751'; // 先用假資料
     // const cost = 3;
-
-    try {
-      const productData = await productsGet();
-      console.log(productData);
-      // 能抓到所有產品
-    } catch (err: any) {
-      const errorDetail = err.response?.data?.detail || err.message;
-      console.error('API 串接出錯：', errorDetail);
-      throw err;
-    }
-
     // await updateProduct(productId, cost);
   };
 </script>

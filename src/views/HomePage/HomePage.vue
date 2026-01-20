@@ -127,12 +127,18 @@
   <section class="w-full py-24 bg-white">
     <div class="max-w-[1600px] mx-auto px-6 md:px-12">
       <!-- 標題區 -->
-      <div class="flex flex-col items-center justify-center mb-16 text-center">
-        <span class="text-sage tracking-[0.3em] text-xs uppercase mb-4 font-jp">
-          FeiTime Selection
-        </span>
-        <h2 class="text-3xl font-serif text-text-main tracking-widest">推薦商品</h2>
-        <div class="w-12 h-px bg-latte mt-6 mb-4"></div>
+      <div class="flex flex-col items-center gap-3 text-center mb-16">
+        <div class="flex items-center gap-3">
+          <div class="h-px w-8 lg:w-12 bg-gradient-to-r from-transparent to-sage"></div>
+          <span class="text-sage tracking-[0.3em] uppercase text-xs font-bold">
+            FeiTime Selection
+          </span>
+          <div class="h-px w-8 lg:w-12 bg-gradient-to-l from-transparent to-sage"></div>
+        </div>
+        <h2 class="text-3xl lg:text-4xl font-serif text-text-main leading-tight">推薦商品</h2>
+        <p class="text-sm lg:text-base text-text-main/60 max-w-2xl leading-relaxed">
+          精選高品質咖啡豆，為您帶來獨特的風味體驗
+        </p>
       </div>
 
       <!-- Loading 狀態 -->
@@ -160,43 +166,88 @@
       </div>
 
       <!-- 產品列表 -->
-      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-        <router-link
-          v-for="product in products"
-          :key="product.pid"
-          :to="{ name: 'ProductDetail', params: { pid: product.pid } }"
-          class="group flex flex-col cursor-pointer"
+      <div v-else>
+        <!-- 桌面版: Grid 佈局 -->
+        <div class="hidden lg:grid lg:grid-cols-4 gap-8 lg:gap-12">
+          <router-link
+            v-for="product in products"
+            :key="product.pid"
+            :to="{ name: 'ProductDetail', params: { pid: product.pid } }"
+            class="group flex flex-col cursor-pointer"
+          >
+            <!-- 產品圖片 -->
+            <div class="relative aspect-[3/4] overflow-hidden bg-mist mb-6 rounded-sm">
+              <div
+                class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-out"
+                :style="{ backgroundImage: `url('${getImageUrl(product)}')` }"
+              ></div>
+              <div
+                class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"
+              ></div>
+            </div>
+
+            <!-- 產品資訊 -->
+            <div class="flex flex-col gap-2 items-center text-center">
+              <h3
+                class="text-base font-medium text-text-main tracking-wide group-hover:text-sage transition-colors font-serif"
+              >
+                {{ product.name }}
+              </h3>
+
+              <span
+                v-if="product.flavor_type"
+                :class="getFlavorStyle(product.flavor_type)"
+                class="inline-block px-3 py-1 text-xs font-medium tracking-wider uppercase rounded-full"
+              >
+                {{ getFlavorLabel(product.flavor_type) }}
+              </span>
+
+              <span class="text-lg font-semibold text-text-main">${{ product.price }}</span>
+            </div>
+          </router-link>
+        </div>
+
+        <!-- 平板和手機版: 水平滾動佈局 -->
+        <div
+          class="lg:hidden flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -mx-6 px-6 md:-mx-12 md:px-12"
         >
-          <!-- 產品圖片 -->
-          <div class="relative aspect-[3/4] overflow-hidden bg-mist mb-6 rounded-sm">
-            <div
-              class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-out"
-              :style="{ backgroundImage: `url('${getImageUrl(product)}')` }"
-            ></div>
-            <div
-              class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"
-            ></div>
-          </div>
+          <router-link
+            v-for="product in products"
+            :key="product.pid"
+            :to="{ name: 'ProductDetail', params: { pid: product.pid } }"
+            class="group flex flex-col cursor-pointer flex-shrink-0 w-[70vw] sm:w-[45vw] snap-start"
+          >
+            <!-- 產品圖片 -->
+            <div class="relative aspect-[3/4] overflow-hidden bg-mist mb-6 rounded-sm">
+              <div
+                class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-out"
+                :style="{ backgroundImage: `url('${getImageUrl(product)}')` }"
+              ></div>
+              <div
+                class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"
+              ></div>
+            </div>
 
-          <!-- 產品資訊 -->
-          <div class="flex flex-col gap-2 items-center text-center">
-            <h3
-              class="text-base font-medium text-text-main tracking-wide group-hover:text-sage transition-colors font-serif"
-            >
-              {{ product.name }}
-            </h3>
+            <!-- 產品資訊 -->
+            <div class="flex flex-col gap-2 items-center text-center">
+              <h3
+                class="text-base font-medium text-text-main tracking-wide group-hover:text-sage transition-colors font-serif"
+              >
+                {{ product.name }}
+              </h3>
 
-            <span
-              v-if="product.flavor_type"
-              :class="getFlavorStyle(product.flavor_type)"
-              class="inline-block px-3 py-1 text-xs font-medium tracking-wider uppercase rounded-full"
-            >
-              {{ getFlavorLabel(product.flavor_type) }}
-            </span>
+              <span
+                v-if="product.flavor_type"
+                :class="getFlavorStyle(product.flavor_type)"
+                class="inline-block px-3 py-1 text-xs font-medium tracking-wider uppercase rounded-full"
+              >
+                {{ getFlavorLabel(product.flavor_type) }}
+              </span>
 
-            <span class="text-lg font-semibold text-text-main">${{ product.price }}</span>
-          </div>
-        </router-link>
+              <span class="text-lg font-semibold text-text-main">${{ product.price }}</span>
+            </div>
+          </router-link>
+        </div>
       </div>
 
       <!-- 查看更多 -->

@@ -53,33 +53,33 @@
   import { updateOrder, updateProduct } from '@/services/checkout';
 
   /*
-    interface ProductRule {
-      pid: string;
-      quantity: number;
-      snapshot_name: string;
-      snapshot_price: number;
-      snapshot_image: string;
-      snapshot_weight: string;
-      item_total: number;
-    }
+      interface ProductRule {
+        pid: string;
+        quantity: number;
+        snapshot_name: string;
+        snapshot_price: number;
+        snapshot_image: string;
+        snapshot_weight: string;
+        item_total: number;
+      }
 
-    interface OrderRule {
-      id: number;
-      order_number: string;
-      subtotal: number;
-      shipping_fee: number;
-      total_amount: number;
-      order_status: string;
-      payment_status: string;
-      recipient_name: string;
-      recipient_phone: string;
-      recipient_address: string;
-      shipping_method: string;
-      createdAt: string;
-      updatedAt: string;
-      order_items: ProductRule[];
-    }
-  */
+      interface OrderRule {
+        id: number;
+        order_number: string;
+        subtotal: number;
+        shipping_fee: number;
+        total_amount: number;
+        order_status: string;
+        payment_status: string;
+        recipient_name: string;
+        recipient_phone: string;
+        recipient_address: string;
+        shipping_method: string;
+        createdAt: string;
+        updatedAt: string;
+        order_items: ProductRule[];
+      }
+    */
 
   const piniaGet = orderList();
   const orderThing = computed(() => piniaGet.orderThing); // 從 pinia 抓 訂單訊息
@@ -99,12 +99,20 @@
         return;
       }
 
-      // 要更新的資料
-      const buyAfter = {
-        payment_status: 'paid',
-        order_status: 'processing',
-        paid_at: new Date().toISOString(),
-      };
+      // 若是貨到付款 不更新 payment_status
+      let buyAfter;
+      if (orderThing.value.payment_method == 'myself') {
+        buyAfter = {
+          order_status: 'processing',
+          paid_at: new Date().toISOString(),
+        };
+      } else {
+        buyAfter = {
+          payment_status: 'paid',
+          order_status: 'processing',
+          paid_at: new Date().toISOString(),
+        };
+      }
 
       // 打put
       try {

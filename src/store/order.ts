@@ -26,6 +26,7 @@ interface OrderRule {
   updatedAt: string;
   order_items: ProductRule[];
   documentId: string;
+  payment_method: string;
 }
 
 // 成功送出訂單後 得到的訂單資料

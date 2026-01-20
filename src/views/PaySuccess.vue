@@ -153,6 +153,7 @@
   }
 
   const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
+
   // 從所有產品 抓出我要的資訊 組成一個小物件
   const getNowStock = (id: number | string) => {
     const findAPIproduct = productsNow.value.filter((obj) => {
@@ -179,6 +180,7 @@
       throw err;
     }
 
+    /*
     console.log('買的東西 要扣的數量 pinia提供');
     console.log(buyProducts.value); // 完整的 訂購的 產品資料
     // 要扣庫存的資料
@@ -189,9 +191,34 @@
     console.log('這個id 現在資料庫的庫存');
     console.log(getNowStock(751));
 
-    const productId = '751'; // 先用假資料
+    console.log('買的產品的數量');
+    console.log(buyProducts.value[0].quantity);
+    */
 
-    /*await updateProduct(productId, cost);*/
+    // 用來put產品庫存的 [{},{},...]
+    const updateStock = buyProducts.value.map((obj) => {
+      return {
+        /*
+        pid: obj.pid,
+        quantity: obj.quantity,
+        firstStock: getNowStock(obj.pid),
+        */
+        pid: obj.pid,
+        stock: getNowStock(obj.pid) - Number(obj.quantity),
+      };
+    });
+
+    // console.log('買的產品的數量、要扣的、扣完的');
+    // console.log(updateStock);
+
+    try {
+      const doStock = await updateProduct(751, { stock: 175 });
+      console.log(doStock);
+    } catch (err: any) {
+      const errorDetail = err.response?.data?.detail || err.message;
+      console.error('API 串接出錯：', errorDetail);
+      throw err;
+    }
   };
 </script>
 

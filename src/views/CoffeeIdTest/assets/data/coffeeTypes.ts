@@ -31,6 +31,13 @@ export const coffeePersonas = [
     description: '清新敏捷，觀察力強，擁有旺盛好奇心，是天生的探索者與創作者。',
     beans: ['淺焙', '果香清爽', '水洗'],
     brew: ['V60', 'Kalita', '冰手沖'],
+    productPaths: [
+      '/product?roast=Light',
+      '/product?flavor_type=Fruity',
+      '/product?processing=Washed',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Bright_Raccoon_ff07a20859.webp',
   },
   {
     id: 'A2',
@@ -43,6 +50,12 @@ export const coffeePersonas = [
     description: '活潑直覺、魅力高，是走到哪都能帶來能量與笑容的人。',
     beans: ['淺焙', '果香清爽', '日曬'],
     brew: ['手沖', '艾樂壓'],
+    productPaths: [
+      '/product?roast=Light',
+      '/product?flavor_type=Fruity',
+      '/product?processing=Natural',
+    ],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Berry_Fox_98595dfb99.webp',
   },
   {
     id: 'A3',
@@ -51,10 +64,17 @@ export const coffeePersonas = [
     image: A3Img,
     flavor1: '酸',
     flavor2: '醇厚',
-    roasting: '中淺焙',
+    roasting: '淺焙',
     description: '果斷行動派，在創意與現實之間切換自如，是領導者類型。',
-    beans: ['中淺焙', '果香清爽', '蜜處理'],
+    beans: ['淺焙', '果香清爽', '蜜處理'],
     brew: ['錐形濾杯', '摩卡壺'],
+    productPaths: [
+      '/product?roast=Light',
+      '/product?flavor_type=Fruity',
+      '/product?processing=Honey',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Adventure_Cat_1060e7cc00.webp',
   },
   {
     id: 'A4',
@@ -67,6 +87,13 @@ export const coffeePersonas = [
     description: '感性與理性並存的深度思考者，擅長品味生活的細節。',
     beans: ['中焙', '花香明亮', '水洗'],
     brew: ['蒂莫西', '手沖'],
+    productPaths: [
+      '/product?roast=Medium',
+      '/product?flavor_type=Floral',
+      '/product?processing=Washed',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Citrus_Tanuki_Thinker_bdd832839b.webp',
   },
 
   {
@@ -80,6 +107,12 @@ export const coffeePersonas = [
     description: '溫柔可愛又帶點靈氣，能讓人放鬆與感到安心。',
     beans: ['衣索比亞', '花香明亮', '日曬'],
     brew: ['手沖', '冷萃'],
+    productPaths: [
+      '/product?origin=Ethopia',
+      '/product?flavor_type=Floral',
+      '/product?processing=Natural',
+    ],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Citrus_Fawn_3258c92207.webp',
   },
   {
     id: 'B2',
@@ -92,6 +125,13 @@ export const coffeePersonas = [
     description: '慢活療癒型人格，穩定可靠，是朋友的心靈靠山。',
     beans: ['巴西', '堅果巧克力', '水洗'],
     brew: ['義式', '美式', '奶咖'],
+    productPaths: [
+      '/product?origin=Brazil',
+      '/product?flavor_type=Nutty',
+      '/product?processing=Washed',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Caramel_Hippo_2f7571da4a.webp',
   },
   {
     id: 'B3',
@@ -104,6 +144,12 @@ export const coffeePersonas = [
     description: '柔和內斂，感性豐富，是讓人安心的暖心存在。',
     beans: ['瓜地馬拉', '堅果巧克力', '蜜處理'],
     brew: ['手沖', '浸泡式'],
+    productPaths: [
+      '/product?origin=Guatemala',
+      '/product?flavor_type=Nutty',
+      '/product?processing=Honey',
+    ],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Honey_Bear_c982334395.webp',
   },
   {
     id: 'B4',
@@ -116,6 +162,13 @@ export const coffeePersonas = [
     description: '自由清爽、感受力強，像海風一般柔軟與靈動。',
     beans: ['肯亞', '果香清爽', '水洗'],
     brew: ['手沖', '冰釀'],
+    productPaths: [
+      '/product?origin=Kenya',
+      '/product?flavor_type=Fruity',
+      '/product?processing=Washed',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Glowing_Dolphin_c4742fe47c.webp',
   },
 
   {
@@ -125,10 +178,17 @@ export const coffeePersonas = [
     image: C1Img,
     flavor1: '醇厚',
     flavor2: '酸',
-    roasting: '中深焙',
+    roasting: '深焙',
     description: '衝勁十足的行動者，遇到事情總是第一個跳下去做。',
-    beans: ['印尼', '中深焙', '水洗'],
+    beans: ['印尼', '深焙', '水洗'],
     brew: ['摩卡壺', '義式'],
+    productPaths: [
+      '/product?origin=Indonesia',
+      '/product?roast=Dark',
+      '/product?processing=Washed',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Panther_Runner_a29f5a4a23.webp',
   },
   {
     id: 'C2',
@@ -137,10 +197,13 @@ export const coffeePersonas = [
     image: C2Img,
     flavor1: '醇厚',
     flavor2: '甜',
-    roasting: '中深焙',
+    roasting: '深焙',
     description: '厚實可靠，節奏穩定，是朋友群中的安全感來源。',
-    beans: ['巴西', '中深焙', '日曬'],
+    beans: ['巴西', '深焙', '日曬'],
     brew: ['法壓', '義式', '美式'],
+    productPaths: ['/product?origin=Brazil', '/product?roast=Dark', '/product?processing=Natural'],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Creamy_Buffalo_d757483760.webp',
   },
   {
     id: 'C3',
@@ -153,6 +216,9 @@ export const coffeePersonas = [
     description: '哲學系人格，喜歡深思、沉靜且有內在力量。',
     beans: ['印尼', '深焙', '蜜處理'],
     brew: ['義式', '浸泡式'],
+    productPaths: ['/product?origin=Indonesia', '/product?roast=Dark', '/product?processing=Honey'],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Deepwood_Bear_390959ce09.webp',
   },
   {
     id: 'C4',
@@ -165,6 +231,13 @@ export const coffeePersonas = [
     description: '策略高手，專注理性，喜歡精準與效率。',
     beans: ['哥倫比亞', '中焙', '水洗'],
     brew: ['金屬濾杯', '手沖'],
+    productPaths: [
+      '/product?origin=Colombia',
+      '/product?roast=Medium',
+      '/product?processing=Washed',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Grey_Wolf_Analyst_fc74b0e38e.webp',
   },
 
   {
@@ -178,6 +251,12 @@ export const coffeePersonas = [
     description: '節奏慢、觀察細膩、具有深度的文青型人格。',
     beans: ['衣索比亞', '中焙', '花香明亮'],
     brew: ['手沖', '浸泡式', '冷萃'],
+    productPaths: [
+      '/product?origin=Ethiopia',
+      '/product?roast=Medium',
+      '/product?flavor_type=Floral',
+    ],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Indie_Owl_60df0f30e7.webp',
   },
   {
     id: 'D2',
@@ -190,6 +269,8 @@ export const coffeePersonas = [
     description: '放鬆療癒型，感性深沉，喜歡慢慢體驗生活。',
     beans: ['巴西', '中焙', '堅果巧克力'],
     brew: ['手沖', '法壓', '冷萃'],
+    productPaths: ['/product?origin=Brazil', '/product?roast=Medium', '/product?flavor_type=Nutty'],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Cocoa_Sloth_5576bd93ae.webp',
   },
   {
     id: 'D3',
@@ -198,10 +279,17 @@ export const coffeePersonas = [
     image: D3Img,
     flavor1: '餘韻',
     flavor2: '醇厚',
-    roasting: '中深焙',
+    roasting: '中焙',
     description: '內斂、有故事感、智慧型人格。',
-    beans: ['印尼', '中深焙', '濃郁厚實'],
+    beans: ['印尼', '中焙', '濃郁厚實'],
     brew: ['義式', '摩卡壺', '浸泡式'],
+    productPaths: [
+      '/product?origin=Indonesia',
+      '/product?roast=Medium',
+      '/product?flavor_type=Bold',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Old_Soul_Black_Bear_de96360198.webp',
   },
   {
     id: 'D4',
@@ -210,10 +298,16 @@ export const coffeePersonas = [
     image: D4Img,
     flavor1: '餘韻',
     flavor2: '澄澈',
-    roasting: '中淺焙',
+    roasting: '淺焙',
     description: '靜謐冷靜、安定感強，如山林間的白鹿。',
-    beans: ['瓜地馬拉', '中淺焙', '果香清爽'],
+    beans: ['瓜地馬拉', '淺焙', '果香清爽'],
     brew: ['手沖', 'V60', '冰手沖'],
+    productPaths: [
+      '/product?origin=Guatemala',
+      '/product?roast=Light',
+      '/product?flavor_type=Fruity',
+    ],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Mist_Deer_975f307ca6.webp',
   },
 
   {
@@ -227,6 +321,13 @@ export const coffeePersonas = [
     description: '思緒敏捷、清晰明亮，如晨光般帶著冷靜與靈巧的氣質。',
     beans: ['淺焙', '花香明亮', '水洗'],
     brew: ['V60', 'Kalita', '冰手沖'],
+    productPaths: [
+      '/product?roast=Light',
+      '/product?flavor_type=Floral',
+      '/product?processing=Washed',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Dawnlight_Fox_97f7810551.webp',
   },
   {
     id: 'E2',
@@ -235,10 +336,17 @@ export const coffeePersonas = [
     image: E2Img,
     flavor1: '澄澈',
     flavor2: '甜',
-    roasting: '淺〜中淺焙',
+    roasting: '淺焙',
     description: '溫柔細膩，感受力敏銳，喜歡純粹自然的甜感與乾淨風味。',
-    beans: ['淺～中淺焙', '果香清爽', '日曬'],
+    beans: ['淺焙', '果香清爽', '日曬'],
     brew: ['手沖', '冰釀', '浸泡式'],
+    productPaths: [
+      '/product?roast=Light',
+      '/product?flavor_type=Fruity',
+      '/product?processing=Natural',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Cloudglow_Rabbit_e0db14d8bf.webp',
   },
   {
     id: 'E3',
@@ -251,6 +359,13 @@ export const coffeePersonas = [
     description: '踏實冷靜、專注理性，喜歡兼具厚度與透明度的均衡風味。',
     beans: ['中焙', '堅果巧克力', '水洗'],
     brew: ['金屬濾杯', '手沖', '法壓'],
+    productPaths: [
+      '/product?roast=Medium',
+      '/product?flavor_type=Nutty',
+      '/product?processing=Washed',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Mistwood_Hound_d8d31f56d3.webp',
   },
   {
     id: 'E4',
@@ -259,9 +374,17 @@ export const coffeePersonas = [
     image: E4Img,
     flavor1: '澄澈',
     flavor2: '餘韻',
-    roasting: '中淺焙',
+    roasting: '中焙',
     description: '寧靜沉著，喜歡乾淨透明且帶有優雅延伸感的風味。',
-    beans: ['中淺焙', '花香明亮', '水洗'],
+    beans: ['中焙', '花香明亮', '水洗'],
     brew: ['手沖', '冰手沖', '浸泡式'],
+    productPaths: [
+      '/product?roast=Medium',
+      '/product?flavor_type=Floral',
+      '/product?processing=Washed',
+    ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Hazeplume_Crane_74048f1917.webp',
   },
 ];
+console.log('coffeeTypes 資料庫已載入，版本：2025-分享測試');

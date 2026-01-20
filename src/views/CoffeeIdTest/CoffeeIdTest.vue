@@ -18,7 +18,6 @@
     >
       <div class="pointer-events-none absolute inset-0 rounded-xl z-20" :style="glowStyle"></div>
       <div class="flex-col bg-background-light/90 backdrop-blur-md shadow-lg border-sage z-10">
-        <!-- 動畫背景 -->
         <div class="w-[80%] mx-auto flex justify-center rounded-2xl bg-cover bg-bottom mt-8">
           <img :src="coffeeWalk" class="invert" alt="Coffee Walk Animation" />
         </div>
@@ -56,8 +55,6 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-
-  // 匯入背景圖與動畫圖
   import bgImage from './assets/img/bgImage.jpg';
   import coffeeWalk from './assets/img/coffeeWalk.gif';
   import cafe from './assets/img/cafe.jpg';
@@ -65,10 +62,9 @@
   import escalator from './assets/img/escalator.png';
   import campus from './assets/img/campus.jpg';
 
-  // 取得 router
   const router = useRouter();
 
-  // 開始測驗函式
+  // 開始測驗
   function startTest() {
     router.push('/coffee-id-test-card');
   } // 控制動畫背景切換
@@ -82,14 +78,14 @@
     function changeBg() {
       const newBg = bgSequence[index % bgSequence.length];
       nextBg.value = newBg;
-      nextBgOpacity.value = 1; // 觸發淡入
+      nextBgOpacity.value = 1;
 
       setTimeout(() => {
-        currentBg.value = newBg; // 完成切換
-        nextBgOpacity.value = 0; // 淡出下一張
+        currentBg.value = newBg;
+        nextBgOpacity.value = 0;
         index++;
-        setTimeout(changeBg, 1500); // 調整每張持續時間
-      }, 500); // 500ms 淡入淡出時間
+        setTimeout(changeBg, 1500);
+      }, 500);
     }
 
     changeBg();

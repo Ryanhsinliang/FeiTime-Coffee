@@ -79,7 +79,6 @@
   const musicLoading = ref<boolean>(false);
   const musicError = ref<string | null>(null);
   const aiRecommendation = ref<string>('選擇風味，開始音樂之旅');
-  const isFetchingNext = ref<boolean>(false); // 正在獲取下一輪推薦
 
   // YouTube 播放器狀態
   const isPlaying = ref<boolean>(false);
@@ -140,7 +139,6 @@
     // 只有在播放且不在 loading 狀態時才旋轉
     if (isPlaying.value && !musicLoading.value) {
       vinylRotation.value = (vinylRotation.value + 0.5) % 360;
-      // 液體容器不旋轉，始終保持在底部
       animationFrameId = requestAnimationFrame(rotateVinyl);
     }
   };
@@ -167,6 +165,19 @@
       rotateVinyl();
     }
   });
+
+  // ============================================
+  // 播放器狀態檢查
+  // ============================================
+  const isPlayerAvailable = (): boolean => {
+    return !!(
+      youtubePlayer &&
+      playerReady.value &&
+      typeof youtubePlayer.loadVideoById === 'function' &&
+      typeof youtubePlayer.playVideo === 'function' &&
+      typeof youtubePlayer.pauseVideo === 'function'
+    );
+  };
 
   // ============================================
   // 播放進度檢查 - 檢測快進/後退並調整黑膠角度
@@ -238,18 +249,6 @@
   // ============================================
   // 播放器管理 - 完全重構版本
   // ============================================
-
-  // 檢查播放器是否真正可用
-  const isPlayerAvailable = (): boolean => {
-    return !!(
-      youtubePlayer &&
-      playerReady.value &&
-      typeof youtubePlayer.loadVideoById === 'function' &&
-      typeof youtubePlayer.playVideo === 'function' &&
-      typeof youtubePlayer.pauseVideo === 'function'
-    );
-  };
-
   const destroyPlayer = () => {
     console.log('🗑️ Destroying player...');
 
@@ -540,15 +539,15 @@
       return;
     }
 
-    // 防止重複請求
-    if (isFetchingNext.value) {
-      console.warn('⚠️ Already fetching next recommendations');
+    // 防止在 loading 時重複請求
+    if (musicLoading.value) {
+      console.warn('⚠️ Already loading music');
       return;
     }
 
     try {
       console.log('🔄 Fetching new music recommendations');
-      isFetchingNext.value = true;
+      musicLoading.value = true;
       musicError.value = null;
 
       const data = await getRandomMusic({
@@ -567,7 +566,7 @@
       console.error('❌ Next recommendation error:', err);
       musicError.value = '無法取得更多推薦';
     } finally {
-      isFetchingNext.value = false;
+      musicLoading.value = false;
     }
   };
 
@@ -612,7 +611,7 @@
                 class="absolute inset-0 rounded-full bg-gradient-to-br from-[#E8F5E9]/30 via-transparent to-[#C8D6C5]/20"
               ></div>
 
-              <!-- 液體容器 - 固定在底部不旋轉，反向抵消黑膠旋轉 -->
+              <!-- 液體容器 - 反向旋轉以保持固定在底部 -->
               <div
                 class="liquid-container absolute inset-0 rounded-full overflow-hidden"
                 :class="{ 'liquid-container-active': isPlaying }"
@@ -869,7 +868,7 @@
             </div>
             <button
               @click="nextRecommendation"
-              :disabled="musicLoading || isFetchingNext || !selectedFlavor || musicError !== null"
+              :disabled="musicLoading || !selectedFlavor || musicError !== null"
               class="flex items-center justify-center gap-2 bg-[#DCCFC0] text-[#171412] px-4 py-2 rounded-lg hover:bg-[#C4B5A0] hover:shadow-lg transition-all duration-300 shadow-md group flex-shrink-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none hover:disabled:bg-gray-200"
             >
               <span class="text-xs font-bold tracking-wide hidden sm:inline">Next</span>

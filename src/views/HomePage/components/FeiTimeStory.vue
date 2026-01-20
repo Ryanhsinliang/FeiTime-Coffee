@@ -180,7 +180,7 @@
               <h2
                 class="text-4xl md:text-5xl font-serif text-[#4A3728] leading-tight animate-fade-in"
               >
-                靜謐時光,
+                靜謐時光，
                 <br />
                 用心釀造咖啡體驗
               </h2>
@@ -195,12 +195,12 @@
 
             <!-- 描述文字 -->
             <p class="text-gray-600 font-light leading-relaxed text-base">
-              踏上專屬您的咖啡旅程,透過互動體驗深入了解手沖咖啡的迷人世界。
-              無論是模擬沖煮過程,還是探索個人風味偏好,FeiTime 為您打造全新的客製化咖啡體驗。
+              踏上專屬您的咖啡旅程，透過互動體驗深入了解手沖咖啡的迷人世界。
+              無論是模擬沖煮過程，還是探索個人風味偏好，FeiTime 為您打造全新的客製化咖啡體驗。
             </p>
 
             <!-- 液態氣泡按鈕區 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+            <div class="grid grid-cols-2 gap-4 md:gap-8 mt-4">
               <!-- 咖啡沖煮模擬器 - 液態氣泡 -->
               <router-link
                 to="/UltraCoffeeSimulator"
@@ -266,15 +266,16 @@
                     </g>
 
                     <!-- 圖標 - Material Symbol -->
-                    <foreignObject x="30" y="20" width="140" height="140">
+                    <foreignObject x="0" y="0" width="200" height="200">
                       <div
                         xmlns="http://www.w3.org/1999/xhtml"
                         style="
                           display: flex;
                           justify-content: center;
                           align-items: center;
-                          width: 100%;
-                          height: 100%;
+                          width: 200px;
+                          height: 200px;
+                          position: relative;
                         "
                       >
                         <span
@@ -284,6 +285,9 @@
                             color: isBrewingHovered ? '#8B6F4B' : '#D4C5B0',
                             opacity: isBrewingHovered ? '1' : '0.5',
                             transition: 'all 0.5s ease',
+                            display: 'block',
+                            lineHeight: '1',
+                            transform: 'translateY(-20px)',
                           }"
                         >
                           coffee_maker
@@ -329,7 +333,9 @@
                     </g>
                   </svg>
                 </div>
-                <h3 class="text-[#8B6F4B] font-bold text-center mt-3">咖啡沖煮模擬器</h3>
+                <h3 class="text-[#8B6F4B] font-bold text-center mt-2 text-xs md:text-base">
+                  咖啡沖煮模擬器
+                </h3>
               </router-link>
 
               <!-- 咖啡小測驗 - 液態氣泡 -->
@@ -397,15 +403,16 @@
                     </g>
 
                     <!-- 圖標 - Material Symbol -->
-                    <foreignObject x="30" y="20" width="140" height="140">
+                    <foreignObject x="0" y="0" width="200" height="200">
                       <div
                         xmlns="http://www.w3.org/1999/xhtml"
                         style="
                           display: flex;
                           justify-content: center;
                           align-items: center;
-                          width: 100%;
-                          height: 100%;
+                          width: 200px;
+                          height: 200px;
+                          position: relative;
                         "
                       >
                         <span
@@ -415,6 +422,9 @@
                             color: isQuizHovered ? '#7A9F75' : '#B8D4B3',
                             opacity: isQuizHovered ? '1' : '0.5',
                             transition: 'all 0.5s ease',
+                            display: 'block',
+                            lineHeight: '1',
+                            transform: 'translateY(-20px)',
                           }"
                         >
                           psychology_alt
@@ -460,7 +470,9 @@
                     </g>
                   </svg>
                 </div>
-                <h3 class="text-[#7A9F75] font-bold text-center mt-3">咖啡小測驗</h3>
+                <h3 class="text-[#7A9F75] font-bold text-center mt-2 text-xs md:text-base">
+                  咖啡小測驗
+                </h3>
               </router-link>
             </div>
           </div>
@@ -603,9 +615,13 @@
       )
       border-box;
     background-size: 300% 100%;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) padding-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) padding-box,
+      linear-gradient(#fff 0 0);
     mask-composite: exclude;
     animation: borderShine 18s linear infinite;
   }
@@ -712,9 +728,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1rem;
+    padding: 0.5rem;
     border-radius: 1rem;
     transition: all 0.3s ease;
+  }
+
+  @media (min-width: 768px) {
+    .bubble-button-container {
+      padding: 1rem;
+    }
   }
 
   .bubble-button-container:hover {
@@ -722,9 +744,16 @@
   }
 
   .bubble-wrapper {
-    width: 140px;
-    height: 140px;
+    width: 100px;
+    height: 100px;
     transition: transform 0.3s ease;
+  }
+
+  @media (min-width: 768px) {
+    .bubble-wrapper {
+      width: 140px;
+      height: 140px;
+    }
   }
 
   .bubble-button-container:hover .bubble-wrapper {

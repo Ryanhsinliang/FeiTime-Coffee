@@ -345,10 +345,19 @@
             // 更新 loading 狀態
             // 只在 buffering 時顯示 loading，unstarted 不算（避免初始化時閃爍）
             if (event.data === 3) {
+              // buffering - 顯示 loading
               isLoadingVideo.value = true;
-            } else if (event.data === 1 || event.data === 2 || event.data === 5) {
-              // playing, paused, or cued - 清除 loading
+            } else if (event.data === 1 || event.data === 2) {
+              // playing 或 paused - 清除 loading
               isLoadingVideo.value = false;
+            } else if (event.data === 5) {
+              // video cued - 延遲清除 loading，確保影片已準備好
+              setTimeout(() => {
+                isLoadingVideo.value = false;
+              }, 100);
+            } else if (event.data === -1) {
+              // unstarted - 可能是新影片正在載入，保持當前 loading 狀態
+              // 不做任何改變
             }
 
             // 當開始播放時，初始化播放時間
@@ -438,11 +447,24 @@
       try {
         console.log('🔄 Using existing player to load new video');
 
+        // 設置 loading 狀態，避免黑屏閃爍
+        isLoadingVideo.value = true;
+
+        // 先暫停當前播放
+        try {
+          if (typeof youtubePlayer!.pauseVideo === 'function') {
+            youtubePlayer!.pauseVideo();
+          }
+        } catch (e) {
+          console.warn('⚠️ Could not pause video:', e);
+        }
+
         // 先重置播放時間，但保持旋轉角度
         lastPlaybackTime.value = 0;
+        isPlaying.value = false;
 
-        // 等待下一個 tick 確保 DOM 已更新
-        await new Promise((resolve) => setTimeout(resolve, 50));
+        // 等待播放器狀態穩定 - 增加等待時間
+        await new Promise((resolve) => setTimeout(resolve, 150));
 
         // 再次檢查播放器是否仍然可用
         if (!isPlayerAvailable()) {
@@ -595,6 +617,25 @@
     <div
       class="w-full max-w-[1200px] bg-[#FAF9EE] rounded-4xl overflow-hidden flex flex-col relative"
     >
+      <!-- Section Title -->
+      <div class="relative z-10 w-full px-6 pt-8 pb-4 lg:px-10 lg:pt-10 lg:pb-6">
+        <div class="flex flex-col items-center gap-3 text-center">
+          <div class="flex items-center gap-3">
+            <div class="h-px w-8 lg:w-12 bg-gradient-to-r from-transparent to-[#A2AF9B]"></div>
+            <span class="text-[#A2AF9B] tracking-[0.3em] uppercase text-xs font-bold">
+              Coffee & Music
+            </span>
+            <div class="h-px w-8 lg:w-12 bg-gradient-to-l from-transparent to-[#A2AF9B]"></div>
+          </div>
+          <h2 class="text-3xl lg:text-4xl font-serif text-[#171412] leading-tight">
+            風味音樂播放器
+          </h2>
+          <p class="text-sm lg:text-base text-[#171412]/60 max-w-2xl leading-relaxed">
+            根據您對風味的喜好，沉浸在專屬於您的音樂氛圍之中
+          </p>
+        </div>
+      </div>
+
       <!-- Header Section with Vinyl and Video -->
       <div
         class="relative z-10 w-full flex flex-col lg:flex-row p-8 lg:px-10 lg:py-6 gap-8 lg:gap-20 items-center"
@@ -861,9 +902,18 @@
                     }"
                   ></span>
                 </div>
-                <span class="text-sm font-bold text-[#171412] leading-tight truncate">
+                <!-- 桌面版：正常顯示 -->
+                <span class="hidden lg:block text-sm font-bold text-[#171412] leading-tight truncate">
                   推薦: {{ aiRecommendation }}
                 </span>
+                <!-- 手機/平板版：跑馬燈效果 -->
+                <div class="lg:hidden overflow-hidden relative w-full">
+                  <span
+                    class="text-sm font-bold text-[#171412] leading-tight whitespace-nowrap inline-block marquee-text"
+                  >
+                    推薦: {{ aiRecommendation }}
+                  </span>
+                </div>
               </div>
             </div>
             <button
@@ -887,9 +937,8 @@
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:items-center">
           <div class="flex flex-col items-start gap-2 min-w-[200px] shrink-0">
             <h2 class="text-[#171412] text-2xl lg:text-3xl font-bold tracking-tight leading-tight">
-              今天我想
-              <br />
-              選擇的風味是:
+              <span class="hidden lg:inline">今天我想<br />選擇的風味是:</span>
+              <span class="lg:hidden">選擇您的風味:</span>
             </h2>
             <div class="flex items-center gap-2">
               <span class="h-1 w-6 bg-[#A2AF9B] rounded-full"></span>
@@ -1151,5 +1200,26 @@
 
   .animate-float {
     animation: float 3s ease-in-out infinite;
+  }
+
+  /* 跑馬燈效果 */
+  .marquee-text {
+    animation: marquee 12s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* 當文字較短時暫停動畫 */
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .marquee-text {
+      animation-duration: 15s;
+    }
   }
 </style>

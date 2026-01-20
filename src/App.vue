@@ -45,7 +45,9 @@
   const route = useRoute();
 
   // 判斷是否顯示 Header/Footer
-  const showHeaderFooter = computed(() => route.name !== 'Intro');
+  const showHeaderFooter = computed(
+    () => route.name !== 'Intro' && !String(route.name).includes('Admin')
+  );
 
   // 確保動畫完成後頁面可見
   const onAfterEnter = (el) => {

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col overflow-x-hidden antialiased font-wenkai text-[#2C3E2D] selection:bg-[#8FA98F]/30 selection:text-[#2C3E2D] bg-[#F8FAF9] bg-texture">
+  <div class="min-h-screen flex flex-col antialiased font-wenkai text-[#2C3E2D] selection:bg-[#8FA98F]/30 selection:text-[#2C3E2D] bg-[#F8FAF9] bg-texture">
 
 
     <main class="flex-grow flex flex-col items-center w-full px-6 md:px-12 lg:pr-[560px] py-12">
@@ -31,9 +31,9 @@
               <span class="text-[#6B8E6B] text-xs font-bold tracking-[0.2em] uppercase bg-[#6B8E6B]/10 px-3 py-1 rounded-full">FeiTime 精選 (selection)</span>
             </div>
             <div class="flex flex-col gap-4">
-              <h1 class="text-4xl md:text-6xl font-notoserif text-[#2C3E2D] tracking-wide leading-tight">調整您的萃取 <br/><span class="text-3xl md:text-5xl text-[#5C6B5D] font-light">Configure Your Extraction</span></h1>
+              <h1 class="text-4xl md:text-6xl font-notoserif text-[#2C3E2D] tracking-wide leading-tight">專屬於您的萃取配方 <br/><span class="text-3xl md:text-5xl text-[#5C6B5D] font-light">Configure Your Extraction</span></h1>
               <p class="text-[#5C6B5D] text-lg max-w-2xl font-light leading-relaxed">
-                選擇您的參數以模擬完美沖煮，探索全新風味輪廓。和諧的平衡正等待著您。
+                探索專屬於您的獨特沖煮之道，發掘全新風味輪廓。難以言喻的口感正等待著您:D。
                 <span class="block text-sm mt-2 opacity-70">Select your parameters to simulate the perfect brew and discover new flavor profiles. A harmonious balance awaits.</span>
               </p>
             </div>
@@ -352,7 +352,10 @@
                 </p>
               </div>
               <div class="shrink-0">
-                <button class="bg-white text-[#2C3E2D] hover:bg-[#8FA98F] hover:text-white px-8 py-4 rounded-lg font-bold text-xs uppercase tracking-[0.15em] transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 group-hover:scale-105">
+                <button 
+                  @click="handleNavigateToRefine"
+                  class="bg-white text-[#2C3E2D] hover:bg-[#8FA98F] hover:text-white px-8 py-4 rounded-lg font-bold text-xs uppercase tracking-[0.15em] transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 group-hover:scale-105"
+                >
                   試用進階模擬器 (Try)
                   <span class="material-symbols-outlined text-lg">science</span>
                 </button>
@@ -497,11 +500,43 @@
        </div>
       </div>
     </main>
+
+    <!-- Login Prompt Modal -->
+    <div v-if="showLoginModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/20 backdrop-blur-sm p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform transition-all scale-100 border border-[#E6EBE6]">
+        <div class="flex flex-col items-center text-center gap-4">
+          <div class="size-12 rounded-full bg-[#F2F7F2] flex items-center justify-center text-[#8FA98F] mb-2">
+            <span class="material-symbols-outlined text-2xl">lock</span>
+          </div>
+          <h3 class="text-xl font-notoserif text-[#2C3E2D] font-bold">需要會員權限</h3>
+          <p class="text-[#5C6B5D] text-sm leading-relaxed">
+            進階模擬器 (Refine Simulator) 僅開放給會員使用。<br>
+            請先登入以繼續探索更精細的沖煮參數。
+          </p>
+          <div class="flex gap-3 w-full mt-4">
+            <button 
+              @click="showLoginModal = false"
+              class="flex-1 px-4 py-3 rounded-xl border border-[#E6EBE6] text-[#5C6B5D] font-medium hover:bg-[#F8FAF9] transition-colors text-sm"
+            >
+              稍後 (Later)
+            </button>
+            <button 
+              @click="confirmLoginRedirect"
+              class="flex-1 px-4 py-3 rounded-xl bg-[#2C3E2D] text-white font-medium hover:bg-[#3E5240] transition-colors text-sm shadow-lg shadow-[#2C3E2D]/20"
+            >
+               前往登入 (Login)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onErrorCaptured, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/store/auth';
 import FlavorRadar from '@/components/FlavorRadar.vue';
 import GeminiTestButton from '@/components/GeminiTestButton.vue';
 import CoffeeFairyIcon from '@/components/common/CoffeeFairyIcon.vue';
@@ -528,6 +563,24 @@ console.log('Mounting UltraCoffeeSimulator setup...');
 onMounted(() => {
   console.log('UltraCoffeeSimulator mounted successfully');
 });
+
+// Navigation Logic
+const router = useRouter();
+const authStore = useAuthStore();
+const showLoginModal = ref(false);
+
+function handleNavigateToRefine() {
+  if (authStore.isLoggedIn) {
+    router.push({ name: 'RefineSimulator' });
+  } else {
+    showLoginModal.value = true;
+  }
+}
+
+function confirmLoginRedirect() {
+  showLoginModal.value = false;
+  router.push({ name: 'Login' });
+}
 
 // Options Data
 // Options Data

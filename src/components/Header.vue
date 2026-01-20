@@ -4,7 +4,6 @@
     class="sticky top-0 z-50 w-full border-b border-[#DCCFC0]/40 backdrop-blur-lg transition-colors duration-300"
   >
     <div class="px-6 xl:px-12 flex items-center justify-between max-w-[1600px] mx-auto h-16">
-      <!-- Logo -->
       <router-link to="/home" class="flex items-center gap-2 flex-shrink-0">
         <img
           src="/icons/feitime-logo.png"
@@ -19,7 +18,6 @@
         </h2>
       </router-link>
 
-      <!-- Desktop Menu -->
       <div class="hidden lg:flex flex-1 justify-center gap-6 xl:gap-12 relative px-4">
         <div
           v-for="link in links"
@@ -33,10 +31,8 @@
             @mouseenter="hoveredLink = link.name"
             @mouseleave="hoveredLink = null"
           >
-            <!-- 固定寬度佔位 -->
             <span class="invisible">{{ link.max }}</span>
 
-            <!-- 英文 -->
             <span
               class="absolute inset-0 flex items-center justify-center transition-opacity duration-200"
               :class="hoveredLink === link.name || isActive(link) ? 'opacity-0' : 'opacity-100'"
@@ -44,7 +40,6 @@
               {{ link.name }}
             </span>
 
-            <!-- 中文 -->
             <span
               class="absolute inset-0 flex items-center justify-center transition-opacity duration-200"
               :class="hoveredLink === link.name || isActive(link) ? 'opacity-100' : 'opacity-0'"
@@ -52,7 +47,6 @@
               {{ link.zh }}
             </span>
 
-            <!-- 底線動畫 -->
             <span
               class="absolute -bottom-1 left-0 w-0 h-px transition-all duration-300 group-hover:w-full"
               :style="underlineStyle"
@@ -61,10 +55,8 @@
         </div>
       </div>
 
-      <!-- Icons + Mobile Toggle -->
       <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
-        <!-- Desktop Icons -->
-        <div class="hidden lg:flex items-center gap-4">
+        <div class="hidden lg:!flex items-center gap-4">
           <span
             class="material-symbols-outlined cursor-pointer transition-all duration-200 hover:scale-110"
             :style="textColorStyle"
@@ -72,7 +64,6 @@
             shopping_bag
           </span>
 
-          <!-- 人頭 icon 加上相對定位容器 - 加入 inline-flex items-center -->
           <div
             class="relative inline-flex items-center"
             @mouseenter="openUserMenu"
@@ -85,19 +76,14 @@
               person
             </span>
 
-            <!-- 使用者下拉選單 -->
             <transition name="dropdown">
               <div v-if="userMenuOpen" class="absolute left-1/2 -translate-x-1/2 top-full">
-                <!-- 透明橋接區域，只需要很小的間距 -->
                 <div class="h-1"></div>
-
-                <!-- 選單本體 -->
                 <div
                   class="rounded-lg shadow-lg border overflow-hidden whitespace-nowrap"
                   :class="scrollY < bannerHeight ? 'border-[#DCCFC0]/50' : 'border-[#DCCFC0]/80'"
                   :style="dropdownMenuStyle"
                 >
-                  <!-- 未登入狀態 -->
                   <div v-if="!isLoggedIn" class="p-3">
                     <div class="flex flex-col gap-2.5">
                       <button
@@ -117,7 +103,6 @@
                     </div>
                   </div>
 
-                  <!-- 已登入狀態 -->
                   <div v-else class="py-1">
                     <button
                       class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
@@ -157,9 +142,8 @@
           </div>
         </div>
 
-        <!-- Mobile Hamburger -->
         <button
-          class="lg:hidden material-symbols-outlined text-3xl"
+          class="material-symbols-outlined text-3xl lg:!hidden"
           :style="textColorStyle"
           @click="mobileOpen = !mobileOpen"
         >
@@ -168,7 +152,6 @@
       </div>
     </div>
 
-    <!-- Mobile Menu -->
     <transition name="slide-fade">
       <div
         v-if="mobileOpen"

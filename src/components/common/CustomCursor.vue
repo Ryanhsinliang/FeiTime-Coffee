@@ -1,5 +1,5 @@
 <template>
-  <div class="cursor-container">
+  <div v-if="isDesktop" class="cursor-container">
     <div
       v-for="s in sparkles"
       :key="s.id"
@@ -61,6 +61,7 @@
   const y = ref(-100);
   const isHover = ref(false);
   const sparkles = ref([]);
+  const isDesktop = ref(false);
 
   const updateMouse = (e) => {
     x.value = e.clientX;
@@ -113,16 +114,32 @@
     isHover.value = !!isClickable;
   };
 
+  // 檢測是否為桌面裝置（有精準的指標裝置）
+  const checkIsDesktop = () => {
+    // 使用 matchMedia 檢測是否有精準指標（滑鼠）
+    // pointer: fine 表示有精準指標裝置（滑鼠）
+    // pointer: coarse 表示觸控裝置
+    const hasPointer = window.matchMedia('(pointer: fine)').matches;
+    return hasPointer;
+  };
+
   onMounted(() => {
-    window.addEventListener('mousemove', updateMouse);
-    window.addEventListener('mouseover', handleOver);
-    document.documentElement.style.cursor = 'none';
+    isDesktop.value = checkIsDesktop();
+
+    // 只在桌面裝置上啟用自訂游標
+    if (isDesktop.value) {
+      window.addEventListener('mousemove', updateMouse);
+      window.addEventListener('mouseover', handleOver);
+      document.documentElement.style.cursor = 'none';
+    }
   });
 
   onUnmounted(() => {
-    window.removeEventListener('mousemove', updateMouse);
-    window.removeEventListener('mouseover', handleOver);
-    document.documentElement.style.cursor = 'auto';
+    if (isDesktop.value) {
+      window.removeEventListener('mousemove', updateMouse);
+      window.removeEventListener('mouseover', handleOver);
+      document.documentElement.style.cursor = 'auto';
+    }
   });
 </script>
 

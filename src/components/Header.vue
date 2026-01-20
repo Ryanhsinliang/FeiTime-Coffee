@@ -26,7 +26,6 @@
           :key="link.name"
           class="relative group text-sm xl:text-base tracking-widest uppercase font-jp whitespace-nowrap"
         >
-          <!-- 主連結 -->
           <RouterLink
             :to="link.to"
             class="relative block px-2 py-1"
@@ -59,24 +58,6 @@
               :style="underlineStyle"
             ></span>
           </RouterLink>
-
-          <!-- 桌面版下拉選單 (Shop) -->
-          <div
-            v-if="link.name === 'Shop'"
-            class="absolute top-full left-0 mt-1 w-36 backdrop-blur-xl rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 transform -translate-y-1 group-hover:translate-y-0"
-            :style="dropdownBgStyle"
-          >
-            <RouterLink
-              v-for="sub in shopSubLinks"
-              :key="sub.name"
-              :to="sub.to"
-              class="block px-4 py-2 text-sm text-left transition-colors duration-200 rounded hover:bg-white/20"
-              :style="{ color: textColorStyle.color }"
-              @click="mobileOpen = false"
-            >
-              {{ sub.name }}
-            </RouterLink>
-          </div>
         </div>
       </div>
 
@@ -106,32 +87,16 @@
         class="lg:hidden backdrop-blur-xl border-t border-[#DCCFC0]/50"
         :style="dropdownBgStyle"
       >
-        <div v-for="link in links" :key="link.name">
-          <!-- 主連結 -->
-          <RouterLink
-            :to="link.to"
-            class="block px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
-            :style="textColorStyle"
-            @click="toggleMobileSubmenu(link.name)"
-          >
-            {{ link.zh }}
-          </RouterLink>
-
-          <!-- 手機版下拉選單 (Shop) -->
-          <transition name="expand-height">
-            <div v-if="link.name === 'Shop' && mobileSubOpen" class="overflow-hidden">
-              <RouterLink
-                v-for="sub in shopSubLinks"
-                :key="sub.name"
-                :to="sub.to"
-                class="block px-10 py-3 text-base border-b border-[#DCCFC0]/20"
-                @click="mobileOpen = false"
-              >
-                {{ sub.name }}
-              </RouterLink>
-            </div>
-          </transition>
-        </div>
+        <RouterLink
+          v-for="link in links"
+          :key="link.name"
+          :to="link.to"
+          class="block px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
+          :style="textColorStyle"
+          @click="mobileOpen = false"
+        >
+          {{ link.zh }}
+        </RouterLink>
       </div>
     </transition>
   </nav>
@@ -164,24 +129,12 @@
     },
   ];
 
-  const shopSubLinks = [
-    { name: '單品咖啡豆', to: '/product/beans' },
-    { name: '濾掛咖啡', to: '/product/drip' },
-    { name: '沖煮器具', to: '/product/tools' },
-  ];
-
   /* ===== State ===== */
   const hoveredLink = ref<string | null>(null);
   const mobileOpen = ref<boolean>(false);
-  const mobileSubOpen = ref<boolean>(false);
-
-  const toggleMobileSubmenu = (name: string) => {
-    if (name === 'Shop') mobileSubOpen.value = !mobileSubOpen.value;
-  };
 
   /* ===== Scroll Effect ===== */
   const scrollY = ref<number>(0);
-  // 🔥 使用 computed 自動計算 banner 高度（94vh）
   const bannerHeight = computed(() => window.innerHeight * 0.94);
 
   const onScroll = () => {
@@ -189,7 +142,6 @@
   };
 
   onMounted(() => {
-    // 🔥 初始化當前滾動位置
     scrollY.value = window.scrollY;
     window.addEventListener('scroll', onScroll);
   });
@@ -203,7 +155,7 @@
     const t = Math.min(scrollY.value / (bannerHeight.value || 1), 1);
     const r = Math.round(26 + (250 - 26) * t);
     const g = Math.round(30 + (249 - 30) * t);
-    const b = Math.round(23 + (238 - 23) * t);
+    const b = Math.round(23 + (250 - 23) * t);
     return { color: `rgb(${r}, ${g}, ${b})` };
   });
 
@@ -241,19 +193,5 @@
   .slide-fade-leave-to {
     opacity: 0;
     transform: translateY(-8px);
-  }
-
-  /* 手機子選單平滑高度展開 */
-  .expand-height-enter-active,
-  .expand-height-leave-active {
-    transition: max-height 0.3s ease;
-  }
-  .expand-height-enter-from,
-  .expand-height-leave-to {
-    max-height: 0;
-  }
-  .expand-height-enter-to,
-  .expand-height-leave-from {
-    max-height: 500px; /* 根據子選單高度調整 */
   }
 </style>

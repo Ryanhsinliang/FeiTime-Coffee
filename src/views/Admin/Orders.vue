@@ -11,17 +11,9 @@
   </header>
 
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
-    <section class="flex justify-between">
-      <div>
-        <h2 class="text-3xl font-bold">訂單管理</h2>
-        <p class="text-gray-400 text-sm">主要管理消費者訂單與出貨事宜。</p>
-      </div>
-      <button
-        class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm"
-      >
-        <span class="material-symbols-outlined text-[20px]">download</span>
-        <p>批次出貨</p>
-      </button>
+    <section>
+      <h2 class="text-3xl font-bold">訂單管理</h2>
+      <p class="text-gray-400 text-sm">主要管理消費者訂單與出貨事宜。</p>
     </section>
 
     <!-- 搜尋 -->
@@ -184,7 +176,10 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">每頁 20 筆 / 共 {{ filteredOrders.length }} 筆</p>
+        <p class="text-sm">共 {{ filteredOrders.length }} 筆</p>
+
+        <!-- 待修改 -->
+        <!-- <p class="text-sm">每頁 20 筆 / 共 {{ filteredOrders.length }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button
@@ -207,7 +202,7 @@
           <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
             <i class="fa-solid fa-chevron-right text-sm"></i>
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </main>

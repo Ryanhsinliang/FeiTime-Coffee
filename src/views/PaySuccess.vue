@@ -99,12 +99,11 @@
         return;
       }
 
-      // 若是貨到付款 不更新 payment_status
+      // 若是貨到付款 不更新 payment_status 不更新付款時間
       let buyAfter;
       if (orderThing.value.payment_method == 'myself') {
         buyAfter = {
           order_status: 'processing',
-          paid_at: new Date().toISOString(),
         };
       } else {
         buyAfter = {
@@ -117,7 +116,7 @@
       // 打put
       try {
         const res = await updateOrder(documentId, buyAfter);
-        // console.log(res.data);
+        console.log(res.data);
       } catch (err: any) {
         const errorDetail = err.response?.data?.detail || err.message;
         console.error('API 串接出錯：', errorDetail);

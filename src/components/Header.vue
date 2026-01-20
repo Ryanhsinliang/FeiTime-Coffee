@@ -56,14 +56,27 @@
       </div>
 
       <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
-        <div class="hidden lg:!flex items-center gap-4">
+        <!-- 購物車圖示 - 桌機和手機都顯示 -->
+        <div class="relative inline-flex items-center">
           <span
             class="material-symbols-outlined cursor-pointer transition-all duration-200 hover:scale-110"
             :style="textColorStyle"
+            @click="handleShoppingBag"
           >
             shopping_bag
           </span>
+          <!-- 購物車數量角標 -->
+          <div
+            v-if="cartItemCount > 0"
+            class="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-bold text-white px-1"
+            style="background-color: #2D5016"
+          >
+            {{ cartItemCount > 99 ? '99+' : cartItemCount }}
+          </div>
+        </div>
 
+        <!-- 使用者選單 - 僅桌機顯示 -->
+        <div class="hidden lg:!flex items-center gap-4">
           <div
             class="relative inline-flex items-center"
             @mouseenter="openUserMenu"
@@ -154,6 +167,7 @@
           </div>
         </div>
 
+        <!-- 漢堡選單按鈕 - 僅手機顯示 -->
         <button
           class="material-symbols-outlined text-3xl lg:!hidden"
           :style="textColorStyle"
@@ -180,6 +194,52 @@
         >
           {{ link.zh }}
         </RouterLink>
+
+        <div v-if="!isLoggedIn" class="border-b border-[#DCCFC0]/30">
+          <button
+            class="flex items-center gap-3 w-full px-6 py-4 text-lg font-jp"
+            :style="textColorStyle"
+            @click="handleMobileLogin"
+          >
+            <span class="material-symbols-outlined text-2xl">login</span>
+            登入
+          </button>
+          <button
+            class="flex items-center gap-3 w-full px-6 py-4 text-lg font-jp border-t border-[#DCCFC0]/30"
+            :style="textColorStyle"
+            @click="handleMobileRegister"
+          >
+            <span class="material-symbols-outlined text-2xl">person_add</span>
+            註冊
+          </button>
+        </div>
+
+        <div v-else>
+          <button
+            class="flex items-center gap-3 w-full px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
+            :style="textColorStyle"
+            @click="handleMobileMemberArea"
+          >
+            <span class="material-symbols-outlined text-2xl">account_circle</span>
+            會員專區
+          </button>
+          <button
+            class="flex items-center gap-3 w-full px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
+            :style="textColorStyle"
+            @click="handleMobileOrderQuery"
+          >
+            <span class="material-symbols-outlined text-2xl">receipt_long</span>
+            訂單查詢
+          </button>
+          <button
+            class="flex items-center gap-3 w-full px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
+            :style="textColorStyle"
+            @click="handleMobileLogout"
+          >
+            <span class="material-symbols-outlined text-2xl">logout</span>
+            登出
+          </button>
+        </div>
       </div>
     </transition>
   </nav>
@@ -223,6 +283,9 @@
 
   // 從 authStore 取得登入狀態
   const isLoggedIn = computed(() => authStore.isLoggedIn);
+
+  // 購物車數量 (暫時使用測試數據，之後需整合購物車 store)
+  const cartItemCount = ref<number>(0);
 
   /* ===== Scroll Effect ===== */
   const scrollY = ref<number>(0);
@@ -315,6 +378,12 @@
   const isActive = (link: NavLink): boolean => route.path === link.to;
   const activeStyle = { fontWeight: '700' };
 
+  /* ===== 購物車相關功能 ===== */
+  const handleShoppingBag = () => {
+    // TODO: 實現購物車功能
+    console.log('打開購物車');
+  };
+
   /* ===== 使用者選單相關功能 ===== */
   const openUserMenu = () => {
     userMenuOpen.value = true;
@@ -347,6 +416,33 @@
 
   const handleLogout = async () => {
     userMenuOpen.value = false;
+    await authStore.logout();
+    router.push('/home');
+  };
+
+  /* ===== 移动端选单相关功能 ===== */
+  const handleMobileLogin = () => {
+    mobileOpen.value = false;
+    router.push('/login');
+  };
+
+  const handleMobileRegister = () => {
+    mobileOpen.value = false;
+    router.push('/register');
+  };
+
+  const handleMobileMemberArea = () => {
+    mobileOpen.value = false;
+    router.push('/member');
+  };
+
+  const handleMobileOrderQuery = () => {
+    mobileOpen.value = false;
+    router.push('/member?tab=order');
+  };
+
+  const handleMobileLogout = async () => {
+    mobileOpen.value = false;
     await authStore.logout();
     router.push('/home');
   };

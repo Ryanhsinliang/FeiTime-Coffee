@@ -126,7 +126,6 @@ export const useAuthStore = defineStore('auth', () => {
           : currentPath;
       localStorage.setItem('redirectAfterLogin', safeRedirectPath);
       googleAuthService.initiateGoogleLogin();
-      // 直接重新導向，不需要 return
     } catch (error: any) {
       const message = error.message || 'Google 登入失敗';
       setBanner(message, 'error');
@@ -141,7 +140,6 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = jwt;
       user.value = userData;
 
-      // 儲存 token 和使用者資訊
       Cookies.set('auth_token', jwt, { sameSite: 'strict' });
       localStorage.setItem('user', JSON.stringify(userData));
 

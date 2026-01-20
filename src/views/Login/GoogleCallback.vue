@@ -36,48 +36,36 @@
   const error = ref('');
 
   onMounted(async () => {
-    const googleAccessToken = (route.query.access_token || route.query.id_token) as string;
-    const finalJwt = route.query.jwt as string;
-    const userStr = route.query.user as string;
-    if (finalJwt && userStr) {
+    const { jwt, user } = route.query;
+
+    if (jwt && user) {
       try {
-        const userData = JSON.parse(decodeURIComponent(userStr));
-        authStore.handleGoogleCallbackData(finalJwt, userData);
+        const userData = JSON.parse(decodeURIComponent(user as string));
+        authStore.handleGoogleCallbackData(jwt as string, userData);
+
         if (authStore.isLoggedIn) {
           authStore.setBanner('登入成功！', 'success');
+
           let redirectPath = localStorage.getItem('redirectAfterLogin') || '/';
           localStorage.removeItem('redirectAfterLogin');
-          const lowerPath = redirectPath.toLowerCase();
+
           if (
-            lowerPath === '/login' ||
-            lowerPath === '/register' ||
-            lowerPath.includes('callback')
+            ['/login', '/register'].includes(redirectPath.toLowerCase()) ||
+            redirectPath.includes('callback')
           ) {
             redirectPath = '/';
           }
 
-          console.log('最終跳轉目標:', redirectPath);
-          setTimeout(() => {
-            if (redirectPath === '/') {
-              router.replace({ name: 'HomePage' });
-            } else {
-              router.replace(redirectPath);
-            }
-          }, 200);
+          router.replace(redirectPath);
         }
-        return;
       } catch (e) {
         console.error('解析失敗', e);
+        router.replace('/login');
       }
-    }
-
-    if (googleAccessToken) {
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-      const backendUrl = `${apiBaseUrl}/api/auth/google/callback?access_token=${googleAccessToken}`;
-      window.location.href = backendUrl;
       return;
     }
 
     console.error('缺少憑證資訊');
+    router.replace('/login?error=auth_failed');
   });
 </script>

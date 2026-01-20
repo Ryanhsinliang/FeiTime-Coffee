@@ -15,6 +15,7 @@ import { useAuthStore } from '@/store/auth';
 import EmailConfirmed from '@/views/Register/EmailConfirmed.vue';
 import ForgotPassword from '@/views/Login/ForgotPassword.vue';
 import ResetPassword from '@/views/Login/ResetPassword.vue';
+import GoogleCallback from '@/views/Login/GoogleCallback.vue';
 
 const routes = [
   {
@@ -37,7 +38,6 @@ const routes = [
     name: 'Product',
     component: Product,
   },
-
   {
     path: '/product-detail/:pid',
     name: 'ProductDetail',
@@ -67,6 +67,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
+  },
+  {
+    path: '/auth/google/callback',
+    name: 'GoogleCallback',
+    component: GoogleCallback,
   },
   {
     path: '/register',
@@ -107,6 +112,7 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
+  console.log(`正在前往: ${to.path}, 登入狀態: ${authStore.isLoggedIn}`);
 
   if (authStore.isLoggedIn && (to.path === '/login' || to.path === '/register')) {
     return next({ name: 'HomePage' });

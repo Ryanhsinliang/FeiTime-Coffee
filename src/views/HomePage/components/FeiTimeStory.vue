@@ -1,14 +1,59 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
+  import homeStoryImage from '@/views/HomePage/assets/home-story.webp';
 
   // 按鈕 hover 狀態
   const isBrewingHovered = ref(false);
   const isQuizHovered = ref(false);
+
+  // 香氣粒子系統
+  interface Particle {
+    id: number;
+    x: number;
+    y: number;
+    size: number;
+    duration: number;
+    delay: number;
+    blur: number;
+  }
+
+  const particles = ref<Particle[]>([]);
+
+  // 生成香氣粒子
+  const generateParticles = () => {
+    const particleCount = 20;
+    const newParticles: Particle[] = [];
+
+    for (let i = 0; i < particleCount; i++) {
+      newParticles.push({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 4 + 2,
+        duration: Math.random() * 15 + 10,
+        delay: Math.random() * 5,
+        blur: Math.random() * 2 + 1,
+      });
+    }
+
+    particles.value = newParticles;
+  };
+
+  onMounted(() => {
+    generateParticles();
+  });
 </script>
 
 <template>
   <section class="feitime-story-section relative w-full py-24 overflow-hidden bg-[#FFFEFB]">
-    <!-- 背景能量線 SVG -->
+    <!-- 背景漸變動畫層 -->
+    <div class="absolute inset-0 opacity-30">
+      <div class="gradient-orb gradient-orb-1"></div>
+      <div class="gradient-orb gradient-orb-2"></div>
+      <div class="gradient-orb gradient-orb-3"></div>
+    </div>
+
+    <!-- 心電圖漸變線條 -->
     <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
       <svg
         class="w-full h-[400px]"
@@ -17,273 +62,141 @@
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <!-- 流動高光漸層 - 更短更集中 -->
-          <linearGradient
-            id="flowing-highlight"
-            x1="0%"
-            y1="0%"
-            x2="100%"
-            y2="0%"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop offset="0%" style="stop-color: #dccfc0; stop-opacity: 0">
-              <animate
-                attributeName="offset"
-                values="-0.15; 1.15"
-                dur="8s"
-                repeatCount="indefinite"
-              />
-            </stop>
-            <stop offset="5%" style="stop-color: #f5e6d3; stop-opacity: 0.9">
-              <animate
-                attributeName="offset"
-                values="-0.1; 1.2"
-                dur="8s"
-                repeatCount="indefinite"
-              />
-            </stop>
-            <stop offset="10%" style="stop-color: #fffef5; stop-opacity: 1">
-              <animate
-                attributeName="offset"
-                values="-0.05; 1.25"
-                dur="8s"
-                repeatCount="indefinite"
-              />
-            </stop>
-            <stop offset="15%" style="stop-color: #f5e6d3; stop-opacity: 0.9">
-              <animate attributeName="offset" values="0; 1.3" dur="8s" repeatCount="indefinite" />
-            </stop>
-            <stop offset="20%" style="stop-color: #dccfc0; stop-opacity: 0">
-              <animate
-                attributeName="offset"
-                values="0.05; 1.35"
-                dur="8s"
-                repeatCount="indefinite"
-              />
-            </stop>
+          <!-- 漸變色定義 -->
+          <linearGradient id="ecg-gradient-left" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color: #dccfc0; stop-opacity: 0.2" />
+            <stop offset="50%" style="stop-color: #b8a07e; stop-opacity: 0.6" />
+            <stop offset="100%" style="stop-color: #dccfc0; stop-opacity: 0.2" />
+          </linearGradient>
+
+          <linearGradient id="ecg-gradient-right" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color: #a8c5a3; stop-opacity: 0.2" />
+            <stop offset="50%" style="stop-color: #8faf8a; stop-opacity: 0.6" />
+            <stop offset="100%" style="stop-color: #a8c5a3; stop-opacity: 0.2" />
           </linearGradient>
         </defs>
 
-        <!-- 背景線（固定） -->
-        <g
-          stroke="#A2AF9B"
-          stroke-width="6"
-          opacity="0.3"
-          fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M 0 200 L 250 200 L 270 140 L 290 260 L 310 200 L 520 200" />
-          <path d="M 1400 200 L 1610 200 L 1630 180 L 1650 220 L 1670 200 L 1920 200" />
+        <!-- 左側心電圖 -->
+        <g class="ecg-line ecg-left">
+          <path
+            d="M 0 200 L 250 200 L 270 140 L 290 260 L 310 200 L 520 200"
+            stroke="url(#ecg-gradient-left)"
+            stroke-width="3"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </g>
 
-        <!-- 高光流動線 -->
-        <g
-          stroke="url(#flowing-highlight)"
-          stroke-width="6"
-          fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <!-- 左側心電圖 -->
+        <!-- 右側心電圖 -->
+        <g class="ecg-line ecg-right">
           <path
-            class="flow-active flow-left"
-            d="M 0 200 L 250 200 L 270 140 L 290 260 L 310 200 L 520 200"
-          />
-
-          <!-- 右側心電圖 -->
-          <path
-            class="flow-active flow-right"
             d="M 1400 200 L 1610 200 L 1630 180 L 1650 220 L 1670 200 L 1920 200"
+            stroke="url(#ecg-gradient-right)"
+            stroke-width="3"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           />
         </g>
       </svg>
     </div>
 
-    <!-- 卡片內容 -->
-    <div class="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
+    <!-- 香氣粒子層 -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
       <div
-        class="card-container relative rounded-2xl p-8 md:p-16 border border-white/60 shadow-xl shadow-sage/10 overflow-hidden"
-        style="
-          background: linear-gradient(
-            135deg,
-            rgba(255, 250, 230, 0.7) 0%,
-            rgba(245, 230, 211, 0.75) 25%,
-            rgba(255, 248, 220, 0.65) 50%,
-            rgba(250, 240, 215, 0.75) 75%,
-            rgba(255, 250, 230, 0.7) 100%
-          );
-          backdrop-filter: blur(20px);
-        "
-      >
-        <!-- 卡片邊框流動效果 SVG -->
-        <svg
-          class="card-border-flow-svg"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <!-- 卡片邊框流動漸層 - 更短更集中的高光 -->
-            <linearGradient id="card-border-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style="stop-color: #dccfc0; stop-opacity: 0">
-                <animate
-                  attributeName="offset"
-                  values="-0.15; 1.15"
-                  dur="8s"
-                  repeatCount="indefinite"
-                />
-              </stop>
-              <stop offset="5%" style="stop-color: #f5e6d3; stop-opacity: 0.9">
-                <animate
-                  attributeName="offset"
-                  values="-0.1; 1.2"
-                  dur="8s"
-                  repeatCount="indefinite"
-                />
-              </stop>
-              <stop offset="10%" style="stop-color: #fffef5; stop-opacity: 1">
-                <animate
-                  attributeName="offset"
-                  values="-0.05; 1.25"
-                  dur="8s"
-                  repeatCount="indefinite"
-                />
-              </stop>
-              <stop offset="15%" style="stop-color: #f5e6d3; stop-opacity: 0.9">
-                <animate attributeName="offset" values="0; 1.3" dur="8s" repeatCount="indefinite" />
-              </stop>
-              <stop offset="20%" style="stop-color: #dccfc0; stop-opacity: 0">
-                <animate
-                  attributeName="offset"
-                  values="0.05; 1.35"
-                  dur="8s"
-                  repeatCount="indefinite"
-                />
-              </stop>
-            </linearGradient>
+        v-for="particle in particles"
+        :key="particle.id"
+        class="aroma-particle"
+        :style="{
+          left: `${particle.x}%`,
+          top: `${particle.y}%`,
+          width: `${particle.size}px`,
+          height: `${particle.size}px`,
+          animationDuration: `${particle.duration}s`,
+          animationDelay: `${particle.delay}s`,
+          filter: `blur(${particle.blur}px)`,
+        }"
+      ></div>
+    </div>
 
-            <!-- 柔和發光濾鏡 -->
-            <filter id="border-glow" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          <!-- 背景固定線（上半部）- 最小圓角 -->
-          <path
-            d="M 0 50 
-               L 0 1.5 
-               Q 0 0, 1.5 0 
-               L 98.5 0 
-               Q 100 0, 100 1.5 
-               L 100 50"
-            fill="none"
-            stroke="#A2AF9B"
-            stroke-width="2"
-            opacity="0.3"
-            vector-effect="non-scaling-stroke"
-          />
-
-          <!-- 背景固定線（下半部）- 最小圓角 -->
-          <path
-            d="M 0 50 
-               L 0 98.5 
-               Q 0 100, 1.5 100 
-               L 98.5 100 
-               Q 100 100, 100 98.5 
-               L 100 50"
-            fill="none"
-            stroke="#A2AF9B"
-            stroke-width="2"
-            opacity="0.3"
-            vector-effect="non-scaling-stroke"
-          />
-
-          <!-- 上半部流動高光 - 最小圓角 -->
-          <path
-            class="card-border-flow card-border-top"
-            d="M 0 50 
-               L 0 1.5
-               Q 0 0, 1.5 0
-               L 98.5 0
-               Q 100 0, 100 1.5
-               L 100 50"
-            fill="none"
-            stroke="url(#card-border-gradient)"
-            stroke-width="6"
-            filter="url(#border-glow)"
-            vector-effect="non-scaling-stroke"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-
-          <!-- 下半部流動高光 - 最小圓角 -->
-          <path
-            class="card-border-flow card-border-bottom"
-            d="M 0 50
-               L 0 98.5
-               Q 0 100, 1.5 100
-               L 98.5 100
-               Q 100 100, 100 98.5
-               L 100 50"
-            fill="none"
-            stroke="url(#card-border-gradient)"
-            stroke-width="6"
-            filter="url(#border-glow)"
-            vector-effect="non-scaling-stroke"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-
-        <!-- 卡片玻璃高光層 -->
+    <!-- 主要內容區 -->
+    <div class="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
+      <div class="card-container relative rounded-3xl p-8 md:p-16 overflow-hidden group">
+        <!-- 卡片背景 - 毛玻璃效果 -->
         <div
-          class="absolute inset-0 pointer-events-none rounded-2xl"
-          style="
-            background: linear-gradient(
-              to bottom right,
-              rgba(255, 255, 255, 0.25),
-              rgba(255, 255, 255, 0.05) 70%,
-              transparent
-            );
-          "
+          class="absolute inset-0 bg-gradient-to-br from-[#FFFAF0]/80 via-[#FFF8E7]/75 to-[#F5E6D3]/80 backdrop-blur-xl"
         ></div>
 
+        <!-- 柔和光暈邊框 -->
+        <div class="absolute inset-0 rounded-3xl glow-border"></div>
+
+        <!-- 邊緣光點 -->
+        <div class="corner-light corner-light-tl"></div>
+        <div class="corner-light corner-light-tr"></div>
+        <div class="corner-light corner-light-bl"></div>
+        <div class="corner-light corner-light-br"></div>
+
+        <!-- 內容區 -->
         <div class="flex flex-col md:flex-row gap-16 items-center relative z-10">
+          <!-- 左側圖片 -->
           <div class="w-full md:w-1/2">
-            <div class="relative w-full aspect-[4/5] overflow-hidden rounded-lg group">
+            <div class="image-wrapper relative w-full aspect-[4/5] overflow-hidden rounded-2xl">
+              <!-- 圖片容器 -->
+              <div class="relative w-full h-full overflow-hidden">
+                <div
+                  class="absolute inset-0 bg-cover bg-center"
+                  :style="{
+                    backgroundImage: `url(${homeStoryImage})`,
+                    backgroundPosition: 'center 30%',
+                    filter: 'grayscale(10%) brightness(0.95)',
+                  }"
+                ></div>
+
+                <!-- 圖片光暈效果 -->
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-[#4A3728]/20 to-transparent"
+                ></div>
+              </div>
+
+              <!-- 裝飾邊框 -->
               <div
-                class="absolute inset-0 bg-cover bg-center grayscale-[10%] transition-transform duration-700 group-hover:scale-105"
-                :style="{
-                  backgroundImage: `url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80')`,
-                }"
+                class="absolute inset-4 border-2 border-white/30 rounded-xl pointer-events-none"
               ></div>
-              <div class="absolute inset-4 border border-white/20 pointer-events-none"></div>
             </div>
           </div>
 
+          <!-- 右側內容 -->
           <div class="w-full md:w-1/2 flex flex-col gap-8">
+            <!-- 標題區 -->
             <div class="space-y-4">
-              <span class="text-[#6B7F6E] tracking-[0.3em] uppercase text-xs font-bold">
-                FeiTime 故事
-              </span>
-              <h2 class="text-4xl md:text-5xl font-serif text-[#4A3728] leading-tight">
-                靜謐時光，
+              <div class="flex items-center gap-3">
+                <span class="text-[#6B7F6E] tracking-[0.3em] uppercase text-xs font-bold">
+                  FeiTime 故事
+                </span>
+                <div class="flex-1 h-px bg-gradient-to-r from-[#DCCFC0] to-transparent"></div>
+              </div>
+
+              <h2
+                class="text-4xl md:text-5xl font-serif text-[#4A3728] leading-tight animate-fade-in"
+              >
+                靜謐時光,
                 <br />
                 用心釀造咖啡體驗
               </h2>
             </div>
 
-            <div class="w-16 h-1 bg-[#DCCFC0]"></div>
+            <!-- 裝飾分隔線 -->
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-1 bg-[#DCCFC0] rounded-full glow-line"></div>
+              <div class="w-6 h-1 bg-[#DCCFC0]/60 rounded-full glow-line"></div>
+              <div class="w-3 h-1 bg-[#DCCFC0]/30 rounded-full"></div>
+            </div>
 
+            <!-- 描述文字 -->
             <p class="text-gray-600 font-light leading-relaxed text-base">
-              踏上專屬您的咖啡旅程，透過互動體驗深入了解手沖咖啡的迷人世界。
-              無論是模擬沖煮過程，還是探索個人風味偏好，FeiTime 為您打造全新的客製化咖啡體驗。
+              踏上專屬您的咖啡旅程,透過互動體驗深入了解手沖咖啡的迷人世界。
+              無論是模擬沖煮過程,還是探索個人風味偏好,FeiTime 為您打造全新的客製化咖啡體驗。
             </p>
 
             <!-- 液態氣泡按鈕區 -->
@@ -559,71 +472,241 @@
 
 <style scoped>
   /* ============================================
-     心電圖流動動畫 - 完整時間軸（8秒循環）
-     
-     左右兩側使用相同參數，確保視覺效果完全一致
+     心電圖漸變線條動畫
      ============================================ */
-  .flow-active {
-    /* 增加高光長度，讓兩側都非常明顯 */
-    stroke-dasharray: 600 2800;
-    stroke-dashoffset: 3400;
-    animation: energy-move 8s linear infinite;
+  .ecg-line {
+    animation: ecgPulse 3s ease-in-out infinite;
   }
 
-  @keyframes energy-move {
-    to {
-      stroke-dashoffset: 0;
-    }
-  }
-
-  /* 左側心電圖：立即開始 */
-  .flow-left {
+  .ecg-left {
     animation-delay: 0s;
   }
 
-  /* 右側心電圖：延遲7秒開始（確保卡片邊框完全走完）*/
-  .flow-right {
-    animation-delay: 7s;
+  .ecg-right {
+    animation-delay: 1.5s;
   }
 
-  /* ============================================
-     卡片邊框流動動畫 - 上下兩條路徑
-     從左側中點分流，沿著上下邊緣，在右側中點匯合
-     
-     2.5-5.5秒：持續3秒流動
-     ============================================ */
-  .card-border-flow-svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .card-border-flow {
-    /* 卡片邊框：佔25%時間（3-5秒，2秒）*/
-    stroke-dasharray: 1100 3300;
-    stroke-dashoffset: 4400;
-    animation: border-flow-move 8s linear infinite;
-  }
-
-  /* 從第 3 秒延遲開始（3-5秒，持續2秒）*/
-  /* 從第 3.5 秒延遲開始（確保左側心電圖高光完全到達卡片左側邊緣）*/
-  .card-border-top,
-  .card-border-bottom {
-    animation-delay: 3.5s;
-  }
-
-  @keyframes border-flow-move {
-    to {
-      stroke-dashoffset: 0;
+  @keyframes ecgPulse {
+    0%,
+    100% {
+      opacity: 0.6;
+      transform: translateY(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(-2px);
     }
   }
 
   /* ============================================
-     液態氣泡按鈕樣式
+     背景漸變動畫球體
+     ============================================ */
+  .gradient-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: float 20s ease-in-out infinite;
+  }
+
+  .gradient-orb-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(220, 207, 192, 0.3) 0%, transparent 70%);
+    top: -10%;
+    left: -5%;
+    animation-delay: 0s;
+  }
+
+  .gradient-orb-2 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(162, 175, 155, 0.25) 0%, transparent 70%);
+    bottom: -15%;
+    right: -10%;
+    animation-delay: -7s;
+  }
+
+  .gradient-orb-3 {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(245, 230, 211, 0.3) 0%, transparent 70%);
+    top: 40%;
+    left: 50%;
+    animation-delay: -14s;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(30px, -30px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+  }
+
+  /* ============================================
+     香氣粒子動畫
+     ============================================ */
+  .aroma-particle {
+    position: absolute;
+    background: radial-gradient(circle, rgba(220, 207, 192, 0.6) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: aromaFloat linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes aromaFloat {
+    0% {
+      transform: translateY(0) translateX(0) scale(1);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.6;
+    }
+    90% {
+      opacity: 0.3;
+    }
+    100% {
+      transform: translateY(-100vh) translateX(calc(var(--random) * 50px)) scale(0.3);
+      opacity: 0;
+    }
+  }
+
+  /* ============================================
+     卡片樣式
+     ============================================ */
+  .card-container {
+    position: relative;
+    transition: all 0.5s ease;
+  }
+
+  .card-container:hover {
+    transform: translateY(-8px);
+  }
+
+  /* 柔和光暈邊框 */
+  .glow-border {
+    border: 2px solid transparent;
+    background: linear-gradient(
+        90deg,
+        rgba(220, 207, 192, 0.5),
+        rgba(255, 255, 255, 0.9),
+        rgba(162, 175, 155, 0.6),
+        rgba(255, 255, 255, 0.9),
+        rgba(245, 230, 211, 0.5),
+        rgba(255, 255, 255, 0.9),
+        rgba(220, 207, 192, 0.5)
+      )
+      border-box;
+    background-size: 300% 100%;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    animation: borderShine 18s linear infinite;
+  }
+
+  @keyframes borderShine {
+    0% {
+      background-position: 0% 0;
+    }
+    100% {
+      background-position: 300% 0;
+    }
+  }
+
+  /* 邊緣光點 */
+  .corner-light {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, rgba(220, 207, 192, 0.8) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: cornerGlow 2s ease-in-out infinite;
+    z-index: 5;
+  }
+
+  .corner-light-tl {
+    top: -4px;
+    left: -4px;
+    animation-delay: 0s;
+  }
+
+  .corner-light-tr {
+    top: -4px;
+    right: -4px;
+    animation-delay: 0.5s;
+  }
+
+  .corner-light-bl {
+    bottom: -4px;
+    left: -4px;
+    animation-delay: 1s;
+  }
+
+  .corner-light-br {
+    bottom: -4px;
+    right: -4px;
+    animation-delay: 1.5s;
+  }
+
+  @keyframes cornerGlow {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: scale(1.5);
+      opacity: 1;
+    }
+  }
+
+  /* ============================================
+     圖片樣式
+     ============================================ */
+  .image-wrapper {
+    box-shadow: 0 20px 60px rgba(74, 55, 40, 0.15);
+  }
+
+  /* ============================================
+     文字裝飾
+     ============================================ */
+  .glow-line {
+    animation: lineGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes lineGlow {
+    0%,
+    100% {
+      box-shadow: 0 0 5px rgba(220, 207, 192, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 15px rgba(220, 207, 192, 0.6);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 1s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ============================================
+     液態氣泡按鈕樣式(保留原有)
      ============================================ */
   .bubble-button-container {
     display: flex;
@@ -778,14 +861,9 @@
   }
 
   /* ============================================
-     其他樣式
+     字體樣式
      ============================================ */
   .font-serif {
     font-family: 'Noto Serif TC', serif;
-  }
-
-  /* 卡片容器 */
-  .card-container {
-    position: relative;
   }
 </style>

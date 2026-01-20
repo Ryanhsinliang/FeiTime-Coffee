@@ -136,14 +136,15 @@
   // 黑膠旋轉動畫
   // ============================================
   const rotateVinyl = () => {
-    if (isPlaying.value) {
+    // 只有在播放且不在 loading 狀態時才旋轉
+    if (isPlaying.value && !musicLoading.value) {
       vinylRotation.value = (vinylRotation.value + 0.5) % 360;
       animationFrameId = requestAnimationFrame(rotateVinyl);
     }
   };
 
   watch(isPlaying, (newValue) => {
-    if (newValue) {
+    if (newValue && !musicLoading.value) {
       if (!animationFrameId) {
         rotateVinyl();
       }
@@ -155,30 +156,46 @@
     }
   });
 
+  // 監聽 musicLoading 變化，確保 loading 時停止旋轉
+  watch(musicLoading, (newValue) => {
+    if (newValue && animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    } else if (!newValue && isPlaying.value && !animationFrameId) {
+      rotateVinyl();
+    }
+  });
+
   // ============================================
-  // 播放進度檢查
+  // 播放進度檢查 - 檢測快進/後退並調整黑膠角度
   // ============================================
   const checkPlaybackProgress = () => {
     if (!youtubePlayer || !youtubePlayer.getCurrentTime) return;
 
     try {
       const currentTime = youtubePlayer.getCurrentTime();
-      const duration = youtubePlayer.getDuration();
 
-      if (currentTime && duration && currentTime !== lastPlaybackTime.value) {
-        const timeDiff = Math.abs(currentTime - lastPlaybackTime.value);
+      if (currentTime && lastPlaybackTime.value > 0) {
+        // 計算時間差（秒）
+        const timeDiff = currentTime - lastPlaybackTime.value;
 
-        if (timeDiff > 2) {
-          const rotationPerSecond = 30;
-          const angleDiff = timeDiff * rotationPerSecond;
+        // 如果時間差大於 1.5 秒（考慮到 500ms 檢查間隔），認為是快進/後退
+        if (Math.abs(timeDiff) > 1.5) {
+          // 根據時間差計算角度變化
+          // 設定：1 秒 = 36 度（可以調整這個比例來改變轉動幅度）
+          const angleDelta = timeDiff * 36;
 
-          if (currentTime > lastPlaybackTime.value) {
-            vinylRotation.value = (vinylRotation.value + angleDiff) % 360;
-          } else {
-            vinylRotation.value = (vinylRotation.value - angleDiff + 360) % 360;
-          }
+          // 調整黑膠角度 - 確保結果始終為正數（0-359）
+          vinylRotation.value = (((vinylRotation.value + angleDelta) % 360) + 360) % 360;
+
+          console.log(
+            `⏩ Time jump detected: ${timeDiff.toFixed(2)}s, rotating: ${angleDelta.toFixed(0)}°`
+          );
         }
+      }
 
+      // 更新時間記錄
+      if (currentTime) {
         lastPlaybackTime.value = currentTime;
       }
     } catch (err) {
@@ -753,16 +770,10 @@
                 class="w-10 h-10 rounded-full bg-sage flex-shrink-0 flex items-center justify-center text-white shadow-md relative"
               >
                 <span
-                  v-if="!musicError && !musicLoading"
+                  v-if="!musicError"
                   class="absolute inset-0 rounded-full bg-sage animate-ping opacity-20"
                 ></span>
-                <img
-                  v-if="!musicError && !musicLoading"
-                  :src="feiDJ"
-                  class="w-6 h-6 object-contain"
-                  alt="Fei DJ"
-                />
-                <span v-else class="material-symbols-outlined text-xl text-[#171412]">error</span>
+                <img :src="feiDJ" class="w-6 h-6 object-contain" alt="Fei DJ" />
               </div>
               <div class="flex flex-col min-w-0 flex-1">
                 <div class="flex items-center gap-2">
@@ -771,9 +782,15 @@
                   >
                     FEI DJ
                   </span>
+                  <!-- 修復1&2：狀態指示器 - 紅色=未播放/暫停，黃色=loading，綠色=播放中 -->
                   <span
-                    v-if="!musicError && !musicLoading"
-                    class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"
+                    v-if="!musicError"
+                    class="w-1.5 h-1.5 rounded-full animate-pulse"
+                    :class="{
+                      'bg-red-500': !isPlaying && !musicLoading,
+                      'bg-yellow-500': musicLoading,
+                      'bg-green-500': isPlaying && !musicLoading,
+                    }"
                   ></span>
                 </div>
                 <span class="text-sm font-bold text-[#171412] leading-tight truncate">

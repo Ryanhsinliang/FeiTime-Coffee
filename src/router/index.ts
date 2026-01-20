@@ -16,6 +16,16 @@ import EmailConfirmed from '@/views/Register/EmailConfirmed.vue';
 import ForgotPassword from '@/views/Login/ForgotPassword.vue';
 import ResetPassword from '@/views/Login/ResetPassword.vue';
 import GoogleCallback from '@/views/Login/GoogleCallback.vue';
+import Admin from '@/views/Admin/Admin.vue';
+import AdminOrders from '@/views/Admin/Orders.vue';
+import AdminOrderDetail from '@/views/Admin/OrderDetail.vue';
+import AdminStocks from '@/views/Admin/Stocks.vue';
+import AdminStockDetail from '@/views/Admin/StockDetail.vue';
+import AdminUsers from '@/views/Admin/AdminUsers.vue';
+import AdminUserDetail from '@/views/Admin/AdminUserDetail.vue';
+
+//後端串接測試用
+import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
 
 const routes = [
   {
@@ -84,6 +94,52 @@ const routes = [
     component: Member,
     meta: { requiresAuth: true },
   },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin,
+    meta: { requiresAdmin: true },
+    children: [
+      // 訂單
+      {
+        path: 'orders',
+        name: 'AdminOrders',
+        component: AdminOrders,
+      },
+      {
+        path: 'orders/:order_number',
+        name: 'AdminOrderDetail',
+        component: AdminOrderDetail,
+        props: true,
+      },
+
+      // 庫存
+      {
+        path: 'stocks',
+        name: 'AdminStocks',
+        component: AdminStocks,
+      },
+      {
+        path: 'stocks/:pid',
+        name: 'AdminStockDetail',
+        component: AdminStockDetail,
+      },
+
+      // 顧客
+      {
+        path: 'users',
+        name: 'AdminUsers',
+        component: AdminUsers,
+      },
+      {
+        path: 'users/:id',
+        name: 'AdminUserDetail',
+        component: AdminUserDetail,
+        props: true,
+      },
+    ],
+  },
+  //測試用
   {
     path: '/email-confirmed',
     name: 'EmailConfirmed',

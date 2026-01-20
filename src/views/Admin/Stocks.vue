@@ -150,7 +150,7 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">1 - 10 筆 / 共 24 筆</p>
+        <p class="text-sm">每頁 20 筆 / 共 {{ filteredProducts.length }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button

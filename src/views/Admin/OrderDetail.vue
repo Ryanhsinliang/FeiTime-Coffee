@@ -38,18 +38,20 @@
 
         <div
           class="hidden md:block h-[2px] flex-1"
-          :class="isPaid ? 'bg-emerald-500' : 'bg-[#e7dacf]'"
+          :class="isProcessing ? 'bg-emerald-500' : 'bg-[#e7dacf]'"
         ></div>
 
         <!-- 待出貨 -->
         <div class="flex flex-col items-center gap-2 min-w-[100px]">
           <span
             class="material-symbols-outlined text-2xl"
-            :class="isPaid ? 'text-emerald-500' : 'text-[#e7dacf]'"
+            :class="isProcessing ? 'text-emerald-500' : 'text-[#e7dacf]'"
           >
             deployed_code_history
           </span>
-          <p class="text-xs" :class="isPaid ? 'text-emerald-500' : 'text-[#e7dacf]'">待出貨</p>
+          <p class="text-xs" :class="isProcessing ? 'text-emerald-500' : 'text-[#e7dacf]'">
+            待出貨
+          </p>
         </div>
 
         <div
@@ -359,33 +361,30 @@
 
   // 判斷付款方式是否為取貨付款
   const isCashOnDelivery = computed(() => {
-    return (
-      order.value?.payment_method === '取貨付款' ||
-      order.value?.payment_method === 'cash_on_delivery'
-    );
+    return order.value?.payment_method === '取貨付款' || order.value?.payment_method === '貨到付款';
   });
 
+  // 待付款階段：line pay支付成功之前，取貨付款訂單成立前
   const isPending = computed(() => {
     if (!order.value) return false;
     const status = order.value.order_status;
 
-    // Line Pay：只要走到 paid 之後就算「待付款完成」
-    return ['pending', 'paid', 'progressing', 'shipped', 'delivered'].includes(status);
-    // 取貨付款：不顯示待付款（你原本就這樣設計），所以這裡回 false 就好
-    if (isCashOnDelivery.value) return false;
+    // 包含全部出貨狀態
+    return ['pending', 'paid', 'processing', 'shipped', 'delivered'].includes(status);
   });
 
-  // 判斷是否已付款(待出貨階段)
-  const isPaid = computed(() => {
+  // 待出貨(processing)階段：line pay支付成功跳轉回訂單成立，取貨付款訂單成立
+  // 結帳頁已處理：line pay付款(paid)後會跳processing，取貨付款直接跳processing
+  const isProcessing = computed(() => {
     if (!order.value) return false;
     const status = order.value.order_status;
 
-    // Line Pay: paid, shipped, delivered 都算已付款
+    // Line Pay: paid, processing, shipped, delivered 都算待出貨
     if (!isCashOnDelivery.value) {
-      return ['paid', 'progressing', 'shipped', 'delivered'].includes(status);
+      return ['paid', 'processing', 'shipped', 'delivered'].includes(status);
     }
     // 取貨付款: pending 就算進入待出貨階段
-    return ['pending', 'paid', 'progressing', 'shipped', 'delivered'].includes(status);
+    return ['pending', 'paid', 'processing', 'shipped', 'delivered'].includes(status);
   });
 
   // 判斷是否已出貨

@@ -45,12 +45,12 @@
             <div
               class="relative group aspect-square rounded-lg overflow-hidden border border-[#e7dacf]"
             >
-              <div
-                class="absolute inset-0 bg-cover bg-center"
-                style="
-                  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDGnvrg0I9-C47r9mcCC0BZwulVtwLJpQNUQWwkPt7-hYaxuLQ1fbftOF3hz0KvewzfaLSWk30c2QLAPAJkRLS6umxYH8OCcIDaPwWs-5iu6OyyE77IB3KCEb4tOGO6PdR_3YOrRuSLbTQW3uXNTPzL9tk8pK9bXM2XLfxKBxSWcBALAfE0bXZqOGkTk0UkUmj7IiRupRrnxWq1UbglNL9YuzJ2CAtTQMxGCuk2ketL6YWaOI3nhYfjlP-iSNNMeubQYpOamAz0rMM');
-                "
-              ></div>
+              <img
+                src="./assets/coffee_001.png"
+                alt=""
+                class="absolute inset-0 bg-cover bg-center w-full aspect-square object-cover"
+              />
+
               <div
                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2"
               >
@@ -60,11 +60,6 @@
                 <button class="bg-white/20 p-2 rounded-full text-white hover:bg-red-500">
                   <span class="material-symbols-outlined">delete</span>
                 </button>
-              </div>
-              <div
-                class="absolute top-2 left-2 text-white text-[10px] font-bold px-2 py-0.5 rounded"
-              >
-                Main
               </div>
             </div>
             <div

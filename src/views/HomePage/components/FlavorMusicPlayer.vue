@@ -22,6 +22,7 @@
     getCurrentTime(): number;
     getDuration(): number;
     getPlayerState(): number;
+    destroy(): void;
   }
 
   interface YTPlayerEvent {
@@ -33,6 +34,7 @@
     events: {
       onStateChange?: (event: YTPlayerEvent) => void;
       onReady?: (event: YTPlayerEvent) => void;
+      onError?: (event: any) => void;
     };
   }
 
@@ -64,6 +66,8 @@
   const vinylRotation = ref<number>(0);
   const lastPlaybackTime = ref<number>(0);
   const shouldAutoPlay = ref<boolean>(false);
+  const ytAPIReady = ref<boolean>(false);
+
   let animationFrameId: number | null = null;
   let youtubePlayer: YTPlayer | null = null;
   let progressCheckInterval: number | null = null;
@@ -169,68 +173,155 @@
   };
 
   // ============================================
-  // YouTube API 初始化
+  // YouTube API 初始化與等待
   // ============================================
+  const waitForYouTubeAPI = (): Promise<void> => {
+    return new Promise((resolve) => {
+      if (window.YT && window.YT.Player) {
+        ytAPIReady.value = true;
+        console.log('✅ YouTube API already loaded');
+        resolve();
+      } else {
+        window.onYouTubeIframeAPIReady = () => {
+          console.log('✅ YouTube IFrame API ready');
+          ytAPIReady.value = true;
+          resolve();
+        };
+      }
+    });
+  };
+
   const initYouTubeAPI = () => {
     if (!window.YT) {
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       const firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-
-      window.onYouTubeIframeAPIReady = () => {
-        console.log('✅ YouTube IFrame API ready');
-      };
     }
   };
 
-  watch(embedUrl, (newUrl) => {
+  // ============================================
+  // 播放器管理
+  // ============================================
+  const destroyPlayer = () => {
     if (progressCheckInterval) {
       clearInterval(progressCheckInterval);
       progressCheckInterval = null;
     }
 
-    if (newUrl) {
+    if (youtubePlayer) {
+      try {
+        if (typeof youtubePlayer.destroy === 'function') {
+          youtubePlayer.destroy();
+        }
+      } catch (err) {
+        console.warn('⚠️ Error destroying player:', err);
+      } finally {
+        youtubePlayer = null;
+      }
+    }
+  };
+
+  const initializePlayer = async (iframe: HTMLIFrameElement) => {
+    if (!window.YT || !window.YT.Player) {
+      console.error('❌ YouTube API not ready');
+      return;
+    }
+
+    try {
+      youtubePlayer = new window.YT.Player(iframe, {
+        events: {
+          onStateChange: (event: YTPlayerEvent) => {
+            const wasPlaying = isPlaying.value;
+            isPlaying.value = event.data === 1; // 1 = playing
+
+            if (isPlaying.value && !wasPlaying) {
+              lastPlaybackTime.value = event.target.getCurrentTime() || 0;
+            }
+          },
+          onReady: (event: YTPlayerEvent) => {
+            console.log('✅ YouTube player ready');
+            youtubePlayer = event.target;
+
+            // 開始進度檢查
+            progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
+
+            // 自動播放處理
+            if (shouldAutoPlay.value) {
+              console.log('🎵 Attempting auto-play...');
+              setTimeout(() => {
+                try {
+                  event.target.playVideo();
+                  shouldAutoPlay.value = false;
+                } catch (err) {
+                  console.warn('⚠️ Auto-play blocked by browser:', err);
+                  // 不將 shouldAutoPlay 設為 false，讓用戶可以手動點擊
+                }
+              }, 300);
+            }
+          },
+          onError: (event: any) => {
+            console.error('❌ YouTube player error:', event.data);
+            const errorMessages: Record<number, string> = {
+              2: '無效的影片 ID',
+              5: 'HTML5 播放器錯誤',
+              100: '影片不存在或已被刪除',
+              101: '影片所有者不允許嵌入',
+              150: '影片所有者不允許嵌入',
+            };
+            musicError.value = errorMessages[event.data] || '影片載入失敗，請重試';
+          },
+        },
+      });
+    } catch (err) {
+      console.error('❌ Failed to initialize YouTube player:', err);
+      musicError.value = '播放器初始化失敗';
+    }
+  };
+
+  // ============================================
+  // embedUrl 監聽器 - 核心修復
+  // ============================================
+  watch(embedUrl, async (newUrl, oldUrl) => {
+    // 清理舊的進度檢查
+    if (progressCheckInterval) {
+      clearInterval(progressCheckInterval);
+      progressCheckInterval = null;
+    }
+
+    if (newUrl && newUrl !== oldUrl) {
+      // 重置播放狀態
       isPlaying.value = false;
       lastPlaybackTime.value = 0;
 
-      setTimeout(() => {
-        const iframe = document.querySelector('iframe');
+      // 銷毀舊播放器
+      destroyPlayer();
 
-        if (iframe && window.YT && window.YT.Player) {
-          try {
-            youtubePlayer = new window.YT.Player(iframe, {
-              events: {
-                onStateChange: (event: YTPlayerEvent) => {
-                  const wasPlaying = isPlaying.value;
-                  isPlaying.value = event.data === 1;
+      // 等待 YouTube API 就緒
+      await waitForYouTubeAPI();
 
-                  if (isPlaying.value && !wasPlaying) {
-                    lastPlaybackTime.value = youtubePlayer?.getCurrentTime() || 0;
-                  }
-                },
-                onReady: (event: YTPlayerEvent) => {
-                  console.log('✅ YouTube player ready');
-                  progressCheckInterval = window.setInterval(checkPlaybackProgress, 500);
+      // 等待 iframe 渲染 + 輪詢查找
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-                  // 如果標記為應自動播放，則自動播放
-                  if (shouldAutoPlay.value) {
-                    console.log('🎵 Auto-playing video...');
-                    try {
-                      event.target.playVideo();
-                      shouldAutoPlay.value = false;
-                    } catch (err) {
-                      console.warn('⚠️ Auto-play failed:', err);
-                    }
-                  }
-                },
-              },
-            });
-          } catch (err) {
-            console.error('❌ Failed to initialize YouTube player:', err);
-          }
+      let retries = 0;
+      const maxRetries = 10;
+
+      const findAndInitPlayer = () => {
+        const iframe = document.querySelector('iframe') as HTMLIFrameElement | null;
+
+        if (iframe && ytAPIReady.value) {
+          initializePlayer(iframe);
+        } else if (retries < maxRetries) {
+          retries++;
+          console.log(`⏳ Waiting for iframe... (${retries}/${maxRetries})`);
+          setTimeout(findAndInitPlayer, 200);
+        } else {
+          console.error('❌ Failed to find iframe after max retries');
+          musicError.value = '播放器載入超時，請重試';
         }
-      }, 1000);
+      };
+
+      findAndInitPlayer();
     }
   });
 
@@ -316,17 +407,16 @@
   // ============================================
   // 生命週期
   // ============================================
-  onMounted(() => {
+  onMounted(async () => {
     initYouTubeAPI();
+    await waitForYouTubeAPI();
   });
 
   onBeforeUnmount(() => {
     if (animationFrameId) {
       cancelAnimationFrame(animationFrameId);
     }
-    if (progressCheckInterval) {
-      clearInterval(progressCheckInterval);
-    }
+    destroyPlayer();
   });
 </script>
 

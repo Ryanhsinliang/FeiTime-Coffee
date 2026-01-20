@@ -36,6 +36,8 @@ export const coffeePersonas = [
       '/product?flavor_type=Fruity',
       '/product?processing=Washed',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Bright_Raccoon_ff07a20859.webp',
   },
   {
     id: 'A2',
@@ -53,6 +55,7 @@ export const coffeePersonas = [
       '/product?flavor_type=Fruity',
       '/product?processing=Natural',
     ],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Berry_Fox_98595dfb99.webp',
   },
   {
     id: 'A3',
@@ -70,6 +73,8 @@ export const coffeePersonas = [
       '/product?flavor_type=Fruity',
       '/product?processing=Honey',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Adventure_Cat_1060e7cc00.webp',
   },
   {
     id: 'A4',
@@ -87,6 +92,8 @@ export const coffeePersonas = [
       '/product?flavor_type=Floral',
       '/product?processing=Washed',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Citrus_Tanuki_Thinker_bdd832839b.webp',
   },
 
   {
@@ -105,6 +112,7 @@ export const coffeePersonas = [
       '/product?flavor_type=Floral',
       '/product?processing=Natural',
     ],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Citrus_Fawn_3258c92207.webp',
   },
   {
     id: 'B2',
@@ -122,6 +130,8 @@ export const coffeePersonas = [
       '/product?flavor_type=Nutty',
       '/product?processing=Washed',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Caramel_Hippo_2f7571da4a.webp',
   },
   {
     id: 'B3',
@@ -139,6 +149,7 @@ export const coffeePersonas = [
       '/product?flavor_type=Nutty',
       '/product?processing=Honey',
     ],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Honey_Bear_c982334395.webp',
   },
   {
     id: 'B4',
@@ -156,6 +167,8 @@ export const coffeePersonas = [
       '/product?flavor_type=Fruity',
       '/product?processing=Washed',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Glowing_Dolphin_c4742fe47c.webp',
   },
 
   {
@@ -174,6 +187,8 @@ export const coffeePersonas = [
       '/product?roast=Dark',
       '/product?processing=Washed',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Panther_Runner_a29f5a4a23.webp',
   },
   {
     id: 'C2',
@@ -187,6 +202,8 @@ export const coffeePersonas = [
     beans: ['巴西', '深焙', '日曬'],
     brew: ['法壓', '義式', '美式'],
     productPaths: ['/product?origin=Brazil', '/product?roast=Dark', '/product?processing=Natural'],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Creamy_Buffalo_d757483760.webp',
   },
   {
     id: 'C3',
@@ -200,6 +217,8 @@ export const coffeePersonas = [
     beans: ['印尼', '深焙', '蜜處理'],
     brew: ['義式', '浸泡式'],
     productPaths: ['/product?origin=Indonesia', '/product?roast=Dark', '/product?processing=Honey'],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Deepwood_Bear_390959ce09.webp',
   },
   {
     id: 'C4',
@@ -217,6 +236,8 @@ export const coffeePersonas = [
       '/product?roast=Medium',
       '/product?processing=Washed',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Grey_Wolf_Analyst_fc74b0e38e.webp',
   },
 
   {
@@ -235,6 +256,7 @@ export const coffeePersonas = [
       '/product?roast=Medium',
       '/product?flavor_type=Floral',
     ],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Indie_Owl_60df0f30e7.webp',
   },
   {
     id: 'D2',
@@ -248,6 +270,7 @@ export const coffeePersonas = [
     beans: ['巴西', '中焙', '堅果巧克力'],
     brew: ['手沖', '法壓', '冷萃'],
     productPaths: ['/product?origin=Brazil', '/product?roast=Medium', '/product?flavor_type=Nutty'],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Cocoa_Sloth_5576bd93ae.webp',
   },
   {
     id: 'D3',
@@ -265,6 +288,8 @@ export const coffeePersonas = [
       '/product?roast=Medium',
       '/product?flavor_type=Bold',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Old_Soul_Black_Bear_de96360198.webp',
   },
   {
     id: 'D4',
@@ -282,6 +307,7 @@ export const coffeePersonas = [
       '/product?roast=Light',
       '/product?flavor_type=Fruity',
     ],
+    strapiImg: 'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Mist_Deer_975f307ca6.webp',
   },
 
   {
@@ -300,6 +326,8 @@ export const coffeePersonas = [
       '/product?flavor_type=Floral',
       '/product?processing=Washed',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Dawnlight_Fox_97f7810551.webp',
   },
   {
     id: 'E2',
@@ -317,6 +345,8 @@ export const coffeePersonas = [
       '/product?flavor_type=Fruity',
       '/product?processing=Natural',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Cloudglow_Rabbit_e0db14d8bf.webp',
   },
   {
     id: 'E3',
@@ -334,6 +364,8 @@ export const coffeePersonas = [
       '/product?flavor_type=Nutty',
       '/product?processing=Washed',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Mistwood_Hound_d8d31f56d3.webp',
   },
   {
     id: 'E4',
@@ -351,5 +383,8 @@ export const coffeePersonas = [
       '/product?flavor_type=Floral',
       '/product?processing=Washed',
     ],
+    strapiImg:
+      'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Hazeplume_Crane_74048f1917.webp',
   },
 ];
+console.log('coffeeTypes 資料庫已載入，版本：2025-分享測試');

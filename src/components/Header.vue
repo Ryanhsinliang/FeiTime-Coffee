@@ -4,7 +4,6 @@
     class="sticky top-0 z-50 w-full border-b border-[#DCCFC0]/40 backdrop-blur-lg transition-colors duration-300"
   >
     <div class="px-6 xl:px-12 flex items-center justify-between max-w-[1600px] mx-auto h-16">
-      <!-- Logo -->
       <router-link to="/home" class="flex items-center gap-2 flex-shrink-0">
         <img
           src="/icons/feitime-logo.png"
@@ -19,7 +18,6 @@
         </h2>
       </router-link>
 
-      <!-- Desktop Menu -->
       <div class="hidden lg:flex flex-1 justify-center gap-6 xl:gap-12 relative px-4">
         <div
           v-for="link in links"
@@ -28,15 +26,13 @@
         >
           <RouterLink
             :to="link.to"
-            class="relative block px-2 py-1"
+            class="relative block px-2 py-1 cursor-pointer"
             :style="[textColorStyle, isActive(link) ? activeStyle : {}]"
             @mouseenter="hoveredLink = link.name"
             @mouseleave="hoveredLink = null"
           >
-            <!-- 固定寬度佔位 -->
             <span class="invisible">{{ link.max }}</span>
 
-            <!-- 英文 -->
             <span
               class="absolute inset-0 flex items-center justify-center transition-opacity duration-200"
               :class="hoveredLink === link.name || isActive(link) ? 'opacity-0' : 'opacity-100'"
@@ -44,7 +40,6 @@
               {{ link.name }}
             </span>
 
-            <!-- 中文 -->
             <span
               class="absolute inset-0 flex items-center justify-center transition-opacity duration-200"
               :class="hoveredLink === link.name || isActive(link) ? 'opacity-100' : 'opacity-0'"
@@ -52,7 +47,6 @@
               {{ link.zh }}
             </span>
 
-            <!-- 底線動畫 -->
             <span
               class="absolute -bottom-1 left-0 w-0 h-px transition-all duration-300 group-hover:w-full"
               :style="underlineStyle"
@@ -61,7 +55,6 @@
         </div>
       </div>
 
-      <!-- Icons + Mobile Toggle -->
       <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
         <!-- Desktop Icons -->
         <!-- Always Visible Cart Icon -->
@@ -72,14 +65,100 @@
           </span>
         </button>
 
-        <!-- Desktop Icons (Person) -->
+        <!-- Desktop Icons (Person with Dropdown) -->
         <div class="hidden lg:flex items-center gap-4">
-          <span class="material-symbols-outlined hover:scale-110 transition-transform cursor-pointer" :style="textColorStyle">person</span>
+          <div
+            class="relative inline-flex items-center"
+            @mouseenter="openUserMenu"
+            @mouseleave="closeUserMenu"
+          >
+            <span
+              class="material-symbols-outlined cursor-pointer transition-all duration-200 hover:scale-110"
+              :style="textColorStyle"
+            >
+              person
+            </span>
+
+            <transition name="dropdown">
+              <div v-if="userMenuOpen" class="absolute left-1/2 -translate-x-1/2 top-full">
+                <div class="h-1"></div>
+                <div
+                  class="rounded-lg shadow-lg border overflow-hidden min-w-[140px]"
+                  :class="scrollY < bannerHeight ? 'border-[#DCCFC0]/50' : 'border-[#DCCFC0]/80'"
+                  :style="dropdownMenuStyle"
+                >
+                  <div v-if="!isLoggedIn" class="p-2">
+                    <div class="flex flex-col gap-2">
+                      <button
+                        class="py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                        :style="buttonStyle"
+                        @click="handleLogin"
+                      >
+                        登入
+                      </button>
+                      <button
+                        class="py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                        :style="buttonStyle"
+                        @click="handleRegister"
+                      >
+                        註冊
+                      </button>
+                    </div>
+                  </div>
+
+                  <div v-else class="py-1">
+                    <button
+                      class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
+                      :style="menuItemHoverStyle('member')"
+                      @mouseenter="hoveredMenuItem = 'member'"
+                      @mouseleave="hoveredMenuItem = null"
+                      @click="handleMemberArea"
+                    >
+                      <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">account_circle</span>
+                        會員專區
+                      </span>
+                    </button>
+                    <button
+                      class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
+                      :style="menuItemHoverStyle('order')"
+                      @mouseenter="hoveredMenuItem = 'order'"
+                      @mouseleave="hoveredMenuItem = null"
+                      @click="handleOrderQuery"
+                    >
+                      <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">receipt_long</span>
+                        訂單查詢
+                      </span>
+                    </button>
+                    <div
+                      class="mx-2 h-px"
+                      :style="{
+                        backgroundColor: scrollY < bannerHeight ? '#DCCFC0' : '#FAF9EE',
+                        opacity: 0.3,
+                      }"
+                    ></div>
+                    <button
+                      class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
+                      :style="menuItemHoverStyle('logout')"
+                      @mouseenter="hoveredMenuItem = 'logout'"
+                      @mouseleave="hoveredMenuItem = null"
+                      @click="handleLogout"
+                    >
+                      <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">logout</span>
+                        登出
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </div>
         </div>
 
-        <!-- Mobile Hamburger -->
         <button
-          class="lg:hidden material-symbols-outlined text-3xl"
+          class="material-symbols-outlined text-3xl lg:!hidden"
           :style="textColorStyle"
           @click="mobileOpen = !mobileOpen"
         >
@@ -88,7 +167,6 @@
       </div>
     </div>
 
-    <!-- Mobile Menu -->
     <transition name="slide-fade">
       <div
         v-if="mobileOpen"
@@ -112,13 +190,16 @@
 
 <script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { useCartStore } from '@/store/cart';
+  import { useAuthStore } from '@/store/auth';
 
   const route = useRoute();
+  const router = useRouter();
   
   // 整合 Cart Store
   const cartStore = useCartStore();
+  const authStore = useAuthStore();
   
   // 直接使用 cartStore.toggleCart 方法
   const toggleCart = cartStore.toggleCart;
@@ -150,6 +231,11 @@
   /* ===== State ===== */
   const hoveredLink = ref<string | null>(null);
   const mobileOpen = ref<boolean>(false);
+  const userMenuOpen = ref<boolean>(false);
+  const hoveredMenuItem = ref<string | null>(null);
+
+  // 從 authStore 取得登入狀態
+  const isLoggedIn = computed(() => authStore.isLoggedIn);
 
   /* ===== Scroll Effect ===== */
   const scrollY = ref<number>(0);
@@ -196,9 +282,87 @@
     }
   });
 
+  const dropdownMenuStyle = computed(() => {
+    // 計算漸層進度 (0 到 1)
+    const t = Math.min(scrollY.value / (bannerHeight.value || 1), 1);
+    // 背景透明度從 0.92 漸變到 0.98，比 navbar 更不透明以確保可讀性
+    const bgOpacity = 0.92 + (0.98 - 0.92) * t;
+
+    return {
+      backgroundColor: `rgba(162, 175, 155, ${bgOpacity})`,
+      backdropFilter: 'blur(12px)',
+      color: scrollY.value < bannerHeight.value ? '#1A1E17' : '#FAF9EE',
+    };
+  });
+
+  const buttonStyle = computed(() => {
+    if (scrollY.value < bannerHeight.value) {
+      return {
+        backgroundColor: '#CDBE9A',
+        color: '#1A1E17',
+        border: '1px solid #DCCFC0',
+      };
+    }
+    return {
+      backgroundColor: 'rgba(250, 249, 238, 0.95)',
+      color: '#1A1E17',
+      border: '1px solid #FAF9EE',
+    };
+  });
+
+  const menuItemHoverStyle = (itemName: string) => {
+    const isHovered = hoveredMenuItem.value === itemName;
+    if (scrollY.value < bannerHeight.value) {
+      return {
+        color: '#1A1E17',
+        backgroundColor: isHovered ? 'rgba(205, 190, 154, 0.3)' : 'transparent',
+      };
+    }
+    return {
+      color: '#FAF9EE',
+      backgroundColor: isHovered ? 'rgba(250, 249, 238, 0.15)' : 'transparent',
+    };
+  };
+
   /* ===== Utils ===== */
   const isActive = (link: NavLink): boolean => route.path === link.to;
   const activeStyle = { fontWeight: '700' };
+
+  /* ===== 使用者選單相關功能 ===== */
+  const openUserMenu = () => {
+    userMenuOpen.value = true;
+  };
+
+  const closeUserMenu = () => {
+    userMenuOpen.value = false;
+    hoveredMenuItem.value = null;
+  };
+
+  const handleRegister = () => {
+    userMenuOpen.value = false;
+    router.push('/register');
+  };
+
+  const handleLogin = () => {
+    userMenuOpen.value = false;
+    router.push('/login');
+  };
+
+  const handleMemberArea = () => {
+    userMenuOpen.value = false;
+    router.push('/member');
+  };
+
+  const handleOrderQuery = () => {
+    userMenuOpen.value = false;
+    router.push('/member?tab=order');
+  };
+
+  const handleLogout = async () => {
+    userMenuOpen.value = false;
+    await authStore.logout();
+    router.push('/home');
+  };
 </script>
 
 <style scoped>
@@ -211,5 +375,21 @@
   .slide-fade-leave-to {
     opacity: 0;
     transform: translateY(-8px);
+  }
+
+  /* 下拉選單動畫 - 保持置中同時向下滑動 */
+  .dropdown-enter-active {
+    transition: all 0.25s ease-out;
+  }
+  .dropdown-leave-active {
+    transition: all 0.2s ease-in;
+  }
+  .dropdown-enter-from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  .dropdown-leave-to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
   }
 </style>

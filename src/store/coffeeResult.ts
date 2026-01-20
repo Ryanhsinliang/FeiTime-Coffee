@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia';
+import { useAuthStore } from '@/store/auth';
+import { ref, computed } from 'vue';
 import api from '@/services/api';
 
 export interface Scores {
@@ -14,48 +16,52 @@ export interface Answer {
   optionKey: string;
 }
 
-export const useCoffeeResultStore = defineStore('coffeeResult', {
-  state: () => ({
-    scores: null as Scores | null,
-    maxScores: null as Scores | null,
-    normalizedScores: null as Scores | null,
-    personaId: null as string | null,
-    answers: [] as Answer[],
-    calculatedAt: null as number | null,
-  }),
+export const useCoffeeResultStore = defineStore(
+  'coffeeResult',
+  () => {
+    const scores = ref<Scores | null>(null);
+    const maxScores = ref<Scores | null>(null);
+    const normalizedScores = ref<Scores | null>(null);
+    const personaId = ref<string | null>(null);
+    const answers = ref<Answer[]>([]);
+    const calculatedAt = ref<number | null>(null);
+    const hasResult = computed(() => scores.value !== null);
+    const getPersonaId = computed(() => personaId.value);
 
-  getters: {
-    hasResult: (state) => state.scores !== null,
-    getPersonaId: (state) => state.personaId,
-  },
+    const authStore = useAuthStore();
+    const userId = computed(() => authStore.user?.id);
 
-  actions: {
-    setResult(data: { scores: Scores; maxScores: Scores; personaId: string; answers: Answer[] }) {
-      this.scores = data.scores;
-      this.maxScores = data.maxScores;
-      this.answers = data.answers;
-      this.personaId = data.personaId;
-      this.calculatedAt = Date.now();
+    function setResult(data: {
+      scores: Scores;
+      maxScores: Scores;
+      personaId: string;
+      answers: Answer[];
+    }): void {
+      scores.value = data.scores;
+      maxScores.value = data.maxScores;
+      answers.value = data.answers;
+      personaId.value = data.personaId;
+      calculatedAt.value = Date.now();
 
-      this.normalizedScores = {
+      normalizedScores.value = {
         acidity: Math.floor((data.scores.acidity / data.maxScores.acidity) * 100) || 0,
         sweetness: Math.floor((data.scores.sweetness / data.maxScores.sweetness) * 100) || 0,
         body: Math.floor((data.scores.body / data.maxScores.body) * 100) || 0,
         aftertaste: Math.floor((data.scores.aftertaste / data.maxScores.aftertaste) * 100) || 0,
         clarity: Math.floor((data.scores.clarity / data.maxScores.clarity) * 100) || 0,
       };
-    },
+    }
 
-    clearResult() {
-      this.scores = null;
-      this.maxScores = null;
-      this.normalizedScores = null;
-      this.personaId = null;
-      this.answers = [];
-      this.calculatedAt = null;
-    },
+    function clearResult(): void {
+      scores.value = null;
+      maxScores.value = null;
+      normalizedScores.value = null;
+      personaId.value = null;
+      answers.value = [];
+      calculatedAt.value = null;
+    }
 
-    async saveToUserAccount(personaData: {
+    async function saveToUserAccount(personaData: {
       persona_name: string;
       persona_image: string;
       description: string;
@@ -72,20 +78,34 @@ export const useCoffeeResultStore = defineStore('coffeeResult', {
             body: personaData.normalizedScores.body,
             aftertaste: personaData.normalizedScores.aftertaste,
             clarity: personaData.normalizedScores.clarity,
-            user: 19,
+            user: userId.value,
           },
         };
         const response = await api.post('/api/coffee-results', payload);
         return response.data;
-      } catch (error: any) {
-        console.error('儲存失敗:', error.message);
-        throw error;
+      } catch (err: any) {
+        console.error(`'儲存失敗:', ${err.message}`);
+        throw err;
       }
+    }
+    return {
+      scores,
+      maxScores,
+      normalizedScores,
+      personaId,
+      answers,
+      calculatedAt,
+      hasResult,
+      getPersonaId,
+      clearResult,
+      setResult,
+      saveToUserAccount,
+    };
+  },
+  {
+    persist: {
+      key: 'coffee-id-result',
+      storage: localStorage,
     },
-  },
-
-  persist: {
-    key: 'coffee-id-result',
-    storage: localStorage,
-  },
-});
+  }
+);

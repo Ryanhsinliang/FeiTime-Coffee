@@ -24,21 +24,21 @@
         </div>
       </div>
 
-      <div class="flex-1 flex flex-col relative w-full lg:w-1/2 bg-white dark:bg-background-dark">
+      <div
+        class="flex-1 flex flex-col relative w-full lg:w-1/2 bg-background-light dark:bg-background-dark"
+      >
         <div class="flex-1 flex items-center justify-center p-6 md:p-12 lg:p-24 overflow-y-auto">
           <div class="w-full max-w-md flex flex-col gap-8">
             <div class="flex flex-col gap-2 text-center lg:text-left">
-              <h1
-                class="text-3xl font-bold tracking-tight text-text-main dark:text-white lg:text-4xl"
-              >
+              <h1 class="text-3xl font-bold tracking-tight text-text-main lg:text-4xl">
                 設定新密碼
               </h1>
-              <p class="text-text-muted dark:text-white/60 text-base">請輸入您的新密碼以完成重設</p>
+              <p class="text-text-muted text-base">請輸入您的新密碼以完成重設</p>
             </div>
 
             <div
               v-if="errorMessage"
-              class="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl"
+              class="p-4 text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30 rounded-xl flex flex-col gap-3"
             >
               <span class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">error</span>
@@ -61,9 +61,7 @@
 
             <form v-if="!isSuccess" @submit.prevent="handleReset" class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
-                <label class="text-sm font-semibold text-text-main dark:text-white" for="password">
-                  新密碼
-                </label>
+                <label class="text-sm font-semibold text-text-main" for="password">新密碼</label>
                 <div class="relative">
                   <span
                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted text-[20px]"
@@ -72,7 +70,7 @@
                   </span>
                   <input
                     v-model="form.password"
-                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 py-3.5 text-base text-text-main dark:text-white placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/20 px-4 pl-11 py-3.5 text-base text-text-main placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     id="password"
                     placeholder="••••••••"
                     required
@@ -91,10 +89,7 @@
               </div>
 
               <div class="flex flex-col gap-2">
-                <label
-                  class="text-sm font-semibold text-text-main dark:text-white"
-                  for="passwordConfirmation"
-                >
+                <label class="text-sm font-semibold text-text-main" for="passwordConfirmation">
                   確認新密碼
                 </label>
                 <div class="relative">
@@ -105,7 +100,7 @@
                   </span>
                   <input
                     v-model="form.passwordConfirmation"
-                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 py-3.5 text-base text-text-main dark:text-white placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 py-3.5 text-base text-text-main placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     id="passwordConfirmation"
                     placeholder="••••••••"
                     required

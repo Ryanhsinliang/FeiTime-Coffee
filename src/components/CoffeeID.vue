@@ -36,7 +36,7 @@
         <router-link
           v-for="(bean, index) in persona?.beans"
           :key="bean"
-          :to="persona?.productPaths[index] || '#'"
+          :to="persona?.productPaths ? persona.productPaths[index] : '#'"
           class="group/option relative inline-flex items-center justify-center h-12 sm:h-14 px-6 sm:px-8 bg-white/20 text-white text-sm sm:text-base tracking-wider uppercase rounded-sm shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300"
           style="white-space: nowrap"
         >
@@ -69,7 +69,6 @@
         class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover/option:scale-100"
       ></span>
     </button>
-
     <button
       @click="saveIdCard"
       :disabled="isSaving"
@@ -84,9 +83,8 @@
         class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover/option:scale-100"
       ></span>
     </button>
-
-    <a
-      href="/coffeeLabT1-T-P1"
+    <router-link
+      to="/coffeeLabT1-T-P1"
       class="group/option relative flex items-center justify-center h-14 px-10 bg-white/20 text-white tracking-widest uppercase rounded-xl shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300 mt-3"
     >
       試試沖煮模擬器
@@ -96,7 +94,7 @@
       <span
         class="pointer-events-none absolute bottom-0 right-0 w-full h-full border-b-2 border-r-2 border-white scale-0 origin-bottom-right transition-transform duration-300 group-hover/option:scale-100"
       ></span>
-    </a>
+    </router-link>
   </section>
 
   <div
@@ -118,13 +116,15 @@
     Filler,
     Tooltip,
     Legend,
+    ChartData,
   } from 'chart.js';
   import { useCoffeeResultStore } from '@/store/coffeeResult';
+  import { useAuthStore } from '@/store/auth';
   import { getPersona } from '@/utils/getPersona';
-  import html2canvas from 'html2canvas';
+  import router from '@/router';
 
+  const authStore = useAuthStore();
   const coffeeResultStore = useCoffeeResultStore();
-
   const normalizedScores = computed(() => {
     return (
       coffeeResultStore.normalizedScores || {
@@ -150,35 +150,39 @@
     Tooltip,
     Legend
   );
+
   const radarCanvas = ref<HTMLCanvasElement | null>(null);
   let radarChart: Chart | null = null;
 
-  function renderRadar() {
+  const chartData = computed<ChartData<'radar'>>(() => {
+    return {
+      labels: ['酸味', '甜味', '醇厚度', '餘韻', '澄澈度'],
+      datasets: [
+        {
+          label: 'Coffee Taste Score',
+          data: [
+            normalizedScores.value.acidity,
+            normalizedScores.value.sweetness,
+            normalizedScores.value.body,
+            normalizedScores.value.aftertaste,
+            normalizedScores.value.clarity,
+          ],
+          backgroundColor: 'rgba(162,175,155,0.4)',
+          borderColor: 'rgba(91, 70, 54, 0.95)',
+          borderWidth: 2,
+          pointBackgroundColor: 'rgba(121,145,110,1)',
+          pointRadius: 4,
+        },
+      ],
+    };
+  });
+
+  const initChart = () => {
     if (!radarCanvas.value) return;
     if (radarChart) radarChart.destroy();
-
-    radarChart = new Chart(radarCanvas.value, {
+    radarChart = new Chart(radarCanvas.value as HTMLCanvasElement, {
       type: 'radar',
-      data: {
-        labels: ['酸味', '甜味', '醇厚度', '餘韻', '澄澈度'],
-        datasets: [
-          {
-            label: 'Coffee Taste Score',
-            data: [
-              normalizedScores.value.acidity,
-              normalizedScores.value.sweetness,
-              normalizedScores.value.body,
-              normalizedScores.value.aftertaste,
-              normalizedScores.value.clarity,
-            ],
-            backgroundColor: 'rgba(162,175,155,0.4)',
-            borderColor: 'rgba(91, 70, 54, 0.95)',
-            borderWidth: 2,
-            pointBackgroundColor: 'rgba(121,145,110,1)',
-            pointRadius: 4,
-          },
-        ],
-      },
+      data: chartData.value as ChartData<'radar'>,
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -195,10 +199,21 @@
         plugins: { legend: { display: false } },
       },
     });
-  }
+  };
 
-  watch(normalizedScores, renderRadar, { deep: true });
-  onMounted(renderRadar);
+  watch(
+    chartData,
+    (newData) => {
+      if (radarChart) {
+        radarChart.data = newData as ChartData<'radar'>;
+        radarChart.update();
+      }
+    },
+    { deep: true }
+  );
+  onMounted(() => {
+    initChart();
+  });
 
   const idCard = ref<HTMLElement | null>(null);
   const cardStyle = ref('');
@@ -238,85 +253,56 @@
   const shareText = computed(() => {
     if (!persona.value) return '';
     return `我的 Coffee ID 是 ${persona.value.name}！
-風味分數：酸:${normalizedScores.value.acidity}, 甜:${normalizedScores.value.sweetness}, 醇:${normalizedScores.value.body}...
-來看看你的風味測試結果吧！`;
+  風味分數：酸:${normalizedScores.value.acidity}, 甜:${normalizedScores.value.sweetness}, 醇:${normalizedScores.value.body}...
+  來看看你的風味測試結果吧！`;
   });
 
-  async function idCardToImage(): Promise<Blob | null> {
-    if (!idCard.value) return null;
-    const originalStyle = cardStyle.value;
-    cardStyle.value = '';
-    await nextTick();
-    const canvas = await html2canvas(idCard.value, {
-      backgroundColor: null,
-      scale: 2,
-      useCORS: true,
-    });
-    cardStyle.value = originalStyle;
-    return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), 'image/png'));
-  }
+  import { coffeePersonas } from '@/views/CoffeeIdTest/assets/data/coffeeTypes';
 
   async function handleMainShare() {
-    if (isProcessing.value) return;
-    isProcessing.value = true;
-    showHint('正在生成 Coffee ID 圖片...');
+    if (!persona.value) return;
+    const currentId = persona.value.id;
+    const fullPersonaData = coffeePersonas.find((p) => p.id === currentId);
+    console.log('比對後的完整資料：', fullPersonaData);
 
-    try {
-      const imageBlob = await idCardToImage();
-      if (!imageBlob || !persona.value) throw new Error('生成失敗');
+    if (!fullPersonaData || !fullPersonaData.strapiImg) {
+      console.error('抓不到資料！請檢查 coffeeTypes.ts 檔案路徑。');
+      return;
+    }
+    const personaName = fullPersonaData.name;
+    const ogImageUrl = fullPersonaData.strapiImg;
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+    const params = new URLSearchParams({
+      name: personaName,
+      img: ogImageUrl,
+    });
 
-      const imageFile = new File([imageBlob], `coffee-id-${persona.value.name}.png`, {
-        type: 'image/png',
-      });
-
-      if (navigator.share && navigator.canShare?.({ files: [imageFile] })) {
+    const shareUrl = `${backendUrl}/share?${params.toString()}`;
+    if (navigator.share) {
+      try {
         await navigator.share({
-          title: '我的 Coffee ID',
-          text: shareText.value,
-          files: [imageFile],
+          title: `Coffee ID | ${personaName}`,
+          url: shareUrl,
         });
-      } else {
-        const url = URL.createObjectURL(imageBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `coffee-id-${persona.value.name}.png`;
-        link.click();
-        await navigator.clipboard.writeText(shareText.value);
-        showHint('圖片已下載，文字已複製！');
+      } catch (err) {
+        console.log('使用者取消');
       }
-    } catch (error) {
-      console.error(error);
-      showHint('分享失敗，請點擊儲存圖片。');
-    } finally {
-      isProcessing.value = false;
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      showHint('分享連結已複製！');
     }
   }
-  // 直接存圖片的功能
-  // async function saveIdCard() {
-  //   isSaving.value = true;
-  //   try {
-  //     const imageblob = await idCardToImage();
-  //     if (!imageblob) {
-  //       throw new Error('無法生成圖片');
-  //     }
-  //     const imageUrl = URL.createObjectURL(imageblob);
-  //     const imageLink = document.createElement('a');
-  //     imageLink.href = imageUrl;
-  //     imageLink.download = `coffee-id-${persona.value.name}-${Date.now()}.png`;
-  //     document.body.appendChild(imageLink);
-  //     imageLink.click();
-  //     document.body.removeChild(imageLink);
-  //     URL.revokeObjectURL(imageUrl);
-  //     showHint('圖片已儲存！');
-  //   } catch (error) {
-  //     console.error('儲存失敗:', error);
-  //     showHint('儲存失敗！');
-  //   } finally {
-  //     isSaving.value = false;
-  //   }
-  // }
+
   async function saveIdCard() {
-    if (isSaving.value || !persona.value) return;
+    if (!authStore.isLoggedIn) {
+      showHint('請先登入以儲存您的 Coffee ID！');
+      router.push({
+        name: 'Login',
+        query: { redirect: router.currentRoute.value.fullPath },
+      });
+      return;
+    }
+    if (isSaving.value || !persona.value || !coffeeResultStore.hasResult) return;
     isSaving.value = true;
     try {
       await coffeeResultStore.saveToUserAccount({
@@ -325,7 +311,7 @@
         description: persona.value.description,
         normalizedScores: normalizedScores.value,
       });
-      showHint('🎉 測驗結果已同步至您的個人帳號！');
+      showHint('測驗結果已同步至您的個人帳號！');
     } catch (error: any) {
       showHint(`儲存失敗: ${error.message}`);
     } finally {

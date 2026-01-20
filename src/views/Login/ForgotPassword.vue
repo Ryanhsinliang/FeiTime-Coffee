@@ -51,7 +51,7 @@
             <button
               type="submit"
               :disabled="isLoading"
-              class="w-full bg-primary/90 hover:bg-primary text-zinc-900 font-bold px-8 py-3.5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full bg-primary/90 hover:bg-primary text-zinc-900 font-bold px-8 py-3.5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed dark:text-white dark:bg-gray-800 dark:hover:bg-gray-600"
             >
               {{ isLoading ? '發送中...' : '發送重設郵件' }}
             </button>
@@ -59,7 +59,7 @@
           <div class="text-center">
             <router-link
               to="/login"
-              class="w-full bg-primary/90 hover:bg-primary text-zinc-900 font-bold px-8 py-3.5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full bg-primary/90 hover:bg-primary text-zinc-900 font-bold px-8 py-3.5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed dark:text-white dark:bg-gray-800 dark:hover:bg-gray-600"
             >
               返回登入
             </router-link>

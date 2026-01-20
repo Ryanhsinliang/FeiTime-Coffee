@@ -161,9 +161,10 @@
 
       <!-- 產品列表 -->
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-        <div
+        <router-link
           v-for="product in products"
-          :key="product.id"
+          :key="product.pid"
+          :to="{ name: 'ProductDetail', params: { pid: product.pid } }"
           class="group flex flex-col cursor-pointer"
         >
           <!-- 產品圖片 -->
@@ -179,14 +180,12 @@
 
           <!-- 產品資訊 -->
           <div class="flex flex-col gap-2 items-center text-center">
-            <!-- 產品名稱 -->
             <h3
               class="text-base font-medium text-text-main tracking-wide group-hover:text-sage transition-colors font-serif"
             >
               {{ product.name }}
             </h3>
 
-            <!-- 風味標籤 - 動態顏色 -->
             <span
               v-if="product.flavor_type"
               :class="getFlavorStyle(product.flavor_type)"
@@ -195,10 +194,9 @@
               {{ getFlavorLabel(product.flavor_type) }}
             </span>
 
-            <!-- 產品價格 -->
             <span class="text-lg font-semibold text-text-main">${{ product.price }}</span>
           </div>
-        </div>
+        </router-link>
       </div>
 
       <!-- 查看更多 -->

@@ -592,12 +592,24 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, computed } from 'vue';
+  import { ref, reactive, computed, onMounted } from 'vue';
+  import { useRoute } from 'vue-router';
+
+  const route = useRoute();
 
   // ========== 狀態管理 ==========
 
   // 當前選中的頁籤（會員專區 or 訂單記錄）
   const activeTab = ref<'member' | 'order'>('member');
+
+  // ========== 初始化 ==========
+
+  // 從 URL 參數讀取要顯示的標籤
+  onMounted(() => {
+    if (route.query.tab === 'order') {
+      activeTab.value = 'order';
+    }
+  });
 
   // ========== 會員資料 ==========
 

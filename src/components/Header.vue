@@ -116,6 +116,18 @@
                         會員專區
                       </span>
                     </button>
+                    <button
+                      class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
+                      :style="menuItemHoverStyle('order')"
+                      @mouseenter="hoveredMenuItem = 'order'"
+                      @mouseleave="hoveredMenuItem = null"
+                      @click="handleOrderQuery"
+                    >
+                      <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">receipt_long</span>
+                        訂單查詢
+                      </span>
+                    </button>
                     <div
                       class="mx-2 h-px"
                       :style="{
@@ -326,6 +338,11 @@
   const handleMemberArea = () => {
     userMenuOpen.value = false;
     router.push('/member');
+  };
+
+  const handleOrderQuery = () => {
+    userMenuOpen.value = false;
+    router.push('/member?tab=order');
   };
 
   const handleLogout = async () => {

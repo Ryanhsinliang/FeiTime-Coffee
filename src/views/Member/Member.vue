@@ -25,7 +25,7 @@
             <a
               class="px-12 py-4 rounded-t-3xl font-bold text-xs uppercase tracking-[0.4em] glass-tab-active-member text-accent-green translate-y-[2px]"
               href="#"
-              @click.prevent="activeTab = 'member'"
+              @click.prevent="switchToMember"
             >
               會員專區
             </a>
@@ -33,7 +33,7 @@
             <a
               class="px-12 py-4 rounded-t-3xl font-bold text-xs uppercase tracking-[0.4em] glass-tab-member text-primary/30 hover:text-primary/50 transition-all"
               href="#"
-              @click.prevent="activeTab = 'order'"
+              @click.prevent="switchToOrder"
             >
               訂單記錄
             </a>
@@ -53,9 +53,7 @@
                     <label class="text-xs uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
                       會員姓名
                     </label>
-                    <p class="text-base font-light text-primary tracking-wide">
-                      {{ '陳小華' }}
-                    </p>
+                    <p class="text-base font-light text-primary tracking-wide">陳小華</p>
                   </div>
 
                   <!-- 聯絡資料網格（會員編號、電話、Email、地址） -->
@@ -143,58 +141,23 @@
 
               <!-- 沖煮記錄卡片網格（3欄布局） -->
               <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- 沖煮記錄卡片 -->
+                <!-- 沖煮記錄卡片 - 改為圖片卡片 -->
                 <div
                   v-for="(log, index) in displayedBrewLogs"
                   :key="log.id"
-                  class="glass-card p-8 rounded-[2rem] hover:bg-white/40 transition-all cursor-pointer group border-none shadow-sm"
+                  class="glass-card rounded-[2rem] hover:bg-white/40 transition-all cursor-pointer group border-none shadow-sm overflow-hidden aspect-[4/3]"
                   @click="viewBrewLog(log.id)"
                 >
-                  <div class="flex items-start justify-between mb-6">
-                    <div class="flex-1">
-                      <!-- 日期 -->
-                      <p
-                        class="text-xs font-bold text-gold-foil/40 uppercase tracking-[0.3em] mb-2"
-                      >
-                        {{ log.date }}
-                      </p>
-                      <!-- 卡片名稱（含編輯按鈕） -->
-                      <div class="flex items-center gap-2 group/name">
-                        <h5
-                          class="font-light text-primary text-xl group-hover:text-accent-green transition-colors"
-                        >
-                          {{ log.name }}
-                        </h5>
-                        <!-- 編輯鉛筆圖標（hover 時顯示） -->
-                        <button
-                          class="opacity-0 group-hover/name:opacity-100 transition-opacity"
-                          @click.stop="editLogName(log.id)"
-                        >
-                          <span
-                            class="material-symbols-outlined text-base text-primary/30 hover:text-accent-green"
-                          >
-                            edit
-                          </span>
-                        </button>
-                      </div>
-                    </div>
+                  <!-- 圖片佔位符 -->
+                  <div
+                    class="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/30 to-white/10"
+                  >
+                    <span
+                      class="material-symbols-outlined text-6xl text-primary/20 font-extralight"
+                    >
+                      image
+                    </span>
                   </div>
-                  <!-- 沖煮參數詳細資訊 -->
-                  <p class="text-sm text-primary/30 font-light italic tracking-widest">
-                    {{ log.details }}
-                  </p>
-                </div>
-
-                <!-- 新增記錄卡片（虛線框） -->
-                <div
-                  v-if="displayedBrewLogs.length < brewLogs.length || showAllBrewLogs"
-                  class="glass-card p-8 rounded-[2rem] border-dashed border-accent-green/20 flex flex-col items-center justify-center text-primary/20 hover:text-accent-green/60 hover:border-accent-green/40 transition-all bg-transparent shadow-none cursor-pointer min-h-[180px]"
-                  @click="addNewLog"
-                >
-                  <span class="material-symbols-outlined mb-3 font-extralight text-3xl">
-                    add_circle
-                  </span>
-                  <span class="text-xs font-bold uppercase tracking-[0.3em]">Log Entry</span>
                 </div>
               </div>
             </div>
@@ -232,7 +195,7 @@
             <a
               class="px-12 py-4 rounded-t-3xl font-bold text-xs uppercase tracking-[0.3em] glass-tab-order text-primary/30 hover:text-primary/50 transition-all"
               href="#"
-              @click.prevent="activeTab = 'member'"
+              @click.prevent="switchToMember"
             >
               會員專區
             </a>
@@ -240,7 +203,7 @@
             <a
               class="px-12 py-4 rounded-t-3xl font-bold text-xs uppercase tracking-[0.3em] glass-tab-active-order text-gold-accent translate-y-[2px]"
               href="#"
-              @click.prevent="activeTab = 'order'"
+              @click.prevent="switchToOrder"
             >
               訂單記錄
             </a>
@@ -592,28 +555,35 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, computed, onMounted } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { ref, reactive, computed, onMounted, watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
 
   const route = useRoute();
+  const router = useRouter();
 
   // ========== 狀態管理 ==========
-
-  // 當前選中的頁籤（會員專區 or 訂單記錄）
   const activeTab = ref<'member' | 'order'>('member');
 
   // ========== 初始化 ==========
-
-  // 從 URL 參數讀取要顯示的標籤
   onMounted(() => {
     if (route.query.tab === 'order') {
       activeTab.value = 'order';
     }
   });
 
-  // ========== 會員資料 ==========
+  // ========== 監聽路由變化 ==========
+  watch(
+    () => route.query.tab,
+    (newTab) => {
+      if (newTab === 'order') {
+        activeTab.value = 'order';
+      } else {
+        activeTab.value = 'member';
+      }
+    }
+  );
 
-  // 聯絡資料（會員編號、電話、Email、地址）
+  // ========== 會員資料 ==========
   const contactDetails = reactive([
     { label: '會員編號', value: 'FT8829-X0' },
     { label: '聯絡電話', value: '+1 (555) 012-9934' },
@@ -621,9 +591,8 @@
     { label: '收件地址', value: '1289 Espresso Way, Suite 400<br/>San Francisco, CA 94103' },
   ]);
 
-  // 咖啡測驗結果（支援圖片顯示）
   const quizResult = reactive({
-    image: '', // 測驗結果圖片 URL（可從 API 取得）
+    image: '',
     title: 'The Ethereal Ethiopia Profile',
     description:
       'Your palate favors high-acidity, floral notes with a tea-like body. We recommend light roasts from the Yirgacheffe region, brewed with a V60 to accentuate the jasmine and lemon zest undertones.',
@@ -631,8 +600,6 @@
   });
 
   // ========== 沖煮記錄 ==========
-
-  // 沖煮記錄列表（支援卡片名稱編輯）
   const brewLogs = reactive([
     { id: 1, date: 'Mar 14, 2024', name: 'Yirgacheffe V60', details: '92°C | 1:16 Ratio' },
     { id: 2, date: 'Mar 12, 2024', name: 'Gesha Aeropress', details: '88°C | Inverted' },
@@ -642,109 +609,92 @@
     { id: 6, date: 'Mar 01, 2024', name: 'Brazilian Santos', details: '88°C | Cold Brew' },
   ]);
 
-  // 沖煮記錄展開/收合狀態
   const showAllBrewLogs = ref(false);
 
-  // 計算屬性：根據展開狀態決定顯示的記錄數量（預設顯示3筆）
   const displayedBrewLogs = computed(() => {
     return showAllBrewLogs.value ? brewLogs : brewLogs.slice(0, 3);
   });
 
   // ========== 方法函式 ==========
+  const switchToMember = () => {
+    activeTab.value = 'member';
+    router.push('/member');
+  };
 
-  // 重新進行咖啡測驗
+  const switchToOrder = () => {
+    activeTab.value = 'order';
+    router.push('/member?tab=order');
+  };
+
   const retakeQuiz = () => {
     console.log('Retake quiz');
   };
 
-  // 切換沖煮記錄展開/收合狀態
   const toggleBrewLogsView = () => {
     showAllBrewLogs.value = !showAllBrewLogs.value;
   };
 
-  // 查看沖煮記錄詳情
   const viewBrewLog = (id: number) => {
     console.log('View brew log:', id);
   };
 
-  // 編輯沖煮記錄卡片名稱
   const editLogName = (id: number) => {
     console.log('Edit log name:', id);
-    // TODO: 打開編輯 modal 或 inline 編輯功能
   };
 
-  // 新增沖煮記錄
   const addNewLog = () => {
     console.log('Add new log');
   };
 </script>
 
 <style scoped>
-  /* ========== 字體引入 ========== */
   @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
 
-  /* Material Icons 圖標樣式設定 */
   .material-symbols-outlined {
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 200,
-      'GRAD' 0,
-      'opsz' 24;
+    font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
   }
 
-  /* ========== 會員專區樣式 ========== */
-
-  /* 外層金色背景 */
   .leather-texture-gold {
     background: #e8dfc8;
   }
 
-  /* 主要玻璃面板（內層透明玻璃效果） - 金色毛玻璃 */
   .glass-panel {
     backdrop-filter: blur(60px) saturate(150%);
     -webkit-backdrop-filter: blur(60px) saturate(150%);
     border: 2px solid transparent;
-    background-image:
-      linear-gradient(rgba(247, 243, 235, 0.3), rgba(247, 243, 235, 0.2)),
+    background-image: linear-gradient(rgba(247, 243, 235, 0.25), rgba(247, 243, 235, 0.15)),
       linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.15) 0%,
-        rgba(197, 160, 89, 0.4) 25%,
-        rgba(255, 255, 255, 0.7) 50%,
-        rgba(197, 160, 89, 0.4) 75%,
-        rgba(255, 255, 255, 0.15) 100%
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(197, 160, 89, 0.25) 25%,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(197, 160, 89, 0.25) 75%,
+        rgba(255, 255, 255, 0.08) 100%
       );
     background-origin: border-box;
     background-clip: padding-box, border-box;
-    box-shadow:
-      0 16px 48px rgba(197, 160, 89, 0.15),
-      0 4px 12px rgba(197, 160, 89, 0.1),
-      inset 0 1px 1px rgba(255, 255, 255, 0.7),
-      inset 0 -1px 1px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 16px 48px rgba(197, 160, 89, 0.1), 0 4px 12px rgba(197, 160, 89, 0.06),
+      inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(255, 255, 255, 0.2);
   }
 
-  /* 內部卡片（咖啡測驗結果、沖煮記錄卡片） - 金色毛玻璃 */
   .glass-card {
     backdrop-filter: blur(30px) saturate(150%);
     -webkit-backdrop-filter: blur(30px) saturate(150%);
     border: 1px solid transparent;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.15)),
+    background-image: linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1)),
       linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(197, 160, 89, 0.3) 30%,
-        rgba(255, 255, 255, 0.6) 50%,
-        rgba(197, 160, 89, 0.3) 70%,
-        rgba(255, 255, 255, 0.1) 100%
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(197, 160, 89, 0.2) 30%,
+        rgba(255, 255, 255, 0.35) 50%,
+        rgba(197, 160, 89, 0.2) 70%,
+        rgba(255, 255, 255, 0.05) 100%
       );
     background-origin: border-box;
     background-clip: padding-box, border-box;
-    box-shadow:
-      0 8px 16px rgba(0, 0, 0, 0.05),
-      inset 0 1px 1px rgba(255, 255, 255, 0.7),
-      inset 0 -1px 1px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.4),
+      inset 0 -1px 1px rgba(255, 255, 255, 0.2);
   }
 
   .glass-tab-member {
@@ -753,9 +703,7 @@
     -webkit-backdrop-filter: blur(40px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-bottom: none;
-    box-shadow:
-      0 4px 12px rgba(0, 0, 0, 0.03),
-      inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.5);
   }
 
   .glass-tab-active-member {
@@ -763,8 +711,7 @@
     -webkit-backdrop-filter: blur(50px) saturate(150%);
     border: 2px solid transparent;
     border-bottom: none;
-    background-image:
-      linear-gradient(rgba(247, 243, 235, 0.35), rgba(247, 243, 235, 0.25)),
+    background-image: linear-gradient(rgba(247, 243, 235, 0.35), rgba(247, 243, 235, 0.25)),
       linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.1) 0%,
@@ -775,9 +722,7 @@
       );
     background-origin: border-box;
     background-clip: padding-box, border-box;
-    box-shadow:
-      0 8px 20px rgba(197, 160, 89, 0.12),
-      inset 0 1px 1px rgba(255, 255, 255, 0.7),
+    box-shadow: 0 8px 20px rgba(197, 160, 89, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.7),
       inset 0 -1px 1px rgba(255, 255, 255, 0.3);
   }
 
@@ -807,7 +752,6 @@
     -webkit-backdrop-filter: blur(120px) saturate(150%);
   }
 
-  /* Order History Styles */
   .leather-texture-champagne {
     background: #dce8df;
   }
@@ -817,11 +761,8 @@
     backdrop-filter: blur(60px) saturate(150%);
     -webkit-backdrop-filter: blur(60px) saturate(150%);
     border: 1.5px solid rgba(255, 255, 255, 0.4);
-    box-shadow:
-      0 16px 48px rgba(122, 140, 124, 0.15),
-      0 4px 12px rgba(122, 140, 124, 0.1),
-      inset 0 1px 1px rgba(255, 255, 255, 0.6),
-      inset 0 -1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 16px 48px rgba(122, 140, 124, 0.15), 0 4px 12px rgba(122, 140, 124, 0.1),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.05);
   }
 
   .glass-row {
@@ -829,81 +770,62 @@
     backdrop-filter: blur(30px) saturate(150%);
     -webkit-backdrop-filter: blur(30px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow:
-      0 4px 12px rgba(0, 0, 0, 0.04),
-      inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.6),
       inset 0 -1px 1px rgba(0, 0, 0, 0.03);
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  /* 訂單列表項 Hover 效果 */
   .glass-row:hover {
     background: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
-    box-shadow:
-      0 8px 20px rgba(0, 0, 0, 0.06),
-      inset 0 1px 1px rgba(255, 255, 255, 0.7),
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.7),
       inset 0 -1px 1px rgba(0, 0, 0, 0.04);
   }
 
-  /* 訂單詳細資訊面板（展開後顯示） */
   .glass-detail-panel {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(30px) saturate(150%);
     -webkit-backdrop-filter: blur(30px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow:
-      0 4px 12px rgba(0, 0, 0, 0.03),
-      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.5),
       inset 0 -1px 1px rgba(0, 0, 0, 0.02);
   }
 
-  /* 訂單狀態標籤（成功/已送達） */
   .status-success {
     background: rgba(232, 242, 238, 0.5);
     color: #5b7a6d;
     border: 1px solid rgba(127, 166, 149, 0.2);
   }
 
-  /* 未選中的頁籤（訂單記錄） */
   .glass-tab-order {
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(40px) saturate(150%);
     -webkit-backdrop-filter: blur(40px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-bottom: none;
-    box-shadow:
-      0 4px 12px rgba(0, 0, 0, 0.03),
-      inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.5);
   }
 
-  /* 已選中的頁籤（訂單記錄 - 金色） */
   .glass-tab-active-order {
     backdrop-filter: blur(50px) saturate(150%);
     -webkit-backdrop-filter: blur(50px) saturate(150%);
     border: 2px solid transparent;
     border-bottom: none;
-    background-image:
-      linear-gradient(rgba(247, 243, 235, 0.35), rgba(247, 243, 235, 0.25)),
+    background-image: linear-gradient(rgba(220, 232, 222, 0.35), rgba(220, 232, 222, 0.25)),
       linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.1) 0%,
-        rgba(197, 160, 89, 0.5) 20%,
-        rgba(255, 255, 255, 0.8) 50%,
-        rgba(197, 160, 89, 0.5) 80%,
+        rgba(127, 166, 149, 0.4) 25%,
+        rgba(255, 255, 255, 0.7) 50%,
+        rgba(127, 166, 149, 0.4) 75%,
         rgba(255, 255, 255, 0.1) 100%
       );
     background-origin: border-box;
     background-clip: padding-box, border-box;
-    box-shadow:
-      0 8px 20px rgba(197, 160, 89, 0.12),
-      inset 0 1px 1px rgba(255, 255, 255, 0.7),
+    box-shadow: 0 8px 20px rgba(122, 140, 124, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.7),
       inset 0 -1px 1px rgba(255, 255, 255, 0.3);
   }
 
-  /* ========== 通用樣式 ========== */
-
-  /* 隱藏捲軸的容器 */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -913,7 +835,6 @@
     scrollbar-width: none;
   }
 
-  /* 自訂捲軸樣式 */
   ::-webkit-scrollbar {
     width: 4px;
   }

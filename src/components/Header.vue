@@ -80,21 +80,21 @@
               <div v-if="userMenuOpen" class="absolute left-1/2 -translate-x-1/2 top-full">
                 <div class="h-1"></div>
                 <div
-                  class="rounded-lg shadow-lg border overflow-hidden whitespace-nowrap"
+                  class="rounded-lg shadow-lg border overflow-hidden min-w-[140px]"
                   :class="scrollY < bannerHeight ? 'border-[#DCCFC0]/50' : 'border-[#DCCFC0]/80'"
                   :style="dropdownMenuStyle"
                 >
-                  <div v-if="!isLoggedIn" class="p-3">
-                    <div class="flex flex-col gap-2.5">
+                  <div v-if="!isLoggedIn" class="p-2">
+                    <div class="flex flex-col gap-2">
                       <button
-                        class="py-2 px-6 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                        class="py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
                         :style="buttonStyle"
                         @click="handleLogin"
                       >
                         登入
                       </button>
                       <button
-                        class="py-2 px-6 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                        class="py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
                         :style="buttonStyle"
                         @click="handleRegister"
                       >

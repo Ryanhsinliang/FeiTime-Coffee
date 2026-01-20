@@ -25,7 +25,7 @@
       <div
         class="flex flex-col md:flex-row items-center justify-between gap-6 overflow-x-auto pb-4 md:pb-0"
       >
-        <!-- 待付款 (只有 Line Pay 會顯示此階段) -->
+        <!-- 待付款 -->
         <div class="flex flex-col items-center gap-2 min-w-[100px]">
           <span
             class="material-symbols-outlined text-2xl"

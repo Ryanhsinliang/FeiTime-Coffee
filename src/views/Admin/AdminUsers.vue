@@ -1,7 +1,4 @@
 <template>
-  <!-- TODO:測試用記得刪除 -->
-  <!-- <router-link to="/admin/customers/id">查看資料</router-link> -->
-
   <header
     class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-10 flex-shrink-0"
   >

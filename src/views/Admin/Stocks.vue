@@ -16,12 +16,12 @@
         <h2 class="text-3xl font-bold">庫存管理</h2>
         <p class="text-gray-400 text-sm">主要管理商品庫存。</p>
       </div>
-      <button
+      <!-- <button
         class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm"
       >
         <i class="fa-solid fa-plus text-sm"></i>
         <p>新增商品</p>
-      </button>
+      </button> -->
     </section>
 
     <!-- 搜尋 -->
@@ -254,14 +254,4 @@
   onMounted(() => {
     loadProducts();
   });
-
-  // // 防止使用者手動輸入違規數字
-  // watch(quantity, (newVal) => {
-  //   if (!products.value) return;
-  //   if (newVal > products.value.stock) {
-  //     quantity.value = products.value.stock;
-  //   } else if (newVal < 1) {
-  //     quantity.value = 1;
-  //   }
-  // });
 </script>

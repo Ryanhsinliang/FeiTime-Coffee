@@ -72,7 +72,7 @@
                 </div>
                 <div 
                   class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover overflow-hidden relative transition-all duration-500"
-                  :class="selectedOrigin === origin.name ? '' : 'grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100'"
+                  :class="selectedOrigin === origin.name ? '' : 'opacity-80 group-hover:opacity-100'"
                   :style="{ backgroundImage: `url(${origin.image})` }"
                 >
                   <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent mix-blend-multiply" v-if="selectedOrigin === origin.name"></div>
@@ -537,39 +537,39 @@ const origins = [
     name: '衣索比亞 耶加雪菲 (Ethiopia Yirgacheffe)',
     tags: '明亮花香 (Bright & Floral)',
     desc: '以茶感醇厚度與複雜柑橘調性聞名。 (Known for its tea-like body and complex citrus notes.)',
-    image: 'https://images.unsplash.com/photo-1611162458324-aeff82ac49bd?q=80&w=600&auto=format&fit=crop' // Coffee drying
+    image: 'https://specialtycoffee.stonex.com/cdn/shop/files/ethiopia-yirgacheffe-halo-beriti-gr1-washed-green-coffee-beans-stonex-specialty-coffee-1.png?v=1724876971' // Coffee drying
   },
   {
     name: '肯亞 AA (Kenya AA)',
     tags: '莓果酒香 (Berry & Wine-like)',
     desc: '具有鮮明的黑醋栗與梅子酸感，口感紮實。 (Distinct blackcurrant acidity and full body.)',
-    image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=600&auto=format&fit=crop' // Coffee cherries
+    image: 'https://www.coffeeness.de/wp-content/uploads/2022/05/Coffee-cherries-spread-out.jpg' // Coffee cherries
   },
   // Americas
   {
     name: '哥倫比亞 惠蘭 (Colombia Huila)',
     tags: '焦糖堅果 (Caramel & Nutty)',
     desc: '均衡醇厚度，帶有甜美焦糖底蘊。 (Balanced body with sweet caramel undertones.)',
-    image: 'https://images.unsplash.com/photo-1559525839-8f897d5a0c12?q=80&w=600&auto=format&fit=crop' // Coffee plant
+    image: 'https://images.unsplash.com/photo-1633627358345-0b94005cdf4f?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' // Coffee plant
   },
   {
     name: '巴西 喜拉朵 (Brazil Cerrado)',
     tags: '巧克力厚實 (Chocolate & Heavy)',
     desc: '低酸度，帶有奶油巧克力般的口感。 (Low acidity with a creamy, chocolaty mouthfeel.)',
-    image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=600&auto=format&fit=crop' // Roasted beans
+    image: 'https://www.reuters.com/resizer/v2/L5ZR3R3QWBI5VJKZMMHLMLAWUU.jpg?auth=c502296ce649eb7b1158ae163066ff56b0e3fc752f8e927300efc416b5ea24a0&height=2400&width=1920&quality=80&smart=true' // Reusing Coffee plant for Brazil (Plantation vibe)
   },
   {
     name: '巴拿馬 藝伎 (Panama Geisha)',
     tags: '極致花韻 (Jasmine & Tea-like)',
     desc: '如香水般的茉莉花香與精緻果韻，頂級享受。 (Perfume-like jasmine aroma and delicate fruit notes.)',
-    image: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=600&auto=format&fit=crop' // Coffee detail
+    image: 'https://kava.family/cdn/shop/files/fincadeborahpanamageishakavafamily3_860x.png?v=1755774806'
   },
   // Asia
   {
     name: '印尼 蘇門答臘 (Indonesia Sumatra)',
     tags: '草本厚實 (Earthy & Herbal)',
     desc: '獨特的藥草香氣與極高的醇厚度，酸度極低。 (Unique herbal aroma, heavy body, very low acidity.)',
-    image: 'https://images.unsplash.com/photo-1552346988-7578cd953058?q=80&w=600&auto=format&fit=crop' // Green beans/process
+    image: 'https://zavida.com/cdn/shop/articles/what-process-ensures-the-best-tasting-sumatra-coffee-262960_1600x.png?v=1715806427' // Green beans/process
   }
 ];
 

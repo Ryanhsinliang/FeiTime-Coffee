@@ -134,6 +134,13 @@
             <span>部分商品庫存不明，無法結帳</span>
           </p>
         </div>
+        <!-- 登入提示 -->
+        <div v-if="!isLoggedIn" class="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <p class="text-sm text-amber-700 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px]">info</span>
+            <span>請登入後即可前往結帳</span>
+          </p>
+        </div>
         <button
           class="w-full group relative flex items-center justify-center gap-2 font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg font-notoserif"
           :class="hasInvalidStockItems 
@@ -158,13 +165,17 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import CartItem from './cart/CartItem.vue'
 import RecommendationCard from './cart/RecommendationCard.vue'
 import { useCartStore } from '@/store/cart'
+import { useAuthStore } from '@/store/auth'
 
 // Pinia Store 整合
 // 使用 useCartStore 取得購物車狀態與方法
 const cartStore = useCartStore()
+const authStore = useAuthStore()
+const router = useRouter()
 
 // State - 直接對應 Store 的 State
 // 使用 computed 保持響應性 (Reactivity)
@@ -178,6 +189,7 @@ const total = computed(() => cartStore.total)
 const totalItems = computed(() => cartStore.totalItems)
 const hasInvalidStockItems = computed(() => cartStore.hasInvalidStockItems)
 const invalidStockItemNames = computed(() => cartStore.invalidStockItemNames)
+const isLoggedIn = computed(() => authStore.isLoggedIn)
 
 // Actions - 綁定 Store 的操作方法
 const closeCart = cartStore.closeCart
@@ -209,6 +221,12 @@ const handleAddToCart = (product) => {
 }
 
 const handleCheckout = () => {
+  if (!isLoggedIn.value) {
+    authStore.setBanner('請先登入帳號以完成結帳', 'warning')
+    closeCart()
+    router.push({ name: 'Login' })
+    return
+  }
   checkout()
 }
 </script>

@@ -8,20 +8,20 @@
           <div class="flex my-[18px] flex-col md:flex-row lg:flex-row">
             <!-- 車icon-->
             <div
-              class="cursor-pointer flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px] mb-[12px] md:mb-0 lg:mb-0 mx-auto md:mx-[12px] lg:mx-[12px] w-[200px] md:w-[50%] lg:w-[50%]"
+              class="cursor-pointer flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px] mb-[12px] md:mb-0 lg:mb-0 mx-auto md:mx-[12px] lg:mx-[12px] w-[200px] md:w-[100%] lg:w-[100%]"
             >
               <i class="fa-solid fa-truck text-[--green-gray] text-[36px]"></i>
               <p class="text-[#222222] font-[600] py-[8px] text-[20px]">宅配取貨</p>
               <p class="text-[#666666]">約3~5個工作天</p>
             </div>
-            <!--店icon -->
+            <!-- 店icon
             <div
               class="cursor-pointer flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px] mb-[12px] md:mb-0 lg:mb-0 mx-auto md:mx-[12px] lg:mx-[12px] w-[200px] md:w-[50%] lg:w-[50%]"
             >
               <i class="fa-solid fa-shop text-[--green-gray] text-[36px]"></i>
               <p class="text-[#222222] font-[600] py-[8px] text-[20px]">來店取貨</p>
               <p class="text-[#666666]">約3~5小時</p>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -38,7 +38,7 @@
             class="w-full p-3 border border-gray-300 rounded-md mt-2 mb-4"
           />
 
-          <label for="phone" class="block">電話</label>
+          <label for="phone" class="block">手機號碼</label>
           <input
             v-model="form.recipient_phone"
             type="tel"
@@ -176,7 +176,7 @@
                 </div>
                 <div class="shrink-0">
                   <div>$&nbsp;{{ list.product.price }}</div>
-                  <div class="text-left md:text-right lg:text-right">{{ list.quantity }}個</div>
+                  <div class="text-left md:text-right lg:text-right">{{ list.quantity }}件</div>
                 </div>
               </div>
               <!-- v-for結束 -->
@@ -400,11 +400,16 @@
 
   // 【 POST + 導到linepay 、成功頁 、 失敗頁 】
   const formPost = async () => {
+    // 定義手機號碼的 正則表達式
+    const phoneRegex = /^09\d{8}$/;
     if (form.recipient_name == '') {
       alert('請填寫姓名');
       return;
     } else if (form.recipient_phone == '') {
       alert('請填寫電話');
+      return;
+    } else if (!phoneRegex.test(form.recipient_phone)) {
+      alert('電話格式錯誤');
       return;
     } else if (form.recipient_address == '') {
       alert('請填寫收件人地址');

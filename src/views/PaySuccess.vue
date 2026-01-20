@@ -8,7 +8,7 @@
         <i class="fa-solid fa-check fa-2xl"></i>
       </div>
 
-      <p class="text-4xl font-bold text-[#222222] mt-[32px] mb-[24px]">付款成功</p>
+      <p class="text-4xl font-bold text-[#222222] mt-[32px] mb-[24px]">下訂成功</p>
       <p class="text-[#666666]">感謝您的購買！FeiTime期待您再次光臨</p>
 
       <!-- 訂單資訊 -->
@@ -119,15 +119,15 @@
   });
 
   const B = async () => {
-    // console.log(buyProducts.value); // 完整的 訂購的 產品資料
-    // // 要扣庫存的資料
-    // const changeData = buyProducts.value.map((obj) => {
-    //   return {
-    //     pid: obj.pid,
-    //     quantity: obj.quantity,
-    //   };
-    // });
-    //  console.log(changeData);
+    console.log(buyProducts.value); // 完整的 訂購的 產品資料
+    // 要扣庫存的資料
+    const changeData = buyProducts.value.map((obj) => {
+      return {
+        id: obj.pid,
+        quantity: obj.quantity,
+      };
+    });
+    console.log(changeData);
     // const productId = '751'; // 先用假資料
     // const cost = 3;
     // await updateProduct(productId, cost);

@@ -302,7 +302,7 @@
 
       // 3秒後清除提示訊息
       setTimeout(() => {
-        success.value = '';
+        success.value = false;
       }, 3000);
     } catch (e: any) {
       error.value = e?.message || e?.response?.data?.message || '更新失敗';

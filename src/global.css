@@ -15,6 +15,9 @@ body {
 } */
 
 /* 隱藏原生游標（全站生效） */
-* {
-  cursor: none !important;
+/* 手機版/觸控裝置：強制隱藏游標 */
+@media (pointer: coarse) {
+  * {
+    cursor: none !important;
+  }
 }

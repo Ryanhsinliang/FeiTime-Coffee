@@ -37,11 +37,8 @@
     "@vue/tsconfig": "^0.8.1",
     "autoprefixer": "^10.4.22",
     "eslint": "^9.39.1",
-<<<<<<< HEAD
     "eslint-plugin-storybook": "^10.1.11",
     "jsdom": "^27.4.0",
-=======
->>>>>>> main
     "playwright": "^1.57.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.18",

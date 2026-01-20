@@ -116,11 +116,13 @@
 
   // 檢測是否為桌面裝置（有精準的指標裝置）
   const checkIsDesktop = () => {
-    // 使用 matchMedia 檢測是否有精準指標（滑鼠）
-    // pointer: fine 表示有精準指標裝置（滑鼠）
-    // pointer: coarse 表示觸控裝置
-    const hasPointer = window.matchMedia('(pointer: fine)').matches;
-    return hasPointer;
+    // 改進：使用 any-pointer: fine 以支援像 Surface Pro 這種混合裝置
+    // 或是如果檢測不到，則用 User Agent 判斷非行動裝置也視為桌機
+    const hasFine = window.matchMedia('(any-pointer: fine)').matches;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // 只要有精細指標，或者"不是"行動裝置，都算桌機 (Surface Pro 通常 matchMedia 結果不穩，但 UA 是 Windows)
+    return hasFine || !isMobile;
   };
 
   onMounted(() => {
@@ -130,7 +132,20 @@
     if (isDesktop.value) {
       window.addEventListener('mousemove', updateMouse);
       window.addEventListener('mouseover', handleOver);
+      
+      // 強制隱藏原生游標
       document.documentElement.style.cursor = 'none';
+      document.body.style.cursor = 'none';
+      
+      // 額外加強：對所有元素強制繼承 cursor: none
+      const style = document.createElement('style');
+      style.id = 'cursor-style';
+      style.innerHTML = `
+        * {
+          cursor: none !important;
+        }
+      `;
+      document.head.appendChild(style);
     }
   });
 
@@ -138,7 +153,13 @@
     if (isDesktop.value) {
       window.removeEventListener('mousemove', updateMouse);
       window.removeEventListener('mouseover', handleOver);
-      document.documentElement.style.cursor = 'auto';
+      
+      // 復原
+      document.documentElement.style.cursor = '';
+      document.body.style.cursor = '';
+      
+      const style = document.getElementById('cursor-style');
+      if (style) style.remove();
     }
   });
 </script>
@@ -232,12 +253,12 @@
     }
   }
 
-  /* 核心：徹底隱藏原生，但不影響 JS 偵測 */
-  :global(*) {
+  /* 移除靜態的全域隱藏，改由 JS 控制 */
+  /* :global(*) {
     cursor: none !important;
-  }
+  } */
   :global(a),
   :global(button) {
-    cursor: none !important;
+    cursor: inherit; /* 改為繼承，讓 style.cursor 生效 */
   }
 </style>

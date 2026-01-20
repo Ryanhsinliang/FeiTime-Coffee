@@ -136,15 +136,14 @@
   // 黑膠旋轉動畫
   // ============================================
   const rotateVinyl = () => {
-    // 只有在播放且不在 loading 狀態時才旋轉
-    if (isPlaying.value && !musicLoading.value) {
+    if (isPlaying.value) {
       vinylRotation.value = (vinylRotation.value + 0.5) % 360;
       animationFrameId = requestAnimationFrame(rotateVinyl);
     }
   };
 
   watch(isPlaying, (newValue) => {
-    if (newValue && !musicLoading.value) {
+    if (newValue) {
       if (!animationFrameId) {
         rotateVinyl();
       }
@@ -156,46 +155,30 @@
     }
   });
 
-  // 監聽 musicLoading 變化，確保 loading 時停止旋轉
-  watch(musicLoading, (newValue) => {
-    if (newValue && animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
-    } else if (!newValue && isPlaying.value && !animationFrameId) {
-      rotateVinyl();
-    }
-  });
-
   // ============================================
-  // 播放進度檢查 - 檢測快進/後退並調整黑膠角度
+  // 播放進度檢查
   // ============================================
   const checkPlaybackProgress = () => {
     if (!youtubePlayer || !youtubePlayer.getCurrentTime) return;
 
     try {
       const currentTime = youtubePlayer.getCurrentTime();
+      const duration = youtubePlayer.getDuration();
 
-      if (currentTime && lastPlaybackTime.value > 0) {
-        // 計算時間差（秒）
-        const timeDiff = currentTime - lastPlaybackTime.value;
+      if (currentTime && duration && currentTime !== lastPlaybackTime.value) {
+        const timeDiff = Math.abs(currentTime - lastPlaybackTime.value);
 
-        // 如果時間差大於 1.5 秒（考慮到 500ms 檢查間隔），認為是快進/後退
-        if (Math.abs(timeDiff) > 1.5) {
-          // 根據時間差計算角度變化
-          // 設定：1 秒 = 36 度（可以調整這個比例來改變轉動幅度）
-          const angleDelta = timeDiff * 36;
+        if (timeDiff > 2) {
+          const rotationPerSecond = 30;
+          const angleDiff = timeDiff * rotationPerSecond;
 
-          // 調整黑膠角度 - 確保結果始終為正數（0-359）
-          vinylRotation.value = (((vinylRotation.value + angleDelta) % 360) + 360) % 360;
-
-          console.log(
-            `⏩ Time jump detected: ${timeDiff.toFixed(2)}s, rotating: ${angleDelta.toFixed(0)}°`
-          );
+          if (currentTime > lastPlaybackTime.value) {
+            vinylRotation.value = (vinylRotation.value + angleDiff) % 360;
+          } else {
+            vinylRotation.value = (vinylRotation.value - angleDiff + 360) % 360;
+          }
         }
-      }
 
-      // 更新時間記錄
-      if (currentTime) {
         lastPlaybackTime.value = currentTime;
       }
     } catch (err) {
@@ -535,6 +518,58 @@
         <!-- Vinyl Record -->
         <div class="flex-shrink-0 flex items-center justify-center relative p-8 lg:p-12">
           <div class="relative animate-float">
+            <!-- 液體容器層 - 獨立於旋轉之外，始終固定 -->
+            <div
+              class="liquid-container absolute rounded-full overflow-hidden pointer-events-none w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] lg:w-[280px] lg:h-[280px]"
+              :class="{ 'liquid-container-active': isPlaying }"
+            >
+              <!-- 液體本體 -->
+              <div class="liquid-body">
+                <!-- 液體表面波動 -->
+                <svg class="liquid-wave" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="liquidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop
+                        offset="0%"
+                        style="stop-color: rgba(162, 175, 155, 0.7); stop-opacity: 1"
+                      />
+                      <stop
+                        offset="50%"
+                        style="stop-color: rgba(182, 195, 175, 0.6); stop-opacity: 1"
+                      />
+                      <stop
+                        offset="100%"
+                        style="stop-color: rgba(139, 158, 135, 0.8); stop-opacity: 1"
+                      />
+                    </linearGradient>
+                  </defs>
+
+                  <!-- 液體主體 -->
+                  <path
+                    class="wave-path wave-back"
+                    d="M0,150 Q75,130 150,150 T300,150 L300,300 L0,300 Z"
+                    fill="url(#liquidGradient)"
+                    opacity="0.6"
+                  />
+                  <path
+                    class="wave-path wave-front"
+                    d="M0,150 Q75,170 150,150 T300,150 L300,300 L0,300 Z"
+                    fill="url(#liquidGradient)"
+                    opacity="0.8"
+                  />
+                </svg>
+
+                <!-- 液體光澤 -->
+                <div class="liquid-shine"></div>
+
+                <!-- 液體氣泡 -->
+                <div class="bubble bubble-1"></div>
+                <div class="bubble bubble-2"></div>
+                <div class="bubble bubble-3"></div>
+              </div>
+            </div>
+
+            <!-- 黑膠碟片層 - 可旋轉 -->
             <div
               class="vinyl-disc relative w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] lg:w-[280px] lg:h-[280px] rounded-full shadow-[0_25px_60px_rgba(162,175,155,0.5)] border-[3px] border-[#A2AF9B]/40 flex items-center justify-center overflow-hidden bg-white/10 backdrop-blur-sm"
               :style="{ transform: `rotate(${vinylRotation}deg)` }"
@@ -543,57 +578,6 @@
               <div
                 class="absolute inset-0 rounded-full bg-gradient-to-br from-[#E8F5E9]/30 via-transparent to-[#C8D6C5]/20"
               ></div>
-
-              <!-- 液體容器 - 保持靜止不旋轉 -->
-              <div
-                class="liquid-container absolute inset-0 rounded-full overflow-hidden"
-                :class="{ 'liquid-container-active': isPlaying }"
-              >
-                <!-- 液體本體 -->
-                <div class="liquid-body">
-                  <!-- 液體表面波動 -->
-                  <svg class="liquid-wave" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      <linearGradient id="liquidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop
-                          offset="0%"
-                          style="stop-color: rgba(162, 175, 155, 0.7); stop-opacity: 1"
-                        />
-                        <stop
-                          offset="50%"
-                          style="stop-color: rgba(182, 195, 175, 0.6); stop-opacity: 1"
-                        />
-                        <stop
-                          offset="100%"
-                          style="stop-color: rgba(139, 158, 135, 0.8); stop-opacity: 1"
-                        />
-                      </linearGradient>
-                    </defs>
-
-                    <!-- 液體主體 -->
-                    <path
-                      class="wave-path wave-back"
-                      d="M0,150 Q75,130 150,150 T300,150 L300,300 L0,300 Z"
-                      fill="url(#liquidGradient)"
-                      opacity="0.6"
-                    />
-                    <path
-                      class="wave-path wave-front"
-                      d="M0,150 Q75,170 150,150 T300,150 L300,300 L0,300 Z"
-                      fill="url(#liquidGradient)"
-                      opacity="0.8"
-                    />
-                  </svg>
-
-                  <!-- 液體光澤 -->
-                  <div class="liquid-shine"></div>
-
-                  <!-- 液體氣泡 -->
-                  <div class="bubble bubble-1"></div>
-                  <div class="bubble bubble-2"></div>
-                  <div class="bubble bubble-3"></div>
-                </div>
-              </div>
 
               <!-- FeiTime 環繞文字 -->
               <div class="absolute inset-0 pointer-events-none">
@@ -770,10 +754,16 @@
                 class="w-10 h-10 rounded-full bg-sage flex-shrink-0 flex items-center justify-center text-white shadow-md relative"
               >
                 <span
-                  v-if="!musicError"
+                  v-if="!musicError && !musicLoading"
                   class="absolute inset-0 rounded-full bg-sage animate-ping opacity-20"
                 ></span>
-                <img :src="feiDJ" class="w-6 h-6 object-contain" alt="Fei DJ" />
+                <img
+                  v-if="!musicError && !musicLoading"
+                  :src="feiDJ"
+                  class="w-6 h-6 object-contain"
+                  alt="Fei DJ"
+                />
+                <span v-else class="material-symbols-outlined text-xl text-[#171412]">error</span>
               </div>
               <div class="flex flex-col min-w-0 flex-1">
                 <div class="flex items-center gap-2">
@@ -782,15 +772,9 @@
                   >
                     FEI DJ
                   </span>
-                  <!-- 修復1&2：狀態指示器 - 紅色=未播放/暫停，黃色=loading，綠色=播放中 -->
                   <span
-                    v-if="!musicError"
-                    class="w-1.5 h-1.5 rounded-full animate-pulse"
-                    :class="{
-                      'bg-red-500': !isPlaying && !musicLoading,
-                      'bg-yellow-500': musicLoading,
-                      'bg-green-500': isPlaying && !musicLoading,
-                    }"
+                    v-if="!musicError && !musicLoading"
+                    class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"
                   ></span>
                 </div>
                 <span class="text-sm font-bold text-[#171412] leading-tight truncate">
@@ -880,11 +864,7 @@
     opacity: 0.8;
   }
 
-  /* 液體容器 */
-  .liquid-container {
-    transition: transform 0.1s linear;
-    transform-origin: center center;
-  }
+  /* 液體容器 - 始終固定不旋轉，不再需要額外樣式 */
 
   .liquid-body {
     position: absolute;

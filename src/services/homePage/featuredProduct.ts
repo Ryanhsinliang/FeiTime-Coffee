@@ -1,7 +1,8 @@
 import api from '@/services/api';
 
 export interface Product {
-  id: number;
+  id: number; // Strapi 內部 ID
+  pid: number; // 產品業務 ID（用於路由）
   name: string;
   price: number;
   flavor_type?: string;

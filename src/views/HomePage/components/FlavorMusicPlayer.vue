@@ -527,11 +527,10 @@
                 class="absolute inset-0 rounded-full bg-gradient-to-br from-[#E8F5E9]/30 via-transparent to-[#C8D6C5]/20"
               ></div>
 
-              <!-- 液體容器 - 反向旋轉保持水平 -->
+              <!-- 液體容器 - 保持靜止不旋轉 -->
               <div
                 class="liquid-container absolute inset-0 rounded-full overflow-hidden"
                 :class="{ 'liquid-container-active': isPlaying }"
-                :style="{ transform: `rotate(-${vinylRotation}deg)` }"
               >
                 <!-- 液體本體 -->
                 <div class="liquid-body">

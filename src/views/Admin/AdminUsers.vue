@@ -141,7 +141,10 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">每頁 20 筆 / 共 {{ filteredUsers.length }} 筆</p>
+        <p class="text-sm">共 {{ filteredUsers.length }} 筆</p>
+
+        <!-- 待修改 -->
+        <!-- <p class="text-sm">每頁 20 筆 / 共 {{ filteredUsers.length }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button
@@ -164,7 +167,7 @@
           <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
             <i class="fa-solid fa-chevron-right text-sm"></i>
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </main>

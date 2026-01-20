@@ -81,7 +81,7 @@
             <th class="py-4 px-6 text-xs font-bold text-center">價格</th>
             <th class="py-4 px-6 text-xs font-bold text-center">庫存量</th>
             <th class="py-4 px-6 text-xs font-bold text-center">庫存狀態</th>
-            <th class="py-4 px-6 text-xs font-bold text-center">操作</th>
+            <!-- <th class="py-4 px-6 text-xs font-bold text-center">操作</th> -->
           </tr>
         </thead>
 
@@ -133,16 +133,16 @@
               </p>
             </td>
 
-            <td class="py-4 px-6 text-right flex justify-center gap-5">
-              <!-- <button type="button">
+            <!-- <td class="py-4 px-6 text-right flex justify-center gap-5">
+              <button type="button">
                 <span class="material-symbols-outlined text-[20px] hover:text-[#9a704c]">
                   visibility
                 </span>
-              </button> -->
+              </button>
               <button type="button">
                 <span class="material-symbols-outlined text-[20px] hover:text-[#9a704c]">edit</span>
               </button>
-            </td>
+            </td> -->
           </tr>
         </tbody>
       </table>
@@ -150,7 +150,10 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">每頁 20 筆 / 共 {{ filteredProducts.length }} 筆</p>
+        <p class="text-sm">共 {{ filteredProducts.length }} 筆</p>
+
+        <!-- 待修改 -->
+        <!-- <p class="text-sm">每頁 20 筆 / 共 {{ filteredProducts.length }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button
@@ -173,7 +176,7 @@
           <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
             <i class="fa-solid fa-chevron-right text-sm"></i>
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </main>

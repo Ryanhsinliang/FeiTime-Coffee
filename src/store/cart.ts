@@ -237,27 +237,60 @@ export const useCartStore = defineStore('cart', () => {
                     item.quantity = quantity;
                 }
 
-                if (authStore.isLoggedIn && item.strapiDocumentId) {
-                    try {
-                        console.log('📝 Updating Strapi quantity:', item.strapiDocumentId, 'to', item.quantity);
-                        const res = await fetch(`${API_BASE_URL}/api/cart/${item.strapiDocumentId}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
+                if (authStore.isLoggedIn && authStore.user?.id) {
+                    if (item.strapiDocumentId) {
+                        // 有 strapiDocumentId，直接 PUT 更新
+                        try {
+                            console.log('📝 Updating Strapi quantity:', item.strapiDocumentId, 'to', item.quantity);
+                            const res = await fetch(`${API_BASE_URL}/api/cart/${item.strapiDocumentId}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    quantity: item.quantity,
+                                    item_total: item.price * item.quantity
+                                })
+                            });
+                            if (res.ok) {
+                                console.log('✅ Update success');
+                            } else {
+                                console.error('❌ Update failed:', await res.json());
+                            }
+                        } catch (error) {
+                            console.error('Failed to update quantity via Express:', error);
+                        }
+                    } else {
+                        // 沒有 strapiDocumentId，先 POST 新增到 Strapi
+                        console.log('📝 Item has no strapiDocumentId, creating in Strapi first...');
+                        try {
+                            const payload = {
+                                user: authStore.user.documentId || authStore.user.id,
+                                product: item.id, // 使用商品 ID
+                                snapshot_name: item.name,
+                                snapshot_price: item.price,
+                                snapshot_image: item.image || '',
+                                snapshot_weight: item.weight || '半磅',
                                 quantity: item.quantity,
                                 item_total: item.price * item.quantity
-                            })
-                        });
-                        if (res.ok) {
-                            console.log('✅ Update success');
-                        } else {
-                            console.error('❌ Update failed:', await res.json());
+                            };
+                            console.log('🛒 Creating cart item with payload:', payload);
+
+                            const response = await fetch(`${API_BASE_URL}/api/cart`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(payload)
+                            });
+
+                            if (response.ok) {
+                                const strapiData = await response.json();
+                                item.strapiDocumentId = strapiData.documentId;
+                                console.log('✅ Created in Strapi, documentId:', strapiData.documentId);
+                            } else {
+                                console.error('❌ Failed to create in Strapi:', await response.json());
+                            }
+                        } catch (error) {
+                            console.error('Failed to create cart item in Strapi:', error);
                         }
-                    } catch (error) {
-                        console.error('Failed to update quantity via Express:', error);
                     }
-                } else if (authStore.isLoggedIn && item) {
-                    console.warn('⚠️ Item has no strapiDocumentId, cannot update in Strapi:', item);
                 }
             }
         }

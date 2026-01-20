@@ -50,7 +50,7 @@
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
   import { orderList } from '@/store/order';
-  import { updateOrder, updateProduct } from '@/services/checkout';
+  import { updateOrder, updateProduct, productsGet } from '@/services/checkout';
 
   /*
       interface ProductRule {
@@ -116,7 +116,7 @@
       // 打put
       try {
         const res = await updateOrder(documentId, buyAfter);
-        console.log(res.data);
+        // console.log(res.data);
       } catch (err: any) {
         const errorDetail = err.response?.data?.detail || err.message;
         console.error('API 串接出錯：', errorDetail);
@@ -125,19 +125,73 @@
     }
   });
 
+  interface AllProductRule {
+    // 設定data規格
+    id: number;
+    pid: string;
+    name: string;
+    price: number;
+    origin: string;
+    img: any[];
+    popularity: number;
+    sweetness: number;
+    acidity: number;
+    body: number;
+    aftertaste: number;
+    clarity: number;
+    flavor_type: string;
+    roast: string;
+    stock: number;
+  }
+
+  interface LittleProductRule {
+    // 設定data規格
+    id: number;
+    pid: string;
+    name: string;
+    stock: number;
+  }
+
+  const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
+  // 從所有產品 抓出我要的資訊 組成一個小物件
+  const getNowStock = (id: number | string) => {
+    const findAPIproduct = productsNow.value.filter((obj) => {
+      return obj.id == id;
+    });
+    return Number(findAPIproduct[0].stock);
+  };
+
   const B = async () => {
+    // productsNow.value 打get 從所有產品 抓出我要的資訊[{},{},...]
+    try {
+      const res = await productsGet(); // 能抓到所有產品
+      productsNow.value = res.map((obj: AllProductRule) => {
+        return {
+          id: obj.id,
+          pid: obj.pid,
+          name: obj.name,
+          stock: Number(obj.stock),
+        };
+      });
+    } catch (err: any) {
+      const errorDetail = err.response?.data?.detail || err.message;
+      console.error('API 串接出錯：', errorDetail);
+      throw err;
+    }
+
+    console.log('買的東西 要扣的數量 pinia提供');
     console.log(buyProducts.value); // 完整的 訂購的 產品資料
     // 要扣庫存的資料
-    const changeData = buyProducts.value.map((obj) => {
-      return {
-        id: obj.pid,
-        quantity: obj.quantity,
-      };
-    });
-    console.log(changeData);
-    // const productId = '751'; // 先用假資料
-    // const cost = 3;
-    // await updateProduct(productId, cost);
+
+    console.log('所有產品簡化資料 打API來的');
+    console.log(productsNow.value);
+
+    console.log('這個id 現在資料庫的庫存');
+    console.log(getNowStock(751));
+
+    const productId = '751'; // 先用假資料
+
+    /*await updateProduct(productId, cost);*/
   };
 </script>
 

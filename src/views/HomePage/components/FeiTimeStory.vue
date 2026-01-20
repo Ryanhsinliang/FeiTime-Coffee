@@ -203,7 +203,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
               <!-- 咖啡沖煮模擬器 - 液態氣泡 -->
               <router-link
-                to="/coffeeLabT1-T"
+                to="/UltraCoffeeSimulator"
                 class="bubble-button-container group"
                 @mouseenter="isBrewingHovered = true"
                 @mouseleave="isBrewingHovered = false"

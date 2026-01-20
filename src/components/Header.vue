@@ -143,7 +143,7 @@
       name: 'CoffeeSimulator',
       zh: '咖啡沖煮模擬器',
       max: '咖啡沖煮模擬器',
-      to: '/coffeeLabT1-T-P1',
+      to: '/UltraCoffeeSimulator',
     },
   ];
 

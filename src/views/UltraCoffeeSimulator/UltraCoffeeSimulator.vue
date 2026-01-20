@@ -3,7 +3,24 @@
 
 
     <main class="flex-grow flex flex-col items-center w-full px-6 md:px-12 lg:pr-[560px] py-12">
-      <div class="max-w-[1400px] w-full">
+      <!-- Error Boundary Display -->
+      <div v-if="error" class="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+        <div class="bg-red-50 border border-red-200 text-red-800 p-8 rounded-xl shadow-xl max-w-2xl w-full mx-4">
+          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined">warning</span>
+            Rendering Error
+          </h2>
+          <p class="font-mono text-sm bg-white p-4 rounded border border-red-100 overflow-auto max-h-60 mb-4">
+            {{ error.toString() }}
+          </p>
+          <p class="text-sm text-red-600">Please check the console for more details.</p>
+          <button @click="error = null" class="mt-6 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-lg transition-colors">
+            Dismiss
+          </button>
+        </div>
+      </div>
+
+      <div v-else class="max-w-[1400px] w-full">
         <!-- Main Content -->
         <div class="flex flex-col gap-24">
           
@@ -389,7 +406,9 @@
                         </div>
                     </div>
                     
-                     <button class="w-full mt-6 bg-[#2C3E2D] hover:bg-[#6B8E6B] text-white font-medium text-sm tracking-widest uppercase py-3 px-6 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-[#6B8E6B]/20 rounded-lg">
+                     <button 
+                      @click="startSimulation"
+                      class="w-full mt-6 bg-[#2C3E2D] hover:bg-[#6B8E6B] text-white font-medium text-sm tracking-widest uppercase py-3 px-6 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-[#6B8E6B]/20 rounded-lg">
                       開始模擬 (Start)
                       <span class="material-symbols-outlined text-sm">arrow_forward</span>
                     </button>
@@ -404,7 +423,7 @@
                   </div>
 
                    <!-- Flavor Prediction -->
-                  <div class="bg-white p-5 border border-[#E6EBE6] rounded-xl shadow-sm flex flex-col gap-6">
+                  <div ref="flavorPredictionRef" class="bg-white p-5 border border-[#E6EBE6] rounded-xl shadow-sm flex flex-col gap-6">
                       <h3 class="text-xs font-bold tracking-[0.2em] uppercase text-[#273c35] border-l-2 border-[#6B8E6B] pl-2">風味預測 (Prediction)</h3>
                        <div class="flex flex-col gap-6">
                         <FlavorRadar :scores="finalProfile" :label-map="labelMap" />
@@ -425,8 +444,10 @@
                    <!-- AI Assistant -->
                    <div class="bg-white p-5 border border-[#E6EBE6] rounded-xl shadow-sm flex flex-col gap-4">
                       <h3 class="text-xs font-bold tracking-[0.2em] uppercase text-[#273c35] flex items-center gap-2">
-                         <span class="material-symbols-outlined text-sm text-[#8FA98F]">smart_toy</span>
-                         AI 小助手
+                         <div class="size-5 text-[#8FA98F]">
+                           <CoffeeFairyIcon />
+                         </div>
+                         小精靈的點寧
                       </h3>
                       <div class="flex flex-wrap gap-2">
                          <button
@@ -480,27 +501,75 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onErrorCaptured, onMounted, computed } from 'vue';
+import FlavorRadar from '@/components/FlavorRadar.vue';
+import GeminiTestButton from '@/components/GeminiTestButton.vue';
+import CoffeeFairyIcon from '@/components/common/CoffeeFairyIcon.vue';
+import {
+  calculateSweetness,
+  calculateAcidity,
+  calculateClarity,
+  calculateBody,
+  calculateAftertaste
+// @ts-ignore
+} from '@/utils/brewLogic.js';
+
+const error = ref<any>(null);
+
+onErrorCaptured((err, instance, info) => {
+  console.error('UltraCoffeeSimulator Error:', err);
+  console.error('Info:', info);
+  error.value = err;
+  return false; // Stop propagation
+});
+
+console.log('Mounting UltraCoffeeSimulator setup...');
+
+onMounted(() => {
+  console.log('UltraCoffeeSimulator mounted successfully');
+});
 
 // Options Data
+// Options Data
 const origins = [
+  // Africa
   {
     name: '衣索比亞 耶加雪菲 (Ethiopia Yirgacheffe)',
     tags: '明亮花香 (Bright & Floral)',
     desc: '以茶感醇厚度與複雜柑橘調性聞名。 (Known for its tea-like body and complex citrus notes.)',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCyVaxwV2ge2M6RLpTjAwtGuORx9laP7jCc_s2xqKYzBrUm7wXAKKYuyBTJFZYv-jxouPs9_t2GpqfJ-J0uBTL7Jwd-3OLvWY_M6J5iV3_9Se1C4My-2irByIvbOuBeZt8vhC32Qb5rXTzmgf6K_v_pHY1vyxuW99jJyc0CYojmqJGNkwk5KYLKhQ5cGXOh84FRhv6CBZhf8FBnd_lEPy8sti-Q2rXqXwMCQRqx7XtCIg_8rz4E_aaO2EzH-dT0dPeNYkL5OnZA_rLt'
+    image: 'https://images.unsplash.com/photo-1611162458324-aeff82ac49bd?q=80&w=600&auto=format&fit=crop' // Coffee drying
   },
+  {
+    name: '肯亞 AA (Kenya AA)',
+    tags: '莓果酒香 (Berry & Wine-like)',
+    desc: '具有鮮明的黑醋栗與梅子酸感，口感紮實。 (Distinct blackcurrant acidity and full body.)',
+    image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=600&auto=format&fit=crop' // Coffee cherries
+  },
+  // Americas
   {
     name: '哥倫比亞 惠蘭 (Colombia Huila)',
     tags: '焦糖堅果 (Caramel & Nutty)',
     desc: '均衡醇厚度，帶有甜美焦糖底蘊。 (Balanced body with sweet caramel undertones.)',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBHbm_nZwqTouOlXAh3cV8cgdepIAWcF6JcHjPazB5HGV4K4_9tXt4pyiEIZS0lbxXlqVmjOjdNEX2g0icX3B3yrFh0EaRAvjDlU9xCl8WFjpukvnJ4vnUrw3KaXgr5YYHLl8-lFjnmdId6gj1XN_RAqTyCcOWiDR-4qvjWkUZAgYd5W1OnFKoX6AHKQiqbwqYR102pZvJ8MERbLddD6za5ncOPASXH43jWxv3Y1_pHi74fdVNO4zJwEBxcMVPFekxLH2HqNObhkoYL'
+    image: 'https://images.unsplash.com/photo-1559525839-8f897d5a0c12?q=80&w=600&auto=format&fit=crop' // Coffee plant
   },
   {
     name: '巴西 喜拉朵 (Brazil Cerrado)',
     tags: '巧克力厚實 (Chocolate & Heavy)',
     desc: '低酸度，帶有奶油巧克力般的口感。 (Low acidity with a creamy, chocolaty mouthfeel.)',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBg3zIpBNrmvK2nr73bXsN85bC8oAQE8G3KIx_3gfAm9eo9v8qkrO-NRcuM4IMmnGCAeFyNac19oVgVOuioy2g8ONsMr7x6edDQSb7fG8Fns4sYZtVAWszE0vchIG3DMDOqFRx5cC9aAYY6Nlbsx5BXt78hiSP1IM5hIMoHg9AFIDZ9PWOLNqTFHuhG9YfUXkxDjmU2aUkXPq_5LN4qRNGH_isqN_yeNEqtSWsoc8rqaIWdNzw3TRqpFjyrLY_86vKkyqnT1TiLzH7a'
+    image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=600&auto=format&fit=crop' // Roasted beans
+  },
+  {
+    name: '巴拿馬 藝伎 (Panama Geisha)',
+    tags: '極致花韻 (Jasmine & Tea-like)',
+    desc: '如香水般的茉莉花香與精緻果韻，頂級享受。 (Perfume-like jasmine aroma and delicate fruit notes.)',
+    image: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=600&auto=format&fit=crop' // Coffee detail
+  },
+  // Asia
+  {
+    name: '印尼 蘇門答臘 (Indonesia Sumatra)',
+    tags: '草本厚實 (Earthy & Herbal)',
+    desc: '獨特的藥草香氣與極高的醇厚度，酸度極低。 (Unique herbal aroma, heavy body, very low acidity.)',
+    image: 'https://images.unsplash.com/photo-1552346988-7578cd953058?q=80&w=600&auto=format&fit=crop' // Green beans/process
   }
 ];
 
@@ -541,18 +610,6 @@ const pourStages = ref('1 段 (Stage)');
 // const isDrawerOpen = ref(false); // Removed
 
 // --- Logic Integration ---
-import FlavorRadar from '@/components/FlavorRadar.vue';
-import GeminiTestButton from '@/components/GeminiTestButton.vue';
-import CoffeeFairyIcon from '@/components/common/CoffeeFairyIcon.vue';
-import {
-  calculateSweetness,
-  calculateAcidity,
-  calculateClarity,
-  calculateBody,
-  calculateAftertaste
-// @ts-ignore
-} from '@/utils/brewLogic.js';
-import { computed } from 'vue';
 
 // 1. Parameter Mapping
 // Map UI text to brewLogic numbers
@@ -581,7 +638,7 @@ const poursValue = computed(() => {
    return match ? parseInt(match[1]) : 3;
 });
 
-// Create config object for brewLogic
+// Create config object for brewLogic (即時選擇)
 const config = computed(() => ({
   roastLevel: roastValue.value,
   ratio: ratioValue.value,
@@ -593,14 +650,54 @@ const config = computed(() => ({
   coffeeDose: 20 // Default
 }));
 
-// 2. Flavor Calculations
-const finalProfile = computed<Record<string, number>>(() => ({
-  Sweetness: calculateSweetness(config.value),
-  Acidity: calculateAcidity(config.value),
-  Clarity: calculateClarity(config.value),
-  Body: calculateBody(config.value),
-  Aftertaste: calculateAftertaste(config.value)
-}));
+// 已確認的設定 (按下開始模擬後才更新)
+const hasSimulated = ref(false);
+const confirmedConfig = ref({
+  roastLevel: 0,
+  ratio: 16,
+  brewTimeSec: 165,
+  grindLevel: 0,
+  pours: 3,
+  bloomTimeSec: 30,
+  waterTempC: 92,
+  coffeeDose: 20
+});
+
+// 滾動目標 Ref
+const flavorPredictionRef = ref<HTMLElement | null>(null);
+
+// 開始模擬 - 將當前選擇套用到已確認設定
+function startSimulation() {
+  confirmedConfig.value = { ...config.value };
+  hasSimulated.value = true;
+  
+  // 自動滾動到風味預測區塊
+  setTimeout(() => {
+    flavorPredictionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+// 2. Flavor Calculations (使用已確認的設定)
+const finalProfile = computed<Record<string, number>>(() => {
+  if (!hasSimulated.value) {
+    // 初始狀態：顯示預設中性值
+    return {
+      Sweetness: 2.5,
+      Acidity: 2.5,
+      Clarity: 2.5,
+      Body: 2.5,
+      Aftertaste: 2.5
+    };
+  }
+  // 已按下開始模擬：使用已確認的設定計算
+  return {
+    Sweetness: calculateSweetness(confirmedConfig.value),
+    Acidity: calculateAcidity(confirmedConfig.value),
+    Clarity: calculateClarity(confirmedConfig.value),
+    Body: calculateBody(confirmedConfig.value),
+    Aftertaste: calculateAftertaste(confirmedConfig.value)
+  };
+});
 
 const flavorKeys = ['Sweetness', 'Acidity', 'Clarity', 'Body', 'Aftertaste'];
 const flavorEntries = computed(() =>

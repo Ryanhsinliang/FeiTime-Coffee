@@ -8,6 +8,7 @@ import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
 import CoffeeIdTestCard from '@/views/CoffeeIdTest/CoffeeIdTestCard.vue';
 import CoffeeSimulatorT1T from '@/views/CoffeeLabT1-T/CoffeeSimulatorT1T.vue';
 import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.vue';
+import UltraCoffeeSimulator from '@/views/UltraCoffeeSimulator/UltraCoffeeSimulator.vue';
 import Login from '@/views/Login/Login.vue';
 import Register from '@/views/Register/Register.vue';
 import Member from '@/views/Member/Member.vue';
@@ -62,6 +63,11 @@ const routes = [
         path: '/coffeeLabT1-T-P1',
         name: 'CoffeeLabT1-T-P1',
         component: CoffeeSimulatorT1TP1,
+    },
+    {
+        path: '/UltraCoffeeSimulator',
+        name: 'UltraCoffeeSimulator',
+        component: UltraCoffeeSimulator,
     },
     {
         path: '/login',

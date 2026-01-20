@@ -214,8 +214,6 @@
       </div>
     </form>
   </main>
-
-  <div @click="C" class="text-[48px] bg-[#ffb8f4]">測試庫存</div>
 </template>
 
 <script setup lang="ts">
@@ -252,7 +250,7 @@
   }
 
   interface GivePiniaRule {
-    pid: string;
+    pid: number;
     quantity: number;
     snapshot_name: string;
     snapshot_price: number;
@@ -343,6 +341,47 @@
     }
   };
 
+  // 【 檢查庫存 】
+  interface AllProductRule {
+    // 設定data規格
+    id: number;
+    pid: string;
+    name: string;
+    price: number;
+    origin: string;
+    img: any[];
+    popularity: number;
+    sweetness: number;
+    acidity: number;
+    body: number;
+    aftertaste: number;
+    clarity: number;
+    flavor_type: string;
+    roast: string;
+    stock: number;
+  }
+
+  interface LittleProductRule {
+    // 設定data規格
+    id: number;
+    pid: string;
+    name: string;
+    stock: number;
+  }
+  const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
+
+  // 判斷庫存的函數
+  const stockHave = (id: number, quantity: number, jsonArr: LittleProductRule[]) => {
+    const buy = jsonArr.filter((obj: LittleProductRule) => {
+      return obj.id == id;
+    });
+    if (quantity <= Number(buy[0].stock)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   // 給 後端 > DB 的訂單資料
   const form = reactive({
     order_items: postProducts.value,
@@ -384,6 +423,37 @@
       alert('購物車是空的');
       return;
     }
+
+    // productsNow.value 打get 從所有產品 抓出我要的資訊[{},{},...]
+    try {
+      const res = await productsGet(); // 能抓到所有產品
+
+      // 從所有產品 抓出我要的資訊 組成一個小物件
+      productsNow.value = res.map((obj: AllProductRule) => {
+        return {
+          id: obj.id,
+          pid: obj.pid,
+          name: obj.name,
+          stock: Number(obj.stock),
+        };
+      });
+    } catch (err: any) {
+      const errorDetail = err.response?.data?.detail || err.message;
+      console.error('API 串接出錯：', errorDetail);
+      throw err;
+    }
+
+    // 檢查庫存
+    for (let i = 0; i < postProducts.value.length; i++) {
+      if (
+        stockHave(postProducts.value[i].pid, postProducts.value[i].quantity, productsNow.value) ==
+        false
+      ) {
+        alert('庫存不足');
+        return;
+      }
+    }
+
     try {
       const result = await formGoPost(form);
       console.log('訂單建立成功');
@@ -405,69 +475,6 @@
 
       router.push('/payment-cancel');
     }
-  };
-
-  // 檢查庫存
-  interface AllProductRule {
-    // 設定data規格
-    id: number;
-    pid: string;
-    name: string;
-    price: number;
-    origin: string;
-    img: any[];
-    popularity: number;
-    sweetness: number;
-    acidity: number;
-    body: number;
-    aftertaste: number;
-    clarity: number;
-    flavor_type: string;
-    roast: string;
-    stock: number;
-  }
-
-  interface LittleProductRule {
-    // 設定data規格
-    id: number;
-    pid: string;
-    name: string;
-    stock: number;
-  }
-  const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
-
-  // 判斷庫存的函數
-  const stockHave = (id: number, quantity: number, jsonArr: LittleProductRule[]) => {
-    const buy = jsonArr.filter((obj: LittleProductRule) => {
-      return obj.id == id;
-    });
-    if (quantity <= Number(buy[0].stock)) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const C = async () => {
-    try {
-      const res = await productsGet(); // 能抓到所有產品
-
-      // 所有產品 抓出我要的資訊 組成一個小物件
-      productsNow.value = res.map((obj: AllProductRule) => {
-        return {
-          id: obj.id,
-          pid: obj.pid,
-          name: obj.name,
-          stock: Number(obj.stock),
-        };
-      });
-    } catch (err: any) {
-      const errorDetail = err.response?.data?.detail || err.message;
-      console.error('API 串接出錯：', errorDetail);
-      throw err;
-    }
-
-    console.log(stockHave(789, 190, productsNow.value));
   };
 </script>
 

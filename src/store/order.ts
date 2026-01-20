@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
 interface ProductRule {
-  pid: string;
+  pid: number;
   quantity: number;
   snapshot_name: string;
   snapshot_price: number;

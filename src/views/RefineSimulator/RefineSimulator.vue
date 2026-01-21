@@ -154,8 +154,8 @@ let lastLogTime = 0;
             }
         } catch (e: any) {
             console.error("AI Coach Error (fetchAiAdvice):", e);
-            aiAdvice.action = "連線錯誤";
-            aiAdvice.reason = "無法取得建議";
+            aiAdvice.action = "嘿嘿嘿";
+            aiAdvice.reason = "別著急 請耐心";
         } finally {
             isAiLoading.value = false;
         }

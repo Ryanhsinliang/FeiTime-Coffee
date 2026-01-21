@@ -44,11 +44,10 @@
       </router-link>
     </div>
   </div>
-  <div @click="F" class="text-[48px] bg-[#ff0000]">測試delete</div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted, onUnmounted } from 'vue';
   import { orderList } from '@/store/order';
   import {
     updateOrder,
@@ -131,6 +130,7 @@
   }
 
   const piniaGet = orderList();
+  const reset = orderList().orderReset;
   const orderThing = computed(() => piniaGet.orderThing); // 從 pinia 抓 訂單訊息
   const buyProducts = computed(() => piniaGet.buyProducts); // 從 pinia 抓 剛剛買的產品 的訊息
   const taiwanTime = ref('');
@@ -149,7 +149,6 @@
   };
 
   onMounted(async () => {
-    return;
     if (orderThing.value) {
       // 把pinia時間 轉成臺灣時區 + 常人閱讀格式
       taiwanTime.value = new Date(orderThing.value.createdAt).toLocaleString('zh-TW', {
@@ -245,40 +244,42 @@
           throw err;
         }
       }
+
+      const userId = 26; // 假參數 之後用user.id 到時候把參數放進()
+      // 刪除所有這個id的購物車
+      try {
+        const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列
+
+        idCart.value = cartData.filter((obj: CartRule) => {
+          if (Number(obj?.user?.id)) {
+            return obj.user.id == userId;
+          }
+        });
+      } catch (err: any) {
+        const errorDetail = err.response?.data?.detail || err.message;
+        console.error('API 串接出錯：', errorDetail);
+        throw err;
+      }
+
+      for (let i = 0; i < idCart.value.length; i++) {
+        try {
+          const deleteRes = await deleteCart(idCart.value[i].documentId);
+          console.log(`第${i + 1}筆購物車刪除成功`);
+          // console.log(deleteRes);
+        } catch (err: any) {
+          const errorDetail = err.response?.data?.detail || err.message;
+          console.log(`第${i + 1}筆購物車刪除失敗`);
+          console.error('delete串接出錯：', errorDetail);
+          throw err;
+        }
+      }
     }
   });
 
-  const F = async () => {
-    const userId = 26; // 假參數 之後用user.id 到時候把參數放進()
-
-    try {
-      const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列
-
-      idCart.value = cartData.filter((obj: CartRule) => {
-        if (Number(obj?.user?.id)) {
-          return obj.user.id == userId;
-        }
-      });
-    } catch (err: any) {
-      const errorDetail = err.response?.data?.detail || err.message;
-      console.error('API 串接出錯：', errorDetail);
-      throw err;
-    }
-    console.log(idCart.value);
-    // console.log(idCart.value[0].id);
-    // console.log(idCart.value[0].documentId);
-    // return;
-
-    try {
-      const deleteRes = await deleteCart('mdx28fzyif66g0y1mbnkt9ty');
-      console.log(`刪除成功`);
-      console.log(deleteRes);
-    } catch (err: any) {
-      const errorDetail = err.response?.data?.detail || err.message;
-      console.error('delete串接出錯：', errorDetail);
-      throw err;
-    }
-  };
+  // 清空pinia
+  onUnmounted(() => {
+    reset();
+  });
 </script>
 
 <style>

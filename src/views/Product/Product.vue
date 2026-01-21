@@ -14,8 +14,14 @@
       <!-- 【 2 】 左側篩選選單 -->
       <nav
         :class="have"
-        class="px-[24px] w-[80%] md:w-[25%] lg:w-[25%] my-[24px] absolute md:static lg:static z-[2] bg-[--main-color]"
+        class="px-[24px] w-[80%] md:w-[25%] lg:w-[25%] my-[24px] absolute md:static lg:static z-[2] bg-[--main-color] shadow-2xl md:shadow-none lg:md:shadow-none"
       >
+        <div
+          class="px-[8px] py-[4px] my-[12px] bg-[--soft-brown] text-right inline-block text-[20px] rounded-[8px]"
+          @click="(getcoffee({}), reset())"
+        >
+          清空
+        </div>
         <!-- 焙度 -->
         <div>
           <h3 class="text-[24px] font-[600]">焙度</h3>
@@ -542,6 +548,7 @@
             </div>
           </router-link>
           <!-- 產品卡片結束 -->
+          <div v-show="cannotFind">查無商品，請確認關鍵字</div>
         </div>
       </main>
     </div>
@@ -562,17 +569,17 @@
   const addToCart = cartStore.addItem;
 
   // 手機板 側邊選單開關
-  const he = ref(true); // 定義 true 為【 < 】
-  const navHe = ref('rotate-[270deg] left-[calc(80%-24px)]'); // 初始【 < 】
-  const have = ref('block md:block lg:block');
+  const he = ref(true); // 定義 true 為【 > 】
+  const navHe = ref('rotate-90 left-[8px] top-[250px]'); // 初始【 > 】
+  const have = ref('hidden  md:block lg:block');
   const navSwitch = () => {
     he.value = !he.value;
     if (he.value) {
-      navHe.value = 'rotate-[270deg] left-[calc(80%-24px)]'; //【 < 】
-      have.value = 'block md:block lg:block';
-    } else {
-      navHe.value = 'rotate-90 left-[8px] top-[250px]'; //【 > 】
+      navHe.value = 'rotate-90 left-[8px] top-[250px]'; //【 < 】
       have.value = 'hidden  md:block lg:block';
+    } else {
+      navHe.value = 'rotate-[270deg] left-[calc(80%-24px)]'; //【 > 】
+      have.value = 'block md:block lg:block';
     }
   };
 
@@ -620,6 +627,10 @@
       err.value = (error as Error).message;
       console.error('API 串接出錯：', error);
     }
+  };
+
+  const reset = () => {
+    findWord.value = '';
   };
 
   // 排序相關
@@ -711,6 +722,7 @@
     // 如果網址變了 (按了新按鈕)  要重新抓資料
     () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值
     () => {
+      cannotFind.value = false;
       first();
     },
     { immediate: true } // 載入頁面時 馬上執行一次來顯示全部產品

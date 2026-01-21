@@ -613,10 +613,9 @@ let lastLogTime = 0;
       cNeck.position.set(0, 1.35, 0);
       carafeGroup.add(cNeck);
 
-      const cSpout = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.05, 0.2, 16, 1, true), glassMaterial);
+      const cSpout = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.05, 0.2, 16, 1, true, 0, Math.PI), glassMaterial);
       cSpout.rotation.set(0, 0, -Math.PI / 4);
       cSpout.position.set(0.7, 1.5, 0);
-      cSpout.geometry.thetaLength = Math.PI;
       carafeGroup.add(cSpout);
 
       const cHandle = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.06, 16, 32, 4), glassMaterial);
@@ -1017,8 +1016,8 @@ let lastLogTime = 0;
 
     onMounted(() => {
       // Debug API Key loading
-      if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-         console.log("FeiTime: API Key loaded successfully (Length: " + process.env.API_KEY.length + ")");
+      if (import.meta.env.VITE_API_KEY) {
+         console.log("FeiTime: API Key loaded successfully");
       } else {
          console.error("FeiTime: API Key IS MISSING or Undefined!");
       }

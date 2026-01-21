@@ -31,6 +31,7 @@
               id="Light"
               name="pFilter"
               value="Light"
+              v-model="filterData.roast"
               @click="goProduct('roast', 'Light')"
             />
             <label class="ml-[8px] text-[20px]" for="Light" @click="goProduct('roast', 'Light')">
@@ -43,6 +44,7 @@
               id="Medium"
               name="pFilter"
               value="Medium"
+              v-model="filterData.roast"
               @click="goProduct('roast', 'Medium')"
             />
             <label class="ml-[8px] text-[20px]" for="Medium" @click="goProduct('roast', 'Medium')">
@@ -56,6 +58,7 @@
               id="Dark"
               name="pFilter"
               value="Dark"
+              v-model="filterData.roast"
               @click="goProduct('roast', 'Dark')"
             />
             <label class="ml-[8px] text-[20px]" for="Dark" @click="goProduct('roast', 'Dark')">
@@ -74,6 +77,7 @@
               id="Fruity"
               name="pFilter"
               value="Fruity"
+              v-model="filterData.flavor_type"
               @click="goProduct('flavor_type', 'Fruity')"
             />
             <label
@@ -90,6 +94,7 @@
               id="Nutty"
               name="pFilter"
               value="Nutty"
+              v-model="filterData.flavor_type"
               @click="goProduct('flavor_type', 'Nutty')"
             />
             <label
@@ -107,6 +112,7 @@
               id="Bold"
               name="pFilter"
               value="Bold"
+              v-model="filterData.flavor_type"
               @click="goProduct('flavor_type', 'Bold')"
             />
             <label
@@ -124,6 +130,7 @@
               id="Floral"
               name="pFilter"
               value="Floral"
+              v-model="filterData.flavor_type"
               @click="goProduct('flavor_type', 'Floral')"
             />
             <label
@@ -146,6 +153,7 @@
               id="Washed"
               name="pFilter"
               value="Washed"
+              v-model="filterData.processing"
               @click="goProduct('processing', 'Washed')"
             />
             <label
@@ -163,6 +171,7 @@
               id="Natural"
               name="pFilter"
               value="Natural"
+              v-model="filterData.processing"
               @click="goProduct('processing', 'Natural')"
             />
             <label
@@ -180,6 +189,7 @@
               id="Honey"
               name="pFilter"
               value="Honey"
+              v-model="filterData.processing"
               @click="goProduct('processing', 'Honey')"
             />
             <label
@@ -197,6 +207,7 @@
               id="Wet-Hulled"
               name="pFilter"
               value="Wet-Hulled"
+              v-model="filterData.processing"
               @click="goProduct('processing', 'Wet-Hulled')"
             />
             <label
@@ -219,6 +230,7 @@
               id="Ethiopia"
               name="pFilter"
               value="Ethiopia"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Ethiopia')"
             />
             <label
@@ -236,6 +248,7 @@
               id="Kenya"
               name="pFilter"
               value="Kenya"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Kenya')"
             />
             <label class="ml-[8px] text-[20px]" for="Kenya" @click="goProduct('origin', 'Kenya')">
@@ -249,6 +262,7 @@
               id="Rwanda"
               name="pFilter"
               value="Rwanda"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Rwanda')"
             />
             <label class="ml-[8px] text-[20px]" for="Rwanda" @click="goProduct('origin', 'Rwanda')">
@@ -262,6 +276,7 @@
               id="Burundi"
               name="pFilter"
               value="Burundi"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Burundi')"
             />
             <label
@@ -279,6 +294,7 @@
               id="Colombia"
               name="pFilter"
               value="Colombia"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Colombia')"
             />
             <label
@@ -296,6 +312,7 @@
               id="Brazil"
               name="pFilter"
               value="Brazil"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Brazil')"
             />
             <label class="ml-[8px] text-[20px]" for="Brazil" @click="goProduct('origin', 'Brazil')">
@@ -309,6 +326,7 @@
               id="Guatemala"
               name="pFilter"
               value="Guatemala"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Guatemala')"
             />
             <label
@@ -326,6 +344,7 @@
               id="Costa Rica"
               name="pFilter"
               value="Costa Rica"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Costa Rica')"
             />
             <label
@@ -343,6 +362,7 @@
               id="El Salvador"
               name="pFilter"
               value="El Salvador"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'El Salvador')"
             />
             <label
@@ -360,6 +380,7 @@
               id="Panama"
               name="pFilter"
               value="Panama"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Panama')"
             />
             <label class="ml-[8px] text-[20px]" for="Panama" @click="goProduct('origin', 'Panama')">
@@ -373,6 +394,7 @@
               id="Indonesia"
               name="pFilter"
               value="Indonesia"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Indonesia')"
             />
             <label
@@ -390,6 +412,7 @@
               id="Vietnam"
               name="pFilter"
               value="Vietnam"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Vietnam')"
             />
             <label
@@ -407,6 +430,7 @@
               id="India"
               name="pFilter"
               value="India"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'India')"
             />
             <label class="ml-[8px] text-[20px]" for="India" @click="goProduct('origin', 'India')">
@@ -420,6 +444,7 @@
               id="Thailand"
               name="pFilter"
               value="Thailand"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Thailand')"
             />
             <label
@@ -437,6 +462,7 @@
               id="Papua New Guinea"
               name="pFilter"
               value="Papua New Guinea"
+              v-model="filterData.origin"
               @click="goProduct('origin', 'Papua New Guinea')"
             />
             <label
@@ -561,7 +587,7 @@
 
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
-  import { ref, watch, onMounted } from 'vue';
+  import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import { useCartStore } from '@/store/cart';
 
@@ -629,10 +655,6 @@
     }
   };
 
-  const reset = () => {
-    findWord.value = '';
-  };
-
   // 排序相關
   const sortWhich = ref(''); // 雙向綁定下拉式選單用的變數 依據它來決定現在要排序什麼
   const sortHe = ref(true); // 決定高到低 還是 低到高 的參數 預設true是 高到低
@@ -697,6 +719,23 @@
     } else {
       cannotFind.value = false;
     }
+  };
+
+  // 記錄打勾狀態 用於清空
+  const filterData = reactive({
+    roast: '',
+    flavor_type: '',
+    processing: '',
+    origin: '',
+  });
+
+  // 清空
+  const reset = () => {
+    findWord.value = '';
+    filterData.roast = '';
+    filterData.flavor_type = '';
+    filterData.processing = '';
+    filterData.origin = '';
   };
 
   onMounted(async () => {

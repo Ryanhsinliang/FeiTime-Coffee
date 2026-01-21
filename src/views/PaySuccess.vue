@@ -85,6 +85,47 @@
   const orderThing = computed(() => piniaGet.orderThing); // 從 pinia 抓 訂單訊息
   const buyProducts = computed(() => piniaGet.buyProducts); // 從 pinia 抓 剛剛買的產品 的訊息
   const taiwanTime = ref('');
+  const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
+
+  interface AllProductRule {
+    // 設定data規格
+    id: number;
+    pid: string;
+    documentId: string;
+    name: string;
+    price: number;
+    origin: string;
+    img: any[];
+    popularity: number;
+    sweetness: number;
+    acidity: number;
+    body: number;
+    aftertaste: number;
+    clarity: number;
+    flavor_type: string;
+    roast: string;
+    stock: number;
+  }
+
+  interface LittleProductRule {
+    // 設定data規格
+    id: number;
+    pid: string;
+    name: string;
+    stock: number;
+    documentId: string;
+  }
+
+  // 用id取得 現在庫存 和 真正用來put的id
+  const getNowStock = (id: number | string) => {
+    const findAPIproduct = productsNow.value.filter((obj) => {
+      return obj.id == id;
+    });
+    return {
+      stock: Number(findAPIproduct[0].stock),
+      documentId: findAPIproduct[0].documentId,
+    };
+  };
 
   onMounted(async () => {
     // 把pinia時間 轉成臺灣時區 + 常人閱讀格式
@@ -125,43 +166,6 @@
     }
   });
 
-  interface AllProductRule {
-    // 設定data規格
-    id: number;
-    pid: string;
-    name: string;
-    price: number;
-    origin: string;
-    img: any[];
-    popularity: number;
-    sweetness: number;
-    acidity: number;
-    body: number;
-    aftertaste: number;
-    clarity: number;
-    flavor_type: string;
-    roast: string;
-    stock: number;
-  }
-
-  interface LittleProductRule {
-    // 設定data規格
-    id: number;
-    pid: string;
-    name: string;
-    stock: number;
-  }
-
-  const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
-
-  // 從所有產品 抓出我要的資訊 組成一個小物件
-  const getNowStock = (id: number | string) => {
-    const findAPIproduct = productsNow.value.filter((obj) => {
-      return obj.id == id;
-    });
-    return Number(findAPIproduct[0].stock);
-  };
-
   const B = async () => {
     // productsNow.value 打get 從所有產品 抓出我要的資訊[{},{},...]
     try {
@@ -170,6 +174,7 @@
         return {
           id: obj.id,
           pid: obj.pid,
+          documentId: obj.documentId,
           name: obj.name,
           stock: Number(obj.stock),
         };
@@ -180,44 +185,43 @@
       throw err;
     }
 
-    /*
-    console.log('買的東西 要扣的數量 pinia提供');
-    console.log(buyProducts.value); // 完整的 訂購的 產品資料
-    // 要扣庫存的資料
+    // console.log('買的東西 要扣的數量 pinia提供');
+    // console.log(buyProducts.value); // 完整的 訂購的 產品資料
+    // // 要扣庫存的資料
 
-    console.log('所有產品簡化資料 打API來的');
-    console.log(productsNow.value);
+    // console.log('所有產品簡化資料 打API來的');
+    // console.log(productsNow.value);
 
-    console.log('這個id 現在資料庫的庫存');
-    console.log(getNowStock(751));
+    // console.log('這個id 現在資料庫的庫存');
+    // console.log(getNowStock(751));
 
-    console.log('買的產品的數量');
-    console.log(buyProducts.value[0].quantity);
-    */
+    // console.log('買的產品的數量');
+    // console.log(buyProducts.value);
 
     // 用來put產品庫存的 [{},{},...]
     const updateStock = buyProducts.value.map((obj) => {
       return {
-        /*
-        pid: obj.pid,
-        quantity: obj.quantity,
-        firstStock: getNowStock(obj.pid),
-        */
-        pid: obj.pid,
-        stock: getNowStock(obj.pid) - Number(obj.quantity),
+        documentId: getNowStock(obj.pid).documentId,
+        stock: getNowStock(obj.pid).stock - Number(obj.quantity),
       };
     });
 
-    // console.log('買的產品的數量、要扣的、扣完的');
-    // console.log(updateStock);
-
-    try {
-      const doStock = await updateProduct(751, { stock: 175 });
-      console.log(doStock);
-    } catch (err: any) {
-      const errorDetail = err.response?.data?.detail || err.message;
-      console.error('API 串接出錯：', errorDetail);
-      throw err;
+    console.log('買的產品的id + 扣完的數量');
+    console.log(updateStock);
+    console.log(updateStock.length);
+    for (let i = 0; i < updateStock.length; i++) {
+      try {
+        const doStock = await updateProduct(updateStock[i].documentId, {
+          stock: updateStock[i].stock,
+        });
+        console.log(`第${i + 1}筆put成功`);
+        console.log(doStock);
+      } catch (err: any) {
+        const errorDetail = err.response?.data?.detail || err.message;
+        console.log(`第${i + 1}筆put失敗`);
+        console.error('API 串接出錯：', errorDetail);
+        throw err;
+      }
     }
   };
 </script>

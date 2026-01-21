@@ -95,7 +95,7 @@
     if (transactionId) {
       // 如果有 transactionId 就跟後端說可以執行第二階段 付款授權
       try {
-        const res = await axios.post(`${linepayUrl}/linePay/confirm`, {
+        const res = await axios.post(`${linepayUrl}/api/linePay/confirm`, {
           transactionId: transactionId,
           amount: fontAmount.value, // 這邊之後串資料庫拿總金額
           // linepay要求要再傳一次 amount 給它  所以這邊再傳一次給後端

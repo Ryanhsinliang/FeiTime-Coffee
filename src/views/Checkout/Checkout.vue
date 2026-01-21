@@ -321,7 +321,7 @@
       }
 
       // 把資料給後端
-      const response = await axios.post(`${linepayUrl}/linepay/gobuy`, {
+      const response = await axios.post(`${linepayUrl}/api/linepay/gobuy`, {
         amount: fontAmount.value,
         productName: 'FeiTime 咖啡購物',
         products: memberBuyArr.value, // 整包丟給後端

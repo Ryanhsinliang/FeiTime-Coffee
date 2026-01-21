@@ -102,5 +102,6 @@ export interface VisualIndicator {
 export interface SessionLogEntry {
     t: number;   // 時間 (秒)
     w: number;   // 水量 (ml)
+    p: number;   // 是否注水 (1: 是, 0: 否)
     ph: string;  // 階段
 }

@@ -1307,7 +1307,7 @@ let lastLogTime = 0;
                                  'border-green-600 bg-green-100/40': bloomPhase === 'ready',
                                  'border-gray-400': bloomPhase === 'idle'
                              },
-                             isMobile ? 'fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-40 pointer-events-none' : 'relative w-full'
+                             isMobile ? 'fixed top-20 left-1/2 -translate-x-1/2 w-[70%] max-w-[280px] z-40 pointer-events-none transform scale-90 origin-top' : 'relative w-full'
                          ]">
                         
                         <div class="flex justify-between items-baseline mb-2">

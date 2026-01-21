@@ -69,3 +69,13 @@ export async function updateProduct(pid: number | string, updateData: any) {
     throw err;
   }
 }
+
+export async function deleteCart(userId: number | string) {
+  try {
+    const res = await api.delete(`/api/cart-items/${userId}`);
+    return res;
+  } catch (err: any) {
+    console.error('delete購物車失敗:', err.response?.data || err.message || err);
+    throw err;
+  }
+}

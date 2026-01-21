@@ -44,12 +44,19 @@
       </router-link>
     </div>
   </div>
+  <div @click="F" class="text-[48px] bg-[#ff0000]">測試delete</div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
   import { orderList } from '@/store/order';
-  import { updateOrder, updateProduct, productsGet } from '@/services/checkout';
+  import {
+    updateOrder,
+    updateProduct,
+    productsGet,
+    getCart,
+    deleteCart,
+  } from '@/services/checkout';
 
   /*
       interface ProductRule {
@@ -80,12 +87,6 @@
       }
     */
 
-  const piniaGet = orderList();
-  const orderThing = computed(() => piniaGet.orderThing); // 從 pinia 抓 訂單訊息
-  const buyProducts = computed(() => piniaGet.buyProducts); // 從 pinia 抓 剛剛買的產品 的訊息
-  const taiwanTime = ref('');
-  const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
-
   interface AllProductRule {
     // 設定data規格
     id: number;
@@ -115,6 +116,27 @@
     documentId: string;
   }
 
+  interface UserRule {
+    // 購物車物件內的 user物件 的規範
+    id: number;
+  }
+  interface CartRule {
+    // 購物車物件 的規範
+    id: number;
+    item_total: number; // 總價錢
+    user: UserRule;
+    quantity: number;
+    snapshot_image: string;
+    documentId: string;
+  }
+
+  const piniaGet = orderList();
+  const orderThing = computed(() => piniaGet.orderThing); // 從 pinia 抓 訂單訊息
+  const buyProducts = computed(() => piniaGet.buyProducts); // 從 pinia 抓 剛剛買的產品 的訊息
+  const taiwanTime = ref('');
+  const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
+  const idCart = ref<CartRule[]>([]);
+
   // 用id取得 現在庫存 和 真正用來put的id
   const getNowStock = (id: number | string) => {
     const findAPIproduct = productsNow.value.filter((obj) => {
@@ -127,6 +149,7 @@
   };
 
   onMounted(async () => {
+    return;
     if (orderThing.value) {
       // 把pinia時間 轉成臺灣時區 + 常人閱讀格式
       taiwanTime.value = new Date(orderThing.value.createdAt).toLocaleString('zh-TW', {
@@ -224,6 +247,38 @@
       }
     }
   });
+
+  const F = async () => {
+    const userId = 26; // 假參數 之後用user.id 到時候把參數放進()
+
+    try {
+      const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列
+
+      idCart.value = cartData.filter((obj: CartRule) => {
+        if (Number(obj?.user?.id)) {
+          return obj.user.id == userId;
+        }
+      });
+    } catch (err: any) {
+      const errorDetail = err.response?.data?.detail || err.message;
+      console.error('API 串接出錯：', errorDetail);
+      throw err;
+    }
+    console.log(idCart.value);
+    // console.log(idCart.value[0].id);
+    // console.log(idCart.value[0].documentId);
+    // return;
+
+    try {
+      const deleteRes = await deleteCart('mdx28fzyif66g0y1mbnkt9ty');
+      console.log(`刪除成功`);
+      console.log(deleteRes);
+    } catch (err: any) {
+      const errorDetail = err.response?.data?.detail || err.message;
+      console.error('delete串接出錯：', errorDetail);
+      throw err;
+    }
+  };
 </script>
 
 <style>

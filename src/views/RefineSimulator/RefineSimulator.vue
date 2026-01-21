@@ -1053,24 +1053,35 @@ let lastLogTime = 0;
         <!-- UI Overlay -->
         <div class="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-4 md:p-8">
             
-            <!-- Mobile Toggle Buttons (Top Left) -->
-            <div class="fixed top-4 left-4 z-50 md:hidden flex gap-2 pointer-events-auto">
-                <button @click="showMobileSettings = !showMobileSettings" 
-                        class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-colors border border-white/40"
-                        :class="showMobileSettings ? 'bg-[#3e2723] text-white' : 'glass text-[#3e2723]'">
-                    <span class="text-xl">⚙️</span>
-                </button>
-                <button @click="showMobileStats = !showMobileStats" 
-                        class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-colors border border-white/40"
-                        :class="showMobileStats ? 'bg-[#3e2723] text-white' : 'glass text-[#3e2723]'">
-                    <span class="text-xl">📊</span>
-                </button>
-            </div>
+            <!-- Mobile Side Toggle Buttons (All on Left) -->
+            <!-- 1. Settings (Top) -->
+            <button v-show="!showMobileSettings && isMobile" 
+                    @click="showMobileSettings = true" 
+                    class="fixed left-0 top-24 z-40 md:hidden h-12 pl-2 pr-3 bg-white/80 backdrop-blur-sm rounded-r-full shadow-lg border border-l-0 border-[#3e2723]/20 flex items-center gap-1 transition-transform active:scale-95 text-[#3e2723] pointer-events-auto">
+                <span class="text-lg animate-spin-slow">⚙️</span>
+                <span class="text-[10px] font-bold vertical-rl">設定</span>
+            </button>
+
+            <!-- 2. Stats (Bottom) -->
+            <button v-show="!showMobileStats && isMobile" 
+                    @click="showMobileStats = true" 
+                    class="fixed left-0 top-40 z-40 md:hidden h-12 pl-2 pr-3 bg-white/80 backdrop-blur-sm rounded-r-full shadow-lg border border-l-0 border-[#3e2723]/20 flex items-center gap-1 transition-transform active:scale-95 text-[#3e2723] pointer-events-auto">
+                <span class="text-lg">📊</span>
+                <span class="text-[10px] font-bold vertical-rl">分析</span>
+            </button>
 
             <!-- Top Controls (Reset) -->
-            <div v-if="!isSnapshotting" class="absolute top-4 right-4 md:top-8 md:right-8 pointer-events-auto z-50">
-                <button @click="resetSimulation" class="glass px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-[#3e2723]/5 transition-colors text-red-600 border-red-600/30">
+            <!-- Top Controls (Reset & Mobile Finish) -->
+            <div class="absolute top-4 right-4 md:top-8 md:right-8 pointer-events-auto z-50 flex flex-col items-end gap-2">
+                <button v-if="!isSnapshotting" @click="resetSimulation" class="glass px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-[#3e2723]/5 transition-colors text-red-600 border-red-600/30">
                     重置 (Reset)
+                </button>
+                
+                <!-- Mobile Finish Button (Updated Position) -->
+                <button v-if="hasStarted && !showResultModal && !isSnapshotting && isMobile" 
+                        @click="finishBrewing" 
+                        class="glass px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-emerald-600/10 hover:border-emerald-500 transition-all duration-300 text-emerald-700 border-emerald-600/30 flex items-center gap-1 shadow-lg animate-pulse">
+                    <span class="text-sm">✓</span> 完成
                 </button>
             </div>
 
@@ -1089,7 +1100,8 @@ let lastLogTime = 0;
                 </div>
 
                 <!-- Finish Button -->
-                <div v-if="hasStarted && !showResultModal && !isSnapshotting" class="pointer-events-auto">
+                <!-- Finish Button (Desktop Only) -->
+                <div v-if="hasStarted && !showResultModal && !isSnapshotting && !isMobile" class="pointer-events-auto">
                     <button @click="finishBrewing" class="glass px-8 py-3 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-emerald-600/10 hover:border-emerald-500 transition-all duration-300 text-emerald-700 border-emerald-600/30 flex items-center gap-2 shadow-lg">
                         <span class="text-lg">✓</span> 完成沖煮 (Finish)
                     </button>
@@ -1217,10 +1229,16 @@ let lastLogTime = 0;
                     
                     <!-- 1. Parameters Panel -->
                     <!-- Mobile: Fixed modal. Desktop: Relative block. -->
-                    <div class="glass p-4 rounded-2xl flex flex-col gap-5 transition-all duration-300 transform"
+                    <!-- 1. Parameters Panel -->
+                    <!-- Mobile: Left Drawer. Desktop: Relative block. -->
+                    <!-- 1. Parameters Panel -->
+                    <!-- Mobile: Left Bottom Drawer. Desktop: Relative block. -->
+                    <!-- 1. Parameters Panel -->
+                    <!-- Mobile: Top-Left Floating Box. Desktop: Relative block. -->
+                    <div class="p-4 flex flex-col gap-3 transition-all duration-500 ease-in-out"
                          :class="isMobile 
-                            ? (showMobileSettings ? 'fixed top-16 left-4 z-50 w-64 opacity-100 scale-100' : 'fixed top-16 left-4 z-50 w-64 opacity-0 scale-95 pointer-events-none') 
-                            : 'relative w-full opacity-100 scale-100'">
+                            ? 'fixed top-24 left-2 w-56 max-h-[35vh] bg-[#fdfbf7]/95 backdrop-blur-xl shadow-2xl z-[60] border border-[#3e2723]/10 overflow-y-auto rounded-2xl' + (showMobileSettings ? ' translate-x-0 opacity-100 scale-100' : ' -translate-x-10 opacity-0 scale-95 pointer-events-none')
+                            : 'relative w-full glass rounded-2xl opacity-100 scale-100'">
                             
                         <h2 class="text-xs font-bold uppercase tracking-wider text-[#8d6e63] border-b border-[#3e2723]/10 pb-2 flex justify-between">
                             <span>參數設定 (Parameters)</span>
@@ -1267,6 +1285,14 @@ let lastLogTime = 0;
                                 <span class="opacity-60">粉水比 (Ratio)</span>
                                 <span class="font-mono">1:{{ currentRatio }}</span>
                             </div>
+                        </div>
+                        
+                        <!-- Mobile Back Button (Bottom Left) -->
+                        <div v-if="isMobile" class="mt-4 pt-4 border-t border-[#3e2723]/10">
+                            <button @click="showMobileSettings = false" class="flex items-center gap-2 text-[#3e2723] hover:bg-[#3e2723]/10 px-3 py-2 rounded-lg transition-colors font-bold">
+                                <span class="text-xl">&lt;</span>
+                                <span class="text-xs">返回 (Back)</span>
+                            </button>
                         </div>
                     </div>
 
@@ -1366,10 +1392,16 @@ let lastLogTime = 0;
                     
                     <!-- 1. Real-time Analysis / Charts Wrapper -->
                     <!-- Mobile: Fixed modal. Desktop: Relative block. -->
-                    <div class="glass p-3 rounded-xl flex flex-col gap-3 transition-all duration-300 transform"
+                    <!-- 1. Real-time Analysis / Charts Wrapper -->
+                    <!-- Mobile: Right Drawer. Desktop: Relative block. -->
+                    <!-- 1. Real-time Analysis / Charts Wrapper -->
+                    <!-- Mobile: Left Bottom Drawer (Stacked). Desktop: Relative block. -->
+                    <!-- 1. Real-time Analysis / Charts Wrapper -->
+                    <!-- Mobile: Bottom-Left Floating Box. Desktop: Relative block. -->
+                    <div class="p-3 flex flex-col gap-3 transition-all duration-500 ease-in-out"
                          :class="isMobile 
-                            ? (showMobileStats ? 'fixed top-16 right-4 z-50 w-64 opacity-100 scale-100' : 'fixed top-16 right-4 z-50 w-64 opacity-0 scale-95 pointer-events-none') 
-                            : 'relative w-full opacity-100 scale-100'">
+                            ? 'fixed bottom-24 left-2 w-56 max-h-[35vh] bg-[#fdfbf7]/95 backdrop-blur-xl shadow-2xl z-[60] border border-[#3e2723]/10 overflow-y-auto rounded-2xl' + (showMobileStats ? ' translate-x-0 opacity-100 scale-100' : ' -translate-x-10 opacity-0 scale-95 pointer-events-none')
+                            : 'relative w-full glass rounded-xl opacity-100 scale-100'">
 
                         <h3 class="text-[9px] font-bold uppercase tracking-widest text-[#8d6e63] border-b border-[#3e2723]/10 pb-1 flex justify-between">
                             <span>即時分析 (Analysis)</span>
@@ -1421,6 +1453,14 @@ let lastLogTime = 0;
                             <div class="relative flex-1 w-full h-full overflow-hidden">
                                 <canvas id="lineChart"></canvas>
                             </div>
+                        </div>
+
+                        <!-- Mobile Back Button (Bottom Left) -->
+                        <div v-if="isMobile" class="mt-4 pt-4 border-t border-[#3e2723]/10">
+                            <button @click="showMobileStats = false" class="flex items-center gap-2 text-[#3e2723] hover:bg-[#3e2723]/10 px-3 py-2 rounded-lg transition-colors font-bold">
+                                <span class="text-xl">&lt;</span>
+                                <span class="text-xs">返回 (Back)</span>
+                            </button>
                         </div>
                     </div>
                 </div>

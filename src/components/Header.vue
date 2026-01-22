@@ -1,7 +1,7 @@
 <template>
   <nav
     :class="navClasses"
-    class="sticky top-0 z-50 w-full border-b border-[#DCCFC0]/40 backdrop-blur-lg transition-colors duration-300"
+    class="sticky top-0 z-50 w-full border-b border-[#DCCFC0]/40 backdrop-blur-lg transition-colors duration-300 overflow-x-clip"
   >
     <div class="px-6 xl:px-12 flex items-center justify-between max-w-[1600px] mx-auto h-16">
       <router-link to="/home" class="flex items-center gap-2 flex-shrink-0">
@@ -58,9 +58,9 @@
       <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
         <!-- Desktop Icons -->
         <!-- Always Visible Cart Icon -->
-        <button class="relative group outline-none" @click="toggleCart">
+        <button class="relative group outline-none flex items-center justify-center" @click="toggleCart">
           <span
-            class="material-symbols-outlined transition-transform group-hover:scale-110"
+            class="material-symbols-outlined transition-transform group-hover:scale-110 leading-none"
             :style="textColorStyle"
           >
             shopping_bag
@@ -81,7 +81,7 @@
             @mouseleave="closeUserMenu"
           >
             <span
-              class="material-symbols-outlined cursor-pointer transition-all duration-200 hover:scale-110"
+              class="material-symbols-outlined cursor-pointer transition-all duration-200 hover:scale-110 leading-none"
               :style="textColorStyle"
             >
               person
@@ -413,6 +413,12 @@
   const closeUserMenu = () => {
     userMenuOpen.value = false;
     hoveredMenuItem.value = null;
+  };
+
+  /* ===== 管理員後台 ===== */
+  const handleAdminPanel = () => {
+    userMenuOpen.value = false;
+    router.push('/admin');
   };
 
   /* ===== 統一選單動作處理 ===== */

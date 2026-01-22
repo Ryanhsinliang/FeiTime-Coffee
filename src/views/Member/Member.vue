@@ -1,6 +1,7 @@
 <template>
   <div
-    class="bg-background-airy font-display min-h-screen text-primary/80 antialiased overflow-x-hidden selection:bg-pale-green"
+    v-if="authStore.isLoggedIn"
+    class="bg-background-airy font-notoserif min-h-screen text-primary/80 antialiased overflow-x-hidden selection:bg-pale-green"
   >
     <!-- 會員專區專用的背景毛玻璃效果層 -->
     <div
@@ -51,43 +52,99 @@
                 <!-- 左側：會員基本資料 -->
                 <div class="space-y-8 max-w-2xl w-full">
                   <!-- 第一行：會員姓名 + 會員編號 -->
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 md:gap-x-16 lg:gap-x-20 gap-y-8">
+                  <div
+                    class="grid grid-cols-1 md:grid-cols-2 gap-x-12 md:gap-x-16 lg:gap-x-20 gap-y-8"
+                  >
                     <div class="space-y-3">
                       <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
                         會員姓名
                       </label>
-                      <p class="text-2xl font-light text-primary tracking-wide">陳小華</p>
+                      <p class="text-2xl font-light text-primary tracking-wide">
+                        {{ authStore.username }}
+                      </p>
                     </div>
                     <div class="space-y-3">
                       <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
                         會員編號
                       </label>
-                      <p class="text-2xl font-light text-primary tracking-wide">FT8829-X0</p>
+                      <p class="text-2xl font-light text-primary tracking-wide">
+                        {{ authStore.userId }}
+                      </p>
                     </div>
                   </div>
 
                   <!-- 第二行：聯絡電話 + Email + 收件地址 -->
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 md:gap-x-16 lg:gap-x-20 gap-y-8">
+                  <div
+                    class="grid grid-cols-1 md:grid-cols-2 gap-x-12 md:gap-x-16 lg:gap-x-20 gap-y-8"
+                  >
                     <div class="space-y-3">
                       <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
                         聯絡電話
                       </label>
-                      <p class="text-lg font-light text-primary tracking-wide">+1 (555) 012-9934</p>
+                      <!-- 編輯模式 -->
+                      <input
+                        v-if="isEditingPhone"
+                        ref="phoneInputRef"
+                        v-model="phone"
+                        type="tel"
+                        placeholder="請輸入聯絡電話"
+                        class="w-full text-lg font-light text-primary tracking-wide bg-white/20 border border-white/30 rounded-xl px-4 py-2 outline-none focus:border-gold-foil/50 focus:bg-white/30 transition-all placeholder:text-primary/30"
+                        @blur="finishEditingPhone"
+                      />
+                      <!-- 顯示模式 -->
+                      <div
+                        v-else
+                        class="flex items-center gap-2 cursor-pointer group"
+                        @click="startEditingPhone"
+                      >
+                        <p class="text-lg font-light text-primary tracking-wide">
+                          {{ phone || '尚未填寫' }}
+                        </p>
+                        <span
+                          class="material-symbols-outlined text-base text-primary/30 group-hover:text-gold-foil/70 transition-colors"
+                        >
+                          edit
+                        </span>
+                      </div>
                     </div>
                     <div class="space-y-3">
                       <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
                         Email
                       </label>
-                      <p class="text-lg font-light text-primary tracking-wide">a.chen@collectors.coffee</p>
+                      <p class="text-lg font-light text-primary tracking-wide">
+                        {{ authStore.email }}
+                      </p>
                     </div>
                     <!-- 收件地址（橫跨兩格） -->
                     <div class="space-y-3 md:col-span-2">
                       <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
                         收件地址
                       </label>
-                      <p class="text-lg font-light text-primary tracking-wide leading-relaxed">
-                        1289 Espresso Way, Suite 400, San Francisco, CA 94103
-                      </p>
+                      <!-- 編輯模式 -->
+                      <input
+                        v-if="isEditingAddress"
+                        ref="addressInputRef"
+                        v-model="address"
+                        type="text"
+                        placeholder="請輸入收件地址"
+                        class="w-full text-lg font-light text-primary tracking-wide leading-relaxed bg-white/20 border border-white/30 rounded-xl px-4 py-2 outline-none focus:border-gold-foil/50 focus:bg-white/30 transition-all placeholder:text-primary/30"
+                        @blur="finishEditingAddress"
+                      />
+                      <!-- 顯示模式 -->
+                      <div
+                        v-else
+                        class="flex items-center gap-2 cursor-pointer group"
+                        @click="startEditingAddress"
+                      >
+                        <p class="text-lg font-light text-primary tracking-wide leading-relaxed">
+                          {{ address || '尚未填寫' }}
+                        </p>
+                        <span
+                          class="material-symbols-outlined text-base text-primary/30 group-hover:text-gold-foil/70 transition-colors"
+                        >
+                          edit
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -369,9 +426,7 @@
                           >
                             追蹤編號
                           </p>
-                          <p
-                            class="text-lg font-light text-gold-accent/70 tracking-wide break-all"
-                          >
+                          <p class="text-lg font-light text-gold-accent/70 tracking-wide break-all">
                             SID-882-TRK
                           </p>
                         </div>
@@ -603,20 +658,35 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, computed, onMounted, watch } from 'vue';
+  import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { useAuthStore } from '@/store/auth';
 
   const route = useRoute();
   const router = useRouter();
+  const authStore = useAuthStore();
+  // 這裡的 user 包含登入時回傳的 id, username, email 等
+  const user = authStore.user;
 
   // ========== 狀態管理 ==========
   const activeTab = ref<'member' | 'order'>('member');
+
+  // ========== 聯絡資訊 ==========
+  const phone = ref('');
+  const address = ref('');
+  const isEditingPhone = ref(false);
+  const isEditingAddress = ref(false);
+  const phoneInputRef = ref<HTMLInputElement | null>(null);
+  const addressInputRef = ref<HTMLInputElement | null>(null);
 
   // ========== 初始化 ==========
   onMounted(() => {
     if (route.query.tab === 'order') {
       activeTab.value = 'order';
     }
+    // 載入已儲存的聯絡資訊
+    phone.value = authStore.phoneNumber || '';
+    address.value = authStore.shippingAddress || '';
   });
 
   // ========== 監聽路由變化 ==========
@@ -631,7 +701,7 @@
     }
   );
 
-  // ========== 會員資料 ==========
+  // ========== 咖啡測驗結果 ==========
   const quizResult = reactive({
     image: '',
     title: 'The Ethereal Ethiopia Profile',
@@ -685,6 +755,41 @@
 
   const addNewLog = () => {
     console.log('Add new log');
+  };
+
+  // ========== 編輯聯絡資訊 ==========
+  const startEditingPhone = () => {
+    isEditingPhone.value = true;
+    nextTick(() => {
+      phoneInputRef.value?.focus();
+    });
+  };
+
+  const finishEditingPhone = () => {
+    isEditingPhone.value = false;
+    saveContactInfo();
+  };
+
+  const startEditingAddress = () => {
+    isEditingAddress.value = true;
+    nextTick(() => {
+      addressInputRef.value?.focus();
+    });
+  };
+
+  const finishEditingAddress = () => {
+    isEditingAddress.value = false;
+    saveContactInfo();
+  };
+
+  const saveContactInfo = async () => {
+    const result = await authStore.updateContactInfo({
+      phone_number: phone.value || null,
+      shipping_address: address.value || null,
+    });
+    if (!result.success) {
+      console.error('儲存失敗:', result.message);
+    }
   };
 </script>
 

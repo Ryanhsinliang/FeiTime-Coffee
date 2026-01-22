@@ -7,6 +7,9 @@ export interface User {
   confirmed: boolean;
   blocked: boolean;
   user_role: 'Member' | 'Admin';
+  user_id: string; // LifeCycle 滾出的會員編號
+  phone_number: string | null;
+  shipping_address: string | null;
 
   role?: {
     type: string;
@@ -25,6 +28,15 @@ export const loginService = {
       password,
       captchaToken,
     });
+    return response.data;
+  },
+
+  //更新會員資料
+  async updateUserContact(
+    userId: number,
+    data: { phone_number?: string | null; shipping_address?: string | null }
+  ): Promise<User> {
+    const response = await api.put<User>(`/api/users/${userId}`, data);
     return response.data;
   },
 };

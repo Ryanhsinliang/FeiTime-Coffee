@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Intro from '@/views/HomePage/Intro.vue';
 import HomePage from '@/views/HomePage/HomePage.vue';
-import AboutUs from '@/views/Story/Story.vue';
 import Product from '@/views/Product/Product.vue';
 import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
 import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
@@ -40,11 +39,6 @@ const routes = [
     path: '/home',
     name: 'HomePage',
     component: HomePage,
-  },
-  {
-    path: '/aboutus',
-    name: 'AboutUs',
-    component: AboutUs,
   },
   {
     path: '/product',
@@ -202,6 +196,7 @@ const router = createRouter({
     return { top: 0, behavior: 'smooth' };
   },
 });
+
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
   console.log(`正在前往: ${to.path}, 登入狀態: ${authStore.isLoggedIn}`);
@@ -216,12 +211,14 @@ router.beforeEach((to, from, next) => {
       authStore.setBanner('請先登入帳號', 'warning');
       next(authStore.isLoggedIn ? { name: 'HomePage' } : { name: 'Login' });
     }
+    // 路由守衛 (Router Guard)
   } else if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     authStore.setBanner('請先登入帳號', 'warning');
-    next({ name: 'Login' });
+    next({ name: 'Login' }); // 強制跳轉到登入頁
   } else {
     authStore.clearBanner();
     next();
   }
 });
+
 export default router;

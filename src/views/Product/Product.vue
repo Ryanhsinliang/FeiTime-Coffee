@@ -731,7 +731,7 @@
       pid: String(product.id),
       name: product.name,
       price: product.price,
-      image: product.image,
+      image: product.img[0].formats.large.url,
       stock: product.stock,
     });
     alert('✔️ 已加入購物車');
@@ -752,6 +752,10 @@
     filterData.flavor_type = '';
     filterData.processing = '';
     filterData.origin = '';
+    sortHe.value = true;
+    sortWhich.value = '';
+    cannotFind.value = false;
+    router.push('/product');
   };
 
   onMounted(async () => {

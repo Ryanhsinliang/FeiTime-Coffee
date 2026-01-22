@@ -156,7 +156,7 @@ const routes = [
     ],
   },
   {
-    path: '/Checkout',
+    path: '/checkout',
     name: 'Checkout',
     component: Checkout,
     meta: { requiresAuth: true },

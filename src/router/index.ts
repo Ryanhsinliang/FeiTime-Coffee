@@ -107,7 +107,7 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: Admin,
-    // meta: { requiresAdmin: true },
+    meta: { requiresAdmin: true },
     children: [
       // 訂單
       {

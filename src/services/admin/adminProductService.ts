@@ -32,8 +32,19 @@ export interface SingleProductResponse {
 }
 
 // 產品資料更新請求(前端傳給後端)
-export interface UpdateProductRequest {
-  data: ProductRequest;
+export interface UpdateProductPayload {
+  name?: string;
+  english_name?: string;
+  price?: number;
+  origin?: string;
+  processing?: string;
+  roast?: string;
+  stock?: number;
+  weight?: string;
+  flavor_type?: string;
+  flavor_tags?: { name: string }[];
+  description?: string;
+  imgIds?: number[]; // 用 id 陣列更新圖片關聯
 }
 
 //呼叫 後端 Express 的 API
@@ -53,13 +64,11 @@ export async function callSingleProduct(pid: string): Promise<SingleProductRespo
   return res.data;
 }
 
-// 出貨 API
+// 更新商品資料
 export async function callUpdateProduct(
-  // 前端傳給後端的東西
   pid: string,
-  data: UpdateProductRequest
-  // 後端處理完後，回來跟我說的結果
+  payload: UpdateProductPayload
 ): Promise<{ success: boolean; message: string; data: ProductRequest }> {
-  const res = await api.put(`/api/admin-products/${pid}`, data);
+  const res = await api.put(`/api/admin-products/${pid}`, payload);
   return res.data;
 }

@@ -56,35 +56,7 @@
     getCart,
     deleteCart,
   } from '@/services/checkout';
-
-  /*
-      interface ProductRule {
-        pid: string;
-        quantity: number;
-        snapshot_name: string;
-        snapshot_price: number;
-        snapshot_image: string;
-        snapshot_weight: string;
-        item_total: number;
-      }
-
-      interface OrderRule {
-        id: number;
-        order_number: string;
-        subtotal: number;
-        shipping_fee: number;
-        total_amount: number;
-        order_status: string;
-        payment_status: string;
-        recipient_name: string;
-        recipient_phone: string;
-        recipient_address: string;
-        shipping_method: string;
-        createdAt: string;
-        updatedAt: string;
-        order_items: ProductRule[];
-      }
-    */
+  import { useAuthStore } from '@/store/auth';
 
   interface AllProductRule {
     // 設定data規格
@@ -136,6 +108,7 @@
   const taiwanTime = ref('');
   const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
   const idCart = ref<CartRule[]>([]);
+  const authStore = useAuthStore();
 
   // 用id取得 現在庫存 和 真正用來put的id
   const getNowStock = (id: number | string) => {
@@ -245,7 +218,7 @@
         }
       }
 
-      const userId = 26; // 假參數 之後用user.id 到時候把參數放進()
+      const userId = authStore.user!.id;
       // 刪除所有這個id的購物車
       try {
         const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列

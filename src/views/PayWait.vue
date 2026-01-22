@@ -26,12 +26,14 @@
   import { ref, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { getCart } from '@/services/checkout';
+  import { useAuthStore } from '@/store/auth';
 
   const route = useRoute();
   const linepayUrl = import.meta.env.VITE_LINK;
 
   let pay = ref('');
   const router = useRouter();
+  const authStore = useAuthStore();
 
   // 【 抓購物車 】
   interface UserRule {
@@ -64,7 +66,7 @@
   // 計算總價錢 準備給後端再打一次賴佩
   onMounted(async () => {
     // 【 1 】 用userid再抓一次資料
-    const buyId = 26; // 假參數 之後用user.id 到時候把參數放進()
+    const buyId = authStore.user!.id;
     const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列
     const idCart = cartData.filter((obj: CartRule) => {
       if (Number(obj?.user?.id)) {

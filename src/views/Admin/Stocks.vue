@@ -16,12 +16,13 @@
         <h2 class="text-3xl font-bold">庫存管理</h2>
         <p class="text-gray-400 text-sm">主要管理商品庫存。</p>
       </div>
-      <!-- <button
+      <!-- TODO:待修改 -->
+      <button
         class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm"
       >
         <i class="fa-solid fa-plus text-sm"></i>
         <p>新增商品</p>
-      </button> -->
+      </button>
     </section>
 
     <!-- 搜尋 -->
@@ -152,8 +153,8 @@
       >
         <p class="text-sm">共 {{ filteredProducts.length }} 筆</p>
 
-        <!-- 待修改 -->
-        <!-- <p class="text-sm">每頁 20 筆 / 共 {{ filteredProducts.length }} 筆</p>
+        <!-- TODO:待修改 -->
+        <p class="text-sm">每頁 20 筆 / 共 {{ filteredProducts.length }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button
@@ -176,7 +177,7 @@
           <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
             <i class="fa-solid fa-chevron-right text-sm"></i>
           </button>
-        </div> -->
+        </div>
       </div>
     </div>
   </main>
@@ -184,8 +185,8 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { callProducts } from '@/services/ProductDetail';
-  import type { ProductRequest } from '@/services/ProductDetail';
+  import { callProducts } from '@/services/admin/adminProductService';
+  import type { ProductRequest } from '@/services/admin/adminProductService';
 
   const router = useRouter();
 

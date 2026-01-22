@@ -11,6 +11,8 @@
             loop
             autoplay
             muted
+            playsinline
+            webkit-playsinline
           ></video>
           <div class="absolute inset-0 bg-black/20 mix-blend-multiply"></div>
           <div
@@ -47,14 +49,9 @@
             </div>
 
             <!-- Google OAuth 錯誤提示 -->
-            <div
-              v-if="oauthError"
-              class="p-4 bg-amber-50 border border-amber-200 rounded-xl dark:bg-amber-900/20 dark:border-amber-800"
-            >
+            <div v-if="oauthError" class="p-4 bg-amber-50 border border-amber-200 rounded-xl">
               <div class="flex items-start gap-3">
-                <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-xl">
-                  info
-                </span>
+                <span class="material-symbols-outlined text-amber-600">info</span>
                 <div class="flex-1">
                   <p class="text-sm font-medium text-amber-900 dark:text-amber-200 mb-1">
                     {{ oauthError }}
@@ -164,41 +161,12 @@
               <button
                 @click="handleGoogleLogin"
                 :disabled="isGoogleLoading"
-                class="flex items-center justify-center gap-3 rounded-xl border border-border-gray bg-white dark:bg-white/5 dark:border-white/10 px-4 py-3 text-sm font-medium text-text-main dark:text-white hover:bg-background-light dark:hover:bg-white/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="flex items-center justify-center gap-3 rounded-xl border border-border-gray bg-white dark:bg-white/5 dark:border-white/10 px-4 py-3 text-sm font-medium text-text-main hover:bg-background-light dark:hover:bg-[#abb7a5] transition-colors"
                 type="button"
               >
                 <i class="fa-brands fa-google" style="color: #abb7a5"></i>
                 {{ isGoogleLoading ? '處理中...' : 'Google' }}
               </button>
-              <button
-                class="flex items-center justify-center gap-3 rounded-xl border border-border-gray bg-white dark:bg-white/5 dark:border-white/10 px-4 py-3 text-sm font-medium text-text-main hover:bg-background-light dark:hover:bg-[#abb7a5] transition-colors"
-                type="button"
-                disabled
-              >
-                <i class="fa-brands fa-apple" style="color: #abb7a5"></i>
-                Apple
-              </button>
-            </div>
-
-            <!-- OAuth 說明提示 -->
-            <div
-              class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4"
-            >
-              <div class="flex items-start gap-3">
-                <span
-                  class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl flex-shrink-0"
-                >
-                  info
-                </span>
-                <div class="text-sm text-blue-900 dark:text-blue-200">
-                  <p class="font-medium mb-1">💡 使用 Google 登入</p>
-                  <ul class="space-y-1 text-xs text-blue-800 dark:text-blue-300">
-                    <li>• 首次使用會自動建立帳號</li>
-                    <li>• 已註冊用戶會自動連結到現有帳號</li>
-                    <li>• 可同時使用密碼和 Google 登入</li>
-                  </ul>
-                </div>
-              </div>
             </div>
 
             <div class="text-center mt-4">

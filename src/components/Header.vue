@@ -100,14 +100,14 @@
                       <button
                         class="py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
                         :style="buttonStyle"
-                        @click="handleLogin"
+                        @click="handleMenuAction('login')"
                       >
                         登入
                       </button>
                       <button
                         class="py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
                         :style="buttonStyle"
-                        @click="handleRegister"
+                        @click="handleMenuAction('register')"
                       >
                         註冊
                       </button>
@@ -120,7 +120,7 @@
                       :style="menuItemHoverStyle('member')"
                       @mouseenter="hoveredMenuItem = 'member'"
                       @mouseleave="hoveredMenuItem = null"
-                      @click="handleMemberArea"
+                      @click="handleMenuAction('member')"
                     >
                       <span class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-lg">account_circle</span>
@@ -132,7 +132,7 @@
                       :style="menuItemHoverStyle('order')"
                       @mouseenter="hoveredMenuItem = 'order'"
                       @mouseleave="hoveredMenuItem = null"
-                      @click="handleOrderQuery"
+                      @click="handleMenuAction('order')"
                     >
                       <span class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-lg">receipt_long</span>
@@ -164,7 +164,7 @@
                       :style="menuItemHoverStyle('logout')"
                       @mouseenter="hoveredMenuItem = 'logout'"
                       @mouseleave="hoveredMenuItem = null"
-                      @click="handleLogout"
+                      @click="handleMenuAction('logout')"
                     >
                       <span class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-lg">logout</span>
@@ -210,7 +210,7 @@
           <button
             class="flex items-center gap-3 w-full px-6 py-4 text-lg font-jp"
             :style="textColorStyle"
-            @click="handleMobileLogin"
+            @click="handleMenuAction('login')"
           >
             <span class="material-symbols-outlined text-2xl">login</span>
             登入
@@ -218,7 +218,7 @@
           <button
             class="flex items-center gap-3 w-full px-6 py-4 text-lg font-jp border-t border-[#DCCFC0]/30"
             :style="textColorStyle"
-            @click="handleMobileRegister"
+            @click="handleMenuAction('register')"
           >
             <span class="material-symbols-outlined text-2xl">person_add</span>
             註冊
@@ -229,7 +229,7 @@
           <button
             class="flex items-center gap-3 w-full px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
             :style="textColorStyle"
-            @click="handleMobileMemberArea"
+            @click="handleMenuAction('member')"
           >
             <span class="material-symbols-outlined text-2xl">account_circle</span>
             會員專區
@@ -237,7 +237,7 @@
           <button
             class="flex items-center gap-3 w-full px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
             :style="textColorStyle"
-            @click="handleMobileOrderQuery"
+            @click="handleMenuAction('order')"
           >
             <span class="material-symbols-outlined text-2xl">receipt_long</span>
             訂單查詢
@@ -245,7 +245,7 @@
           <button
             class="flex items-center gap-3 w-full px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
             :style="textColorStyle"
-            @click="handleMobileLogout"
+            @click="handleMenuAction('logout')"
           >
             <span class="material-symbols-outlined text-2xl">logout</span>
             登出
@@ -415,62 +415,32 @@
     hoveredMenuItem.value = null;
   };
 
-  const handleRegister = () => {
+  /* ===== 統一選單動作處理 ===== */
+  // 處理所有登入/登出/跳轉邏輯
+  const handleMenuAction = async (action: 'login' | 'register' | 'member' | 'order' | 'logout') => {
+    // 關閉桌面與手機選單
     userMenuOpen.value = false;
-    router.push('/register');
-  };
-
-  const handleLogin = () => {
-    userMenuOpen.value = false;
-    router.push('/login');
-  };
-
-  const handleMemberArea = () => {
-    userMenuOpen.value = false;
-    router.push('/member');
-  };
-
-  const handleOrderQuery = () => {
-    userMenuOpen.value = false;
-    router.push('/member?tab=order');
-  };
-
-  const handleAdminPanel = () => {
-    userMenuOpen.value = false;
-    router.push('/admin');
-  };
-
-  const handleLogout = async () => {
-    userMenuOpen.value = false;
-    await authStore.logout();
-    router.push('/home');
-  };
-
-  /* ===== 移动端选单相关功能 ===== */
-  const handleMobileLogin = () => {
     mobileOpen.value = false;
-    router.push('/login');
-  };
+    hoveredMenuItem.value = null;
 
-  const handleMobileRegister = () => {
-    mobileOpen.value = false;
-    router.push('/register');
-  };
-
-  const handleMobileMemberArea = () => {
-    mobileOpen.value = false;
-    router.push('/member');
-  };
-
-  const handleMobileOrderQuery = () => {
-    mobileOpen.value = false;
-    router.push('/member?tab=order');
-  };
-
-  const handleMobileLogout = async () => {
-    mobileOpen.value = false;
-    await authStore.logout();
-    router.push('/home');
+    switch (action) {
+      case 'login':
+        router.push('/login');
+        break;
+      case 'register':
+        router.push('/register');
+        break;
+      case 'member':
+        router.push('/member');
+        break;
+      case 'order':
+        router.push('/member?tab=order');
+        break;
+      case 'logout':
+        await authStore.logout();
+        router.push('/home');
+        break;
+    }
   };
 </script>
 

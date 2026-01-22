@@ -84,7 +84,7 @@
       ></span>
     </button>
     <router-link
-      to="/coffeeLabT1-T-P1"
+      to="UltraCoffeeSimulator"
       class="group/option relative flex items-center justify-center h-14 px-10 bg-white/20 text-white tracking-widest uppercase rounded-xl shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300 mt-3"
     >
       試試沖煮模擬器
@@ -250,13 +250,6 @@
     }, 3000);
   }
 
-  const shareText = computed(() => {
-    if (!persona.value) return '';
-    return `我的 Coffee ID 是 ${persona.value.name}！
-  風味分數：酸:${normalizedScores.value.acidity}, 甜:${normalizedScores.value.sweetness}, 醇:${normalizedScores.value.body}...
-  來看看你的風味測試結果吧！`;
-  });
-
   import { coffeePersonas } from '@/views/CoffeeIdTest/assets/data/coffeeTypes';
 
   async function handleMainShare() {
@@ -271,7 +264,7 @@
     }
     const personaName = fullPersonaData.name;
     const ogImageUrl = fullPersonaData.strapiImg;
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+    const backendUrl = import.meta.env.VITE_API_BASE_URL;
     const params = new URLSearchParams({
       name: personaName,
       img: ogImageUrl,

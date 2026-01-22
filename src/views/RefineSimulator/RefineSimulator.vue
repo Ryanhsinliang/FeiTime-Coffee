@@ -154,8 +154,8 @@ let lastLogTime = 0;
             }
         } catch (e: any) {
             console.error("AI Coach Error (fetchAiAdvice):", e);
-            aiAdvice.action = "連線錯誤";
-            aiAdvice.reason = "無法取得建議";
+            aiAdvice.action = "嘿嘿嘿";
+            aiAdvice.reason = "別著急 請耐心";
         } finally {
             isAiLoading.value = false;
         }
@@ -613,10 +613,9 @@ let lastLogTime = 0;
       cNeck.position.set(0, 1.35, 0);
       carafeGroup.add(cNeck);
 
-      const cSpout = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.05, 0.2, 16, 1, true), glassMaterial);
+      const cSpout = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.05, 0.2, 16, 1, true, 0, Math.PI), glassMaterial);
       cSpout.rotation.set(0, 0, -Math.PI / 4);
       cSpout.position.set(0.7, 1.5, 0);
-      cSpout.geometry.thetaLength = Math.PI;
       carafeGroup.add(cSpout);
 
       const cHandle = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.06, 16, 32, 4), glassMaterial);
@@ -1017,8 +1016,8 @@ let lastLogTime = 0;
 
     onMounted(() => {
       // Debug API Key loading
-      if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-         console.log("FeiTime: API Key loaded successfully (Length: " + process.env.API_KEY.length + ")");
+      if (import.meta.env.VITE_API_KEY) {
+         console.log("FeiTime: API Key loaded successfully");
       } else {
          console.error("FeiTime: API Key IS MISSING or Undefined!");
       }
@@ -1054,24 +1053,35 @@ let lastLogTime = 0;
         <!-- UI Overlay -->
         <div class="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-4 md:p-8">
             
-            <!-- Mobile Toggle Buttons (Top Left) -->
-            <div class="fixed top-4 left-4 z-50 md:hidden flex gap-2 pointer-events-auto">
-                <button @click="showMobileSettings = !showMobileSettings" 
-                        class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-colors border border-white/40"
-                        :class="showMobileSettings ? 'bg-[#3e2723] text-white' : 'glass text-[#3e2723]'">
-                    <span class="text-xl">⚙️</span>
-                </button>
-                <button @click="showMobileStats = !showMobileStats" 
-                        class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-colors border border-white/40"
-                        :class="showMobileStats ? 'bg-[#3e2723] text-white' : 'glass text-[#3e2723]'">
-                    <span class="text-xl">📊</span>
-                </button>
-            </div>
+            <!-- Mobile Side Toggle Buttons (All on Left) -->
+            <!-- 1. Settings (Top) -->
+            <button v-show="!showMobileSettings && isMobile" 
+                    @click="showMobileSettings = true" 
+                    class="fixed left-0 top-24 z-40 md:hidden h-12 pl-2 pr-3 bg-white/80 backdrop-blur-sm rounded-r-full shadow-lg border border-l-0 border-[#3e2723]/20 flex items-center gap-1 transition-transform active:scale-95 text-[#3e2723] pointer-events-auto">
+                <span class="text-lg animate-spin-slow">⚙️</span>
+                <span class="text-[10px] font-bold vertical-rl">設定</span>
+            </button>
+
+            <!-- 2. Stats (Bottom) -->
+            <button v-show="!showMobileStats && isMobile" 
+                    @click="showMobileStats = true" 
+                    class="fixed left-0 top-40 z-40 md:hidden h-12 pl-2 pr-3 bg-white/80 backdrop-blur-sm rounded-r-full shadow-lg border border-l-0 border-[#3e2723]/20 flex items-center gap-1 transition-transform active:scale-95 text-[#3e2723] pointer-events-auto">
+                <span class="text-lg">📊</span>
+                <span class="text-[10px] font-bold vertical-rl">分析</span>
+            </button>
 
             <!-- Top Controls (Reset) -->
-            <div v-if="!isSnapshotting" class="absolute top-4 right-4 md:top-8 md:right-8 pointer-events-auto z-50">
-                <button @click="resetSimulation" class="glass px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-[#3e2723]/5 transition-colors text-red-600 border-red-600/30">
+            <!-- Top Controls (Reset & Mobile Finish) -->
+            <div class="absolute top-4 right-4 md:top-8 md:right-8 pointer-events-auto z-50 flex flex-col items-end gap-2">
+                <button v-if="!isSnapshotting" @click="resetSimulation" class="glass px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-[#3e2723]/5 transition-colors text-red-600 border-red-600/30">
                     重置 (Reset)
+                </button>
+                
+                <!-- Mobile Finish Button (Updated Position) -->
+                <button v-if="hasStarted && !showResultModal && !isSnapshotting && isMobile" 
+                        @click="finishBrewing" 
+                        class="glass px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-emerald-600/10 hover:border-emerald-500 transition-all duration-300 text-emerald-700 border-emerald-600/30 flex items-center gap-1 shadow-lg animate-pulse">
+                    <span class="text-sm">✓</span> 完成
                 </button>
             </div>
 
@@ -1090,7 +1100,8 @@ let lastLogTime = 0;
                 </div>
 
                 <!-- Finish Button -->
-                <div v-if="hasStarted && !showResultModal && !isSnapshotting" class="pointer-events-auto">
+                <!-- Finish Button (Desktop Only) -->
+                <div v-if="hasStarted && !showResultModal && !isSnapshotting && !isMobile" class="pointer-events-auto">
                     <button @click="finishBrewing" class="glass px-8 py-3 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-emerald-600/10 hover:border-emerald-500 transition-all duration-300 text-emerald-700 border-emerald-600/30 flex items-center gap-2 shadow-lg">
                         <span class="text-lg">✓</span> 完成沖煮 (Finish)
                     </button>
@@ -1218,56 +1229,73 @@ let lastLogTime = 0;
                     
                     <!-- 1. Parameters Panel -->
                     <!-- Mobile: Fixed modal. Desktop: Relative block. -->
-                    <div class="glass p-4 rounded-2xl flex flex-col gap-5 transition-all duration-300 transform"
+                    <!-- 1. Parameters Panel -->
+                    <!-- Mobile: Left Drawer. Desktop: Relative block. -->
+                    <!-- 1. Parameters Panel -->
+                    <!-- Mobile: Left Bottom Drawer. Desktop: Relative block. -->
+                    <!-- 1. Parameters Panel -->
+                    <!-- Mobile: Top-Left Floating Box. Desktop: Relative block. -->
+                    <div class="p-4 flex flex-col gap-3 transition-all duration-500 ease-in-out"
                          :class="isMobile 
-                            ? (showMobileSettings ? 'fixed top-16 left-4 z-50 w-64 opacity-100 scale-100' : 'fixed top-16 left-4 z-50 w-64 opacity-0 scale-95 pointer-events-none') 
-                            : 'relative w-full opacity-100 scale-100'">
+                            ? 'fixed top-24 left-2 w-56 max-h-[35vh] bg-[#fdfbf7]/95 backdrop-blur-xl shadow-2xl z-[60] border border-[#3e2723]/10 flex flex-col overflow-hidden rounded-2xl' + (showMobileSettings ? ' translate-x-0 opacity-100 scale-100' : ' -translate-x-10 opacity-0 scale-95 pointer-events-none')
+                            : 'relative w-full glass rounded-2xl opacity-100 scale-100'">
                             
                         <h2 class="text-xs font-bold uppercase tracking-wider text-[#8d6e63] border-b border-[#3e2723]/10 pb-2 flex justify-between">
                             <span>參數設定 (Parameters)</span>
                             <span v-if="isMobile" @click="showMobileSettings = false" class="text-lg leading-none cursor-pointer">×</span>
                         </h2>
                         
-                        <!-- Roast Level -->
-                        <div class="flex flex-col gap-1">
-                            <div class="flex justify-between text-[10px] text-[#3e2723]">
-                                <span>烘焙度 (Roast)</span>
-                                <span class="text-orange-600">{{ roastLabel }}</span>
+                        <!-- Content Wrapper for Scroll -->
+                        <div :class="isMobile ? 'flex-1 overflow-y-auto min-h-0 pr-1' : ''">
+                            <!-- Roast Level -->
+                            <div class="flex flex-col gap-1 mb-3">
+                                <div class="flex justify-between text-[10px] text-[#3e2723]">
+                                    <span>烘焙度 (Roast)</span>
+                                    <span class="text-orange-600">{{ roastLabel }}</span>
+                                </div>
+                                <input type="range" min="-1" max="1" step="0.1" v-model.number="roastLevel">
+                                <div class="flex justify-between text-[9px] text-[#8d6e63]">
+                                    <span>淺 (Light)</span>
+                                    <span>深 (Dark)</span>
+                                </div>
                             </div>
-                            <input type="range" min="-1" max="1" step="0.1" v-model.number="roastLevel">
-                            <div class="flex justify-between text-[9px] text-[#8d6e63]">
-                                <span>淺 (Light)</span>
-                                <span>深 (Dark)</span>
+
+                            <!-- Grind Level -->
+                            <div class="flex flex-col gap-1 mb-3">
+                                <div class="flex justify-between text-[10px] text-[#3e2723]">
+                                    <span>研磨度 (Grind)</span>
+                                    <span class="text-orange-600">{{ grindLabel }}</span>
+                                </div>
+                                <input type="range" min="-1" max="1" step="0.1" v-model.number="grindLevel">
+                                <div class="flex justify-between text-[9px] text-[#8d6e63]">
+                                    <span>細 (Fine)</span>
+                                    <span>粗 (Coarse)</span>
+                                </div>
+                            </div>
+
+                            <!-- Live Stats -->
+                            <div class="space-y-1 pt-2 border-t border-[#3e2723]/10 text-[#3e2723]">
+                                <div class="flex justify-between text-[10px]">
+                                    <span class="opacity-60">水量 (Water)</span>
+                                    <span class="font-mono">{{ Math.round(totalWater) }}ml</span>
+                                </div>
+                                <div class="flex justify-between text-[10px]">
+                                    <span class="opacity-60">注水次數 (Pours)</span>
+                                    <span class="font-mono">{{ pours }}</span>
+                                </div>
+                                <div class="flex justify-between text-[10px]">
+                                    <span class="opacity-60">粉水比 (Ratio)</span>
+                                    <span class="font-mono">1:{{ currentRatio }}</span>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Grind Level -->
-                        <div class="flex flex-col gap-1">
-                            <div class="flex justify-between text-[10px] text-[#3e2723]">
-                                <span>研磨度 (Grind)</span>
-                                <span class="text-orange-600">{{ grindLabel }}</span>
-                            </div>
-                            <input type="range" min="-1" max="1" step="0.1" v-model.number="grindLevel">
-                            <div class="flex justify-between text-[9px] text-[#8d6e63]">
-                                <span>細 (Fine)</span>
-                                <span>粗 (Coarse)</span>
-                            </div>
-                        </div>
-
-                        <!-- Live Stats -->
-                        <div class="space-y-1 pt-2 border-t border-[#3e2723]/10 text-[#3e2723]">
-                            <div class="flex justify-between text-[10px]">
-                                <span class="opacity-60">水量 (Water)</span>
-                                <span class="font-mono">{{ Math.round(totalWater) }}ml</span>
-                            </div>
-                            <div class="flex justify-between text-[10px]">
-                                <span class="opacity-60">注水次數 (Pours)</span>
-                                <span class="font-mono">{{ pours }}</span>
-                            </div>
-                            <div class="flex justify-between text-[10px]">
-                                <span class="opacity-60">粉水比 (Ratio)</span>
-                                <span class="font-mono">1:{{ currentRatio }}</span>
-                            </div>
+                        
+                        <!-- Mobile Back Button (Sticky Bottom) -->
+                        <div v-if="isMobile" class="mt-auto pt-2 border-t border-[#3e2723]/10">
+                            <button @click="showMobileSettings = false" class="w-full flex justify-center items-center gap-2 text-[#3e2723] hover:bg-[#3e2723]/10 px-3 py-2 rounded-lg transition-colors font-bold">
+                                <span class="text-xl">&lt;</span>
+                                <span class="text-xs">返回 (Back)</span>
+                            </button>
                         </div>
                     </div>
 
@@ -1282,7 +1310,7 @@ let lastLogTime = 0;
                                  'border-green-600 bg-green-100/40': bloomPhase === 'ready',
                                  'border-gray-400': bloomPhase === 'idle'
                              },
-                             isMobile ? 'fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-40 pointer-events-none' : 'relative w-full'
+                             isMobile ? 'fixed top-20 left-1/2 -translate-x-1/2 w-[70%] max-w-[280px] z-40 pointer-events-none transform scale-90 origin-top' : 'relative w-full'
                          ]">
                         
                         <div class="flex justify-between items-baseline mb-2">
@@ -1367,61 +1395,78 @@ let lastLogTime = 0;
                     
                     <!-- 1. Real-time Analysis / Charts Wrapper -->
                     <!-- Mobile: Fixed modal. Desktop: Relative block. -->
-                    <div class="glass p-3 rounded-xl flex flex-col gap-3 transition-all duration-300 transform"
+                    <!-- 1. Real-time Analysis / Charts Wrapper -->
+                    <!-- Mobile: Right Drawer. Desktop: Relative block. -->
+                    <!-- 1. Real-time Analysis / Charts Wrapper -->
+                    <!-- Mobile: Left Bottom Drawer (Stacked). Desktop: Relative block. -->
+                    <!-- 1. Real-time Analysis / Charts Wrapper -->
+                    <!-- Mobile: Bottom-Left Floating Box. Desktop: Relative block. -->
+                    <div class="p-3 flex flex-col gap-3 transition-all duration-500 ease-in-out"
                          :class="isMobile 
-                            ? (showMobileStats ? 'fixed top-16 right-4 z-50 w-64 opacity-100 scale-100' : 'fixed top-16 right-4 z-50 w-64 opacity-0 scale-95 pointer-events-none') 
-                            : 'relative w-full opacity-100 scale-100'">
+                            ? 'fixed bottom-24 left-2 w-56 max-h-[35vh] bg-[#fdfbf7]/95 backdrop-blur-xl shadow-2xl z-[60] border border-[#3e2723]/10 flex flex-col overflow-hidden rounded-2xl' + (showMobileStats ? ' translate-x-0 opacity-100 scale-100' : ' -translate-x-10 opacity-0 scale-95 pointer-events-none')
+                            : 'relative w-full glass rounded-xl opacity-100 scale-100'">
 
                         <h3 class="text-[9px] font-bold uppercase tracking-widest text-[#8d6e63] border-b border-[#3e2723]/10 pb-1 flex justify-between">
                             <span>即時分析 (Analysis)</span>
                             <span v-if="isMobile" @click="showMobileStats = false" class="text-lg leading-none cursor-pointer">×</span>
                         </h3>
                         
-                        <!-- Extraction Bar -->
-                        <div class="flex flex-col gap-1">
-                            <div class="flex justify-between items-baseline text-[10px]">
-                                <span class="text-[#3e2723]">萃取狀態 (Extraction)</span>
-                                <span class="font-bold text-[9px]" :class="extractionVisual.valNum > 0.25 ? 'text-red-600' : (extractionVisual.valNum < -0.25 ? 'text-blue-600' : 'text-emerald-700')">
-                                    {{ extractionVisual.label }}
-                                </span>
+                        <!-- Content Wrapper for Scroll -->
+                        <div :class="isMobile ? 'flex-1 overflow-y-auto min-h-0 pr-1' : ''">
+                            <!-- Extraction Bar -->
+                            <div class="flex flex-col gap-1 mb-3">
+                                <div class="flex justify-between items-baseline text-[10px]">
+                                    <span class="text-[#3e2723]">萃取狀態 (Extraction)</span>
+                                    <span class="font-bold text-[9px]" :class="extractionVisual.valNum > 0.25 ? 'text-red-600' : (extractionVisual.valNum < -0.25 ? 'text-blue-600' : 'text-emerald-700')">
+                                        {{ extractionVisual.label }}
+                                    </span>
+                                </div>
+                                <div class="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden border border-white/40">
+                                    <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-[#3e2723]/20 z-10 transform -translate-x-1/2"></div>
+                                    <div class="h-full transition-all duration-300 ease-out"
+                                         :class="extractionVisual.colorClass"
+                                         :style="{ width: extractionVisual.pct + '%' }">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden border border-white/40">
-                                <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-[#3e2723]/20 z-10 transform -translate-x-1/2"></div>
-                                <div class="h-full transition-all duration-300 ease-out"
-                                     :class="extractionVisual.colorClass"
-                                     :style="{ width: extractionVisual.pct + '%' }">
+
+                            <!-- Uniformity Bar -->
+                            <div class="flex flex-col gap-1 mb-3">
+                                <div class="flex justify-between items-baseline text-[10px]">
+                                    <span class="text-[#3e2723]">均勻度 (Uniformity)</span>
+                                    <span class="font-bold text-[9px] text-[#3e2723]">{{ uniformityVisual.label }}</span>
+                                </div>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden border border-white/40">
+                                    <div class="h-full transition-all duration-300 ease-out"
+                                         :class="uniformityVisual.colorClass"
+                                         :style="{ width: uniformityVisual.pct + '%' }">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Flavor Radar (Inside Stats Panel on Mobile) -->
+                            <div class="w-full h-40 p-1 rounded-lg flex items-center justify-center relative bg-white/20 mb-3">
+                                <canvas id="radarChart"></canvas>
+                            </div>
+
+                            <!-- 3. Extraction Graph (Inside Stats Panel on Mobile) -->
+                            <div class="w-full h-32 p-1 rounded-lg relative flex flex-col bg-white/20">
+                                <div class="flex justify-between items-center mb-1">
+                                    <h3 class="text-[9px] uppercase tracking-widest text-[#8d6e63]">總水量 / 時間</h3>
+                                    <span class="text-[9px] text-blue-700">Target: {{ predictedYield }}%</span>
+                                </div>
+                                <div class="relative flex-1 w-full h-full overflow-hidden">
+                                    <canvas id="lineChart"></canvas>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Uniformity Bar -->
-                        <div class="flex flex-col gap-1">
-                            <div class="flex justify-between items-baseline text-[10px]">
-                                <span class="text-[#3e2723]">均勻度 (Uniformity)</span>
-                                <span class="font-bold text-[9px] text-[#3e2723]">{{ uniformityVisual.label }}</span>
-                            </div>
-                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden border border-white/40">
-                                <div class="h-full transition-all duration-300 ease-out"
-                                     :class="uniformityVisual.colorClass"
-                                     :style="{ width: uniformityVisual.pct + '%' }">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 2. Flavor Radar (Inside Stats Panel on Mobile) -->
-                        <div class="w-full h-40 p-1 rounded-lg flex items-center justify-center relative bg-white/20">
-                            <canvas id="radarChart"></canvas>
-                        </div>
-
-                        <!-- 3. Extraction Graph (Inside Stats Panel on Mobile) -->
-                        <div class="w-full h-32 p-1 rounded-lg relative flex flex-col bg-white/20">
-                            <div class="flex justify-between items-center mb-1">
-                                <h3 class="text-[9px] uppercase tracking-widest text-[#8d6e63]">總水量 / 時間</h3>
-                                <span class="text-[9px] text-blue-700">Target: {{ predictedYield }}%</span>
-                            </div>
-                            <div class="relative flex-1 w-full h-full overflow-hidden">
-                                <canvas id="lineChart"></canvas>
-                            </div>
+                        <!-- Mobile Back Button (Sticky Bottom) -->
+                        <div v-if="isMobile" class="mt-auto pt-2 border-t border-[#3e2723]/10">
+                            <button @click="showMobileStats = false" class="w-full flex justify-center items-center gap-2 text-[#3e2723] hover:bg-[#3e2723]/10 px-3 py-2 rounded-lg transition-colors font-bold">
+                                <span class="text-xl">&lt;</span>
+                                <span class="text-xs">返回 (Back)</span>
+                            </button>
                         </div>
                     </div>
                 </div>

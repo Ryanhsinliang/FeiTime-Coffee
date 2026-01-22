@@ -590,7 +590,9 @@
   import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import { useCartStore } from '@/store/cart';
+  import { useAuthStore } from '@/store/auth';
 
+  const authStore = useAuthStore();
   const cartStore = useCartStore();
 
   // 手機板 側邊選單開關
@@ -722,6 +724,10 @@
 
   // 加入購物車
   const addToCart = (product: any) => {
+    if (authStore.isLoggedIn == false) {
+      alert('請先登入！');
+      return;
+    }
     if (product.stock < 1) {
       alert('❌ 庫存不足！');
       return;

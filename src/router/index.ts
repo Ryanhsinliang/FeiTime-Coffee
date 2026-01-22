@@ -30,9 +30,6 @@ import PayCancel from '@/views/PayCancel.vue';
 import PaySuccess from '@/views/PaySuccess.vue';
 import PayWait from '@/views/PayWait.vue';
 
-//後端串接測試用
-import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
-
 const routes = [
   {
     path: '/', // URL 地址，使用者訪問此頁面時的路徑

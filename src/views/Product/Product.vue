@@ -567,7 +567,7 @@
             <!-- 加入購物車按紐 -->
             <div
               class="rounded-full bg-[#222222] inline-block px-[17px] py-[12px] absolute text-white font-bold bottom-[16px] right-[20px] z-10"
-              @click.stop.prevent=""
+              @click.stop.prevent="addToCart(p)"
             >
               <!-- 使用.stop.prevent 讓事件止於【 + 】不要擴散到跳轉 -->
               <i class="fa-solid fa-plus"></i>
@@ -592,7 +592,6 @@
   import { useCartStore } from '@/store/cart';
 
   const cartStore = useCartStore();
-  const addToCart = cartStore.addItem;
 
   // 手機板 側邊選單開關
   const he = ref(true); // 定義 true 為【 > 】
@@ -719,6 +718,23 @@
     } else {
       cannotFind.value = false;
     }
+  };
+
+  // 加入購物車
+  const addToCart = (product: any) => {
+    if (product.stock < 1) {
+      alert('❌ 庫存不足！');
+      return;
+    }
+    cartStore.addItem({
+      id: product.id,
+      pid: String(product.id),
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      stock: product.stock,
+    });
+    alert('✔️ 已加入購物車');
   };
 
   // 記錄打勾狀態 用於清空

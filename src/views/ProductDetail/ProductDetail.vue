@@ -367,11 +367,11 @@
   const cartStore = useCartStore();
   const addToCart = async () => {
     if (!product.value) return;
-    
+
     // 準備加入購物車的商品資料 (包含當前選擇的數量)
     await cartStore.addItem({
       ...product.value,
-      quantity: quantity.value 
+      quantity: quantity.value,
     });
   };
 
@@ -380,7 +380,7 @@
   const buyNow = () => {
     if (!product.value) return;
     // 導向結帳頁面
-    router.push('/Checkout');
+    router.push('/checkout');
   };
 
   // 商品資訊欄位展開

@@ -153,27 +153,31 @@ const routes = [
     ],
   },
   {
-    path: '/Checkout',
+    path: '/checkout',
     name: 'Checkout',
     component: Checkout,
+    meta: { requiresAuth: true },
   },
 
   {
     path: '/payment-cancel',
     name: 'payment-cancel',
     component: PayCancel,
+    meta: { requiresAuth: true },
   },
 
   {
     path: '/payment-wait',
     name: 'payment-wait',
     component: PayWait,
+    meta: { requiresAuth: true },
   },
 
   {
     path: '/payment-success',
     name: 'payment-success',
     component: PaySuccess,
+    meta: { requiresAuth: true },
   },
 
   {

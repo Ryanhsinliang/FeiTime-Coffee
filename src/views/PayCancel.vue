@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[--main-color]">
+  <div class="bg-[--main-color] pb-[200px]">
     <!-- 打叉 -->
     <div class="flex flex-col items-center py-[64px] w-[450px] mx-auto">
       <div

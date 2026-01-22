@@ -83,6 +83,7 @@
 
     if (totalCost < 350) {
       alert('沒有訂單');
+      router.push({ name: 'Login' });
       return;
       // 防呆 總金額 會 >= 最低價產品的價格
     } else {
@@ -121,6 +122,8 @@
         // console.error('確認失敗：', error.res?.data || error.message);
         router.push('/payment-cancel');
       }
+    } else {
+      router.push({ name: 'Login' });
     }
   });
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[--main-color]">
+  <div class="bg-[--main-color] pb-[200px]">
     <p class="text-center pt-[100px] text-[40px] font-bold text-[#222222]">讀取中</p>
     <p class="text-center text-[#666666]">若加載時間太久 請重新整理</p>
     <div class="loader"></div>

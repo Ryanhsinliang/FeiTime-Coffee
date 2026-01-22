@@ -25,6 +25,10 @@ import AdminStocks from '@/views/Admin/Stocks.vue';
 import AdminStockDetail from '@/views/Admin/StockDetail.vue';
 import AdminUsers from '@/views/Admin/AdminUsers.vue';
 import AdminUserDetail from '@/views/Admin/AdminUserDetail.vue';
+import Checkout from '@/views/Checkout/Checkout.vue';
+import PayCancel from '@/views/PayCancel.vue';
+import PaySuccess from '@/views/PaySuccess.vue';
+import PayWait from '@/views/PayWait.vue';
 
 //後端串接測試用
 import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
@@ -151,7 +155,30 @@ const routes = [
       },
     ],
   },
-  //測試用
+  {
+    path: '/Checkout',
+    name: 'Checkout',
+    component: Checkout,
+  },
+
+  {
+    path: '/payment-cancel',
+    name: 'payment-cancel',
+    component: PayCancel,
+  },
+
+  {
+    path: '/payment-wait',
+    name: 'payment-wait',
+    component: PayWait,
+  },
+
+  {
+    path: '/payment-success',
+    name: 'payment-success',
+    component: PaySuccess,
+  },
+
   {
     path: '/email-confirmed',
     name: 'EmailConfirmed',

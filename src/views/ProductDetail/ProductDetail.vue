@@ -200,9 +200,10 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
+  import { callSingleProduct, callRecommendations, cartGoPost } from '@/services/ProductDetail';
   import type { ProductRequest } from '@/services/ProductDetail';
   import { useCartStore } from '@/store/cart';
+  import { useAuthStore } from '@/store/auth';
 
   // 1. 靜態對照表
   const originMap: Record<string, string> = {
@@ -272,6 +273,7 @@
   // 2. 組件狀態與邏輯
 
   const route = useRoute();
+  const authStore = useAuthStore();
 
   const product = ref<ProductRequest | null>(null);
   const recommendations = ref<ProductRequest[]>([]);
@@ -377,9 +379,48 @@
 
   // TODO:立即購買：檢驗登入狀態，並導向結帳頁
   const router = useRouter();
-  const buyNow = () => {
+
+  // 新增按下【 立即購買 】後會加入購物車 (柔+)
+  const buyNow = async () => {
+    // 防呆 防使用者在還沒渲染產品時就按
     if (!product.value) return;
-    // 導向結帳頁面
+
+    // 防呆 庫存不足
+    if (product.value.stock < quantity.value) {
+      alert('庫存不足');
+      return;
+    }
+
+    // 防呆 先登入
+    if (authStore.isLoggedIn == false) {
+      router.push({ name: 'Login' });
+      return;
+    }
+
+    // console.log('這個產品的詳細資料');
+    // console.log(product.value);
+    // console.log('使用者按了幾包');
+    // console.log(quantity.value);
+
+    const buy = {
+      user: authStore.user!.id.toString(),
+      product: product.value.id,
+      quantity: Number(quantity.value),
+      snapshot_image: product.value.img[0].formats.large.url,
+      snapshot_name: product.value.name,
+      snapshot_price: Number(product.value.price),
+      snapshot_weight: product.value.weight,
+      item_total: Number(product.value.price) * Number(quantity.value),
+    };
+
+    try {
+      const response = await cartGoPost(buy);
+      console.log(response);
+    } catch (error) {
+      console.error('購物車加入失敗', error);
+      throw error;
+    }
+
     router.push('/checkout');
   };
 

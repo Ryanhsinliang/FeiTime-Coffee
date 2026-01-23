@@ -752,6 +752,10 @@
 
   // 清空
   const reset = () => {
+    findWord.value = '';
+    sortWhich.value = '';
+    sortHe.value = true;
+    cannotFind.value = false;
     router.push('/product');
   };
 

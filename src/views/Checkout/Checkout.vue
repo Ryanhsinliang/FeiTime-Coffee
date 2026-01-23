@@ -390,6 +390,7 @@
 
   // 給 後端 > DB 的訂單資料
   const form = reactive({
+    user: authStore.user!.id.toString(),
     order_items: postProducts.value,
     subtotal: productTotal.value, // 只有商品的價錢
     shipping_fee: 250, //運費

@@ -740,7 +740,6 @@
       image: product.img[0].formats.large.url,
       stock: product.stock,
     });
-    alert('✔️ 已加入購物車');
   };
 
   // 記錄打勾狀態 用於清空
@@ -753,20 +752,8 @@
 
   // 清空
   const reset = () => {
-    findWord.value = '';
-    filterData.roast = '';
-    filterData.flavor_type = '';
-    filterData.processing = '';
-    filterData.origin = '';
-    sortHe.value = true;
-    sortWhich.value = '';
-    cannotFind.value = false;
     router.push('/product');
   };
-
-  onMounted(async () => {
-    await getcoffee({});
-  });
 
   // 前端路由
   const router = useRouter();
@@ -786,8 +773,12 @@
   watch(
     // 如果網址變了 (按了新按鈕)  要重新抓資料
     () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值
-    () => {
+    (newQuery) => {
       cannotFind.value = false;
+      filterData.roast = (newQuery.roast as string) || '';
+      filterData.flavor_type = (newQuery.flavor_type as string) || '';
+      filterData.processing = (newQuery.processing as string) || '';
+      filterData.origin = (newQuery.origin as string) || '';
       first();
     },
     { immediate: true } // 載入頁面時 馬上執行一次來顯示全部產品

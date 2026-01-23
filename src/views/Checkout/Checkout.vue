@@ -14,14 +14,6 @@
               <p class="text-[#222222] font-[600] py-[8px] text-[20px]">宅配取貨</p>
               <p class="text-[#666666]">約3~5個工作天</p>
             </div>
-            <!-- 店icon
-            <div
-              class="cursor-pointer flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px] mb-[12px] md:mb-0 lg:mb-0 mx-auto md:mx-[12px] lg:mx-[12px] w-[200px] md:w-[50%] lg:w-[50%]"
-            >
-              <i class="fa-solid fa-shop text-[--green-gray] text-[36px]"></i>
-              <p class="text-[#222222] font-[600] py-[8px] text-[20px]">來店取貨</p>
-              <p class="text-[#666666]">約3~5小時</p>
-            </div> -->
           </div>
         </div>
 
@@ -85,55 +77,6 @@
             />
             <label for="m-linepay" class="pl-[20px]">
               <img src="./assets/linepay.svg" alt="linepay支付" class="w-[160px] h-[60px]" />
-            </label>
-          </div>
-
-          <div class="flex my-[12px]">
-            <input
-              type="radio"
-              id="m-paypay"
-              required
-              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
-              name="give-money"
-              v-model="form.payment_method"
-              value="paypay"
-            />
-            <label for="m-paypay" class="pl-[20px]">
-              <img src="./assets/paypay.svg" alt="paypay支付" class="w-[160px] h-[60px]" />
-            </label>
-          </div>
-
-          <div class="flex">
-            <input
-              type="radio"
-              id="m-card"
-              required
-              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
-              name="give-money"
-              v-model="form.payment_method"
-              value="card"
-            />
-            <label for="m-card" class="pl-[20px]">
-              <img
-                src="./assets/kaato.svg"
-                alt="刷卡"
-                class="w-[160px] py-[16px] h-[60px] bg-white"
-              />
-            </label>
-          </div>
-
-          <div class="flex">
-            <input
-              type="radio"
-              id="m-ok711"
-              required
-              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
-              name="give-money"
-              v-model="form.payment_method"
-              value="convenience"
-            />
-            <label for="m-ok711" class="pl-[20px]">
-              <img src="./assets/ok711.svg" alt="超商付款" class="w-[160px] h-[60px]" />
             </label>
           </div>
 

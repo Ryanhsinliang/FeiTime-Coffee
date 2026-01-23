@@ -88,6 +88,33 @@ export const useCoffeeResultStore = defineStore(
         throw err;
       }
     }
+
+    async function loadFromUserAccount(): Promise<boolean> {
+      if (!userId.value) return false;
+      try {
+        const response = await api.get(
+          `/api/coffee-results?filters[user][id][$eq]=${userId.value}&sort=createdAt:desc&pagination[limit]=1`
+        );
+        const results = response.data?.data;
+        if (results && results.length > 0) {
+          const result = results[0];
+          normalizedScores.value = {
+            acidity: result.acidity || 0,
+            sweetness: result.sweetness || 0,
+            body: result.body || 0,
+            aftertaste: result.aftertaste || 0,
+            clarity: result.clarity || 0,
+          };
+          calculatedAt.value = Date.now();
+          return true;
+        }
+        return false;
+      } catch (err: any) {
+        console.error('載入測驗結果失敗:', err.message);
+        return false;
+      }
+    }
+
     return {
       scores,
       maxScores,
@@ -100,6 +127,7 @@ export const useCoffeeResultStore = defineStore(
       clearResult,
       setResult,
       saveToUserAccount,
+      loadFromUserAccount,
     };
   },
   {

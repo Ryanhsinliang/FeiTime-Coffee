@@ -48,7 +48,8 @@
             </span>
 
             <span
-              class="absolute -bottom-1 left-0 w-0 h-px transition-all duration-300 group-hover:w-full"
+              class="absolute -bottom-1 left-0 h-px transition-all duration-300"
+              :class="isActive(link) ? 'w-0' : 'w-0 group-hover:w-full'"
               :style="underlineStyle"
             ></span>
           </RouterLink>
@@ -200,6 +201,7 @@
           :key="link.name"
           :to="link.to"
           class="block px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
+          :class="{ 'bg-[#DCCFC0]/30 border-l-4 border-l-[#CDBE9A] pl-5': isActive(link) }"
           :style="textColorStyle"
           @click="mobileOpen = false"
         >

@@ -39,51 +39,49 @@ const routes = [
     path: '/home',
     name: 'HomePage',
     component: HomePage,
+    meta: { title: '首頁' },
   },
   {
     path: '/product',
     name: 'Product',
     component: Product,
+    meta: { title: '商品' },
   },
   {
     path: '/product-detail/:pid',
     name: 'ProductDetail',
     component: ProductDetail,
+    meta: { title: '產品詳情' },
   },
   {
     path: '/coffee-id-test',
     name: 'CoffeeIdTest',
     component: CoffeeIdTest,
+    meta: { title: 'CoffeeID測驗' },
   },
   {
     path: '/coffee-id-test-card',
     name: 'CoffeeIdTestCard',
     component: CoffeeIdTestCard,
-  },
-  {
-    path: '/coffeeLabT1-T',
-    name: 'CoffeeLabT1-T',
-    component: CoffeeSimulatorT1T,
-  },
-  {
-    path: '/coffeeLabT1-T-P1',
-    name: 'CoffeeLabT1-T-P1',
-    component: CoffeeSimulatorT1TP1,
+    meta: { title: 'CoffeeID測驗' },
   },
   {
     path: '/UltraCoffeeSimulator',
     name: 'UltraCoffeeSimulator',
     component: UltraCoffeeSimulator,
+    meta: { title: '咖啡沖煮模擬器' },
   },
   {
     path: '/refine-simulator',
     name: 'RefineSimulator',
     component: RefineSimulator,
+    meta: { title: '進階模擬器' },
   },
   {
     path: '/login',
     name: 'Login',
     component: Login,
+    meta: { title: '登入' },
   },
   {
     path: '/auth/google/callback',
@@ -94,18 +92,19 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register,
+    meta: { title: '註冊' },
   },
   {
     path: '/member',
     name: 'Member',
     component: Member,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: '會員專區' },
   },
   {
     path: '/admin',
     name: 'Admin',
     component: Admin,
-    meta: { requiresAdmin: true },
+    meta: { requiresAdmin: true, title: '後台管理' },
     children: [
       // 訂單
       {
@@ -146,45 +145,6 @@ const routes = [
       },
     ],
   },
-  {
-    path: '/Checkout',
-    name: 'Checkout',
-    component: Checkout,
-  },
-
-  {
-    path: '/payment-cancel',
-    name: 'payment-cancel',
-    component: PayCancel,
-  },
-
-  {
-    path: '/payment-wait',
-    name: 'payment-wait',
-    component: PayWait,
-  },
-
-  {
-    path: '/payment-success',
-    name: 'payment-success',
-    component: PaySuccess,
-  },
-
-  {
-    path: '/email-confirmed',
-    name: 'EmailConfirmed',
-    component: EmailConfirmed,
-  },
-  {
-    path: '/forgot-password',
-    name: 'ForgotPassword',
-    component: ForgotPassword,
-  },
-  {
-    path: '/reset-password',
-    name: 'ResetPassword',
-    component: ResetPassword,
-  },
 ];
 
 const router = createRouter({
@@ -199,6 +159,13 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
+
+  // --- 設定瀏覽器標題邏輯 ---
+  const siteName = 'FeiTime';
+  const pageTitle = to.meta.title as string;
+  document.title = pageTitle ? `${siteName} - ${pageTitle}` : siteName;
+  // ------------------------------
+
   console.log(`正在前往: ${to.path}, 登入狀態: ${authStore.isLoggedIn}`);
 
   if (authStore.isLoggedIn && (to.path === '/login' || to.path === '/register')) {

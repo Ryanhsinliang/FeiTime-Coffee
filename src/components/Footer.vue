@@ -27,7 +27,7 @@
       <div
         class="flex flex-col md:flex-row justify-between items-center gap-3 text-[10px] md:text-xs text-[#B5A893] uppercase tracking-wider font-notosans"
       >
-        <p>© 2025 FeiTime Coffee. All rights reserved.</p>
+        <p>© 2026 FeiTime Coffee. All rights reserved.</p>
         <div class="flex gap-8">
           <a class="hover:text-[#8C7B5D] transition-colors" href="#">隱私權政策</a>
           <a class="hover:text-[#8C7B5D] transition-colors" href="#">Cookie 政策</a>

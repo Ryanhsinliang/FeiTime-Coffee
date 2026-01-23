@@ -123,7 +123,7 @@
       id: 'chocolate',
       name: '巧克力',
       description: '濃郁深沉',
-      icon: 'cake',
+      icon: 'deployed_code',
       image: flavorChocolate,
     },
   ]);
@@ -564,6 +564,16 @@
 
   const nextRecommendation = async (): Promise<void> => {
     console.log('⏭️ Next recommendation requested');
+    console.log('📊 Current state:', {
+      currentVideoIndex: currentVideoIndex.value,
+      totalVideos: currentVideos.value.length,
+      isFetchingNext: isFetchingNext.value,
+      musicLoading: musicLoading.value,
+      selectedFlavor: selectedFlavor.value?.name,
+    });
+
+    // 清除之前的錯誤，允許重試
+    musicError.value = null;
 
     // 如果還有下一首歌曲在當前列表中
     if (currentVideoIndex.value < currentVideos.value.length - 1) {
@@ -635,7 +645,7 @@
 
 <template>
   <section
-    class="bg-sage text-text-dark font-display flex items-center justify-center py-8 px-4 lg:py-12 lg:px-8 overflow-x-hidden transition-colors duration-300"
+    class="bg-[#FAF9EE] text-text-dark font-display flex items-center justify-center py-8 px-4 lg:py-12 lg:px-8 overflow-x-hidden transition-colors duration-300"
   >
     <div
       class="w-full max-w-[1200px] bg-[#FAF9EE] rounded-4xl overflow-hidden flex flex-col relative"
@@ -780,7 +790,7 @@
           >
             <!-- YouTube Player Container -->
             <div
-              v-if="!musicLoading && !musicError && currentVideo"
+              v-show="!musicLoading && !musicError && currentVideo"
               id="youtube-player-container"
               class="w-full h-full"
             >
@@ -880,12 +890,8 @@
           >
             <div class="flex items-center gap-3 flex-1 min-w-0">
               <div
-                class="w-10 h-10 rounded-full bg-sage flex-shrink-0 flex items-center justify-center text-white shadow-md relative"
+                class="w-10 h-10 rounded-full bg-white flex-shrink-0 flex items-center justify-center text-white shadow-md"
               >
-                <span
-                  v-if="!musicError"
-                  class="absolute inset-0 rounded-full bg-sage animate-ping opacity-20"
-                ></span>
                 <img :src="feiDJ" class="w-6 h-6 object-contain" alt="Fei DJ" />
               </div>
               <div class="flex flex-col min-w-0 flex-1">
@@ -913,7 +919,7 @@
             </div>
             <button
               @click="nextRecommendation"
-              :disabled="musicLoading || isFetchingNext || !selectedFlavor || musicError !== null"
+              :disabled="musicLoading || isFetchingNext || !selectedFlavor"
               class="flex items-center justify-center gap-2 bg-[#DCCFC0] text-[#171412] px-4 py-2 rounded-lg hover:bg-[#C4B5A0] hover:shadow-lg transition-all duration-300 shadow-md group flex-shrink-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none hover:disabled:bg-gray-200"
             >
               <span class="text-xs font-bold tracking-wide hidden sm:inline">Next</span>
@@ -949,8 +955,8 @@
               :key="flavor.id"
               @click="selectFlavor(flavor)"
               :class="[
-                'group relative h-28 sm:h-32 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-1',
-                selectedFlavor?.id === flavor.id ? 'ring-2 ring-sage/50' : '',
+                'group relative h-28 sm:h-32 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition-[shadow,transform] duration-500 hover:-translate-y-1',
+                selectedFlavor?.id === flavor.id ? 'ring-2 ring-amber-300/50' : '',
               ]"
             >
               <div
@@ -967,7 +973,7 @@
                 <span class="text-white/80 text-[10px]">{{ flavor.description }}</span>
               </div>
               <div
-                class="absolute top-2 right-2 w-5 h-5 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-sage group-hover:scale-110 transition-all"
+                class="absolute top-2 right-2 w-5 h-5 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white"
               >
                 <span class="material-symbols-outlined text-xs">{{ flavor.icon }}</span>
               </div>

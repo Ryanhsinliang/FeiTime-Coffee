@@ -4,6 +4,7 @@ import api from '@/services/api';
 export interface ProductRequest {
   name: string; // 產品名稱
   english_name: string; // 產品英文名稱
+  id: string; // 產品DB編號(柔+)
   pid: string; // 產品編號
   origin: string; // 產地
   processing: string; // 處理法
@@ -56,4 +57,18 @@ export async function callSingleProduct(pid: string): Promise<SingleProductRespo
 export async function callRecommendations(pid: string): Promise<RecommendationsResponse> {
   const res = await api.get<RecommendationsResponse>(`/api/product-detail/${pid}/recommendations`);
   return res.data;
+}
+
+// 新增產品至購物車 (柔+)
+export async function cartGoPost(formData: any) {
+  try {
+    const res = await api.post('/api/cart', formData);
+    return res.data;
+  } catch (err: any) {
+    console.error('API 串接出錯：', err.message);
+    console.error(err.res.error);
+    console.error(err.res.message);
+    console.error(err.res.detail);
+    throw err;
+  }
 }

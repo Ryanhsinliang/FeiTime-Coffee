@@ -57,6 +57,7 @@
     deleteCart,
   } from '@/services/checkout';
   import { useAuthStore } from '@/store/auth';
+  import { useCartStore } from '@/store/cart';
 
   interface AllProductRule {
     // 設定data規格
@@ -109,6 +110,7 @@
   const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
   const idCart = ref<CartRule[]>([]);
   const authStore = useAuthStore();
+  const cartStore = useCartStore();
 
   // 用id取得 現在庫存 和 真正用來put的id
   const getNowStock = (id: number | string) => {
@@ -246,6 +248,8 @@
           throw err;
         }
       }
+      cartStore.items = [];
+      console.log('購物車pinia已成功清空');
     }
   });
 

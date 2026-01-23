@@ -68,8 +68,8 @@
         </button>
         <button
           class="px-6 py-4 text-sm"
-          :class="activeStatus === 'paid' ? 'font-bold border-b-2' : ''"
-          @click="activeStatus = 'paid'"
+          :class="activeStatus === 'processing' ? 'font-bold border-b-2' : ''"
+          @click="activeStatus = 'processing'"
         >
           待出貨
         </button>
@@ -95,10 +95,10 @@
           已取消
         </button>
       </div>
-      <!-- <div class="hidden lg:flex items-center gap-2 text-xs text-text-secondary px-4">
+      <div class="hidden lg:flex items-center gap-2 text-xs text-text-secondary px-4">
         <span class="flex size-2 bg-emerald-500 rounded-full"></span>
-        12 筆新訂單
-      </div> -->
+        {{ processingCount }}筆待出貨訂單需處理
+      </div>
     </section>
 
     <!-- Loading status -->
@@ -112,7 +112,7 @@
     <!-- 訂單列表 -->
     <div
       class="overflow-hidden rounded-xl border border-[#e7dacf] bg-white shadow-sm"
-      v-else-if="orders"
+      v-else-if="allOrders.length"
     >
       <table class="w-full text-left">
         <thead>
@@ -133,7 +133,7 @@
 
         <tbody>
           <tr
-            v-for="order in filteredOrders"
+            v-for="order in paginatedOrders"
             :key="order.order_number"
             @click="goToOrderDetail(order.order_number)"
             class="hover:bg-gray-100 cursor-pointer"
@@ -165,7 +165,7 @@
             <td class="py-4 px-6 text-right text-sm font-bold">${{ order.total_amount }}</td>
           </tr>
 
-          <tr v-if="!filteredOrders.length">
+          <tr v-if="!paginatedOrders.length">
             <td class="py-10 text-center text-sm text-gray-400" colspan="6">
               目前沒有符合條件的訂單
             </td>
@@ -176,30 +176,33 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">共 {{ filteredOrders.length }} 筆</p>
-
-        <!-- TODO:待修改 -->
-        <p class="text-sm">每頁 20 筆 / 共 {{ filteredOrders.length }} 筆</p>
+        <p class="text-sm">每頁 {{ pageSize }} 筆 / 共 {{ totalFilteredItems }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button
             class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
-            disabled="false"
+            :disabled="currentPage === 1"
+            @click="changePage(currentPage - 1)"
           >
             <i class="fa-solid fa-chevron-left text-sm"></i>
           </button>
+
+          <!-- 頁碼按鈕 -->
           <button
-            class="flex items-center justify-center size-9 rounded-lg bg-[#f09a4e] font-bold text-sm shadow-sm"
+            v-for="page in totalPages"
+            :key="page"
+            class="flex items-center justify-center size-9 rounded-lg font-bold text-sm"
+            :class="page === currentPage ? 'bg-[#f09a4e] shadow-sm' : 'border bg-white'"
+            @click="changePage(page)"
           >
-            1
+            {{ page }}
           </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            2
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            3
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
+
+          <button
+            class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
+            :disabled="currentPage === totalPages || totalPages === 0"
+            @click="changePage(currentPage + 1)"
+          >
             <i class="fa-solid fa-chevron-right text-sm"></i>
           </button>
         </div>
@@ -209,20 +212,31 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue';
+  import { ref, onMounted, computed, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { callOrders } from '@/services/admin/adminOrderService';
   import type { OrderRequest } from '@/services/admin/adminOrderService';
 
   const router = useRouter();
 
-  const orders = ref<OrderRequest[]>([]);
+  const allOrders = ref<OrderRequest[]>([]); // ✅ 儲存全部訂單
   const loading = ref(false);
   const error = ref('');
   const keyword = ref('');
 
+  // 分頁狀態
+  const currentPage = ref(1);
+  const pageSize = ref(20);
+
   // 目前選到的 tab 狀態
-  type TabStatus = 'all' | 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
+  type TabStatus =
+    | 'all'
+    | 'pending'
+    | 'paid'
+    | 'processing'
+    | 'shipped'
+    | 'delivered'
+    | 'cancelled';
   const activeStatus = ref<TabStatus>('all');
 
   // 訂購日期篩選
@@ -242,9 +256,10 @@
     error.value = '';
 
     try {
-      const res = await callOrders();
-      orders.value = res.data || [];
-      console.log('✅ 成功載入訂單:', orders.value.length, '筆');
+      // ✅ 一次載入全部資料
+      const res = await callOrders(1, 1000);
+      allOrders.value = res.data || [];
+      console.log('✅ 成功載入訂單:', allOrders.value.length, '筆');
     } catch (err: any) {
       console.error('❌ 載入失敗:', err);
       error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
@@ -253,18 +268,17 @@
     }
   }
 
-  // 篩選訂單狀態
+  //  先篩選
   const filteredOrders = computed(() => {
-    let result = orders.value;
+    let result = allOrders.value;
 
     // 狀態 tab
     if (activeStatus.value !== 'all') {
       result = result.filter((o) => o.order_status === activeStatus.value);
     }
 
-    // 訂購日期篩選（createdAt）
+    // 訂購日期篩選
     const now = new Date();
-
     result = result.filter((o) => {
       if (dateRange.value === 'all') return true;
       if (!o.createdAt) return false;
@@ -276,7 +290,6 @@
         return isSameLocalDate(created, now);
       }
 
-      // 用「距今幾天」判斷（避免時區/跨日）
       const diffMs = now.getTime() - created.getTime();
       const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
@@ -305,15 +318,44 @@
         return hay.includes(key);
       });
     }
+
     return result;
   });
 
-  // 清除篩選
+  // 計算待出貨訂單數量
+  const processingCount = computed(
+    () => allOrders.value.filter((o) => o.order_status === 'processing').length
+  );
+
+  // ✅ 計算篩選後的總筆數和總頁數
+  const totalFilteredItems = computed(() => filteredOrders.value.length);
+  const totalPages = computed(() => Math.ceil(totalFilteredItems.value / pageSize.value));
+
+  // ✅ 再做分頁切割
+  const paginatedOrders = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return filteredOrders.value.slice(start, end);
+  });
+
+  // ✅ 換頁功能
+  function changePage(page: number) {
+    if (page < 1 || page > totalPages.value) return;
+    currentPage.value = page;
+  }
+
+  // ✅ 清除篩選時重置頁碼
   function clearFilters() {
     keyword.value = '';
     activeStatus.value = 'all';
     dateRange.value = 'all';
+    currentPage.value = 1; // 重置頁碼
   }
+
+  // ✅ 監聽篩選條件變化，重置頁碼
+  watch([activeStatus, dateRange, keyword], () => {
+    currentPage.value = 1;
+  });
 
   function goToOrderDetail(order_number: string) {
     router.push({ name: 'AdminOrderDetail', params: { order_number } });

@@ -95,10 +95,10 @@
           已取消
         </button>
       </div>
-      <div class="hidden lg:flex items-center gap-2 text-xs text-text-secondary px-4">
+      <!-- <div class="hidden lg:flex items-center gap-2 text-xs text-text-secondary px-4">
         <span class="flex size-2 bg-emerald-500 rounded-full"></span>
         12 筆新訂單
-      </div>
+      </div> -->
     </section>
 
     <!-- Loading status -->

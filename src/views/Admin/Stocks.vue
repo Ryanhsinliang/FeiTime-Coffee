@@ -11,18 +11,29 @@
   </header>
 
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
+    <!-- 成功提示 Toast -->
+    <transition
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="opacity-0 translate-y-[-20px]"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 translate-y-[-20px]"
+    >
+      <div
+        v-if="showSuccessToast"
+        class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
+      >
+        <i class="fa-solid fa-circle-check"></i>
+        <span class="font-semibold">庫存更新成功！</span>
+      </div>
+    </transition>
+
     <section class="flex justify-between">
       <div>
         <h2 class="text-3xl font-bold">庫存管理</h2>
         <p class="text-gray-400 text-sm">主要管理商品庫存。</p>
       </div>
-      <!-- TODO:待修改 -->
-      <button
-        class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm"
-      >
-        <i class="fa-solid fa-plus text-sm"></i>
-        <p>新增商品</p>
-      </button>
     </section>
 
     <!-- 搜尋 -->
@@ -59,11 +70,15 @@
 
     <!-- Loading status -->
     <div v-if="loading" class="flex items-center justify-center min-h-[400px] flex-col gap-4">
-      <div class="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"></div>
+      <div
+        class="w-12 h-12 border-4 border-[#e27312] border-t-transparent rounded-full animate-spin"
+      ></div>
       <p>載入產品中...</p>
     </div>
     <!-- Error status -->
-    <div v-else-if="error">{{ error }}</div>
+    <div v-else-if="error" class="p-6 bg-red-50 border border-red-200 rounded-xl text-red-800">
+      {{ error }}
+    </div>
     <!-- 表格 -->
     <div
       class="overflow-hidden rounded-xl border border-[#e7dacf] bg-white shadow-sm"
@@ -82,7 +97,7 @@
             <th class="py-4 px-6 text-xs font-bold text-center">價格</th>
             <th class="py-4 px-6 text-xs font-bold text-center">庫存量</th>
             <th class="py-4 px-6 text-xs font-bold text-center">庫存狀態</th>
-            <!-- <th class="py-4 px-6 text-xs font-bold text-center">操作</th> -->
+            <th class="py-4 px-6 text-xs font-bold text-center">編輯庫存</th>
           </tr>
         </thead>
 
@@ -90,26 +105,57 @@
           <tr
             v-for="product in filteredProducts"
             :key="product.pid"
-            @click="goToStockDetail(product.pid)"
-            class="hover:bg-gray-100 cursor-pointer"
+            class="hover:bg-gray-50 transition-colors"
           >
             <td class="py-4 px-6">
               <p class="text-sm font-bold">{{ product.pid }}</p>
             </td>
 
-            <td class="py-4 px-6 flex items-center gap-3">
-              <img
-                :src="product.img[0]?.formats?.large?.url"
-                :alt="product.name"
-                class="size-12 rounded-lg object-cover aspect-square"
-              />
-              <p class="text-sm font-bold">{{ product.name }}</p>
+            <td
+              @click="goToStockDetail(product.pid)"
+              class="py-4 px-6 hover:text-[#9a704c] cursor-pointer"
+            >
+              <div class="flex items-center gap-3">
+                <img
+                  :src="product.img[0]?.formats?.large?.url"
+                  :alt="product.name"
+                  class="size-12 rounded-lg object-cover aspect-square"
+                />
+                <p class="text-sm font-bold">{{ product.name }}</p>
+                <button type="button" class="text-gray-400 hover:text-[#9a704c] transition-colors">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
             </td>
 
-            <td class="py-4 px-6 text-sm text-center">{{ product.price }}</td>
+            <td class="py-4 px-6 text-sm text-center">NT$ {{ product.price }}</td>
 
-            <td class="py-4 px-6 text-center text-sm font-bold">
-              {{ product.stock }}
+            <td class="py-4 px-6 text-center">
+              <div
+                v-if="editingProduct === product.pid"
+                class="flex items-center justify-center gap-2"
+              >
+                <button
+                  @click="decreaseStock(product)"
+                  :disabled="tempStock[product.pid] <= 0"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#e7dacf] bg-white hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <i class="fa-solid fa-minus text-xs"></i>
+                </button>
+                <input
+                  v-model.number="tempStock[product.pid]"
+                  type="number"
+                  min="0"
+                  class="w-20 h-8 text-center text-sm font-bold border border-[#e7dacf] rounded-lg focus:ring-2 focus:ring-[#f09a4e] focus:border-transparent"
+                />
+                <button
+                  @click="increaseStock(product)"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#e7dacf] bg-white hover:bg-gray-100 transition-colors"
+                >
+                  <i class="fa-solid fa-plus text-xs"></i>
+                </button>
+              </div>
+              <p v-else class="text-sm font-bold">{{ product.stock }}</p>
             </td>
 
             <td class="py-4 px-6 text-center">
@@ -134,16 +180,37 @@
               </p>
             </td>
 
-            <!-- <td class="py-4 px-6 text-right flex justify-center gap-5">
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px] hover:text-[#9a704c]">
-                  visibility
-                </span>
-              </button>
-              <button type="button">
-                <span class="material-symbols-outlined text-[20px] hover:text-[#9a704c]">edit</span>
-              </button>
-            </td> -->
+            <td class="py-4 px-6">
+              <div class="flex justify-center gap-2">
+                <template v-if="editingProduct === product.pid">
+                  <button
+                    @click="cancelEdit"
+                    class="px-4 py-2 text-sm font-semibold rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+                  >
+                    取消
+                  </button>
+                  <button
+                    @click="saveStock(product)"
+                    :disabled="updatingProduct === product.pid"
+                    class="px-4 py-2 text-sm font-semibold rounded-lg bg-[#f09a4e] text-white hover:bg-[#e27312] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center gap-2"
+                  >
+                    <i
+                      v-if="updatingProduct === product.pid"
+                      class="fa-solid fa-circle-notch fa-spin"
+                    ></i>
+                    <span>{{ updatingProduct === product.pid ? '更新中...' : '送出' }}</span>
+                  </button>
+                </template>
+                <button
+                  v-else
+                  @click="startEdit(product)"
+                  class="px-4 py-2 text-sm font-semibold rounded-lg border border-[#e7dacf] bg-white hover:bg-[#fcfaf8] transition-colors flex items-center gap-2"
+                >
+                  <span class="material-symbols-outlined text-base">edit</span>
+                  <span>編輯</span>
+                </button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -151,41 +218,16 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">共 {{ filteredProducts.length }} 筆</p>
-
-        <!-- TODO:待修改 -->
         <p class="text-sm">每頁 20 筆 / 共 {{ filteredProducts.length }} 筆</p>
-
-        <div class="flex items-center gap-2">
-          <button
-            class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
-            disabled="false"
-          >
-            <i class="fa-solid fa-chevron-left text-sm"></i>
-          </button>
-          <button
-            class="flex items-center justify-center size-9 rounded-lg bg-[#f09a4e] font-bold text-sm shadow-sm"
-          >
-            1
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            2
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            3
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            <i class="fa-solid fa-chevron-right text-sm"></i>
-          </button>
-        </div>
       </div>
     </div>
   </main>
 </template>
+
 <script setup lang="ts">
-  import { ref, computed, onMounted, watch } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
-  import { callProducts } from '@/services/admin/adminProductService';
+  import { ref, computed, onMounted, reactive } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { callProducts, callUpdateProduct } from '@/services/admin/adminProductService';
   import type { ProductRequest } from '@/services/admin/adminProductService';
 
   const router = useRouter();
@@ -198,6 +240,12 @@
   // 庫存狀態 tab
   type StockStatus = 'all' | 'soldout' | 'lowstock' | 'normal';
   const stockStatus = ref<StockStatus>('all');
+
+  // 編輯相關狀態
+  const editingProduct = ref<string | null>(null);
+  const updatingProduct = ref<string | null>(null);
+  const tempStock = reactive<Record<string, number>>({});
+  const showSuccessToast = ref(false);
 
   // 搜尋欄檢索
   const filteredProducts = computed(() => {
@@ -233,7 +281,7 @@
     try {
       const res = await callProducts();
       products.value = res.data || [];
-      console.log('✅ 成功載入訂單:', products.value.length, '筆');
+      console.log('✅ 成功載入產品:', products.value.length, '筆');
     } catch (err: any) {
       console.error('❌ 載入失敗:', err);
       error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
@@ -250,6 +298,66 @@
 
   function goToStockDetail(pid: string) {
     router.push({ name: 'AdminStockDetail', params: { pid } });
+  }
+
+  // 開始編輯
+  function startEdit(product: ProductRequest) {
+    editingProduct.value = product.pid;
+    tempStock[product.pid] = product.stock;
+  }
+
+  // 取消編輯
+  function cancelEdit() {
+    editingProduct.value = null;
+  }
+
+  // 增加庫存
+  function increaseStock(product: ProductRequest) {
+    tempStock[product.pid] = (tempStock[product.pid] || 0) + 1;
+  }
+
+  // 減少庫存
+  function decreaseStock(product: ProductRequest) {
+    if (tempStock[product.pid] > 0) {
+      tempStock[product.pid] = tempStock[product.pid] - 1;
+    }
+  }
+
+  // 儲存庫存
+  async function saveStock(product: ProductRequest) {
+    const newStock = tempStock[product.pid];
+
+    if (newStock === product.stock) {
+      editingProduct.value = null;
+      return;
+    }
+
+    updatingProduct.value = product.pid;
+
+    try {
+      await callUpdateProduct(product.pid, { stock: newStock });
+
+      // 更新本地資料
+      const index = products.value.findIndex((p) => p.pid === product.pid);
+      if (index !== -1) {
+        products.value[index].stock = newStock;
+      }
+
+      console.log('✅ 庫存更新成功:', product.pid, '新庫存:', newStock);
+
+      // 顯示成功提示
+      showSuccessToast.value = true;
+      setTimeout(() => {
+        showSuccessToast.value = false;
+      }, 3000);
+
+      editingProduct.value = null;
+    } catch (err: any) {
+      console.error('❌ 更新失敗:', err);
+      alert(`更新失敗: ${err.response?.data?.message || err.message}`);
+    } finally {
+      updatingProduct.value = null;
+    }
   }
 
   onMounted(() => {

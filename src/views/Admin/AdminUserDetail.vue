@@ -211,7 +211,7 @@
   import { computed, onMounted, reactive, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { getUserById, updateUser } from '@/services/admin/adminUserService';
-  import type { UserRequest } from '@/services/admin/adminUserService';
+  import type { UserRequest, UpdateUserRequest } from '@/services/admin/adminUserService';
 
   type UserRole = 'Admin' | 'Member';
 
@@ -225,10 +225,17 @@
 
   const user = ref<UserRequest | null>(null);
 
-  // ✅ 只允許編輯的欄位
-  const form = reactive<{ blocked: boolean; user_role: UserRole }>({
+  //  只允許編輯的欄位
+  const form = reactive<{
+    blocked: boolean;
+    user_role: UserRole;
+    phone_number: string;
+    shipping_address: string;
+  }>({
     blocked: false,
     user_role: 'Member',
+    phone_number: '',
+    shipping_address: '',
   });
 
   const id = computed(() => String(route.params.id || ''));

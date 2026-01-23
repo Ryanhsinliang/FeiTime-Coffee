@@ -20,10 +20,13 @@ export interface ProductRequest {
 
 export interface ProductListResponse {
   data: ProductRequest[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number; // 總頁數
+      total: number; // 總筆數
+    };
   };
 }
 

@@ -103,7 +103,7 @@
 
         <tbody>
           <tr
-            v-for="product in filteredProducts"
+            v-for="product in paginatedProducts"
             :key="product.pid"
             class="hover:bg-gray-50 transition-colors"
           >
@@ -218,14 +218,43 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">每頁 20 筆 / 共 {{ filteredProducts.length }} 筆</p>
+        <p class="text-sm">每頁 {{ pageSize }} 筆 / 共 {{ totalFilteredItems }} 筆</p>
+
+        <div class="flex items-center gap-2">
+          <button
+            class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
+            :disabled="currentPage === 1"
+            @click="changePage(currentPage - 1)"
+          >
+            <i class="fa-solid fa-chevron-left text-sm"></i>
+          </button>
+
+          <!-- 頁碼按鈕 -->
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            class="flex items-center justify-center size-9 rounded-lg font-bold text-sm"
+            :class="page === currentPage ? 'bg-[#f09a4e] shadow-sm' : 'border bg-white'"
+            @click="changePage(page)"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
+            :disabled="currentPage === totalPages || totalPages === 0"
+            @click="changePage(currentPage + 1)"
+          >
+            <i class="fa-solid fa-chevron-right text-sm"></i>
+          </button>
+        </div>
       </div>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted, reactive } from 'vue';
+  import { ref, computed, onMounted, reactive, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { callProducts, callUpdateProduct } from '@/services/admin/adminProductService';
   import type { ProductRequest } from '@/services/admin/adminProductService';
@@ -237,9 +266,29 @@
   const error = ref('');
   const keyword = ref('');
 
+  // 分頁狀態
+  const currentPage = ref(1);
+  const pageSize = ref(20);
+
   // 庫存狀態 tab
   type StockStatus = 'all' | 'soldout' | 'lowstock' | 'normal';
   const stockStatus = ref<StockStatus>('all');
+
+  async function loadProducts() {
+    loading.value = true;
+    error.value = '';
+
+    try {
+      const res = await callProducts(1, 1000);
+      products.value = res.data || [];
+      console.log('✅ 成功載入產品:', products.value.length, '筆');
+    } catch (err: any) {
+      console.error('❌ 載入失敗:', err);
+      error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
+    } finally {
+      loading.value = false;
+    }
+  }
 
   // 編輯相關狀態
   const editingProduct = ref<string | null>(null);
@@ -274,27 +323,34 @@
     return result;
   });
 
-  async function loadProducts() {
-    loading.value = true;
-    error.value = '';
+  // ✅ 計算篩選後的總筆數和總頁數
+  const totalFilteredItems = computed(() => filteredProducts.value.length);
+  const totalPages = computed(() => Math.ceil(totalFilteredItems.value / pageSize.value));
 
-    try {
-      const res = await callProducts();
-      products.value = res.data || [];
-      console.log('✅ 成功載入產品:', products.value.length, '筆');
-    } catch (err: any) {
-      console.error('❌ 載入失敗:', err);
-      error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
-    } finally {
-      loading.value = false;
-    }
+  // ✅ 再做分頁切割
+  const paginatedProducts = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return filteredProducts.value.slice(start, end);
+  });
+
+  // ✅ 換頁功能
+  function changePage(page: number) {
+    if (page < 1 || page > totalPages.value) return;
+    currentPage.value = page;
   }
 
   // 清除篩選
   function clearFilters() {
     keyword.value = '';
     stockStatus.value = 'all';
+    currentPage.value = 1; // 重置頁碼
   }
+
+  // ✅ 監聽篩選條件變化，重置頁碼
+  watch([stockStatus, keyword], () => {
+    currentPage.value = 1;
+  });
 
   function goToStockDetail(pid: string) {
     router.push({ name: 'AdminStockDetail', params: { pid } });

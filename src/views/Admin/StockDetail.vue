@@ -60,13 +60,7 @@
               >
                 <button
                   type="button"
-                  class="bg-white/20 p-2 rounded-full text-white hover:bg-white/40"
-                >
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-                <button
-                  type="button"
-                  class="bg-white/20 p-2 rounded-full text-white hover:bg-red-500"
+                  class="bg-white/20 size-10 rounded-full text-white hover:bg-red-500"
                   @click="removeImage(index)"
                 >
                   <span class="material-symbols-outlined">delete</span>
@@ -134,26 +128,19 @@
           </label>
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">處理法</p>
-            <select
+            <input
               class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              type="text"
               v-model="ProductForm.processing"
-            >
-              <option value="washed">Washed</option>
-              <option value="natural">Natural</option>
-              <option value="honey">Honey</option>
-              <option value="anaerobic">Anaerobic</option>
-            </select>
+            />
           </label>
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">烘焙度</p>
-            <select
+            <input
               class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              type="text"
               v-model="ProductForm.roast"
-            >
-              <option value="light">淺焙</option>
-              <option value="medium">中焙</option>
-              <option value="dark">深焙</option>
-            </select>
+            />
           </label>
         </div>
       </section>
@@ -170,7 +157,7 @@
         <div class="p-6 space-y-8">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <label class="flex flex-col gap-2">
-              <p class="text-sm font-semibold">Flavor Tags</p>
+              <p class="text-sm font-semibold">風味標籤</p>
               <div
                 class="flex flex-wrap gap-2 p-3 border border-[#e7dacf] dark:border-[#3d2b1d] rounded-lg bg-white dark:bg-[#221810]"
               >
@@ -200,7 +187,7 @@
               </div>
             </label>
             <label class="flex flex-col gap-2">
-              <p class="text-sm font-semibold">Flavor Type</p>
+              <p class="text-sm font-semibold">風味類型</p>
               <select
                 class="w-full pl-4 rounded-lg border-[#e7dacf] bg-[#f8f7f6] py-3"
                 v-model="ProductForm.flavor_type"
@@ -384,7 +371,7 @@
         flavor_type: ProductForm.value.flavor_type,
         flavor_tags: ProductForm.value.flavor_tags,
         description: ProductForm.value.description,
-        imgIds, // 「刪圖後保留的圖」
+        imgIds, // 刪圖後保留的圖
       });
 
       console.log('✅ 更新成功:', res);

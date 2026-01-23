@@ -171,13 +171,13 @@
     <section class="bg-[#eeeeee] py-[100px] min-h-[750px] overflow-hidden w-full">
       <h2 class="py-10 text-center text-3xl font-semibold text-[#6d654f]">推薦商品</h2>
       <div
-        class="cursor-pointer flex gap-12 w-max animate-[scroll_60s_linear_infinite] [will-change:transform] hover:[animation-play-state:paused]"
+        class="cursor-pointer flex gap-12 w-max animate-[scroll_70s_linear_infinite] [will-change:transform] hover:[animation-play-state:paused]"
       >
         <router-link
           v-for="item in recommendations"
           :key="item.pid"
           :to="`/product-detail/${item.pid}`"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0"
+          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0 shadow-lg"
         >
           <img
             :src="item.img[0]?.formats?.large?.url"
@@ -378,7 +378,7 @@
     });
   };
 
-  // 立即購買：檢驗登入狀態，並導向結帳頁
+  // 立即購買：檢驗登入狀態，導向結帳頁
   const router = useRouter();
 
   // 新增按下【 立即購買 】後會加入購物車 (柔+)

@@ -40,6 +40,7 @@ export interface UpdateUserRequest {
   user_role: UserRole;
   username?: string;
   phone_number?: string;
+  shipping_address?: string;
 }
 
 export interface UpdateUserResponse {

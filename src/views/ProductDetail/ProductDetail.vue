@@ -54,7 +54,7 @@
 
       <!-- Product Form -->
       <form class="py-24 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-12 text-[#6d654f]">
-        <div class="w-7/12 mx-auto">
+        <div class="w-1/2 mx-auto">
           <p id="origin">{{ originText }} • Single Origin</p>
           <h2 class="text-4xl pt-3 font-semibold">{{ product.name }}</h2>
           <h3 class="pt-2 pb-4">{{ product.english_name }}</h3>

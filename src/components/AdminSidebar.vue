@@ -49,15 +49,17 @@
         <span class="material-symbols-outlined">settings</span>
         <span class="text-sm">設定</span>
       </RouterLink>
-      <div class="px-3 py-3 border-t border-[#e7dacf]">
-        <p class="text-sm font-semibold">管理者</p>
-        <p class="text-xs">admin@coffee.com</p>
-      </div>
+      <RouterLink
+        to="/"
+        class="flex items-center gap-2 px-4 py-2.5 mb-2 bg-[#f3ede7] rounded-lg text-sm font-bold hover:bg-[#e6ddda] active:scale-95"
+      >
+        <span class="material-symbols-outlined text-lg">arrow_back</span>
+        <p>返回前台</p>
+      </RouterLink>
     </div>
   </aside>
 </template>
 <script setup>
-  import { computed } from 'vue';
   import { useRoute } from 'vue-router';
 
   const route = useRoute();

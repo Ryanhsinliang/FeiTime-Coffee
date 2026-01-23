@@ -24,6 +24,7 @@ import AdminOrderDetail from '@/views/Admin/OrderDetail.vue';
 import AdminStocks from '@/views/Admin/Stocks.vue';
 import AdminStockDetail from '@/views/Admin/StockDetail.vue';
 import AdminUsers from '@/views/Admin/AdminUsers.vue';
+import AdminUserMe from '@/views/Admin/AdminUserMe.vue';
 import AdminUserDetail from '@/views/Admin/AdminUserDetail.vue';
 import Checkout from '@/views/Checkout/Checkout.vue';
 import PayCancel from '@/views/PayCancel.vue';
@@ -138,11 +139,16 @@ const routes = [
         component: AdminStockDetail,
       },
 
-      // 顧客
+      // 使用者
       {
         path: 'users',
         name: 'AdminUsers',
         component: AdminUsers,
+      },
+      {
+        path: 'users/me',
+        name: 'AdminUserMe',
+        component: AdminUserMe,
       },
       {
         path: 'users/:id',

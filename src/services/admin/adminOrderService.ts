@@ -48,10 +48,13 @@ export interface OrderUser {
 
 export interface OrderListResponse {
   data: OrderRequest[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number; // 總頁數
+      total: number; // 總筆數
+    };
   };
 }
 
@@ -66,7 +69,7 @@ export interface updateOrderRequest {
 }
 
 //呼叫 後端 Express 的 API
-export async function callOrders(page = 1, pageSize = 100): Promise<OrderListResponse> {
+export async function callOrders(page = 1, pageSize = 1000): Promise<OrderListResponse> {
   const res = await api.get<OrderListResponse>('/api/admin-orders', {
     params: {
       page,

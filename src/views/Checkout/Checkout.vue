@@ -179,6 +179,7 @@
   interface ProductRule {
     // 購物車物件內的 product物件 的規範
     id: number;
+    pid: string;
     name: string;
     price: number;
     quantity: number;
@@ -221,7 +222,7 @@
     // 依照post需求 做一個符合他規範的 [{},{}...]
     postProducts.value = idCart.map((obj: CartRule) => {
       return {
-        pid: obj.product.id.toString(),
+        pid: obj.product.pid,
         quantity: obj.quantity,
         snapshot_name: obj.product.name,
         snapshot_price: obj.product.price,
@@ -230,6 +231,9 @@
         item_total: Number(obj.quantity) * Number(obj.product.price),
       };
     });
+
+    // console.log(postProducts.value);
+    // return;
 
     // 總價錢 (不含運)
     const totalCost = memberBuyArr.value.reduce((sum, obj) => {
@@ -311,9 +315,9 @@
   const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
 
   // 判斷庫存的函數
-  const stockHave = (id: number, quantity: number, jsonArr: LittleProductRule[]) => {
+  const stockHave = (pid: string, quantity: number, jsonArr: LittleProductRule[]) => {
     const buy = jsonArr.filter((obj: LittleProductRule) => {
-      return obj.id == id;
+      return obj.pid == pid;
     });
     if (quantity <= Number(buy[0].stock)) {
       return true;
@@ -425,27 +429,6 @@
 </script>
 
 <style>
-  /* Tailwind 3.4 官網 */
-  /* https://v3.tailwindcss.com/ */
-
-  /* Font-awesome */
-  /* https://fontawesome.com/search?ic=free-collection */
-
-  /*
-    先md 再lg
-    先寫不會變動的樣式
-    再用md: 寫平板 (>768px)
-    再用lg: 寫電腦版 (>1024px)
-    手機版 不用特別寫
-  */
-
-  /* 
-    在F12 元素丟這段 找回滑鼠
-    const style = document.createElement('style');
-    style.innerHTML = `* { cursor: auto !important; }`;
-    document.head.appendChild(style); 
-  */
-
   :root {
     --main-color: #faf9ee;
     /* 淡黃 */

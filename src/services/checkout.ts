@@ -2,7 +2,7 @@ import api from '@/services/api';
 
 // 要post的訂單中的產品型別
 export interface GivePiniaRule {
-  pid: number;
+  pid: string;
   quantity: number;
   snapshot_name: string;
   snapshot_price: number;

@@ -105,8 +105,8 @@
 
 <script setup lang="ts">
   import CoffeeID from '../../components/CoffeeID.vue';
-  import { reactive, computed, onMounted, ref } from 'vue';
-  import type { Scores, Option, Question, Answer } from './type';
+  import { reactive, computed, onMounted, ref, onUnmounted } from 'vue';
+  import type { Option, Question, Answer } from './type';
   import { questionAPI, quizAPI } from '@/services/questionService';
   import bgImage from './assets/img/bgImage.jpg';
   import { useCoffeeResultStore } from '@/store/coffeeResult';
@@ -133,7 +133,10 @@
     }
   };
 
-  onMounted(fetchQuetions);
+  onMounted(() => {
+    fetchQuetions();
+    coffeeResultStore.clearResult();
+  });
 
   const answeredCount = computed(() => quizData.answers.filter((a) => a !== undefined).length);
   const progressWidth = computed(() => (answeredCount.value / quizData.questions.length) * 100);

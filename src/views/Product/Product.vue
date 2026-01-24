@@ -686,7 +686,15 @@
   const takeSort = async () => {
     // 當使用下拉式選單 執行排序的函數
     if (!sortWhich.value) return;
+
+    // 清空搜尋
     findWord.value = '';
+
+    // 清空篩選
+    filterData.roast = '';
+    filterData.flavor_type = '';
+    filterData.processing = '';
+    filterData.origin = '';
 
     try {
       await getcoffee({ sort: [`${sortWhich.value}:desc`] }); // 抓取一個依照 sortWhich 高到低排序的產品陣列 sortWhich可能是 價錢、人氣度...
@@ -709,7 +717,19 @@
   // 搜尋相關
   const findWord = ref(''); // 雙向綁定輸入框的變數
   const cannotFind = ref(false); // 製作變數來控制【搜尋不到】的CSS樣式是否生成 預設先不要出現
-  const find = (word: string) => {
+  const find = async (word: string) => {
+    if (!word.trim()) return;
+
+    // 清空排序
+    sortHe.value = true;
+    sortWhich.value = '';
+
+    // 清空篩選
+    filterData.roast = '';
+    filterData.flavor_type = '';
+    filterData.processing = '';
+    filterData.origin = '';
+
     product.value = [...productCopy.value];
     const allCoffee = [...product.value]; // 複製一份全部產品的陣列
     const found = allCoffee.filter((obj) => {
@@ -780,7 +800,15 @@
     () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值
     (newQuery) => {
       cannotFind.value = false;
+
+      // 清空搜尋
       findWord.value = '';
+
+      // 清空排序
+      sortHe.value = true;
+      sortWhich.value = '';
+
+      // 清空篩選
       filterData.roast = (newQuery.roast as string) || '';
       filterData.flavor_type = (newQuery.flavor_type as string) || '';
       filterData.processing = (newQuery.processing as string) || '';

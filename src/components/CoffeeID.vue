@@ -119,6 +119,7 @@
     ChartData,
   } from 'chart.js';
   import { useCoffeeResultStore } from '@/store/coffeeResult';
+  import { coffeePersonas } from '@/views/CoffeeIdTest/assets/data/coffeeTypes';
   import { useAuthStore } from '@/store/auth';
   import { getPersona } from '@/utils/getPersona';
   import router from '@/router';
@@ -249,8 +250,6 @@
       hint.value.show = false;
     }, 3000);
   }
-
-  import { coffeePersonas } from '@/views/CoffeeIdTest/assets/data/coffeeTypes';
 
   async function handleMainShare() {
     if (!persona.value) return;

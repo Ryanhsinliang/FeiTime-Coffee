@@ -31,19 +31,17 @@
     v-else
     class="w-full h-full min-h-[300px] flex flex-col items-center justify-center bg-gradient-to-br from-white/30 to-white/10 rounded-xl"
   >
-    <span class="material-symbols-outlined text-7xl text-primary/20 font-extralight mb-2">
-      psychology_alt
-    </span>
-    <p
-      class="group text-sm text-primary/40 flex items-center gap-1 cursor-pointer hover:text-primary/70 transition-all"
+    <div
+      class="size-20 flex items-center justify-center rounded-2xl border-2 border-primary/20 bg-white/40 shadow-lg hover:bg-white/60 hover:border-primary/30 hover:scale-105 transition-all cursor-pointer mb-4"
       @click="goToQuiz"
     >
-      前往 Coffee ID 測驗來了解你的偏好吧:D
-      <span
-        class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform"
-      >
-        open_in_new
-      </span>
+      <span class="material-symbols-outlined text-6xl text-primary/30 font-extralight">add</span>
+    </div>
+    <p
+      class="text-sm text-primary/40 cursor-pointer hover:text-primary/70 transition-all"
+      @click="goToQuiz"
+    >
+      快前往 Coffee ID 測驗來了解你的偏好吧:D
     </p>
   </div>
 </template>

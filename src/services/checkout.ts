@@ -1,5 +1,40 @@
 import api from '@/services/api';
 
+// 要post的訂單中的產品型別
+export interface GivePiniaRule {
+  pid: number;
+  quantity: number;
+  snapshot_name: string;
+  snapshot_price: number;
+  snapshot_image: string;
+  snapshot_weight: string;
+  item_total: number;
+}
+
+// 要post的訂單
+export interface OrderForm {
+  user: string;
+  order_items: GivePiniaRule[];
+  subtotal: number;
+  shipping_fee: number;
+  total_amount: number;
+  order_status: 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  payment_status: 'unpaid' | 'paid' | 'refunded';
+  payment_method: string;
+  recipient_name: string;
+  recipient_phone: string;
+  recipient_address: string;
+  customer_note: string;
+  shipping_method: string;
+}
+
+// 要put(更新)訂單的物件
+export interface UpdateOrderRule {
+  order_status: 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  payment_status: 'unpaid' | 'paid' | 'refunded';
+  paid_at: string;
+}
+
 // 抓購物車的
 export async function getCart() {
   try {
@@ -27,7 +62,7 @@ export async function getOrder() {
   }
 }
 
-export async function formGoPost(formData: any) {
+export async function formGoPost(formData: OrderForm) {
   try {
     const res = await api.post('/api/orders/checkout', formData);
     return res.data;
@@ -40,7 +75,7 @@ export async function formGoPost(formData: any) {
   }
 }
 
-export async function updateOrder(id: number | string, updateData: any) {
+export async function updateOrder(id: number | string, updateData: Partial<UpdateOrderRule>) {
   try {
     const res = await api.put(`/api/orders/${id}`, updateData);
     return res.data;
@@ -60,7 +95,7 @@ export async function productsGet() {
   }
 }
 
-export async function updateProduct(pid: number | string, updateData: any) {
+export async function updateProduct(pid: number | string, updateData: { stock: number }) {
   try {
     const res = await api.put(`/api/products/${pid}`, updateData);
     return res.data;

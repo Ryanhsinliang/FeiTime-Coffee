@@ -58,6 +58,7 @@
   } from '@/services/checkout';
   import { useAuthStore } from '@/store/auth';
   import { useCartStore } from '@/store/cart';
+  import type { UpdateOrderRule } from '@/services/checkout';
 
   interface AllProductRule {
     // 設定data規格
@@ -138,7 +139,7 @@
       }
 
       // 若是貨到付款 只更新order_status
-      let buyAfter;
+      let buyAfter: Partial<UpdateOrderRule>;
       if (orderThing.value.payment_method == 'myself') {
         buyAfter = {
           order_status: 'processing',

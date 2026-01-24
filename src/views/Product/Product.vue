@@ -591,6 +591,7 @@
   import { useRouter, useRoute } from 'vue-router';
   import { useCartStore } from '@/store/cart';
   import { useAuthStore } from '@/store/auth';
+  import type { FilterDataRule } from '@/services/product';
 
   const authStore = useAuthStore();
   const cartStore = useCartStore();
@@ -617,7 +618,7 @@
     name: string;
     price: number;
     origin: string;
-    img: any[];
+    img: { formats: { large: { url: string }; medium?: { url: string } } }[];
     popularity: number;
     sweetness: number;
     acidity: number;
@@ -626,6 +627,7 @@
     clarity: number;
     flavor_type: string;
     roast: string;
+    stock: number;
   }
 
   const productCopy = ref<DataRule[]>([]); // 備份資料 【排序】功能使用
@@ -636,9 +638,9 @@
   const err = ref(''); // 放錯誤訊息
 
   // API(get)函數
-  const getcoffee = async (filterData: any = {}) => {
+  const getcoffee = async (filterData: FilterDataRule = {}) => {
     // filterData是參數 它是一個物件
-    // : any  為TS的語法 代表不限制物件裡面的型別
+
     try {
       err.value = ''; // 每次重新請求前清空錯誤
       const res = await getProducts(filterData);
@@ -744,7 +746,7 @@
   };
 
   // 加入購物車
-  const addToCart = (product: any) => {
+  const addToCart = (product: DataRule) => {
     if (authStore.isLoggedIn == false) {
       alert('請先登入！');
       return;

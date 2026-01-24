@@ -166,6 +166,7 @@
   import { getCart, formGoPost, productsGet } from '@/services/checkout';
   import { orderList } from '@/store/order';
   import { useAuthStore } from '@/store/auth';
+  import type { OrderForm, GivePiniaRule } from '@/services/checkout';
 
   const authStore = useAuthStore();
   const router = useRouter();
@@ -192,16 +193,6 @@
     user: UserRule;
     quantity: number;
     snapshot_image: string;
-  }
-
-  interface GivePiniaRule {
-    pid: number;
-    quantity: number;
-    snapshot_name: string;
-    snapshot_price: number;
-    snapshot_image: string;
-    snapshot_weight: string;
-    item_total: number;
   }
 
   const memberBuyArr = ref<CartRule[]>([]); // 裝有同一個id的人買的所有產品物件 的陣列
@@ -298,7 +289,7 @@
     name: string;
     price: number;
     origin: string;
-    img: any[];
+    img: { formats: { large: { url: string }; medium?: { url: string } } }[];
     popularity: number;
     sweetness: number;
     acidity: number;
@@ -332,7 +323,7 @@
   };
 
   // 給 後端 > DB 的訂單資料
-  const form = reactive({
+  const form = reactive<OrderForm>({
     user: authStore.user!.id.toString(),
     order_items: postProducts.value,
     subtotal: productTotal.value, // 只有商品的價錢

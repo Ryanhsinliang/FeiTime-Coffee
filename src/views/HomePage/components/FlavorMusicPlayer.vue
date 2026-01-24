@@ -41,6 +41,7 @@
       controls?: 0 | 1;
       rel?: 0 | 1;
       modestbranding?: 0 | 1;
+      playsinline?: 0 | 1;
     };
     events: {
       onStateChange?: (event: YTPlayerEvent) => void;
@@ -79,6 +80,7 @@
   const musicLoading = ref<boolean>(false);
   const musicError = ref<string | null>(null);
   const aiRecommendation = ref<string>('選擇風味，開始音樂之旅');
+  const isFetchingNext = ref<boolean>(false); // 正在獲取下一輪推薦
 
   // YouTube 播放器狀態
   const isPlaying = ref<boolean>(false);
@@ -87,6 +89,8 @@
   const ytAPIReady = ref<boolean>(false);
   const playerReady = ref<boolean>(false);
   const isLoadingVideo = ref<boolean>(false);
+  const isMobileDevice = ref<boolean>(false);
+  const userInteracted = ref<boolean>(false);
 
   let animationFrameId: number | null = null;
   let youtubePlayer: YTPlayer | null = null;
@@ -139,6 +143,7 @@
     // 只有在播放且不在 loading 狀態時才旋轉
     if (isPlaying.value && !musicLoading.value) {
       vinylRotation.value = (vinylRotation.value + 0.5) % 360;
+      // 液體容器不旋轉，始終保持在底部
       animationFrameId = requestAnimationFrame(rotateVinyl);
     }
   };
@@ -165,19 +170,6 @@
       rotateVinyl();
     }
   });
-
-  // ============================================
-  // 播放器狀態檢查
-  // ============================================
-  const isPlayerAvailable = (): boolean => {
-    return !!(
-      youtubePlayer &&
-      playerReady.value &&
-      typeof youtubePlayer.loadVideoById === 'function' &&
-      typeof youtubePlayer.playVideo === 'function' &&
-      typeof youtubePlayer.pauseVideo === 'function'
-    );
-  };
 
   // ============================================
   // 播放進度檢查 - 檢測快進/後退並調整黑膠角度
@@ -246,9 +238,28 @@
     }
   };
 
+  // 檢測是否為移動裝置
+  const detectMobileDevice = (): boolean => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+  };
+
   // ============================================
   // 播放器管理 - 完全重構版本
   // ============================================
+
+  // 檢查播放器是否真正可用
+  const isPlayerAvailable = (): boolean => {
+    return !!(
+      youtubePlayer &&
+      playerReady.value &&
+      typeof youtubePlayer.loadVideoById === 'function' &&
+      typeof youtubePlayer.playVideo === 'function' &&
+      typeof youtubePlayer.pauseVideo === 'function'
+    );
+  };
+
   const destroyPlayer = () => {
     console.log('🗑️ Destroying player...');
 
@@ -310,10 +321,11 @@
         width: '100%',
         videoId: videoId,
         playerVars: {
-          autoplay: 1,
+          autoplay: isMobileDevice.value ? 0 : 1, // 移動裝置不自動播放，改用手動觸發
           controls: 1,
           rel: 0,
           modestbranding: 1,
+          playsinline: 1, // iOS 需要這個參數避免全螢幕播放
         },
         events: {
           onStateChange: (event: YTPlayerEvent) => {
@@ -345,19 +357,10 @@
             // 更新 loading 狀態
             // 只在 buffering 時顯示 loading，unstarted 不算（避免初始化時閃爍）
             if (event.data === 3) {
-              // buffering - 顯示 loading
               isLoadingVideo.value = true;
-            } else if (event.data === 1 || event.data === 2) {
-              // playing 或 paused - 清除 loading
+            } else if (event.data === 1 || event.data === 2 || event.data === 5) {
+              // playing, paused, or cued - 清除 loading
               isLoadingVideo.value = false;
-            } else if (event.data === 5) {
-              // video cued - 延遲清除 loading，確保影片已準備好
-              setTimeout(() => {
-                isLoadingVideo.value = false;
-              }, 100);
-            } else if (event.data === -1) {
-              // unstarted - 可能是新影片正在載入，保持當前 loading 狀態
-              // 不做任何改變
             }
 
             // 當開始播放時，初始化播放時間
@@ -395,6 +398,16 @@
               // 現在才設置 playerReady，確保其他代碼不會過早調用 API
               playerReady.value = true;
               console.log('✅ Player ready flag set');
+
+              // 移動裝置需要手動觸發播放
+              if (isMobileDevice.value && userInteracted.value) {
+                console.log('📱 Mobile device detected, attempting to play...');
+                try {
+                  youtubePlayer.playVideo();
+                } catch (err) {
+                  console.warn('⚠️ Auto-play blocked on mobile:', err);
+                }
+              }
 
               // 開始進度檢查
               if (progressCheckInterval) {
@@ -447,24 +460,11 @@
       try {
         console.log('🔄 Using existing player to load new video');
 
-        // 設置 loading 狀態，避免黑屏閃爍
-        isLoadingVideo.value = true;
-
-        // 先暫停當前播放
-        try {
-          if (typeof youtubePlayer!.pauseVideo === 'function') {
-            youtubePlayer!.pauseVideo();
-          }
-        } catch (e) {
-          console.warn('⚠️ Could not pause video:', e);
-        }
-
         // 先重置播放時間，但保持旋轉角度
         lastPlaybackTime.value = 0;
-        isPlaying.value = false;
 
-        // 等待播放器狀態穩定 - 增加等待時間
-        await new Promise((resolve) => setTimeout(resolve, 150));
+        // 等待下一個 tick 確保 DOM 已更新
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
         // 再次檢查播放器是否仍然可用
         if (!isPlayerAvailable()) {
@@ -473,6 +473,21 @@
 
         // 使用 loadVideoById 並自動播放
         youtubePlayer!.loadVideoById(videoId);
+
+        // 移動裝置需要手動觸發播放
+        if (isMobileDevice.value) {
+          // 等待影片載入完成後再播放
+          setTimeout(() => {
+            if (isPlayerAvailable()) {
+              console.log('📱 Mobile: Manually triggering playback after loadVideoById');
+              try {
+                youtubePlayer!.playVideo();
+              } catch (err) {
+                console.warn('⚠️ Failed to trigger playback:', err);
+              }
+            }
+          }, 500);
+        }
 
         // onStateChange 會處理所有狀態更新
         console.log('✅ Video load initiated');
@@ -515,6 +530,9 @@
   const selectFlavor = async (flavor: Flavor): Promise<void> => {
     console.log('🎵 Selecting flavor:', flavor.name);
     selectedFlavor.value = flavor;
+
+    // 標記使用者已互動（用於移動裝置播放）
+    userInteracted.value = true;
 
     try {
       musicLoading.value = true;
@@ -561,15 +579,15 @@
       return;
     }
 
-    // 防止在 loading 時重複請求
-    if (musicLoading.value) {
-      console.warn('⚠️ Already loading music');
+    // 防止重複請求
+    if (isFetchingNext.value) {
+      console.warn('⚠️ Already fetching next recommendations');
       return;
     }
 
     try {
       console.log('🔄 Fetching new music recommendations');
-      musicLoading.value = true;
+      isFetchingNext.value = true;
       musicError.value = null;
 
       const data = await getRandomMusic({
@@ -588,7 +606,7 @@
       console.error('❌ Next recommendation error:', err);
       musicError.value = '無法取得更多推薦';
     } finally {
-      musicLoading.value = false;
+      isFetchingNext.value = false;
     }
   };
 
@@ -597,6 +615,11 @@
   // ============================================
   onMounted(async () => {
     console.log('🚀 Component mounted');
+
+    // 檢測是否為移動裝置
+    isMobileDevice.value = detectMobileDevice();
+    console.log('📱 Is mobile device:', isMobileDevice.value);
+
     initYouTubeAPI();
     await waitForYouTubeAPI();
   });
@@ -617,25 +640,6 @@
     <div
       class="w-full max-w-[1200px] bg-[#FAF9EE] rounded-4xl overflow-hidden flex flex-col relative"
     >
-      <!-- Section Title -->
-      <div class="relative z-10 w-full px-6 pt-8 pb-4 lg:px-10 lg:pt-10 lg:pb-6">
-        <div class="flex flex-col items-center gap-3 text-center">
-          <div class="flex items-center gap-3">
-            <div class="h-px w-8 lg:w-12 bg-gradient-to-r from-transparent to-[#A2AF9B]"></div>
-            <span class="text-[#A2AF9B] tracking-[0.3em] uppercase text-xs font-bold">
-              Coffee & Music
-            </span>
-            <div class="h-px w-8 lg:w-12 bg-gradient-to-l from-transparent to-[#A2AF9B]"></div>
-          </div>
-          <h2 class="text-3xl lg:text-4xl font-serif text-[#171412] leading-tight">
-            風味音樂播放器
-          </h2>
-          <p class="text-sm lg:text-base text-[#171412]/60 max-w-2xl leading-relaxed">
-            根據您對風味的喜好，沉浸在專屬於您的音樂氛圍之中
-          </p>
-        </div>
-      </div>
-
       <!-- Header Section with Vinyl and Video -->
       <div
         class="relative z-10 w-full flex flex-col lg:flex-row p-8 lg:px-10 lg:py-6 gap-8 lg:gap-20 items-center"
@@ -652,7 +656,7 @@
                 class="absolute inset-0 rounded-full bg-gradient-to-br from-[#E8F5E9]/30 via-transparent to-[#C8D6C5]/20"
               ></div>
 
-              <!-- 液體容器 - 反向旋轉以保持固定在底部 -->
+              <!-- 液體容器 - 固定在底部不旋轉，反向抵消黑膠旋轉 -->
               <div
                 class="liquid-container absolute inset-0 rounded-full overflow-hidden"
                 :class="{ 'liquid-container-active': isPlaying }"
@@ -902,23 +906,14 @@
                     }"
                   ></span>
                 </div>
-                <!-- 桌面版：正常顯示 -->
-                <span class="hidden lg:block text-sm font-bold text-[#171412] leading-tight truncate">
+                <span class="text-sm font-bold text-[#171412] leading-tight truncate">
                   推薦: {{ aiRecommendation }}
                 </span>
-                <!-- 手機/平板版：跑馬燈效果 -->
-                <div class="lg:hidden overflow-hidden relative w-full">
-                  <span
-                    class="text-sm font-bold text-[#171412] leading-tight whitespace-nowrap inline-block marquee-text"
-                  >
-                    推薦: {{ aiRecommendation }}
-                  </span>
-                </div>
               </div>
             </div>
             <button
               @click="nextRecommendation"
-              :disabled="musicLoading || !selectedFlavor || musicError !== null"
+              :disabled="musicLoading || isFetchingNext || !selectedFlavor || musicError !== null"
               class="flex items-center justify-center gap-2 bg-[#DCCFC0] text-[#171412] px-4 py-2 rounded-lg hover:bg-[#C4B5A0] hover:shadow-lg transition-all duration-300 shadow-md group flex-shrink-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none hover:disabled:bg-gray-200"
             >
               <span class="text-xs font-bold tracking-wide hidden sm:inline">Next</span>
@@ -937,8 +932,9 @@
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:items-center">
           <div class="flex flex-col items-start gap-2 min-w-[200px] shrink-0">
             <h2 class="text-[#171412] text-2xl lg:text-3xl font-bold tracking-tight leading-tight">
-              <span class="hidden lg:inline">今天我想<br />選擇的風味是:</span>
-              <span class="lg:hidden">選擇您的風味:</span>
+              今天我想
+              <br />
+              選擇的風味是:
             </h2>
             <div class="flex items-center gap-2">
               <span class="h-1 w-6 bg-[#A2AF9B] rounded-full"></span>
@@ -1200,26 +1196,5 @@
 
   .animate-float {
     animation: float 3s ease-in-out infinite;
-  }
-
-  /* 跑馬燈效果 */
-  .marquee-text {
-    animation: marquee 12s linear infinite;
-  }
-
-  @keyframes marquee {
-    0% {
-      transform: translateX(0%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
-
-  /* 當文字較短時暫停動畫 */
-  @media (min-width: 640px) and (max-width: 1023px) {
-    .marquee-text {
-      animation-duration: 15s;
-    }
   }
 </style>

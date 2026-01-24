@@ -59,8 +59,16 @@
         <!-- Desktop Icons -->
         <!-- Always Visible Cart Icon -->
         <button class="relative group outline-none" @click="toggleCart">
-          <span class="material-symbols-outlined transition-transform group-hover:scale-110" :style="textColorStyle">shopping_bag</span>
-          <span v-if="totalItems > 0" class="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#17cf82] text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
+          <span
+            class="material-symbols-outlined transition-transform group-hover:scale-110"
+            :style="textColorStyle"
+          >
+            shopping_bag
+          </span>
+          <span
+            v-if="totalItems > 0"
+            class="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#17cf82] text-[10px] font-bold text-white shadow-sm ring-2 ring-white"
+          >
             {{ totalItems }}
           </span>
         </button>
@@ -129,6 +137,19 @@
                       <span class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-lg">receipt_long</span>
                         訂單查詢
+                      </span>
+                    </button>
+                    <button
+                      v-if="isAdmin"
+                      class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
+                      :style="menuItemHoverStyle('admin')"
+                      @mouseenter="hoveredMenuItem = 'admin'"
+                      @mouseleave="hoveredMenuItem = null"
+                      @click="handleAdminPanel"
+                    >
+                      <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+                        進入後台
                       </span>
                     </button>
                     <div
@@ -243,14 +264,14 @@
 
   const route = useRoute();
   const router = useRouter();
-  
+
   // 整合 Cart Store
   const cartStore = useCartStore();
   const authStore = useAuthStore();
-  
+
   // 直接使用 cartStore.toggleCart 方法
   const toggleCart = cartStore.toggleCart;
-  
+
   // 使用 computed 取得購物車總數量，確保數字會即時更新
   const totalItems = computed(() => cartStore.totalItems);
 
@@ -265,7 +286,6 @@
   /* ===== Menu Data ===== */
   const links: NavLink[] = [
     { name: 'Shop', zh: '商店', max: '商店', to: '/product' },
-    { name: 'Story', zh: '故事', max: '故事', to: '/about' },
     { name: 'CoffeeIDTest', zh: 'CoffeeID測驗', max: 'CoffeeID測驗', to: '/coffee-id-test' },
     {
       name: 'CoffeeSimulator',
@@ -283,6 +303,7 @@
 
   // 從 authStore 取得登入狀態
   const isLoggedIn = computed(() => authStore.isLoggedIn);
+  const isAdmin = computed(() => authStore.isAdmin);
 
   // 購物車數量 (暫時使用測試數據，之後需整合購物車 store)
   const cartItemCount = ref<number>(0);

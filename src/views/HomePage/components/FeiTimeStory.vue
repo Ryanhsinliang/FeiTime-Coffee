@@ -270,9 +270,6 @@
                       <div
                         xmlns="http://www.w3.org/1999/xhtml"
                         style="
-                          display: flex;
-                          justify-content: center;
-                          align-items: center;
                           width: 200px;
                           height: 200px;
                           position: relative;
@@ -287,7 +284,10 @@
                             transition: 'all 0.5s ease',
                             display: 'block',
                             lineHeight: '1',
-                            transform: 'translateY(-20px)',
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%) translateY(-20px)',
                           }"
                         >
                           coffee_maker
@@ -407,9 +407,6 @@
                       <div
                         xmlns="http://www.w3.org/1999/xhtml"
                         style="
-                          display: flex;
-                          justify-content: center;
-                          align-items: center;
                           width: 200px;
                           height: 200px;
                           position: relative;
@@ -424,7 +421,10 @@
                             transition: 'all 0.5s ease',
                             display: 'block',
                             lineHeight: '1',
-                            transform: 'translateY(-20px)',
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%) translateY(-20px)',
                           }"
                         >
                           psychology_alt

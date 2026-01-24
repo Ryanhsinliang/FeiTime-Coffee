@@ -7,13 +7,16 @@
         class="w-80 bg-white rounded-xl shadow-xl flex flex-col overflow-hidden mb-3"
         :style="{ height: chatHeight + 'px' }"
       >
-        <!-- 頂部拖拉條 -->
-        <div
-          @mousedown="startResize"
-          class="h-1 bg-gray-300 hover:bg-[#A2AF9B] cursor-ns-resize transition-colors"
-        ></div>
+        <div class="bg-[#A2AF9B] text-white px-4 py-2 flex flex-col">
+          <!-- 頂部拖拉條（整合到標題列） -->
+          <div
+            @mousedown="startResize"
+            class="h-4 -mx-4 -mt-2 cursor-ns-resize flex items-center justify-center group"
+          >
+            <div class="w-12 h-1 bg-white/30 rounded-full group-hover:bg-white/60 transition-colors"></div>
+          </div>
 
-        <div class="bg-[#A2AF9B] text-white px-4 py-2 flex justify-between items-center">
+          <div class="flex justify-between items-center">
           <div class="flex items-center gap-2">
             <!-- 咖啡豆機器人小圖標 -->
             <svg viewBox="0 0 100 100" class="w-6 h-6">
@@ -71,6 +74,7 @@
             <span>咖啡小助手</span>
           </div>
           <button @click="showChat = false" class="text-white font-bold hover:opacity-80">✕</button>
+          </div>
         </div>
 
         <div class="flex-1 p-3 overflow-y-auto space-y-3 bg-gray-50" ref="chatBody">

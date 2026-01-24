@@ -493,7 +493,7 @@
           <!-- 搜尋欄 -->
 
           <input
-            v-model="findWord"
+            v-model.trim="findWord"
             @keyup.enter="find(findWord)"
             class="border-2 border-solid border-[#8f745c] rounded-[8px] w-[90%] lg:w-[60%] text-[24px] py-[4px] px-[8px] my-[40px] mx-[24px]"
             placeholder="喝一杯靜謐的午後時光"
@@ -559,7 +559,7 @@
                 <p>．</p>
                 <p>{{ p.roast }}</p>
               </div>
-              <p class="text-[24px] font-[600] my-[4px]">{{ p.name }}</p>
+              <p class="text-[20px] font-[600] my-[4px]">{{ p.name }}</p>
               <p>{{ p.flavor_type }}</p>
             </div>
             <!-- 價錢 -->
@@ -592,6 +592,7 @@
   import { useCartStore } from '@/store/cart';
   import { useAuthStore } from '@/store/auth';
   import type { FilterDataRule } from '@/services/product';
+  import { productsGet } from '@/services/checkout';
 
   const authStore = useAuthStore();
   const cartStore = useCartStore();
@@ -732,9 +733,11 @@
     filterData.processing = '';
     filterData.origin = '';
 
-    product.value = [...productCopy.value];
-    const allCoffee = [...product.value]; // 複製一份全部產品的陣列
-    const found = allCoffee.filter((obj) => {
+    const apiProducts = await productsGet();
+    console.log(apiProducts);
+    product.value = apiProducts;
+
+    const found = apiProducts.filter((obj: DataRule) => {
       return obj.name.includes(word);
     });
     product.value = found;

@@ -1,8 +1,23 @@
 <template>
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
-    <section>
-      <h2 class="text-3xl font-bold">訂單管理</h2>
-      <p class="text-gray-400 text-sm">主要管理消費者訂單與出貨事宜。</p>
+    <section class="flex justify-between">
+      <div>
+        <h2 class="text-3xl font-bold">訂單管理</h2>
+        <p class="text-gray-400 text-sm">主要管理消費者訂單與出貨事宜。</p>
+      </div>
+      <div>
+        <button
+          @click="handleAutoSync"
+          :disabled="syncing"
+          class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm disabled:opacity-50"
+        >
+          <span class="material-symbols-outlined" :class="{ 'animate-spin': syncing }">
+            autorenew
+          </span>
+          更新貨態
+        </button>
+        <p class="text-gray-400 text-xs text-center">查詢前請先更新。</p>
+      </div>
     </section>
 
     <!-- 搜尋 -->
@@ -107,10 +122,7 @@
         <thead>
           <tr class="border-b border-[#e7dacf] bg-[#fcfaf8]">
             <th class="py-4 px-6 text-xs font-bold">
-              <div class="flex items-center gap-1 cursor-pointer">
-                訂單編號
-                <span class="material-symbols-outlined">arrow_downward</span>
-              </div>
+              <div class="flex items-center gap-1 cursor-pointer">訂單編號</div>
             </th>
             <th class="py-4 px-6 text-xs font-bold">訂購者姓名</th>
             <th class="py-4 px-6 text-xs font-bold">下訂商品名稱</th>
@@ -203,7 +215,7 @@
 <script setup lang="ts">
   import { ref, onMounted, computed, watch } from 'vue';
   import { useRouter } from 'vue-router';
-  import { callOrders } from '@/services/admin/adminOrderService';
+  import { callOrders, callBulkSyncLogistics } from '@/services/admin/adminOrderService';
   import type { OrderRequest } from '@/services/admin/adminOrderService';
 
   const router = useRouter();
@@ -240,12 +252,12 @@
     );
   }
 
+  // 載入全部訂單資料
   async function loadOrders() {
     loading.value = true;
     error.value = '';
 
     try {
-      // ✅ 一次載入全部資料
       const res = await callOrders(1, 1000);
       allOrders.value = res.data || [];
       console.log('✅ 成功載入訂單:', allOrders.value.length, '筆');
@@ -254,6 +266,32 @@
       error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
     } finally {
       loading.value = false;
+    }
+  }
+
+  // 一鍵更新鍵更新物流狀態
+  const syncing = ref(false); // 用來顯示背景同步狀態
+
+  async function handleAutoSync() {
+    // 如果正在同步中則跳過，避免重複觸發
+    if (syncing.value) return;
+
+    syncing.value = true;
+    console.log('🔄 背景物流同步啟動...');
+
+    try {
+      const res = await callBulkSyncLogistics();
+
+      // 如果 message 裡顯示有更新 (updatedCount > 0)，則重新抓取列表
+      if (res.success) {
+        console.log('✅ 物流同步完成:', res.message);
+        // 同步完成後，重新呼叫 loadOrders 刷新畫面的狀態
+        await loadOrders();
+      }
+    } catch (err) {
+      console.error('❌ 自動同步物流失敗:', err);
+    } finally {
+      syncing.value = false;
     }
   }
 
@@ -351,6 +389,9 @@
   }
 
   onMounted(() => {
+    // 加載列表
     loadOrders();
+    // 背景執行同步
+    // handleAutoSync();
   });
 </script>

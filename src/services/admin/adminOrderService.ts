@@ -95,3 +95,16 @@ export async function callUpdateOrder(
   const res = await api.put(`/api/admin-orders/${order_number}`, data);
   return res.data;
 }
+
+// 批量同步物流的結果介面
+export interface BulkSyncResponse {
+  success: boolean;
+  message: string;
+  details?: string[];
+}
+
+// ✅ 一鍵同步物流狀態
+export async function callBulkSyncLogistics(): Promise<BulkSyncResponse> {
+  const res = await api.post<BulkSyncResponse>('/api/admin-orders/bulk-sync');
+  return res.data;
+}

@@ -1,21 +1,11 @@
 <template>
   <header
-    class="h-16 flex items-center justify-between px-6 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-20 flex-shrink-0"
+    class="h-16 flex items-center px-6 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-20 flex-shrink-0"
   >
-    <div class="flex items-center gap-4">
-      <div class="flex items-center text-sm gap-2">
-        <p>訂單管理</p>
-        <span class="material-symbols-outlined text-lg">chevron_right</span>
-        <p class="font-semibold">訂單編號 #{{ order?.order_number || 'ORD-7352' }}</p>
-      </div>
-    </div>
-    <div class="flex items-center gap-4">
-      <button
-        class="flex items-center justify-center gap-2 h-9 px-4 border rounded-lg text-xs font-semibold hover:bg-gray-50"
-      >
-        <span class="material-symbols-outlined text-[18px]">print</span>
-        <p>列印收據</p>
-      </button>
+    <div class="flex items-center text-sm gap-2">
+      <p>訂單管理</p>
+      <span class="material-symbols-outlined text-lg">chevron_right</span>
+      <p class="font-semibold">訂單編號 #{{ order?.order_number }}</p>
     </div>
   </header>
 
@@ -370,9 +360,15 @@
   });
 
   // 自動生成物流單號(依時間戳)
+  // function generateTrackingNumber() {
+  //   const timestamp = Date.now();
+  //   shippingForm.value.tracking_number = `TRK-${timestamp}`;
+  // }
+
+  // 測試用固定格式物流單號
   function generateTrackingNumber() {
     const timestamp = Date.now();
-    shippingForm.value.tracking_number = `TRK-${timestamp}`;
+    shippingForm.value.tracking_number = `TEST-TRACKING-NUMBER`;
   }
 
   // 轉換為 datetime-local 格式

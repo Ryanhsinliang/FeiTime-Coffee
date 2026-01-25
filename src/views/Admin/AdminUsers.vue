@@ -66,10 +66,7 @@
         <thead>
           <tr class="border-b border-[#e7dacf] bg-[#fcfaf8]">
             <th class="py-4 px-6 text-xs font-bold">
-              <div class="flex items-center gap-1 cursor-pointer">
-                使用者ID
-                <span class="material-symbols-outlined">arrow_downward</span>
-              </div>
+              <div class="flex items-center gap-1 cursor-pointer">使用者ID</div>
             </th>
             <th class="py-4 px-6 text-xs font-bold">使用者姓名</th>
             <th class="py-4 px-6 text-xs font-bold">Email</th>
@@ -128,32 +125,6 @@
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
         <p class="text-sm">共 {{ filteredUsers.length }} 筆</p>
-
-        <!-- TODO:待修改 -->
-        <p class="text-sm">每頁 20 筆 / 共 {{ filteredUsers.length }} 筆</p>
-
-        <div class="flex items-center gap-2">
-          <button
-            class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
-            disabled="false"
-          >
-            <i class="fa-solid fa-chevron-left text-sm"></i>
-          </button>
-          <button
-            class="flex items-center justify-center size-9 rounded-lg bg-[#f09a4e] font-bold text-sm shadow-sm"
-          >
-            1
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            2
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            3
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            <i class="fa-solid fa-chevron-right text-sm"></i>
-          </button>
-        </div>
       </div>
     </div>
   </main>

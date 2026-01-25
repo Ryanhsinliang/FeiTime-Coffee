@@ -160,7 +160,7 @@
             </td>
 
             <td class="py-4 px-6 text-center text-sm font-semibold">
-              {{ order.order_status }}
+              {{ orderStatusText(order.order_status) }}
             </td>
 
             <td class="py-4 px-6 text-right text-sm font-bold">${{ order.total_amount }}</td>
@@ -217,6 +217,7 @@
   import { useRouter } from 'vue-router';
   import { callOrders, callBulkSyncLogistics } from '@/services/admin/adminOrderService';
   import type { OrderRequest } from '@/services/admin/adminOrderService';
+  import { orderStatusText } from '@/utils/statusTranslator';
 
   const router = useRouter();
 

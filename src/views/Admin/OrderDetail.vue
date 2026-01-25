@@ -200,8 +200,7 @@
             <p class="text-sm">電話: {{ order.recipient_phone }}</p>
             <p class="text-sm">地址: {{ order.recipient_address }}</p>
             <p class="text-sm">配送方式: {{ order.shipping_method }}</p>
-            <p class="text-sm">付款方式: {{ order.payment_method }}</p>
-            <p class="text-sm">訂單狀態: {{ order.order_status }}</p>
+            <p class="text-sm">訂單狀態: {{ orderStatusText(order.order_status) }}</p>
             <p class="text-sm">物流單號: {{ order.tracking_number || '尚未出貨' }}</p>
             <p class="text-sm">
               出貨時間:
@@ -306,13 +305,15 @@
               <p
                 class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200"
               >
-                {{ order.payment_status }}
+                {{ paymentStatusText(order.payment_status) }}
               </p>
             </div>
 
             <div class="flex justify-between items-center">
               <p class="text-xs">付款方式</p>
-              <p class="text-sm flex items-center gap-1">{{ order.payment_method }}</p>
+              <p class="text-sm flex items-center gap-1">
+                {{ paymentMethodText(order.payment_method) }}
+              </p>
             </div>
 
             <div class="flex justify-between items-center">
@@ -347,6 +348,7 @@
   import { useRoute } from 'vue-router';
   import { callSingleOrder, callUpdateOrder } from '@/services/admin/adminOrderService';
   import type { OrderRequest } from '@/services/admin/adminOrderService';
+  import { orderStatusText, paymentStatusText, paymentMethodText } from '@/utils/statusTranslator';
 
   const route = useRoute();
 

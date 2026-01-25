@@ -26,13 +26,10 @@ import AdminStockDetail from '@/views/Admin/StockDetail.vue';
 import AdminUsers from '@/views/Admin/AdminUsers.vue';
 import AdminUserMe from '@/views/Admin/AdminUserMe.vue';
 import AdminUserDetail from '@/views/Admin/AdminUserDetail.vue';
-<<<<<<< HEAD
-=======
 import Checkout from '@/views/Checkout/Checkout.vue';
 import PayCancel from '@/views/PayCancel.vue';
 import PaySuccess from '@/views/PaySuccess.vue';
 import PayWait from '@/views/PayWait.vue';
->>>>>>> main
 
 const routes = [
   {
@@ -161,8 +158,6 @@ const routes = [
       },
     ],
   },
-<<<<<<< HEAD
-=======
   {
     path: '/checkout',
     name: 'Checkout',
@@ -191,7 +186,6 @@ const routes = [
     meta: { requiresAuth: true },
   },
 
->>>>>>> main
   {
     path: '/email-confirmed',
     name: 'EmailConfirmed',

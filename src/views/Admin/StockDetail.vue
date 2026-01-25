@@ -1,6 +1,6 @@
 <template>
   <header
-    class="h-16 flex items-center justify-between px-6 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-20 flex-shrink-0 bg-white/80"
+    class="h-16 flex items-center justify-between px-6 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-20 flex-shrink-0"
   >
     <div class="flex items-center gap-4">
       <div class="flex items-center text-sm gap-2">
@@ -214,17 +214,17 @@
         </div>
       </section>
 
-      <!-- Flavor Profile -->
+      <!-- 風味資訊 -->
       <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
           <span class="material-symbols-outlined text-xl">palette</span>
-          <h2 class="text-lg font-bold">Flavor Profile</h2>
+          <h2 class="text-lg font-bold">風味資訊</h2>
         </div>
         <div class="p-6 space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- <div class="flex flex-col gap-2">
               <p class="text-sm font-semibold">
-                Flavor Tags
+                風味標籤
                 <span class="text-red-500">*</span>
               </p>
               <div
@@ -249,7 +249,7 @@
             </div> -->
 
             <label class="flex flex-col gap-2">
-              <p class="text-sm font-semibold">Flavor Type</p>
+              <p class="text-sm font-semibold">風味類型</p>
               <select
                 class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
                 v-model="ProductForm.flavor_type"

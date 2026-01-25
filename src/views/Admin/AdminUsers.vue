@@ -104,7 +104,7 @@
                     : 'bg-purple-100 text-purple-800 border-purple-200'
                 "
               >
-                {{ user.user_role }}
+                {{ user_roleText(user.user_role) }}
               </p>
             </td>
 
@@ -135,6 +135,7 @@
   import { useRouter } from 'vue-router';
   import { getAllUsers } from '@/services/admin/adminUserService';
   import type { UserRequest } from '@/services/admin/adminUserService';
+  import { user_roleText } from '@/utils/statusTranslator';
 
   const router = useRouter();
 

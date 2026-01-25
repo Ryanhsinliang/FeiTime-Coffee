@@ -1,22 +1,13 @@
 <template>
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
-    <!-- 成功提示 Toast -->
-    <transition
-      enter-active-class="transition ease-out duration-300"
-      enter-from-class="opacity-0 translate-y-[-20px]"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition ease-in duration-200"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 translate-y-[-20px]"
+    <!-- 更新成功提示 -->
+    <div
+      v-if="showSuccessToast"
+      class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
     >
-      <div
-        v-if="showSuccessToast"
-        class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
-      >
-        <i class="fa-solid fa-circle-check"></i>
-        <span class="font-semibold">庫存更新成功！</span>
-      </div>
-    </transition>
+      <i class="fa-solid fa-circle-check"></i>
+      <span class="font-semibold">庫存更新成功！</span>
+    </div>
 
     <section class="flex justify-between">
       <div>

@@ -359,6 +359,12 @@
   // 防止使用者手動輸入違規數字
   watch(quantity, (newVal) => {
     if (!product.value) return;
+
+    // 防止小數點
+    if (!Number.isInteger(newVal)) {
+      quantity.value = Math.floor(newVal);
+    }
+
     if (newVal > product.value.stock) {
       quantity.value = product.value.stock;
     } else if (newVal < 1) {

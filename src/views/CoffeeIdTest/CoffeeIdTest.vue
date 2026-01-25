@@ -61,12 +61,15 @@
   import mountain from './assets/img/mountain.jpg';
   import escalator from './assets/img/escalator.png';
   import campus from './assets/img/campus.jpg';
+  import { useCoffeeResultStore } from '@/store/coffeeResult';
 
+  const coffeeResultStore = useCoffeeResultStore();
   const router = useRouter();
 
   // 開始測驗
   function startTest() {
     router.push('/coffee-id-test-card');
+    coffeeResultStore.clearResult();
   } // 控制動畫背景切換
   const currentBg = ref(bgImage);
   const bgSequence = [cafe, cafe, mountain, mountain, escalator, escalator, campus, campus, cafe];

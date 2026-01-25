@@ -278,11 +278,15 @@
               {{ updating ? '更新中...' : '更新物流狀態' }}
             </button>
 
-            <!-- 成功/錯誤提示 -->
+            <!-- 更新成功/錯誤提示 -->
             <div
               v-if="updateMessage"
-              class="text-sm text-center py-2 px-3 rounded-lg"
-              :class="updateSuccess ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+              class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 mb-6 p-4 rounded-lg"
+              :class="
+                updateSuccess
+                  ? 'bg-green-100 text-green-800 border border-green-200'
+                  : 'bg-red-100 text-red-800 border border-red-200'
+              "
             >
               {{ updateMessage }}
             </div>

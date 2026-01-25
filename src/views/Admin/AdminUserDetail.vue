@@ -12,6 +12,15 @@
   </header>
 
   <main class="px-8 py-6 max-w-5xl mx-auto w-full">
+    <!-- 更新成功提示 -->
+    <div
+      v-if="success"
+      class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
+    >
+      <i class="fa-solid fa-circle-check"></i>
+      <span class="font-semibold">更新成功！</span>
+    </div>
+
     <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
       <div class="flex flex-col gap-1">
         <h2 class="text-3xl font-extrabold">編輯使用者資料</h2>
@@ -173,9 +182,6 @@
       </div>
 
       <div class="p-6 flex justify-end items-center gap-4 bg-white border-t border-[#f3ede7]">
-        <div v-if="success" class="px-6 py-2.5 text-sm text-emerald-700 font-semibold 00">
-          更新成功
-        </div>
         <button
           type="button"
           @click="loadUser"

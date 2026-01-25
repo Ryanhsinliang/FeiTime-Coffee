@@ -23,6 +23,7 @@
         <h2 class="text-3xl font-bold">庫存管理</h2>
         <p class="text-gray-400 text-sm">主要管理商品庫存。</p>
       </div>
+      <p class="text-red-400 text-sm font-bold">待補貨商品數量: {{ restockCount }}</p>
     </section>
 
     <!-- 搜尋 -->
@@ -130,6 +131,7 @@
                 </button>
                 <input
                   v-model.number="tempStock[product.pid]"
+                  @input="handleInput(product.pid)"
                   type="number"
                   min="0"
                   class="w-20 h-8 text-center text-sm font-bold border border-[#e7dacf] rounded-lg focus:ring-2 focus:ring-[#f09a4e] focus:border-transparent"
@@ -177,7 +179,7 @@
                   </button>
                   <button
                     @click="saveStock(product)"
-                    :disabled="updatingProduct === product.pid"
+                    :disabled="tempStock[product.pid] < 0 || updatingProduct === product.pid"
                     class="px-4 py-2 text-sm font-semibold rounded-lg bg-[#f09a4e] text-white hover:bg-[#e27312] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center gap-2"
                   >
                     <i
@@ -362,6 +364,19 @@
   function decreaseStock(product: ProductRequest) {
     if (tempStock[product.pid] > 0) {
       tempStock[product.pid] = tempStock[product.pid] - 1;
+    }
+  }
+
+  // 計算待補貨件數 (庫存 <= 20 的所有商品)
+  const restockCount = computed(() => {
+    return products.value.filter((p) => p.stock <= 20).length;
+  });
+
+  // 防止手動輸入負數
+  function handleInput(pid: string) {
+    // 如果輸入的值小於 0，強制設為 0
+    if (tempStock[pid] < 0) {
+      tempStock[pid] = 0;
     }
   }
 

@@ -1,21 +1,11 @@
 <template>
   <header
-    class="h-16 flex items-center justify-between px-6 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-20 flex-shrink-0"
+    class="h-16 flex items-center px-6 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-20 flex-shrink-0"
   >
-    <div class="flex items-center gap-4">
-      <div class="flex items-center text-sm gap-2">
-        <p>庫存管理</p>
-        <span class="material-symbols-outlined text-lg">chevron_right</span>
-        <p class="font-semibold">商品編號PID: coffee_001</p>
-      </div>
-    </div>
-    <div class="flex items-center gap-4">
-      <button class="w-10 h-10 hover:text-[#e27312] relative">
-        <i class="fa-regular fa-bell text-2xl"></i>
-        <span
-          class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"
-        ></span>
-      </button>
+    <div class="flex items-center text-sm gap-2">
+      <p>庫存管理</p>
+      <span class="material-symbols-outlined text-lg">chevron_right</span>
+      <p class="font-semibold">商品編號PID: {{ product?.pid }}</p>
     </div>
   </header>
 

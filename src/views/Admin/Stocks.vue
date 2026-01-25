@@ -77,10 +77,7 @@
         <thead>
           <tr class="border-b border-[#e7dacf] bg-[#fcfaf8]">
             <th class="py-4 px-6 text-xs font-bold">
-              <div class="flex items-center gap-1 cursor-pointer">
-                商品PID
-                <span class="material-symbols-outlined">arrow_downward</span>
-              </div>
+              <div class="flex items-center gap-1 cursor-pointer">商品PID</div>
             </th>
             <th class="py-4 px-6 text-xs font-bold">商品名稱</th>
             <th class="py-4 px-6 text-xs font-bold text-center">價格</th>

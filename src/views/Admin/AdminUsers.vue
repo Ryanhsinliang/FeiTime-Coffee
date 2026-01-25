@@ -1,15 +1,4 @@
 <template>
-  <header
-    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-10 flex-shrink-0"
-  >
-    <button class="w-10 h-10 hover:text-[#e27312] relative">
-      <i class="fa-regular fa-bell text-2xl"></i>
-      <span
-        class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"
-      ></span>
-    </button>
-  </header>
-
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
     <section>
       <h2 class="text-3xl font-bold">使用者管理</h2>
@@ -32,7 +21,7 @@
       <div class="relative min-w-48 w-full md:w-auto">
         <select
           v-model="roleFilter"
-          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm appearance-none cursor-pointer"
         >
           <option value="all">所有使用者</option>
           <option value="Admin">管理者</option>
@@ -45,7 +34,7 @@
       <div class="relative min-w-48 w-full md:w-auto">
         <select
           v-model="statusFilter"
-          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm appearance-none cursor-pointer"
         >
           <option value="all">所有狀態</option>
           <option value="active">已驗證</option>
@@ -107,7 +96,7 @@
 
             <td class="py-4 px-6 text-sm">{{ user.email }}</td>
 
-            <td class="py-4 px-6 text-sm">{{ formatDate(user.updatedAt) }}</td>
+            <td class="py-4 px-6 text-sm">{{ formatDate(user.createdAt) }}</td>
 
             <td class="py-4 px-6 text-center">
               <p

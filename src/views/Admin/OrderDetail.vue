@@ -251,13 +251,23 @@
           <div class="flex flex-col gap-4">
             <div>
               <label class="block text-sm font-bold mb-1.5">物流單號</label>
-              <input
-                v-model="shippingForm.tracking_number"
-                class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-[#e7dacf] bg-[#fcfaf8] focus:ring-0 text-sm font-mono"
-                type="text"
-                placeholder="請輸入物流單號"
-                required
-              />
+              <div class="relative">
+                <input
+                  v-model="shippingForm.tracking_number"
+                  class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-[#e7dacf] bg-[#fcfaf8] focus:ring-0 text-sm font-mono"
+                  type="text"
+                  placeholder="請輸入物流單號"
+                  required
+                />
+                <button
+                  type="button"
+                  @click="generateTrackingNumber"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 hover:text-[#e27312]"
+                  title="自動生成物流單號"
+                >
+                  <span class="material-symbols-outlined text-lg">auto_fix</span>
+                </button>
+              </div>
             </div>
 
             <div>
@@ -359,6 +369,30 @@
     shipped_at: '',
   });
 
+  // 自動生成物流單號(依時間戳)
+  function generateTrackingNumber() {
+    const timestamp = Date.now();
+    shippingForm.value.tracking_number = `TRK-${timestamp}`;
+  }
+
+  // 轉換為 datetime-local 格式
+  function toDatetimeLocal(input?: string | Date | null) {
+    const date = input ? new Date(input) : new Date();
+    if (Number.isNaN(date.getTime())) return ''; // 防呆：日期無效就回空字串
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  // 設定當前時間為出貨時間
+  function setCurrentDateTime() {
+    shippingForm.value.shipped_at = toDatetimeLocal(); // 不傳值就用現在時間
+  }
+
   // 判斷付款方式是否為取貨付款
   const isCashOnDelivery = computed(() => {
     return (
@@ -424,13 +458,10 @@
       }
       if (order.value.shipped_at) {
         // 轉換為 datetime-local 格式
-        const date = new Date(order.value.shipped_at);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        shippingForm.value.shipped_at = `${year}-${month}-${day}T${hours}:${minutes}`;
+        shippingForm.value.shipped_at = toDatetimeLocal(order.value.shipped_at);
+      } else {
+        // 如果沒有出貨時間，預設為當前時間
+        setCurrentDateTime();
       }
     } catch (err: any) {
       console.error('❌ 載入失敗:', err);

@@ -612,11 +612,9 @@
   import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import { useCartStore } from '@/store/cart';
-  import { useAuthStore } from '@/store/auth';
   import type { FilterDataRule } from '@/services/product';
   import { productsGet } from '@/services/checkout';
 
-  const authStore = useAuthStore();
   const cartStore = useCartStore();
 
   // 手機板 側邊選單開關
@@ -632,6 +630,16 @@
       navHe.value = 'rotate-[270deg] left-[calc(80%-24px)]'; //【 > 】
       have.value = 'block md:block lg:block';
     }
+  };
+
+  // 清空網址但不觸發watch
+  const isResetting = ref(false);
+  const resetRouteOnly = async () => {
+    isResetting.value = true;
+    await router.replace({ query: {} });
+    setTimeout(() => {
+      isResetting.value = false;
+    }, 100);
   };
 
   interface DataRule {
@@ -689,7 +697,8 @@
   // 排序相關
   const sortWhich = ref(''); // 雙向綁定下拉式選單用的變數 依據它來決定現在要排序什麼
   const sortHe = ref(true); // 決定高到低 還是 低到高 的參數 預設true是 高到低
-  const doSort = () => {
+  const doSort = async () => {
+    await resetRouteOnly();
     // 切換 高到低 低到高 的函數 我選擇在前端做
     if (!sortWhich.value) return; // 如果沒有sortWhich.value 就不做以下的事 相當於if(sortWhich.value){...} 但這樣比較簡潔
 
@@ -748,6 +757,8 @@
   const findWord = ref(''); // 雙向綁定輸入框的變數
   const cannotFind = ref(false); // 製作變數來控制【搜尋不到】的CSS樣式是否生成 預設先不要出現
   const find = async (word: string) => {
+    await resetRouteOnly();
+
     if (!word.trim()) return;
 
     // 清空排序
@@ -827,6 +838,8 @@
     // 如果網址變了 (按了新按鈕)  要重新抓資料
     () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值
     (newQuery) => {
+      if (isResetting.value) return;
+
       cannotFind.value = false;
 
       // 清空搜尋

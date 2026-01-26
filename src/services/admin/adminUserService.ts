@@ -11,7 +11,7 @@ export interface UserRequest {
   publishedAt: string;
   phone_number: string;
   shipping_address: string;
-  user_role: string;
+  user_role: UserRole;
   user_id: string;
 }
 

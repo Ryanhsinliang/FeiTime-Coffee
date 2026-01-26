@@ -772,13 +772,20 @@
     filterData.origin = '';
 
     const apiProducts = await productsGet();
-    console.log(apiProducts);
     product.value = apiProducts;
 
     const found = apiProducts.filter((obj: DataRule) => {
       return obj.name.includes(word);
     });
     product.value = found;
+
+    pagination.value = {
+      page: 1,
+      pageSize: found.length,
+      pageCount: 1,
+      total: found.length,
+    };
+
     if (found.length == 0) {
       cannotFind.value = true;
     } else {

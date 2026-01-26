@@ -515,9 +515,9 @@
                 <option value="">排序</option>
                 <option value="price">價錢</option>
                 <option value="popularity">熱門度</option>
-                <option value="sweetness">甜味</option>
-                <option value="acidity">酸味</option>
-                <option value="body">口感</option>
+                <option value="sweetness">甜度</option>
+                <option value="acidity">酸度</option>
+                <option value="body">醇厚度</option>
                 <option value="aftertaste">餘韻</option>
                 <option value="clarity">澄澈度</option>
               </select>

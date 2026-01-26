@@ -397,6 +397,7 @@
   /* ===== 統一選單動作處理 ===== */
   // 處理所有登入/登出/跳轉邏輯
   const handleMenuAction = async (action: 'login' | 'register' | 'member' | 'order' | 'logout') => {
+    console.log(`🚀 Header: handleMenuAction called with '${action}'`);
     // 關閉桌面與手機選單
     userMenuOpen.value = false;
     mobileOpen.value = false;
@@ -416,7 +417,11 @@
         router.push('/member?tab=order');
         break;
       case 'logout':
-        await authStore.logout();
+        // 先清空購物車 UI (localStorage)
+        console.log('🚪 Logout: Clearing cart and auth data...');
+        cartStore.clearLocalCart();
+        // 再執行登出
+        authStore.logout();
         router.push('/home');
         break;
     }

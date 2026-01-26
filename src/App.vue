@@ -37,12 +37,14 @@
   import CustomCursor from './components/common/CustomCursor.vue';
   import GlobalBanner from './components/GlobalBanner.vue';
   import { useRoute } from 'vue-router';
-  import { computed, onMounted } from 'vue';
+  import { computed, onMounted, watch } from 'vue';
   import { useCartStore } from '@/store/cart';
   import { useAuthStore } from '@/store/auth';
 
   // 取得當前路由
   const route = useRoute();
+  const authStore = useAuthStore();
+  const cartStore = useCartStore();
 
   // 判斷是否顯示 Header/Footer
   const showHeaderFooter = computed(
@@ -54,15 +56,23 @@
     el.style.opacity = '1';
   };
 
-  // App 初始化邏輯
-  onMounted(async () => {
-    const authStore = useAuthStore();
-    const cartStore = useCartStore();
+  // 監聽登入狀態變化 - 當使用者登入時立即載入購物車
+  watch(
+    () => authStore.isLoggedIn,
+    async (isLoggedIn, wasLoggedIn) => {
+      if (isLoggedIn && !wasLoggedIn) {
+        console.log('👤 登入狀態變更：即時載入購物車...');
+        await cartStore.loadCartFromStrapi(authStore.user?.id);
+      }
+    }
+  );
 
+  // App 初始化邏輯 (頁面重新整理時，使用者可能已經登入)
+  onMounted(async () => {
     // 如果使用者已登入 (LocalStorage 還原)，則同步最新的購物車資料
     if (authStore.isLoggedIn) {
       console.log('🚀 App Mounted: 同步購物車資料...');
-      await cartStore.loadCartFromStrapi();
+      await cartStore.loadCartFromStrapi(authStore.user?.id);
     }
   });
 </script>

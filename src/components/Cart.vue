@@ -109,6 +109,8 @@
             @add-to-cart="handleAddToCart"
           />
         </div>
+
+
       </div>
 
       <!-- Footer / Checkout -->
@@ -168,6 +170,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import CartItem from './cart/CartItem.vue'
 import RecommendationCard from './cart/RecommendationCard.vue'
+
 import { useCartStore } from '@/store/cart'
 import { useAuthStore } from '@/store/auth'
 

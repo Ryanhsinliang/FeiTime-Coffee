@@ -50,9 +50,9 @@ export const useAuthStore = defineStore('auth', () => {
       }
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      // 登入成功後，從 Strapi 載入購物車
+      // 登入成功後，從 Strapi 載入購物車（傳入 userId 以繞過 computed 時序問題）
       const cartStore = useCartStore();
-      await cartStore.loadCartFromStrapi();
+      await cartStore.loadCartFromStrapi(data.user.id);
 
       return { success: true };
     } catch (err: any) {
@@ -70,6 +70,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function logout() {
+    // 清除認證資訊 (購物車清空由 Header.vue 負責，避免循環依賴)
     token.value = null;
     user.value = null;
     localStorage.removeItem('user');
@@ -147,6 +148,10 @@ export const useAuthStore = defineStore('auth', () => {
 
       Cookies.set('auth_token', jwt, { sameSite: 'strict' });
       localStorage.setItem('user', JSON.stringify(userData));
+
+      // Google 登入成功後，從 Strapi 載入購物車（傳入 userId 以繞過 computed 時序問題）
+      const cartStore = useCartStore();
+      cartStore.loadCartFromStrapi(userData.id);
 
       return { success: true };
     } catch (error: any) {

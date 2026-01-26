@@ -320,6 +320,18 @@ export const useCartStore = defineStore('cart', () => {
         items.value = [];
     }
 
+    /**
+     * 只清空前端購物車（localStorage 和 Pinia state）
+     * 不清空後端購物車（保留在 Strapi）
+     * 用於登出時清空前端資料，但保留後端資料供下次登入時載入
+     */
+    function clearLocalCart() {
+        console.log('🧹 clearLocalCart() called, items before:', items.value.length);
+        items.value = [];
+        localStorage.removeItem('cart');
+        console.log('✅ clearLocalCart() done, localStorage.getItem(\"cart\"):', localStorage.getItem('cart'));
+    }
+
     function checkout() {
         console.log('Proceeding to checkout');
     }
@@ -327,18 +339,21 @@ export const useCartStore = defineStore('cart', () => {
     /**
      * 從 Strapi 載入購物車資料 (登入後呼叫)
      * 用於同步資料庫裡的購物車狀態到 Pinia
+     * @param forceUserId - 可選，直接傳入 userId 以繞過 authStore 檢查（登入流程使用）
      */
-    async function loadCartFromStrapi() {
+    async function loadCartFromStrapi(forceUserId?: number) {
         const authStore = useAuthStore();
 
-        if (!authStore.isLoggedIn || !authStore.user?.id) {
-            console.warn('[Cart] 未登入，無法從 Strapi 載入購物車');
+        // 如果有傳入 forceUserId，使用它；否則從 authStore 取得
+        const userId = forceUserId ?? authStore.user?.id;
+
+        if (!userId) {
+            console.warn('[Cart] 未登入或無法取得 userId，無法從 Strapi 載入購物車');
             return;
         }
 
         try {
-            console.log('🔄 從 Strapi 載入購物車...');
-            const userId = authStore.user.id;
+            console.log('🔄 從 Strapi 載入購物車... userId:', userId);
             const response = await fetch(`${API_BASE_URL}/api/cart?userId=${userId}`);
 
             if (!response.ok) {
@@ -386,6 +401,7 @@ export const useCartStore = defineStore('cart', () => {
         removeItem,
         updateQuantity,
         clearCart,
+        clearLocalCart,
         toggleCart,
         openCart,
         closeCart,

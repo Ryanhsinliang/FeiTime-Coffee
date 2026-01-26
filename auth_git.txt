@@ -1,0 +1,174 @@
+﻿import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+import Cookies from 'js-cookie';
+import { loginService, type User, type AuthResponse } from '../services/loginService';
+import { useCartStore } from './cart';
+
+import { forgotPasswordService } from '@/services/forgotPasswordService';
+import { resetPasswordService } from '@/services/resetPasswordService';
+import { googleAuthService } from '@/services/googleAuthService';
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,}$/;
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
+  const token = ref<string | null>(Cookies.get('auth_token') || null);
+  const isAdmin = computed(() => {
+    return user.value?.user_role === 'Admin' || user.value?.role?.type === 'admin';
+  });
+  const banner = ref<{ message: string; type: 'success' | 'error' | 'warning' | null } | null>(
+    null
+  );
+
+  function setBanner(message: string, type: 'success' | 'error' | 'warning' = 'warning') {
+    banner.value = { message, type };
+  }
+
+  function clearBanner() {
+    banner.value = null;
+  }
+
+  const isLoggedIn = computed(() => {
+    return !!token.value && !!user.value;
+  });
+
+  async function handleLogin(
+    identifier: string,
+    password: string,
+    remember: boolean = false,
+    captchaToken: string
+  ) {
+    try {
+      const data: AuthResponse = await loginService.login(identifier, password, captchaToken);
+
+      token.value = data.jwt;
+      user.value = data.user;
+
+      if (remember) {
+        Cookies.set('auth_token', data.jwt, { expires: 7, sameSite: 'strict' });
+      } else {
+        Cookies.set('auth_token', data.jwt, { sameSite: 'strict' });
+      }
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // ?餃??敺?敺?Strapi 頛鞈潛頠?
+      const cartStore = useCartStore();
+      await cartStore.loadCartFromStrapi();
+
+      return { success: true };
+    } catch (err: any) {
+      const status = err.status;
+      let message = err.message || '撣唾???蝣潮隤?;
+      if (status === 401) {
+        message = '撣唾???蝣潮隤歹?隢??啗撓??;
+      } else if (status === 429) {
+        message = '?餃?岫甈⊥??嚗???5??敺?閰?;
+      }
+
+      setBanner(message, 'error');
+      return { success: false, message };
+    }
+  }
+
+  function logout() {
+    token.value = null;
+    user.value = null;
+    localStorage.removeItem('user');
+    localStorage.removeItem('rememberedEmail');
+    Cookies.remove('auth_token');
+  }
+
+  async function handleForgotPassword(email: string) {
+    try {
+      clearBanner();
+      await forgotPasswordService.forgotPassword(email);
+      setBanner('?身撖Ⅳ???撌脩??函?靽∠拳', 'success');
+      return { success: true };
+    } catch (error: any) {
+      const message = error.response?.data?.error?.message || '?潮仃??隢?敺?閰?;
+      setBanner(message, 'error');
+      return { success: false };
+    }
+  }
+
+  async function handleResetPassword(
+    code: string,
+    password: string,
+    confirmPass: string,
+    captchaToken: string
+  ) {
+    const cleanPassword = password.trim();
+    const cleanConfirmPass = confirmPass.trim();
+    try {
+      clearBanner();
+      if (cleanPassword !== cleanConfirmPass) {
+        setBanner('?拇活頛詨??蝣潔?銝??, 'error');
+        return { success: false };
+      }
+      if (!passwordRegex.test(cleanPassword)) {
+        setBanner('?喳? 8 蝣潘???怠之撠神摮??摮?, 'error');
+        return { success: false };
+      }
+      await resetPasswordService.resetPassword(code, cleanPassword, cleanConfirmPass, captchaToken);
+      setBanner('撖Ⅳ靽格??', 'success');
+      return { success: true };
+    } catch (error: any) {
+      let displayMessage = '?身憭望?嚗???航撌脤????⊥?';
+      const backendMessage = error.response?.data?.error?.message;
+      if (backendMessage && error.response?.status < 500) {
+        displayMessage = backendMessage;
+      }
+      setBanner(displayMessage, 'error');
+      return { success: false };
+    }
+  }
+  function handleGoogleLogin() {
+    try {
+      clearBanner();
+      const currentPath = window.location.pathname;
+      const safeRedirectPath =
+        currentPath === '/login' || currentPath === '/register' || currentPath === '/Login'
+          ? '/'
+          : currentPath;
+      localStorage.setItem('redirectAfterLogin', safeRedirectPath);
+      googleAuthService.initiateGoogleLogin();
+    } catch (error: any) {
+      const message = error.message || 'Google ?餃憭望?';
+      setBanner(message, 'error');
+      return { success: false, message };
+    }
+  }
+
+  function handleGoogleCallbackData(jwt: string, userData: User) {
+    try {
+      clearBanner();
+
+      token.value = jwt;
+      user.value = userData;
+
+      Cookies.set('auth_token', jwt, { sameSite: 'strict' });
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      return { success: true };
+    } catch (error: any) {
+      const message = error.message || 'Google ?餃??憭望?';
+      setBanner(message, 'error');
+      return { success: false, message };
+    }
+  }
+
+  return {
+    user,
+    token,
+    isAdmin,
+    isLoggedIn,
+    banner,
+    handleLogin,
+    handleGoogleLogin,
+    handleGoogleCallbackData,
+    handleForgotPassword,
+    handleResetPassword,
+    logout,
+    setBanner,
+    clearBanner,
+  };
+});

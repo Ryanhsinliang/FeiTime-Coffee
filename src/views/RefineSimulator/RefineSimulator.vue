@@ -1045,10 +1045,9 @@ let lastLogTime = 0;
 <template>
     <div class="relative w-full h-screen text-[#3e2723] select-none" style="font-family: 'LXGW WenKai TC', serif;">
         <!-- 3D Container -->
-        <div ref="canvasContainer" class="absolute inset-0 z-0 cursor-crosshair" 
-             @mousedown="startPour" @mouseup="stopPour" @mouseleave="stopPour"
-             @touchstart.prevent="startPour" @touchend.prevent="stopPour">
+        <div ref="canvasContainer" class="absolute inset-0 z-0 cursor-move">
         </div>
+
 
         <!-- UI Overlay -->
         <div class="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-4 md:p-8">
@@ -1095,8 +1094,8 @@ let lastLogTime = 0;
                 </div>
                 
                 <!-- Start Hint -->
-                 <div v-if="!hasStarted && !showResultModal" class="mt-2 text-yellow-700 text-sm animate-pulse flex items-center gap-2 bg-white/60 px-3 py-1 rounded-full backdrop-blur-sm shadow-sm">
-                    <span> 長按畫面注水 (Hold to Pour)</span>
+                <div v-if="!hasStarted && !showResultModal" class="mt-2 text-yellow-700 text-sm animate-pulse flex items-center gap-2 bg-white/60 px-3 py-1 rounded-full backdrop-blur-sm shadow-sm">
+                    <span> 按住右側按鈕注水 (Hold Button to Pour)</span>
                 </div>
 
                 <!-- Finish Button -->
@@ -1471,6 +1470,19 @@ let lastLogTime = 0;
                     </div>
                 </div>
             </div>
+        </div>
+
+
+        <!-- Dedicated Pour Button (Independent of UI Overlay Layout) -->
+        <div v-show="!showResultModal" class="absolute right-4 top-1/2 -translate-y-1/2 z-[60] pointer-events-auto flex flex-col items-center gap-2">
+                 <button 
+                    class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-blue-600/80 backdrop-blur-sm shadow-[0_0_20px_rgba(37,99,235,0.5)] border-4 border-white/30 flex flex-col items-center justify-center text-white transition-all duration-200 active:scale-95 active:bg-blue-700 select-none touch-none hover:bg-blue-500/90"
+                    @mousedown="startPour" @mouseup="stopPour" @mouseleave="stopPour"
+                    @touchstart.prevent="startPour" @touchend.prevent="stopPour"
+                >
+                    <span class="text-3xl filter drop-shadow-md">💧</span>
+                    <span class="text-xs font-bold font-mono tracking-widest mt-1">POUR</span>
+                </button>
         </div>
     </div>
 </template>

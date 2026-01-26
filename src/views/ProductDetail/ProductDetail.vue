@@ -53,88 +53,89 @@
       </div>
 
       <!-- Product Form -->
-      <form class="py-24 px-32 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-12 text-[#6d654f]">
-        <p id="origin">{{ originText }} • Single Origin</p>
-        <h2 class="text-4xl pt-3 font-semibold">{{ product.name }}</h2>
-        <h3 class="pt-2 pb-4">{{ product.english_name }}</h3>
-        <p id="price" class="text-xl font-semibold">{{ `$${price}` }}</p>
+      <form class="py-24 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-12 text-[#6d654f]">
+        <div class="w-7/12 mx-auto">
+          <p id="origin">{{ originText }} • Single Origin</p>
+          <h2 class="text-4xl pt-3 font-semibold">{{ product.name }}</h2>
+          <h3 class="pt-2 pb-4">{{ product.english_name }}</h3>
+          <p id="price" class="text-xl font-semibold">{{ `$${price}` }}</p>
 
-        <div class="py-4">
-          <label for="quantity" class="block font-semibold">數量</label>
-          <input
-            type="number"
-            name="quantity"
-            id="quantity"
-            value="1"
-            :min="1"
-            :max="product.stock"
-            class="border border-gray-300 px-3 py-2 rounded w-1/2"
-            v-model.number="quantity"
-          />
-          <p v-if="isSoldOut" class="text-red-500 font-semibold">已售完</p>
-          <p v-else-if="isLowStock" class="text-red-500 font-semibold">
-            剩餘庫存：{{ product.stock }}
-          </p>
-          <!-- TODO:做完庫存管理記得刪掉庫存顯示(售完和低庫存不用刪) -->
-          <p v-else>目前庫存：{{ product.stock }}</p>
-        </div>
+          <div class="py-4">
+            <label for="quantity" class="block font-semibold">數量</label>
+            <input
+              type="number"
+              name="quantity"
+              id="quantity"
+              value="1"
+              :min="1"
+              :max="product.stock"
+              class="border border-gray-300 px-3 py-2 rounded w-1/2"
+              v-model.number="quantity"
+            />
+            <p v-if="isSoldOut" class="text-red-500 font-semibold">已售完</p>
+            <p v-else-if="isLowStock" class="text-red-500 font-semibold">
+              剩餘庫存：{{ product.stock }}
+            </p>
+            <p v-else>目前庫存：{{ product.stock }}</p>
+          </div>
 
-        <div>
-          <p class="block font-semibold">重量</p>
-          <p class="pt-1">{{ product.weight }}</p>
-        </div>
+          <div>
+            <p class="block font-semibold">重量</p>
+            <p class="pt-1">{{ product.weight }}</p>
+          </div>
 
-        <div class="py-4">
-          <button
-            type="button"
-            @click="toggleRoast"
-            class="w-1/2 py-2 flex justify-between font-semibold"
-          >
-            烘焙度
-            <i :class="showRoast ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
-          </button>
-          <p v-show="showRoast" class="pb-2">{{ roastText }}</p>
-          <button
-            type="button"
-            @click="toggleProcess"
-            class="w-1/2 py-2 flex justify-between font-semibold"
-          >
-            處理方式
-            <i :class="showProcess ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
-          </button>
-          <p v-show="showProcess" class="pb-2">{{ processingText }}</p>
-          <button
-            type="button"
-            @click="toggleFlavor"
-            class="w-1/2 py-2 flex justify-between font-semibold"
-          >
-            風味特性
-            <i :class="showFlavor ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
-          </button>
-          <p v-show="showFlavor" class="pb-2">
-            {{ descriptionFlavor }}
-            <br />
-            核心風味：{{ flavorTagsText.join('、') }}
-          </p>
-        </div>
+          <div class="py-4">
+            <button
+              type="button"
+              @click="toggleRoast"
+              class="w-full py-3 flex justify-between font-semibold"
+            >
+              烘焙度
+              <i :class="showRoast ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
+            </button>
+            <p v-show="showRoast" class="pb-2">{{ roastText }}</p>
+            <button
+              type="button"
+              @click="toggleProcess"
+              class="w-full py-3 flex justify-between font-semibold"
+            >
+              處理方式
+              <i :class="showProcess ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
+            </button>
+            <p v-show="showProcess" class="pb-2">{{ processingText }}</p>
+            <button
+              type="button"
+              @click="toggleFlavor"
+              class="w-full py-3 flex justify-between font-semibold"
+            >
+              風味特性
+              <i :class="showFlavor ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
+            </button>
+            <p v-show="showFlavor" class="pb-2">
+              {{ descriptionFlavor }}
+              <br />
+              核心風味：{{ flavorTagsText.join('、') }}
+            </p>
+          </div>
 
-        <div>
-          <button
-            @click="addToCart"
-            :disabled="isSoldOut"
-            type="button"
-            class="bg-[#6d654f] text-white text-sm p-3.5 mr-2 rounded-md w-32 font-bold hover:bg-[#ABB7A5] disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            加到購物車
-          </button>
-          <button
-            type="button"
-            :disabled="isSoldOut"
-            @click="buyNow"
-            class="bg-[#6d654f] text-white text-sm p-3.5 rounded-md w-32 font-bold hover:bg-[#ABB7A5] disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            立即購買
-          </button>
+          <div class="flex gap-3">
+            <button
+              @click="addToCart"
+              :disabled="isSoldOut"
+              type="button"
+              class="bg-[#ABB7A5] hover:bg-[#dccfc0] text-white text-sm p-4 rounded-md w-1/2 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              加到購物車
+            </button>
+            <button
+              type="button"
+              :disabled="isSoldOut"
+              @click="buyNow"
+              class="bg-[#ABB7A5] hover:bg-[#dccfc0] text-white text-sm p-4 rounded-md w-1/2 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              立即購買
+            </button>
+          </div>
         </div>
       </form>
     </section>
@@ -170,7 +171,7 @@
     <section class="bg-[#eeeeee] py-[100px] min-h-[750px] overflow-hidden w-full">
       <h2 class="py-10 text-center text-3xl font-semibold text-[#6d654f]">推薦商品</h2>
       <div
-        class="cursor-pointer flex gap-12 w-max animate-[scroll_80s_linear_infinite] [will-change:transform] hover:[animation-play-state:paused]"
+        class="cursor-pointer flex gap-12 w-max animate-[scroll_60s_linear_infinite] [will-change:transform] hover:[animation-play-state:paused]"
       >
         <router-link
           v-for="item in recommendations"
@@ -365,7 +366,7 @@
     }
   });
 
-  // TODO:加入購物車
+  // 加入購物車
   const cartStore = useCartStore();
   const addToCart = async () => {
     if (!product.value) return;
@@ -377,7 +378,7 @@
     });
   };
 
-  // TODO:立即購買：檢驗登入狀態，並導向結帳頁
+  // 立即購買：檢驗登入狀態，並導向結帳頁
   const router = useRouter();
 
   // 新增按下【 立即購買 】後會加入購物車 (柔+)

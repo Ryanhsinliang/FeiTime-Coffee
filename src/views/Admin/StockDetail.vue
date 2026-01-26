@@ -368,8 +368,23 @@
     };
 
     try {
-      const res = await callUpdateProduct(product.value.documentId, {
-        data: ProductForm.value,
+      const imgIds = ProductForm.value.img
+        .map((m: any) => m.id)
+        .filter((id: any) => typeof id === 'number');
+
+      const res = await callUpdateProduct(product.value.pid, {
+        name: ProductForm.value.name,
+        english_name: ProductForm.value.english_name,
+        price: ProductForm.value.price,
+        origin: ProductForm.value.origin,
+        processing: ProductForm.value.processing,
+        roast: ProductForm.value.roast,
+        stock: ProductForm.value.stock,
+        weight: ProductForm.value.weight,
+        flavor_type: ProductForm.value.flavor_type,
+        flavor_tags: ProductForm.value.flavor_tags,
+        description: ProductForm.value.description,
+        imgIds, // 「刪圖後保留的圖」
       });
 
       console.log('✅ 更新成功:', res);

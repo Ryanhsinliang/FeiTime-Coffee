@@ -135,7 +135,12 @@
 
   onMounted(() => {
     fetchQuetions();
-    coffeeResultStore.clearResult();
+    const backFromLogin = localStorage.getItem('pending_coffee_save') === 'true';
+    if (coffeeResultStore.hasResult && !backFromLogin) {
+      coffeeResultStore.clearResult();
+      quizData.currentIndex = 0;
+      quizData.answers = [];
+    }
   });
 
   const answeredCount = computed(() => quizData.answers.filter((a) => a !== undefined).length);

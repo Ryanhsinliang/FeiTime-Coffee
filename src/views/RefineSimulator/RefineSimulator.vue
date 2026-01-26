@@ -1474,7 +1474,7 @@ let lastLogTime = 0;
 
 
         <!-- Dedicated Pour Button (Independent of UI Overlay Layout) -->
-        <div v-show="!showResultModal" class="absolute right-4 top-1/2 -translate-y-1/2 z-[60] pointer-events-auto flex flex-col items-center gap-2">
+        <div v-show="!showResultModal" class="absolute right-2 top-[71%] -translate-y-1/2 z-[60] pointer-events-auto flex flex-col items-center gap-2">
                  <button 
                     class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-blue-600/80 backdrop-blur-sm shadow-[0_0_20px_rgba(37,99,235,0.5)] border-4 border-white/30 flex flex-col items-center justify-center text-white transition-all duration-200 active:scale-95 active:bg-blue-700 select-none touch-none hover:bg-blue-500/90"
                     @mousedown="startPour" @mouseup="stopPour" @mouseleave="stopPour"

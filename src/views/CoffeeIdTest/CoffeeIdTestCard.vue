@@ -135,11 +135,9 @@
 
   onMounted(() => {
     fetchQuetions();
-    const backFromLogin = localStorage.getItem('pending_coffee_save') === 'true';
+    const backFromLogin = localStorage.getItem('pending_coffee_save') === 'manual';
     if (coffeeResultStore.hasResult && !backFromLogin) {
       coffeeResultStore.clearResult();
-      quizData.currentIndex = 0;
-      quizData.answers = [];
     }
   });
 

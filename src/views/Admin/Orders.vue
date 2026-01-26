@@ -274,7 +274,7 @@
     error.value = '';
 
     try {
-      const res = await callOrders(1, 1000);
+      const res = await callOrders(1, 500);
       allOrders.value = res.data || [];
       console.log('✅ 成功載入訂單:', allOrders.value.length, '筆');
     } catch (err: any) {

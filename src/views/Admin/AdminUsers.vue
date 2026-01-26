@@ -140,8 +140,8 @@
       >
         <p class="text-sm">共 {{ filteredUsers.length }} 筆</p>
 
-        <!-- 待修改 -->
-        <!-- <p class="text-sm">每頁 20 筆 / 共 {{ filteredUsers.length }} 筆</p>
+        <!-- TODO:待修改 -->
+        <p class="text-sm">每頁 20 筆 / 共 {{ filteredUsers.length }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button
@@ -164,7 +164,7 @@
           <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
             <i class="fa-solid fa-chevron-right text-sm"></i>
           </button>
-        </div> -->
+        </div>
       </div>
     </div>
   </main>
@@ -173,8 +173,8 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import { getAllUsers } from '@/services/adminUserService';
-  import type { UserRequest } from '@/services/adminUserService';
+  import { getAllUsers } from '@/services/admin/adminUserService';
+  import type { UserRequest } from '@/services/admin/adminUserService';
 
   const router = useRouter();
 

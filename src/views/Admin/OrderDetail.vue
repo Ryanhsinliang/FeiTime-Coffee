@@ -341,8 +341,8 @@
 <script setup lang="ts">
   import { ref, onMounted, computed } from 'vue';
   import { useRoute } from 'vue-router';
-  import { callSingleOrder, callUpdateOrder } from '@/services/adminOrderService';
-  import type { OrderRequest } from '@/services/adminOrderService';
+  import { callSingleOrder, callUpdateOrder } from '@/services/admin/adminOrderService';
+  import type { OrderRequest } from '@/services/admin/adminOrderService';
 
   const route = useRoute();
 
@@ -361,7 +361,11 @@
 
   // 判斷付款方式是否為取貨付款
   const isCashOnDelivery = computed(() => {
-    return order.value?.payment_method === '取貨付款' || order.value?.payment_method === '貨到付款';
+    return (
+      order.value?.payment_method === '取貨付款' ||
+      order.value?.payment_method === '貨到付款' ||
+      order.value?.payment_method === 'cod'
+    );
   });
 
   // 待付款階段：line pay支付成功之前，取貨付款訂單成立前

@@ -69,7 +69,7 @@ export interface updateOrderRequest {
 }
 
 //呼叫 後端 Express 的 API
-export async function callOrders(page = 1, pageSize = 1000): Promise<OrderListResponse> {
+export async function callOrders(page: number, pageSize: number): Promise<OrderListResponse> {
   const res = await api.get<OrderListResponse>('/api/admin-orders', {
     params: {
       page,

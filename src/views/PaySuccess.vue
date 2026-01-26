@@ -140,7 +140,7 @@
 
       // 若是貨到付款 只更新order_status
       let buyAfter: Partial<UpdateOrderRule>;
-      if (orderThing.value.payment_method == 'myself') {
+      if (orderThing.value.payment_method == 'cod') {
         buyAfter = {
           order_status: 'processing',
         };

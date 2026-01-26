@@ -777,10 +777,6 @@
 
   // 加入購物車
   const addToCart = (product: DataRule) => {
-    if (authStore.isLoggedIn == false) {
-      alert('請先登入！');
-      return;
-    }
     if (product.stock < 1) {
       alert('❌ 庫存不足！');
       return;

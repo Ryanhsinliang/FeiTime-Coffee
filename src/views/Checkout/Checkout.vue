@@ -232,9 +232,6 @@
       };
     });
 
-    // console.log(postProducts.value);
-    // return;
-
     // 總價錢 (不含運)
     const totalCost = memberBuyArr.value.reduce((sum, obj) => {
       return sum + Number(obj.product.price) * Number(obj.quantity);

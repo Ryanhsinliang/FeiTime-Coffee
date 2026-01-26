@@ -178,8 +178,8 @@
       >
         <p class="text-sm">共 {{ filteredOrders.length }} 筆</p>
 
-        <!-- 待修改 -->
-        <!-- <p class="text-sm">每頁 20 筆 / 共 {{ filteredOrders.length }} 筆</p>
+        <!-- TODO:待修改 -->
+        <p class="text-sm">每頁 20 筆 / 共 {{ filteredOrders.length }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button
@@ -202,7 +202,7 @@
           <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
             <i class="fa-solid fa-chevron-right text-sm"></i>
           </button>
-        </div> -->
+        </div>
       </div>
     </div>
   </main>
@@ -211,8 +211,8 @@
 <script setup lang="ts">
   import { ref, onMounted, computed } from 'vue';
   import { useRouter } from 'vue-router';
-  import { callOrders } from '@/services/adminOrderService';
-  import type { OrderRequest } from '@/services/adminOrderService';
+  import { callOrders } from '@/services/admin/adminOrderService';
+  import type { OrderRequest } from '@/services/admin/adminOrderService';
 
   const router = useRouter();
 

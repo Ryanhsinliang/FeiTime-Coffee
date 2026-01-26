@@ -27,47 +27,61 @@
         <p class="text-[#9a704c]">主要負責修改商品資料。</p>
       </div>
       <button
+        type="button"
         class="flex items-center gap-2 px-4 py-2 bg-[#f3ede7] rounded-lg text-sm font-bold hover:bg-[#e6ddda] active:scale-95"
+        @click="$router.back()"
       >
         <span class="material-symbols-outlined text-lg">arrow_back</span>
         <p>返回庫存管理</p>
       </button>
     </div>
 
-    <div class="space-y-8 pb-20">
+    <form class="space-y-8 pb-20">
       <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
           <span class="material-symbols-outlined text-xl">photo_library</span>
-          <h2 class="text-lg font-bold">產品圖</h2>
+          <h2 class="text-lg font-bold">商品圖</h2>
         </div>
         <div class="p-6">
           <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             <div
+              v-for="(image, index) in ProductForm.img"
+              :key="image?.id ?? index"
               class="relative group aspect-square rounded-lg overflow-hidden border border-[#e7dacf]"
             >
               <img
-                src="./assets/coffee_001.png"
-                alt=""
+                :src="image?.formats?.large?.url || image?.formats?.medium?.url || image?.url"
+                :alt="ProductForm.name"
                 class="absolute inset-0 bg-cover bg-center w-full aspect-square object-cover"
               />
 
               <div
                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2"
               >
-                <button class="bg-white/20 p-2 rounded-full text-white hover:bg-white/40">
+                <button
+                  type="button"
+                  class="bg-white/20 p-2 rounded-full text-white hover:bg-white/40"
+                >
                   <span class="material-symbols-outlined">visibility</span>
                 </button>
-                <button class="bg-white/20 p-2 rounded-full text-white hover:bg-red-500">
+                <button
+                  type="button"
+                  class="bg-white/20 p-2 rounded-full text-white hover:bg-red-500"
+                  @click="removeImage(index)"
+                >
                   <span class="material-symbols-outlined">delete</span>
                 </button>
               </div>
             </div>
-            <div
+
+            <input type="file" id="imageUpload" class="hidden" />
+            <label
+              for="imageUpload"
               class="border-2 border-dashed border-[#e7dacf] rounded-lg flex flex-col items-center justify-center gap-2 bg-[#fcfaf8] cursor-pointer aspect-square"
             >
               <span class="material-symbols-outlined text-[#9a704c] text-3xl">upload_file</span>
               <p class="text-xs text-[#9a704c]">新增照片</p>
-            </div>
+            </label>
           </div>
         </div>
       </section>
@@ -80,9 +94,10 @@
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">商品編號PID</p>
             <input
-              class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3 cursor-not-allowed text-[#9a704c]"
               type="text"
-              value="coffee_001"
+              disabled
+              v-model="ProductForm.pid"
             />
           </label>
           <label class="flex flex-col gap-2">
@@ -90,7 +105,7 @@
             <input
               class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
               type="text"
-              value="衣索比亞 耶家雪菲 日曬 G1"
+              v-model="ProductForm.name"
             />
           </label>
           <label class="flex flex-col gap-2">
@@ -98,7 +113,7 @@
             <input
               class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
               type="text"
-              value="Ethiopian Yirgacheffe G1"
+              v-model="ProductForm.english_name"
             />
           </label>
         </div>
@@ -114,30 +129,36 @@
             <input
               class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
               type="text"
-              value="衣索比亞"
+              v-model="ProductForm.origin"
             />
           </label>
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">處理法</p>
-            <select class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3">
-              <option selected="">Washed</option>
-              <option>Natural</option>
-              <option>Honey</option>
-              <option>Anaerobic</option>
+            <select
+              class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              v-model="ProductForm.processing"
+            >
+              <option value="washed">Washed</option>
+              <option value="natural">Natural</option>
+              <option value="honey">Honey</option>
+              <option value="anaerobic">Anaerobic</option>
             </select>
           </label>
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">烘焙度</p>
-            <select class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3">
-              <option selected="">淺焙</option>
-              <option>中焙</option>
-              <option>深焙</option>
+            <select
+              class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              v-model="ProductForm.roast"
+            >
+              <option value="light">淺焙</option>
+              <option value="medium">中焙</option>
+              <option value="dark">深焙</option>
             </select>
           </label>
         </div>
       </section>
 
-      <!-- <section
+      <section
         class="bg-white dark:bg-[#2a1e14] rounded-xl border border-[#e7dacf] dark:border-[#3d2b1d] overflow-hidden shadow-sm"
       >
         <div
@@ -181,17 +202,18 @@
             <label class="flex flex-col gap-2">
               <p class="text-sm font-semibold">Flavor Type</p>
               <select
-                class="w-full rounded-lg border-[#e7dacf] dark:border-[#3d2b1d] bg-white dark:bg-[#221810]  px-4 py-3"
+                class="w-full pl-4 rounded-lg border-[#e7dacf] bg-[#f8f7f6] py-3"
+                v-model="ProductForm.flavor_type"
               >
-                <option selected="">Floral &amp; Citrusy</option>
-                <option>Chocolatey &amp; Nutty</option>
-                <option>Fruity &amp; Winey</option>
-                <option>Spicy &amp; Earthy</option>
+                <option value="Floral">Floral</option>
+                <option value="Nutty">Nutty</option>
+                <option value="Fruity">Fruity</option>
+                <option value="Bold">Bold</option>
               </select>
             </label>
           </div>
         </div>
-      </section> -->
+      </section>
 
       <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
@@ -206,7 +228,7 @@
               <input
                 class="w-full pl-8 rounded-lg border-[#e7dacf] bg-[#f8f7f6] py-3"
                 type="number"
-                value="300"
+                v-model.number="ProductForm.price"
               />
             </div>
           </label>
@@ -215,7 +237,7 @@
             <input
               class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
               type="number"
-              value="156"
+              v-model.number="ProductForm.stock"
             />
           </label>
           <label class="flex flex-col gap-2">
@@ -223,7 +245,7 @@
             <input
               class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
               type="text"
-              value="250g"
+              v-model="ProductForm.weight"
             />
           </label>
         </div>
@@ -239,22 +261,151 @@
           minlength="10"
           maxlength="300"
           rows="6"
+          v-model="ProductForm.description"
         ></textarea>
       </section>
 
       <div class="flex justify-end gap-3 pt-6 border-t border-[#e7dacf]">
         <button
+          type="button"
           class="px-6 py-2.5 w-36 rounded-lg border border-[#e7dacf] text-sm font-bold hover:bg-[#f3ede7] active:scale-95"
         >
           取消
         </button>
         <button
           class="px-8 py-2.5 w-36 rounded-lg text-white text-sm bg-[#e27312] font-bold shadow-md hover:bg-[#e6a974] active:scale-95"
+          :disabled="updating"
+          @click="handleUpdateProduct"
         >
-          儲存
+          {{ updating ? '儲存中...' : '儲存' }}
         </button>
       </div>
-    </div>
+    </form>
   </main>
 </template>
-<script></script>
+<script setup lang="ts">
+  import { ref, onMounted, computed } from 'vue';
+  import { useRoute } from 'vue-router';
+  import { callSingleProduct, callUpdateProduct } from '@/services/admin/adminProductService';
+  import type { ProductRequest } from '@/services/admin/adminProductService';
+
+  const route = useRoute();
+
+  const product = ref<ProductRequest | null>(null);
+  const loading = ref(false);
+  const error = ref('');
+  const updating = ref(false);
+  const updateMessage = ref('');
+  const updateSuccess = ref(false);
+
+  // 表單資料
+  const ProductForm = ref({
+    pid: '',
+    name: '',
+    english_name: '',
+    price: 0,
+    origin: '',
+    processing: '',
+    roast: '',
+    stock: 0,
+    weight: '',
+    flavor_type: '',
+    flavor_tags: [],
+    description: '',
+    img: [],
+    documentId: '',
+  });
+
+  // 載入商品資料
+  async function loadProductData(pid: string) {
+    loading.value = true;
+    error.value = '';
+    try {
+      const res = await callSingleProduct(pid);
+      product.value = res.data;
+      console.log('🔍 載入商品明細:', pid);
+      console.log('✅ 載入成功:', product.value);
+
+      // 如果訂單已有物流資訊，填入表單
+      if (product.value) {
+        ProductForm.value = JSON.parse(JSON.stringify(product.value));
+      }
+    } catch (err: any) {
+      console.error('❌ API載入失敗:', err);
+      error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // 處理商品更新
+  async function handleUpdateProduct() {
+    if (!product.value) return;
+
+    updating.value = true;
+    updateMessage.value = '';
+
+    // 轉成 imgIds（只保留 id）
+    const imgIds = (ProductForm.value.img ?? [])
+      .map((m: any) => m?.id)
+      .filter((id: any) => typeof id === 'number');
+
+    // 組 payload：不要把 img 整包送回去
+    const payload = {
+      name: ProductForm.value.name,
+      english_name: ProductForm.value.english_name,
+      pid: ProductForm.value.pid,
+      price: ProductForm.value.price,
+      origin: ProductForm.value.origin,
+      processing: ProductForm.value.processing,
+      roast: ProductForm.value.roast,
+      stock: ProductForm.value.stock,
+      weight: ProductForm.value.weight,
+      flavor_type: ProductForm.value.flavor_type,
+      flavor_tags: ProductForm.value.flavor_tags,
+      description: ProductForm.value.description,
+      imgIds,
+    };
+
+    try {
+      const res = await callUpdateProduct(product.value.documentId, {
+        data: ProductForm.value,
+      });
+
+      console.log('✅ 更新成功:', res);
+
+      updateMessage.value = '商品更新成功！';
+      updateSuccess.value = true;
+
+      // 重新載入訂單資料
+      await loadProductData(product.value.pid);
+
+      // 3秒後清除提示訊息
+      setTimeout(() => {
+        updateMessage.value = '';
+      }, 3000);
+    } catch (err: any) {
+      console.error('❌ 更新失敗:', err);
+      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
+      updateSuccess.value = false;
+    } finally {
+      updating.value = false;
+    }
+  }
+
+  // 刪除圖片
+  function removeImage(index: number) {
+    ProductForm.value.img.splice(index, 1);
+  }
+
+  onMounted(() => {
+    const pid = route.params.pid as string;
+    console.log('商品編號:', pid);
+
+    if (pid) {
+      loadProductData(pid);
+    } else {
+      error.value = '缺少商品編號';
+    }
+  });
+</script>

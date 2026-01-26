@@ -206,7 +206,8 @@
       </div>
     </form>
 
-    <!-- <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- TODO:待修改 -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="p-4 bg-white border border-[#f3ede7] rounded-lg flex items-center gap-4">
         <div
           class="size-12 rounded-full bg-green-100 flex items-center justify-center text-green-600"
@@ -228,14 +229,14 @@
           <p class="text-sm font-bold">深海鯨魚</p>
         </div>
       </div>
-    </div> -->
+    </div>
   </main>
 </template>
 <script setup lang="ts">
   import { computed, onMounted, reactive, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { getUserById, updateUser } from '@/services/adminUserService';
-  import type { UserRequest } from '@/services/adminUserService';
+  import { getUserById, updateUser } from '@/services/admin/adminUserService';
+  import type { UserRequest } from '@/services/admin/adminUserService';
 
   type UserRole = 'Admin' | 'Member';
 

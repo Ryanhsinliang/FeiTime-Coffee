@@ -54,7 +54,7 @@
 
       <!-- Product Form -->
       <form class="py-24 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-12 text-[#6d654f]">
-        <div class="w-1/2 mx-auto">
+        <div class="w-3/4 lg:w-1/2 mx-auto">
           <p id="origin">{{ originText }} • Single Origin</p>
           <h2 class="text-4xl pt-3 font-semibold">{{ product.name }}</h2>
           <h3 class="pt-2 pb-4">{{ product.english_name }}</h3>
@@ -154,7 +154,7 @@
     <!-- Product Description -->
     <section class="bg-[#eeeeee]">
       <div class="flex flex-col lg:flex-row">
-        <div class="w-full lg:w-1/2 px-20 pb-12 lg:py-0">
+        <div class="w-3/4 lg:w-1/2 mx-auto pb-12 lg:py-0">
           <h3 class="text-3xl font-semibold text-[#6d654f]">{{ product.name }}</h3>
           <p class="text-lg text-[#808080] pt-10">
             {{ descriptionBody }}
@@ -163,7 +163,13 @@
             {{ descriptionBody2 }}
           </p>
         </div>
-        <video src="./assets/video.mp4" autoplay muted loop class="w-full lg:w-1/2"></video>
+        <video
+          src="./assets/video.mp4"
+          autoplay
+          muted
+          loop
+          class="w-full lg:w-1/2 playsinline webkit-playsinline"
+        ></video>
       </div>
     </section>
 
@@ -177,7 +183,7 @@
           v-for="item in recommendations"
           :key="item.pid"
           :to="`/product-detail/${item.pid}`"
-          class="h-[450px] w-[300px] relative flex justify-center items-center group flex-shrink-0 shadow-lg"
+          class="h-[375px] w-[250px] lg:h-[450px] lg:w-[300px] relative flex justify-center items-center group flex-shrink-0 shadow-lg"
         >
           <img
             :src="item.img[0]?.formats?.large?.url"

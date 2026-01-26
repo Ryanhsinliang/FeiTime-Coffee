@@ -556,6 +556,9 @@
       console.error('更新商品失敗:', error);
       updateMessage.value = error?.response?.data?.error || '更新商品失敗，請重試';
       updateSuccess.value = false;
+      setTimeout(() => {
+        updateMessage.value = '';
+      }, 3000);
     } finally {
       updating.value = false;
     }

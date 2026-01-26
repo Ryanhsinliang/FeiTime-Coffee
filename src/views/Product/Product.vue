@@ -538,6 +538,28 @@
             </p>
           </div>
         </div>
+        <!-- 分頁 -->
+        <div v-if="pagination" class="flex justify-center gap-2 mb-[24px]">
+          <button
+            :disabled="pagination.page === 1"
+            @click="changePage(pagination.page - 1)"
+            class="px-4 py-2 border rounded disabled:opacity-30"
+          >
+            上一頁
+          </button>
+
+          <span class="flex items-center">
+            第 {{ pagination.page }} 頁 / 共 {{ pagination.pageCount }} 頁
+          </span>
+
+          <button
+            :disabled="pagination.page === pagination.pageCount"
+            @click="changePage(pagination.page + 1)"
+            class="px-4 py-2 border rounded disabled:opacity-30"
+          >
+            下一頁
+          </button>
+        </div>
         <!-- 產品區 -->
         <div class="grid mx-[24px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[60px]">
           <!-- 產品卡片 -->
@@ -644,10 +666,15 @@
 
     try {
       err.value = ''; // 每次重新請求前清空錯誤
-      const res = await getProducts(filterData);
+      const params = {
+        ...filterData,
+        pageSize: 24,
+      };
+      const res = await getProducts(params);
       const apiFormData = res.data || res;
 
       product.value = apiFormData;
+      pagination.value = res.meta.pagination;
       productCopy.value = [...apiFormData]; // 預先準備一個備份資料 之後排序、搜尋時使用
       if (productCopy.value) {
         loading.value = false;
@@ -822,6 +849,26 @@
     },
     { immediate: true } // 載入頁面時 馬上執行一次來顯示全部產品
   );
+
+  // 分頁
+  interface MetaRule {
+    page: number;
+    pageSize: number;
+    pageCount: number;
+    total: number;
+  }
+
+  const pagination = ref<MetaRule | null>(null);
+
+  const changePage = (newPage: number) => {
+    router.push({
+      path: '/product',
+      query: {
+        // ...route.query,
+        page: newPage,
+      },
+    });
+  };
 </script>
 
 <style scoped>

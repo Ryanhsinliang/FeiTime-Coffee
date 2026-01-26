@@ -1,12 +1,16 @@
 <template>
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
-    <!-- 更新成功提示 -->
+    <!-- 更新成功/錯誤提示 -->
     <div
-      v-if="showSuccessToast"
-      class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
+      v-if="updateMessage"
+      class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 mb-6 p-4 rounded-lg"
+      :class="
+        updateSuccess
+          ? 'bg-green-100 text-green-800 border border-green-200'
+          : 'bg-red-100 text-red-800 border border-red-200'
+      "
     >
-      <i class="fa-solid fa-circle-check"></i>
-      <span class="font-semibold">庫存更新成功！</span>
+      {{ updateMessage }}
     </div>
 
     <section class="flex justify-between">
@@ -279,7 +283,8 @@
   const editingProduct = ref<string | null>(null);
   const updatingProduct = ref<string | null>(null);
   const tempStock = reactive<Record<string, number>>({});
-  const showSuccessToast = ref(false);
+  const updateMessage = ref('');
+  const updateSuccess = ref(false);
 
   // 搜尋欄檢索
   const filteredProducts = computed(() => {
@@ -387,6 +392,7 @@
     }
 
     updatingProduct.value = product.pid;
+    updateMessage.value = '';
 
     try {
       await callUpdateProduct(product.pid, { stock: newStock });
@@ -399,16 +405,22 @@
 
       console.log('✅ 庫存更新成功:', product.pid, '新庫存:', newStock);
 
-      // 顯示成功提示
-      showSuccessToast.value = true;
+      updateMessage.value = '庫存更新成功！';
+      updateSuccess.value = true;
+
+      // 3秒後清除提示訊息
       setTimeout(() => {
-        showSuccessToast.value = false;
+        updateMessage.value = '';
       }, 3000);
 
       editingProduct.value = null;
     } catch (err: any) {
       console.error('❌ 更新失敗:', err);
-      alert(`更新失敗: ${err.response?.data?.message || err.message}`);
+      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
+      updateSuccess.value = false;
+      setTimeout(() => {
+        updateMessage.value = '';
+      }, 3000);
     } finally {
       updatingProduct.value = null;
     }

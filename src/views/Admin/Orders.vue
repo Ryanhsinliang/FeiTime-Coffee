@@ -1,5 +1,18 @@
 <template>
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
+    <!-- 更新成功/錯誤提示 -->
+    <div
+      v-if="updateMessage"
+      class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 mb-6 p-4 rounded-lg"
+      :class="
+        updateSuccess
+          ? 'bg-green-100 text-green-800 border border-green-200'
+          : 'bg-red-100 text-red-800 border border-red-200'
+      "
+    >
+      {{ updateMessage }}
+    </div>
+
     <section class="flex justify-between">
       <div>
         <h2 class="text-3xl font-bold">訂單管理</h2>
@@ -225,6 +238,8 @@
   const loading = ref(false);
   const error = ref('');
   const keyword = ref('');
+  const updateMessage = ref('');
+  const updateSuccess = ref(false);
 
   // 分頁狀態
   const currentPage = ref(1);
@@ -279,6 +294,7 @@
 
     syncing.value = true;
     console.log('🔄 背景物流同步啟動...');
+    updateMessage.value = '';
 
     try {
       const res = await callBulkSyncLogistics();
@@ -286,11 +302,25 @@
       // 如果 message 裡顯示有更新 (updatedCount > 0)，則重新抓取列表
       if (res.success) {
         console.log('✅ 物流同步完成:', res.message);
+
+        updateMessage.value = `${res.message}`;
+        updateSuccess.value = true;
         // 同步完成後，重新呼叫 loadOrders 刷新畫面的狀態
         await loadOrders();
+
+        // 3秒後清除提示訊息
+        setTimeout(() => {
+          updateMessage.value = '';
+        }, 3000);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('❌ 自動同步物流失敗:', err);
+      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
+      updateSuccess.value = false;
+      // 3秒後清除提示訊息
+      setTimeout(() => {
+        updateMessage.value = '';
+      }, 3000);
     } finally {
       syncing.value = false;
     }

@@ -99,7 +99,7 @@
 
   <div
     v-if="hint.show"
-    class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-lg z-50"
+    class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-lg z-[100]"
   >
     {{ hint.message }}
   </div>
@@ -214,6 +214,9 @@
   );
   onMounted(() => {
     initChart();
+    if (authStore.isLoggedIn && localStorage.getItem('pending_coffee_save') === 'true') {
+      executeSave();
+    }
   });
 
   const idCard = ref<HTMLElement | null>(null);
@@ -285,15 +288,7 @@
     }
   }
 
-  async function saveIdCard() {
-    if (!authStore.isLoggedIn) {
-      showHint('請先登入以儲存您的 Coffee ID！');
-      router.push({
-        name: 'Login',
-        query: { redirect: router.currentRoute.value.fullPath },
-      });
-      return;
-    }
+  const executeSave = async () => {
     if (isSaving.value || !persona.value || !coffeeResultStore.hasResult) return;
     isSaving.value = true;
     try {
@@ -308,6 +303,21 @@
       showHint(`儲存失敗: ${error.message}`);
     } finally {
       isSaving.value = false;
+      localStorage.removeItem('pending_coffee_save');
     }
+  };
+
+  async function saveIdCard() {
+    if (!authStore.isLoggedIn) {
+      localStorage.setItem('pending_coffee_save', 'true');
+      showHint('請先登入以儲存您的 Coffee ID！');
+
+      router.push({
+        name: 'Login',
+        query: { redirect: router.currentRoute.value.fullPath },
+      });
+      return;
+    }
+    await executeSave();
   }
 </script>

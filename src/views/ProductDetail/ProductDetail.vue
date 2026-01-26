@@ -53,10 +53,10 @@
       </div>
 
       <!-- Product Form -->
-      <form class="py-24 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-12 text-[#6d654f]">
+      <form class="py-20 bg-[#f9f8f6] w-full lg:w-1/2 lg:pb-12 text-[#6d654f]">
         <div class="w-3/4 lg:w-1/2 mx-auto">
           <p id="origin">{{ originText }} • Single Origin</p>
-          <h2 class="text-4xl pt-3 font-semibold">{{ product.name }}</h2>
+          <h2 class="text-3xl lg:text-4xl pt-3 font-semibold">{{ product.name }}</h2>
           <h3 class="pt-2 pb-4">{{ product.english_name }}</h3>
           <p id="price" class="text-xl font-semibold">{{ `$${price}` }}</p>
 
@@ -146,22 +146,25 @@
     </section>
 
     <section>
-      <p class="bg-[#eeeeee] text-[#6d654f] font-semibold text-4xl text-center py-48">
-        源自高品質產地，香氣清晰口感純淨
+      <p class="bg-[#eeeeee] text-[#6d654f] font-semibold text-4xl text-center py-48 px-4">
+        精選豆款搭配黃金烘焙比例，展現最佳風味。
       </p>
     </section>
 
     <!-- Product Description -->
     <section class="bg-[#eeeeee]">
       <div class="flex flex-col lg:flex-row">
-        <div class="w-full lg:w-1/2 px-20 pb-12 lg:py-0">
-          <h3 class="text-3xl font-semibold text-[#6d654f]">{{ product.name }}</h3>
-          <p class="text-lg text-[#808080] pt-10">
-            {{ descriptionBody }}
-          </p>
-          <p class="text-lg text-[#808080] pt-4">
-            {{ descriptionBody2 }}
-          </p>
+        <div class="w-full lg:w-1/2 pb-12">
+          <div class="w-3/4 mx-auto">
+            <h3 class="text-3xl font-semibold text-[#6d654f]">{{ product.name }}</h3>
+            <p class="pt-2 pb-4 text-[#808080]">{{ product.english_name }}</p>
+            <p class="text-lg text-[#808080] pt-10">
+              {{ descriptionBody }}
+            </p>
+            <p class="text-lg text-[#808080] pt-4">
+              {{ descriptionBody2 }}
+            </p>
+          </div>
         </div>
         <video
           src="./assets/video.mp4"
@@ -175,7 +178,11 @@
 
     <!-- Recommend Products Section -->
     <section class="bg-[#eeeeee] py-[100px] min-h-[750px] overflow-hidden w-full">
-      <h2 class="py-10 text-center text-3xl font-semibold text-[#6d654f]">推薦商品</h2>
+      <div class="py-12 text-center">
+        <p class="pb-2 text-center text-[#6d654f] font-semibold">Top Picks</p>
+        <h2 class="text-center text-3xl lg:text-4xl font-semibold text-[#6d654f]">精選推薦</h2>
+        <p class="pt-2 text-center text-[#6d654f]">為咖啡愛好者打造的精品豆款，品味升級首選。</p>
+      </div>
       <div
         class="cursor-pointer flex gap-12 w-max animate-[scroll_70s_linear_infinite] [will-change:transform] hover:[animation-play-state:paused]"
       >

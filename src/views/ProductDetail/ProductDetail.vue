@@ -154,7 +154,7 @@
     <!-- Product Description -->
     <section class="bg-[#eeeeee]">
       <div class="flex flex-col lg:flex-row">
-        <div class="w-3/4 lg:w-1/2 mx-auto pb-12 lg:py-0">
+        <div class="w-full lg:w-1/2 px-20 pb-12 lg:py-0">
           <h3 class="text-3xl font-semibold text-[#6d654f]">{{ product.name }}</h3>
           <p class="text-lg text-[#808080] pt-10">
             {{ descriptionBody }}

@@ -189,6 +189,7 @@
   import { useAuthStore } from '../../store/auth';
   import { useRouter, useRoute } from 'vue-router';
   import { useReCaptcha } from 'vue-recaptcha-v3';
+  import { googleAuthService } from '@/services/googleAuthService';
 
   const authStore = useAuthStore();
   const router = useRouter();
@@ -295,15 +296,17 @@
   };
 
   function handleGoogleLogin() {
-    isGoogleLoading.value = true;
-    errorMessage.value = '';
-    oauthError.value = '';
-    const redirectTo = route.query.redirect as string;
-    if (redirectTo) {
-      localStorage.setItem('oauth_redirect', redirectTo);
-    }
     try {
-      authStore.handleGoogleLogin();
+      isGoogleLoading.value = true;
+      const redirectTo = route.query.redirect as string;
+      if (redirectTo && redirectTo.includes('coffee-id-test-card')) {
+        localStorage.setItem('pending_coffee_save', 'manual');
+      }
+      const finalPath = redirectTo || '/';
+      localStorage.setItem('redirectAfterLogin', finalPath);
+      setTimeout(() => {
+        googleAuthService.initiateGoogleLogin();
+      }, 100);
     } catch (err) {
       isGoogleLoading.value = false;
       errorMessage.value = 'Google 登入啟動失敗';

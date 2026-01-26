@@ -66,11 +66,12 @@
   const coffeeResultStore = useCoffeeResultStore();
   const router = useRouter();
 
-  // 開始測驗
   function startTest() {
     router.push('/coffee-id-test-card');
     coffeeResultStore.clearResult();
-  } // 控制動畫背景切換
+    localStorage.removeItem('pending_coffee_save');
+    localStorage.removeItem('temp_coffee_result');
+  }
   const currentBg = ref(bgImage);
   const bgSequence = [cafe, cafe, mountain, mountain, escalator, escalator, campus, campus, cafe];
 
@@ -94,7 +95,6 @@
     changeBg();
   });
 
-  // 卡片效果
   const card = ref<HTMLElement | null>(null);
   const style = ref('');
 

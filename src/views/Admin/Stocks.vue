@@ -268,7 +268,7 @@
     error.value = '';
 
     try {
-      const res = await callProducts(1, 1000);
+      const res = await callProducts(1, 500);
       products.value = res.data || [];
       console.log('✅ 成功載入產品:', products.value.length, '筆');
     } catch (err: any) {

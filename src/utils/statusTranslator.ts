@@ -28,7 +28,7 @@ export function paymentStatusText(status?: string) {
 }
 
 export const payment_methodMap: Record<string, string> = {
-  linePay: 'linePay',
+  linePay: 'Line Pay',
   cod: '貨到付款',
   COD: '貨到付款',
 };

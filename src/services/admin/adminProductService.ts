@@ -77,7 +77,7 @@ export interface UpdateProductPayload {
 }
 
 //呼叫 後端 Express 的 API
-export async function callProducts(page = 1, pageSize = 100): Promise<ProductListResponse> {
+export async function callProducts(page = 1, pageSize = 500): Promise<ProductListResponse> {
   const res = await api.get<ProductListResponse>('/api/admin-products', {
     params: {
       page,

@@ -56,7 +56,7 @@ export interface UpdateMeRequest {
 }
 
 // 取得所有使用者
-export async function getAllUsers(page = 1, pageSize = 100): Promise<UserListResponse> {
+export async function getAllUsers(page: number, pageSize: number): Promise<UserListResponse> {
   const res = await api.get<UserListResponse>('/api/admin-users', {
     params: { page, pageSize },
   });

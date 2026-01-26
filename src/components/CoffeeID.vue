@@ -217,7 +217,6 @@
     const saveMode = localStorage.getItem('pending_coffee_save');
     if (authStore.isLoggedIn && saveMode === 'manual') {
       showHint('歡迎回來！現在您可以點擊「儲存」按鈕來同步結果。');
-      localStorage.removeItem('pending_coffee_save');
     }
   });
 
@@ -306,6 +305,7 @@
     } finally {
       isSaving.value = false;
       localStorage.removeItem('pending_coffee_save');
+      localStorage.removeItem('temp_coffee_result');
     }
   };
 

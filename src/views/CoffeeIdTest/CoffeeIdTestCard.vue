@@ -135,7 +135,10 @@
 
   onMounted(() => {
     fetchQuetions();
-    coffeeResultStore.clearResult();
+    const backFromLogin = localStorage.getItem('pending_coffee_save') === 'manual';
+    if (coffeeResultStore.hasResult && !backFromLogin) {
+      coffeeResultStore.clearResult();
+    }
   });
 
   const answeredCount = computed(() => quizData.answers.filter((a) => a !== undefined).length);

@@ -276,6 +276,9 @@
           localStorage.removeItem('rememberedEmail');
         }
         const redirectTo = route.query.redirect as string;
+        if (redirectTo && redirectTo.includes('coffee-id-test-card')) {
+          localStorage.setItem('pending_coffee_save', 'manual');
+        }
         if (redirectTo) {
           router.push(redirectTo);
         } else {
@@ -295,7 +298,10 @@
     isGoogleLoading.value = true;
     errorMessage.value = '';
     oauthError.value = '';
-
+    const redirectTo = route.query.redirect as string;
+    if (redirectTo) {
+      localStorage.setItem('oauth_redirect', redirectTo);
+    }
     try {
       authStore.handleGoogleLogin();
     } catch (err) {

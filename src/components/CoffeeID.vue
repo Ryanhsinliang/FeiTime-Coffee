@@ -214,8 +214,10 @@
   );
   onMounted(() => {
     initChart();
-    if (authStore.isLoggedIn && localStorage.getItem('pending_coffee_save') === 'true') {
-      executeSave();
+    const saveMode = localStorage.getItem('pending_coffee_save');
+    if (authStore.isLoggedIn && saveMode === 'manual') {
+      showHint('歡迎回來！現在您可以點擊「儲存」按鈕來同步結果。');
+      localStorage.removeItem('pending_coffee_save');
     }
   });
 
@@ -309,13 +311,15 @@
 
   async function saveIdCard() {
     if (!authStore.isLoggedIn) {
-      localStorage.setItem('pending_coffee_save', 'true');
-      showHint('請先登入以儲存您的 Coffee ID！');
+      localStorage.setItem('pending_coffee_save', 'manual');
+      showHint('即將前往登入頁面，登入後即可儲存儲存您的 Coffee ID！');
 
-      router.push({
-        name: 'Login',
-        query: { redirect: router.currentRoute.value.fullPath },
-      });
+      setTimeout(() => {
+        router.push({
+          name: 'Login',
+          query: { redirect: router.currentRoute.value.fullPath },
+        });
+      }, 2000);
       return;
     }
     await executeSave();

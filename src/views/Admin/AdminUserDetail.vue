@@ -12,13 +12,17 @@
   </header>
 
   <main class="px-8 py-6 max-w-5xl mx-auto w-full">
-    <!-- 更新成功提示 -->
+    <!-- 更新成功/錯誤提示 -->
     <div
-      v-if="success"
-      class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2"
+      v-if="updateMessage"
+      class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 mb-6 p-4 rounded-lg"
+      :class="
+        updateSuccess
+          ? 'bg-green-100 text-green-800 border border-green-200'
+          : 'bg-red-100 text-red-800 border border-red-200'
+      "
     >
-      <i class="fa-solid fa-circle-check"></i>
-      <span class="font-semibold">更新成功！</span>
+      {{ updateMessage }}
     </div>
 
     <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
@@ -217,6 +221,8 @@
   const saving = ref(false);
   const error = ref('');
   const success = ref(false);
+  const updateMessage = ref('');
+  const updateSuccess = ref(false);
 
   const user = ref<UserRequest | null>(null);
 
@@ -270,7 +276,7 @@
     if (!user.value) return;
     saving.value = true;
     error.value = '';
-    success.value = false;
+    updateMessage.value = '';
 
     try {
       // ✅ 只送允許更新的欄位
@@ -284,14 +290,20 @@
 
       // 更新畫面資料
       user.value = res.data;
-      success.value = true;
+      updateMessage.value = '資料更新成功！';
+      updateSuccess.value = true;
 
       // 3秒後清除提示訊息
       setTimeout(() => {
-        success.value = false;
+        updateMessage.value = '';
       }, 3000);
-    } catch (e: any) {
-      error.value = e?.message || e?.response?.data?.message || '更新失敗';
+    } catch (err: any) {
+      console.error('❌ 更新失敗:', err);
+      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
+      // 3秒後清除提示訊息
+      setTimeout(() => {
+        updateMessage.value = '';
+      }, 3000);
     } finally {
       saving.value = false;
     }

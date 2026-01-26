@@ -366,15 +366,9 @@
   });
 
   // 自動生成物流單號(依時間戳)
-  // function generateTrackingNumber() {
-  //   const timestamp = Date.now();
-  //   shippingForm.value.tracking_number = `TRK-${timestamp}`;
-  // }
-
-  // 測試用固定格式物流單號
   function generateTrackingNumber() {
     const timestamp = Date.now();
-    shippingForm.value.tracking_number = `TEST-TRACKING-NUMBER`;
+    shippingForm.value.tracking_number = `TRK-${timestamp}`;
   }
 
   // 轉換為 datetime-local 格式
@@ -519,6 +513,9 @@
       console.error('❌ 更新失敗:', err);
       updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
       updateSuccess.value = false;
+      setTimeout(() => {
+        updateMessage.value = '';
+      }, 3000);
     } finally {
       updating.value = false;
     }

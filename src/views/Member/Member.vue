@@ -3,12 +3,6 @@
     v-if="authStore.isLoggedIn"
     class="bg-background-airy font-notoserif min-h-screen text-primary/80 antialiased overflow-x-hidden selection:bg-pale-green"
   >
-    <!-- 會員專區專用的背景毛玻璃效果層 -->
-    <div
-      v-if="activeTab === 'member'"
-      class="fixed inset-0 pointer-events-none desktop-bg-glass z-[-1]"
-    ></div>
-
     <!-- 主要內容區域 -->
     <main class="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
       <!-- ========== 會員專區視圖 ========== -->
@@ -282,13 +276,35 @@
                   2026 年度交易記錄
                 </p>
               </div>
-              <!-- 篩選按鈕（年份） -->
-              <div class="flex gap-4">
+              <!-- 篩選按鈕（日期選擇器） -->
+              <div class="flex gap-4 items-center">
+                <div class="relative">
+                  <VueDatePicker
+                    v-model="dateRange"
+                    range
+                    :enable-time-picker="false"
+                    select-text="確定"
+                    cancel-text="取消"
+                    placeholder="選擇日期範圍"
+                    format="yyyy/MM/dd"
+                    @update:model-value="handleDateChange"
+                  >
+                    <template #trigger>
+                      <button
+                        class="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-sm font-bold uppercase tracking-[0.3em] text-primary/50 bg-white/20 flex items-center gap-2 sm:gap-3 hover:bg-white/40 transition-all"
+                      >
+                        <span class="material-symbols-outlined text-base sm:text-lg">calendar_today</span>
+                        {{ getDateRangeText() }}
+                      </button>
+                    </template>
+                  </VueDatePicker>
+                </div>
                 <button
-                  class="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-sm font-bold uppercase tracking-[0.3em] text-primary/50 bg-white/20 flex items-center gap-2 sm:gap-3 hover:bg-white/40 transition-all"
+                  v-if="dateRange"
+                  class="px-4 py-2 rounded-full text-xs font-bold text-primary/40 hover:text-primary/60 hover:bg-white/20 transition-all"
+                  @click="clearDateFilter"
                 >
-                  <span class="material-symbols-outlined text-base sm:text-lg">calendar_today</span>
-                  本年度
+                  清除篩選
                 </button>
               </div>
             </div>
@@ -303,15 +319,15 @@
               </div>
 
               <!-- 無訂單 -->
-              <div v-else-if="orders.length === 0" class="text-center py-12">
+              <div v-else-if="filteredOrders.length === 0" class="text-center py-12">
                 <p class="text-sm text-primary/40 uppercase tracking-[0.3em] font-bold">
-                  目前沒有訂單記錄
+                  {{ dateRange ? '此日期範圍內沒有訂單' : '目前沒有訂單記錄' }}
                 </p>
               </div>
 
               <!-- 訂單列表 -->
               <template v-else>
-                <details v-for="order in orders" :key="order.id" class="group border-none">
+                <details v-for="order in paginatedOrders" :key="order.id" class="group border-none">
                   <!-- 訂單摘要列 -->
                   <summary
                     class="glass-row rounded-2xl md:rounded-[2rem] px-4 sm:px-6 md:px-10 py-4 sm:py-6 md:py-8 cursor-pointer flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-8 list-none outline-none"
@@ -327,15 +343,15 @@
                         </p>
                       </div>
                       <div class="w-px h-10 sm:h-12 bg-gold-accent/15"></div>
-                      <!-- 訂單編號與商品 -->
+                      <!-- 訂單編號 -->
                       <div class="flex-1 min-w-0">
                         <p
-                          class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-1 sm:mb-1.5 truncate"
+                          class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-1 sm:mb-1.5"
                         >
-                          訂單編號 #{{ order.order_number }}
+                          訂單編號
                         </p>
-                        <h4 class="text-lg font-light text-primary/80 break-words">
-                          {{ order.order_items.map((item) => item.snapshot_name).join('、') }}
+                        <h4 class="text-lg font-light text-primary/80">
+                          #{{ order.order_number }}
                         </h4>
                       </div>
                     </div>
@@ -374,101 +390,107 @@
                     class="mx-2 sm:mx-4 mt-2 rounded-2xl md:rounded-[2rem] p-6 sm:p-8 md:p-12 glass-detail-panel"
                   >
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 md:gap-20">
-                      <!-- 左欄：商品明細 -->
-                      <div class="space-y-6 sm:space-y-8 md:space-y-10">
-                        <div>
-                          <p
-                            class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-4 sm:mb-6"
-                          >
-                            商品明細
-                          </p>
-                          <div
-                            v-for="item in order.order_items"
-                            :key="item.id"
-                            class="flex justify-between items-center py-4 border-b border-primary/5"
-                          >
-                            <span class="text-lg font-light text-primary/70">
-                              {{ item.quantity }}x {{ item.snapshot_name }}（{{
-                                item.snapshot_weight
-                              }}）
-                            </span>
-                            <span class="text-lg font-light text-primary/70">
-                              ${{ item.item_total.toLocaleString() }}
-                            </span>
-                          </div>
-                          <!-- 運費 -->
-                          <div
-                            class="flex justify-between items-center py-4 border-b border-primary/5"
-                          >
-                            <span class="text-lg font-light text-primary/70">運費</span>
-                            <span class="text-lg font-light text-primary/70">
-                              ${{ order.shipping_fee.toLocaleString() }}
-                            </span>
-                          </div>
+                      <!-- 左欄：商品明細、運費、總金額 -->
+                      <div>
+                        <p
+                          class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-4 sm:mb-6"
+                        >
+                          商品明細
+                        </p>
+                        <!-- 商品項目 -->
+                        <div
+                          v-for="item in order.order_items"
+                          :key="item.id"
+                          class="flex justify-between items-center py-3"
+                        >
+                          <span class="text-lg font-light text-primary/70">
+                            {{ item.quantity }}x {{ item.snapshot_name }}（{{
+                              item.snapshot_weight
+                            }}）
+                          </span>
+                          <span class="text-lg font-light text-primary/70">
+                            ${{ item.item_total.toLocaleString() }}
+                          </span>
                         </div>
-                        <!-- 付款方式與追蹤碼 -->
-                        <div class="flex flex-col sm:flex-row gap-6 sm:gap-10">
-                          <div class="flex-1">
-                            <p
-                              class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
-                            >
-                              付款方式
-                            </p>
-                            <p class="text-lg text-primary/60">
-                              {{
-                                order.payment_method === 'linepay'
-                                  ? 'LINE Pay'
-                                  : order.payment_method
-                              }}
-                            </p>
-                          </div>
-                          <div v-if="order.tracking_number" class="flex-1">
-                            <p
-                              class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
-                            >
-                              追蹤編號
-                            </p>
-                            <p
-                              class="text-lg font-light text-gold-accent/70 tracking-wide break-all"
-                            >
-                              {{ order.tracking_number }}
-                            </p>
-                          </div>
+                        <!-- 運費（上方有分隔線） -->
+                        <div
+                          class="flex justify-between items-center py-4 mt-2 border-t border-primary/10"
+                        >
+                          <span class="text-lg font-light text-primary/70">運費</span>
+                          <span class="text-lg font-light text-primary/70">
+                            ${{ order.shipping_fee.toLocaleString() }}
+                          </span>
+                        </div>
+                        <!-- 總金額（上方有分隔線） -->
+                        <div
+                          class="flex justify-between items-center py-4 border-t border-primary/10"
+                        >
+                          <span class="text-lg font-medium text-primary/80">總計</span>
+                          <span class="text-xl font-medium text-primary/90">
+                            ${{ order.total_amount.toLocaleString() }}
+                          </span>
                         </div>
                       </div>
 
-                      <!-- 右欄：收件地址與總金額 -->
-                      <div class="space-y-6 sm:space-y-8 md:space-y-10">
+                      <!-- 右欄：收件資訊、付款方式、追蹤 -->
+                      <div class="space-y-6 sm:space-y-8">
+                        <!-- 收件資訊 -->
                         <div>
                           <p
                             class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-4 sm:mb-6"
                           >
-                            收件地址
+                            收件資訊
                           </p>
-                          <p class="text-lg font-light text-primary/70 mb-1.5">
-                            {{ order.recipient_name }}
+                          <div class="space-y-3">
+                            <div>
+                              <p class="text-xs font-bold text-primary/30 mb-1">收件人</p>
+                              <p class="text-lg font-light text-primary/70">
+                                {{ order.recipient_name }}
+                              </p>
+                            </div>
+                            <div>
+                              <p class="text-xs font-bold text-primary/30 mb-1">收件地址</p>
+                              <p class="text-lg text-primary/50 leading-relaxed font-light">
+                                {{ order.recipient_address }}
+                              </p>
+                            </div>
+                            <div>
+                              <p class="text-xs font-bold text-primary/30 mb-1">聯絡電話</p>
+                              <p class="text-lg text-primary/50 font-light">
+                                {{ order.recipient_phone }}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- 付款方式 -->
+                        <div>
+                          <p
+                            class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                          >
+                            付款方式
                           </p>
-                          <p class="text-lg text-primary/50 leading-relaxed font-light">
-                            {{ order.recipient_address }}
-                            <br />
-                            {{ order.recipient_phone }}
+                          <p class="text-lg text-primary/60">
+                            {{
+                              order.payment_method === 'linepay'
+                                ? 'LINE Pay'
+                                : order.payment_method
+                            }}
                           </p>
                         </div>
-                        <!-- 總計 -->
-                        <div
-                          class="pt-6 sm:pt-8 border-t border-primary/5 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 sm:gap-0"
-                        >
-                          <div>
-                            <p class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30">
-                              總計
-                            </p>
-                            <p class="text-lg font-light text-primary/80">
-                              ${{ order.total_amount.toLocaleString() }}
-                            </p>
-                          </div>
+                        <!-- 追蹤編號（如果有） -->
+                        <div v-if="order.tracking_number">
+                          <p
+                            class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                          >
+                            追蹤編號
+                          </p>
+                          <p
+                            class="text-lg font-light text-gold-accent/70 tracking-wide break-all"
+                          >
+                            {{ order.tracking_number }}
+                          </p>
                           <button
-                            v-if="order.tracking_number"
-                            class="px-8 sm:px-10 py-2.5 sm:py-3 bg-pale-green/40 border border-pale-green-dark/20 text-pale-green-dark text-sm font-bold uppercase tracking-[0.3em] rounded-full shadow-sm hover:bg-pale-green/60 transition-all w-full sm:w-auto"
+                            class="mt-4 px-8 sm:px-10 py-2.5 sm:py-3 bg-pale-green/40 border border-pale-green-dark/20 text-pale-green-dark text-sm font-bold uppercase tracking-[0.3em] rounded-full shadow-sm hover:bg-pale-green/60 transition-all"
                           >
                             追蹤訂單
                           </button>
@@ -484,42 +506,42 @@
             <div
               class="p-6 sm:p-8 md:p-12 border-t border-white/10 flex flex-col items-center gap-4 sm:gap-6"
             >
-              <!-- 分頁按鈕組 -->
-              <div class="flex gap-3 sm:gap-4">
+              <!-- 分頁按鈕組 - 只在超過一頁時顯示 -->
+              <div v-if="totalPages > 1" class="flex gap-3 sm:gap-4">
                 <!-- 上一頁按鈕 -->
                 <button
-                  class="size-11 flex items-center justify-center rounded-full text-primary/20 hover:text-primary transition-colors bg-white/5"
+                  class="size-11 flex items-center justify-center rounded-full transition-colors bg-white/5"
+                  :class="currentPage === 1 ? 'text-primary/10 cursor-not-allowed' : 'text-primary/20 hover:text-primary'"
+                  :disabled="currentPage === 1"
+                  @click="prevPage"
                 >
                   <span class="material-symbols-outlined text-lg">chevron_left</span>
                 </button>
                 <!-- 頁碼按鈕 -->
                 <div class="flex items-center gap-2">
                   <button
-                    class="size-11 bg-white/50 flex items-center justify-center rounded-full text-primary/80 text-xs font-bold"
+                    v-for="page in totalPages"
+                    :key="page"
+                    class="size-11 flex items-center justify-center rounded-full text-xs font-bold transition-all"
+                    :class="page === currentPage ? 'bg-white/50 text-primary/80' : 'text-primary/30 hover:bg-white/40'"
+                    @click="goToPage(page)"
                   >
-                    1
-                  </button>
-                  <button
-                    class="size-11 flex items-center justify-center rounded-full text-primary/30 text-xs font-bold hover:bg-white/40 transition-all"
-                  >
-                    2
-                  </button>
-                  <button
-                    class="size-11 flex items-center justify-center rounded-full text-primary/30 text-xs font-bold hover:bg-white/40 transition-all"
-                  >
-                    3
+                    {{ page }}
                   </button>
                 </div>
                 <!-- 下一頁按鈕 -->
                 <button
-                  class="size-11 flex items-center justify-center rounded-full text-primary/20 hover:text-primary transition-colors bg-white/5"
+                  class="size-11 flex items-center justify-center rounded-full transition-colors bg-white/5"
+                  :class="currentPage === totalPages ? 'text-primary/10 cursor-not-allowed' : 'text-primary/20 hover:text-primary'"
+                  :disabled="currentPage === totalPages"
+                  @click="nextPage"
                 >
                   <span class="material-symbols-outlined text-lg">chevron_right</span>
                 </button>
               </div>
               <!-- 頁碼資訊 -->
               <p class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30">
-                第 01 頁 • 共 12 筆訂單
+                第 {{ String(currentPage).padStart(2, '0') }} 頁 • 共 {{ filteredOrders.length }} 筆訂單
               </p>
             </div>
           </div>
@@ -557,6 +579,8 @@
   import { useCoffeeResultStore } from '@/store/coffeeResult';
   import CoffeeIDMini from '@/components/CoffeeIDMini.vue';
   import { memberService, type Order } from '@/services/memberService';
+  import { VueDatePicker } from '@vuepic/vue-datepicker';
+  import '@vuepic/vue-datepicker/dist/main.css';
 
   const route = useRoute();
   const router = useRouter();
@@ -570,6 +594,13 @@
   // ========== 訂單資料 ==========
   const orders = ref<Order[]>([]);
   const isLoadingOrders = ref(false);
+
+  // ========== 日期篩選 ==========
+  const dateRange = ref<[Date, Date] | null>(null);
+
+  // ========== 分頁 ==========
+  const currentPage = ref(1);
+  const pageSize = 10;
 
   // ========== 聯絡資訊 ==========
   const phone = ref('');
@@ -627,6 +658,60 @@
   };
 
   const getStatusText = (status: string) => statusMap[status] || status;
+
+  // ========== 篩選後的訂單（新的在前面） ==========
+  const filteredOrders = computed(() => {
+    let result = [...orders.value];
+
+    // 日期篩選
+    if (dateRange.value) {
+      const [start, end] = dateRange.value;
+      result = result.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        return orderDate >= start && orderDate <= end;
+      });
+    }
+
+    // 按日期排序，新的在前面
+    result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    return result;
+  });
+
+  // ========== 分頁計算 ==========
+  const totalPages = computed(() => Math.ceil(filteredOrders.value.length / pageSize));
+  const paginatedOrders = computed(() => {
+    const start = (currentPage.value - 1) * pageSize;
+    return filteredOrders.value.slice(start, start + pageSize);
+  });
+
+  // ========== 分頁方法 ==========
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages.value) {
+      currentPage.value = page;
+    }
+  };
+
+  const prevPage = () => goToPage(currentPage.value - 1);
+  const nextPage = () => goToPage(currentPage.value + 1);
+
+  // ========== 日期篩選方法 ==========
+  const handleDateChange = (value: [Date, Date] | null) => {
+    dateRange.value = value;
+    currentPage.value = 1; // 重置到第一頁
+  };
+
+  const clearDateFilter = () => {
+    dateRange.value = null;
+    currentPage.value = 1;
+  };
+
+  const getDateRangeText = () => {
+    if (!dateRange.value) return '選擇日期';
+    const [start, end] = dateRange.value;
+    const formatDate = (d: Date) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+    return `${formatDate(start)} - ${formatDate(end)}`;
+  };
 
   // ========== 初始化 ==========
   onMounted(async () => {
@@ -845,17 +930,6 @@
     font-weight: 200;
   }
 
-  .desktop-bg-glass {
-    background: radial-gradient(
-      circle at top right,
-      rgba(247, 243, 235, 0.6) 0%,
-      rgba(251, 249, 244, 0.4) 50%,
-      rgba(255, 255, 255, 0.2) 100%
-    );
-    backdrop-filter: blur(120px) saturate(150%);
-    -webkit-backdrop-filter: blur(120px) saturate(150%);
-  }
-
   .leather-texture-champagne {
     background: #dce8df;
   }
@@ -964,5 +1038,43 @@
   ::-webkit-scrollbar-thumb {
     background: rgba(220, 203, 176, 0.3);
     border-radius: 10px;
+  }
+
+  /* Vue DatePicker 自訂樣式 */
+  :deep(.dp__theme_light) {
+    --dp-background-color: rgba(255, 255, 255, 0.9);
+    --dp-text-color: #3d3d3d;
+    --dp-hover-color: rgba(220, 232, 222, 0.5);
+    --dp-hover-text-color: #3d3d3d;
+    --dp-hover-icon-color: #5b7a6d;
+    --dp-primary-color: #5b7a6d;
+    --dp-primary-text-color: #fff;
+    --dp-secondary-color: #c5a059;
+    --dp-border-color: rgba(197, 160, 89, 0.2);
+    --dp-menu-border-color: rgba(197, 160, 89, 0.2);
+    --dp-border-color-hover: rgba(197, 160, 89, 0.4);
+    --dp-disabled-color: #f0f0f0;
+    --dp-scroll-bar-background: rgba(220, 232, 222, 0.3);
+    --dp-scroll-bar-color: rgba(91, 122, 109, 0.5);
+    --dp-success-color: #5b7a6d;
+    --dp-success-color-disabled: rgba(91, 122, 109, 0.3);
+    --dp-icon-color: #5b7a6d;
+    --dp-danger-color: #cc4b4b;
+    --dp-highlight-color: rgba(220, 232, 222, 0.3);
+    --dp-range-between-dates-background-color: rgba(220, 232, 222, 0.4);
+    --dp-range-between-dates-text-color: #3d3d3d;
+    --dp-range-between-border-color: rgba(91, 122, 109, 0.2);
+  }
+
+  :deep(.dp__menu) {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  :deep(.dp__action_button) {
+    border-radius: 0.5rem;
+    font-weight: 600;
   }
 </style>

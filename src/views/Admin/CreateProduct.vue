@@ -50,6 +50,7 @@
             商品圖
             <span class="text-red-500">*</span>
           </h2>
+          <p class="text-gray-400 text-sm">(限制圖片大小5MB，且至少上傳1張)</p>
         </div>
         <div class="p-6">
           <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -124,6 +125,7 @@
               type="text"
               required
               v-model.trim="ProductForm.pid"
+              placeholder="格式：coffee_0XX"
             />
             <p class="text-xs text-[#9a704c]">商品編號不可重複，格式：coffee_0XX</p>
           </label>
@@ -137,6 +139,7 @@
               type="text"
               v-model="ProductForm.name"
               required
+              placeholder="例如：巴拿馬 蜜處理"
             />
           </label>
           <label class="flex flex-col gap-2">
@@ -149,6 +152,7 @@
               type="text"
               required
               v-model="ProductForm.english_name"
+              placeholder="例如：Panama Honey Process"
             />
           </label>
         </div>

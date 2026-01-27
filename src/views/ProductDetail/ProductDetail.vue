@@ -157,18 +157,9 @@
         <div class="w-full lg:w-1/2 pb-12">
           <div class="w-3/4 mx-auto">
             <h3 class="text-3xl font-semibold text-[#6d654f]">{{ product.name }}</h3>
-<<<<<<< HEAD
-            <p class="pt-2 pb-4 text-[#808080]">{{ product.english_name }}</p>
-            <p class="text-lg text-[#808080] pt-10">
-              {{ descriptionBody }}
-            </p>
-            <p class="text-lg text-[#808080] pt-4">
-              {{ descriptionBody2 }}
-=======
             <p class="pt-2 text-[#808080]">{{ product.english_name }}</p>
             <p class="whitespace-pre-line text-lg text-[#6d654f] pt-9">
               {{ product.description }}
->>>>>>> issue/59
             </p>
           </div>
         </div>
@@ -177,13 +168,9 @@
           autoplay
           muted
           loop
-<<<<<<< HEAD
           playsinline
           webkit-playsinline
           class="w-full lg:w-1/2"
-=======
-          class="w-full lg:w-1/2 playsinline webkit-playsinline"
->>>>>>> issue/59
         ></video>
       </div>
     </section>

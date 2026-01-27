@@ -92,9 +92,9 @@ export const useCoffeeResultStore = defineStore(
     async function loadFromUserAccount(): Promise<boolean> {
       if (!userId.value) return false;
       try {
-        const response = await api.get(
-          `/api/coffee-results?filters[user][id][$eq]=${userId.value}&sort=createdAt:desc&pagination[limit]=1`
-        );
+        const response = await api.get('/api/coffee-results', {
+          params: { userId: userId.value }
+        });
         const results = response.data?.data;
         if (results && results.length > 0) {
           const result = results[0];

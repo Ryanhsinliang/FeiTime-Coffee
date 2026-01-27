@@ -123,7 +123,7 @@
       id: 'chocolate',
       name: '巧克力',
       description: '濃郁深沉',
-      icon: 'cake',
+      icon: 'deployed_code',
       image: flavorChocolate,
     },
   ]);
@@ -194,10 +194,6 @@
           vinylRotation.value = (((vinylRotation.value + angleDelta) % 360) + 360) % 360;
 
           // 液體容器不調整角度，始終保持在底部（0度）
-
-          console.log(
-            `⏩ Time jump detected: ${timeDiff.toFixed(2)}s, rotating: ${angleDelta.toFixed(0)}°`
-          );
         }
       }
 
@@ -217,11 +213,9 @@
     return new Promise((resolve) => {
       if (window.YT && window.YT.Player) {
         ytAPIReady.value = true;
-        console.log('✅ YouTube API already loaded');
         resolve();
       } else {
         window.onYouTubeIframeAPIReady = () => {
-          console.log('✅ YouTube IFrame API ready');
           ytAPIReady.value = true;
           resolve();
         };
@@ -261,8 +255,6 @@
   };
 
   const destroyPlayer = () => {
-    console.log('🗑️ Destroying player...');
-
     if (progressCheckInterval) {
       clearInterval(progressCheckInterval);
       progressCheckInterval = null;
@@ -292,8 +284,6 @@
       console.error('❌ No video ID provided');
       return;
     }
-
-    console.log('🎬 Initializing player with video:', videoId);
 
     try {
       // 確保容器存在
@@ -337,9 +327,6 @@
               '3': 'buffering',
               '5': 'cued',
             };
-            console.log(
-              `🎵 Player state changed: ${event.data} (${stateNames[event.data] || 'unknown'})`
-            );
 
             // YouTube Player States
             // -1: unstarted
@@ -366,24 +353,19 @@
             // 當開始播放時，初始化播放時間
             if (event.data === 1 && !wasPlaying) {
               lastPlaybackTime.value = event.target.getCurrentTime() || 0;
-              console.log('▶️ Playback started');
             }
 
             // 當暫停時
             if (event.data === 2) {
-              console.log('⏸️ Playback paused');
             }
 
             // 如果影片結束，自動播放下一首
             if (event.data === 0) {
-              console.log('🎵 Video ended, playing next...');
               isPlaying.value = false;
               setTimeout(() => nextRecommendation(), 1000);
             }
           },
           onReady: (event: YTPlayerEvent) => {
-            console.log('✅ YouTube player ready');
-
             // 關鍵修復：先更新播放器引用
             youtubePlayer = event.target;
 
@@ -397,11 +379,9 @@
 
               // 現在才設置 playerReady，確保其他代碼不會過早調用 API
               playerReady.value = true;
-              console.log('✅ Player ready flag set');
 
               // 移動裝置需要手動觸發播放
               if (isMobileDevice.value && userInteracted.value) {
-                console.log('📱 Mobile device detected, attempting to play...');
                 try {
                   youtubePlayer.playVideo();
                 } catch (err) {
@@ -446,8 +426,6 @@
   // 切換影片 - 核心改進
   // ============================================
   const loadVideo = async (videoId: string) => {
-    console.log('🔄 Loading video:', videoId);
-
     if (!videoId) {
       console.error('❌ No video ID provided');
       return;
@@ -458,8 +436,6 @@
     // 如果播放器已經存在且準備好，直接切換影片
     if (isPlayerAvailable()) {
       try {
-        console.log('🔄 Using existing player to load new video');
-
         // 先重置播放時間，但保持旋轉角度
         lastPlaybackTime.value = 0;
 
@@ -479,7 +455,6 @@
           // 等待影片載入完成後再播放
           setTimeout(() => {
             if (isPlayerAvailable()) {
-              console.log('📱 Mobile: Manually triggering playback after loadVideoById');
               try {
                 youtubePlayer!.playVideo();
               } catch (err) {
@@ -490,7 +465,6 @@
         }
 
         // onStateChange 會處理所有狀態更新
-        console.log('✅ Video load initiated');
 
         return;
       } catch (err) {
@@ -501,7 +475,6 @@
     }
 
     // 如果播放器不存在或出錯，重新初始化
-    console.log('🔧 Reinitializing player for video:', videoId);
     isLoadingVideo.value = true;
     isPlaying.value = false;
     lastPlaybackTime.value = 0;
@@ -519,7 +492,6 @@
   // ============================================
   watch(currentVideo, async (newVideo, oldVideo) => {
     if (newVideo && newVideo.videoId !== oldVideo?.videoId) {
-      console.log('🎵 Current video changed:', newVideo.title);
       await loadVideo(newVideo.videoId);
     }
   });
@@ -528,7 +500,6 @@
   // 音樂推薦方法
   // ============================================
   const selectFlavor = async (flavor: Flavor): Promise<void> => {
-    console.log('🎵 Selecting flavor:', flavor.name);
     selectedFlavor.value = flavor;
 
     // 標記使用者已互動（用於移動裝置播放）
@@ -548,7 +519,6 @@
         currentVideos.value = data.videos;
         currentVideoIndex.value = 0;
         aiRecommendation.value = data.recommendation;
-        console.log('✅ Got music recommendations:', data.videos.length, 'videos');
       } else {
         throw new Error(data.message || '暫時無法找到相關音樂');
       }
@@ -563,11 +533,11 @@
   };
 
   const nextRecommendation = async (): Promise<void> => {
-    console.log('⏭️ Next recommendation requested');
+    // 清除之前的錯誤，允許重試
+    musicError.value = null;
 
     // 如果還有下一首歌曲在當前列表中
     if (currentVideoIndex.value < currentVideos.value.length - 1) {
-      console.log('📋 Playing next video from current list');
       // 直接切換到下一首
       currentVideoIndex.value++;
       return;
@@ -586,7 +556,6 @@
     }
 
     try {
-      console.log('🔄 Fetching new music recommendations');
       isFetchingNext.value = true;
       musicError.value = null;
 
@@ -598,7 +567,6 @@
         currentVideos.value = data.videos;
         currentVideoIndex.value = 0;
         aiRecommendation.value = data.recommendation || aiRecommendation.value;
-        console.log('✅ Got new recommendations:', data.videos.length, 'videos');
       } else {
         throw new Error(data.message || '暫時無法找到更多音樂');
       }
@@ -614,18 +582,14 @@
   // 生命週期
   // ============================================
   onMounted(async () => {
-    console.log('🚀 Component mounted');
-
     // 檢測是否為移動裝置
     isMobileDevice.value = detectMobileDevice();
-    console.log('📱 Is mobile device:', isMobileDevice.value);
 
     initYouTubeAPI();
     await waitForYouTubeAPI();
   });
 
   onBeforeUnmount(() => {
-    console.log('👋 Component unmounting');
     if (animationFrameId) {
       cancelAnimationFrame(animationFrameId);
     }
@@ -635,7 +599,7 @@
 
 <template>
   <section
-    class="bg-sage text-text-dark font-display flex items-center justify-center py-8 px-4 lg:py-12 lg:px-8 overflow-x-hidden transition-colors duration-300"
+    class="bg-[#FAF9EE] text-text-dark font-display flex items-center justify-center py-8 px-4 lg:py-12 lg:px-8 overflow-x-hidden transition-colors duration-300"
   >
     <div
       class="w-full max-w-[1200px] bg-[#FAF9EE] rounded-4xl overflow-hidden flex flex-col relative"
@@ -780,7 +744,7 @@
           >
             <!-- YouTube Player Container -->
             <div
-              v-if="!musicLoading && !musicError && currentVideo"
+              v-show="!musicLoading && !musicError && currentVideo"
               id="youtube-player-container"
               class="w-full h-full"
             >
@@ -880,12 +844,8 @@
           >
             <div class="flex items-center gap-3 flex-1 min-w-0">
               <div
-                class="w-10 h-10 rounded-full bg-sage flex-shrink-0 flex items-center justify-center text-white shadow-md relative"
+                class="w-10 h-10 rounded-full bg-white flex-shrink-0 flex items-center justify-center text-white shadow-md"
               >
-                <span
-                  v-if="!musicError"
-                  class="absolute inset-0 rounded-full bg-sage animate-ping opacity-20"
-                ></span>
                 <img :src="feiDJ" class="w-6 h-6 object-contain" alt="Fei DJ" />
               </div>
               <div class="flex flex-col min-w-0 flex-1">
@@ -913,7 +873,7 @@
             </div>
             <button
               @click="nextRecommendation"
-              :disabled="musicLoading || isFetchingNext || !selectedFlavor || musicError !== null"
+              :disabled="musicLoading || isFetchingNext || !selectedFlavor"
               class="flex items-center justify-center gap-2 bg-[#DCCFC0] text-[#171412] px-4 py-2 rounded-lg hover:bg-[#C4B5A0] hover:shadow-lg transition-all duration-300 shadow-md group flex-shrink-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none hover:disabled:bg-gray-200"
             >
               <span class="text-xs font-bold tracking-wide hidden sm:inline">Next</span>
@@ -949,8 +909,8 @@
               :key="flavor.id"
               @click="selectFlavor(flavor)"
               :class="[
-                'group relative h-28 sm:h-32 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-1',
-                selectedFlavor?.id === flavor.id ? 'ring-2 ring-sage/50' : '',
+                'group relative h-28 sm:h-32 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition-[shadow,transform] duration-500 hover:-translate-y-1',
+                selectedFlavor?.id === flavor.id ? 'ring-2 ring-amber-300/50' : '',
               ]"
             >
               <div
@@ -967,7 +927,7 @@
                 <span class="text-white/80 text-[10px]">{{ flavor.description }}</span>
               </div>
               <div
-                class="absolute top-2 right-2 w-5 h-5 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-sage group-hover:scale-110 transition-all"
+                class="absolute top-2 right-2 w-5 h-5 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white"
               >
                 <span class="material-symbols-outlined text-xs">{{ flavor.icon }}</span>
               </div>

@@ -32,7 +32,7 @@
     </div>
 
     <section
-      v-if="!coffeeResultStore.hasResult"
+      v-if="!coffeeResultStore.hasResult || isRetaking"
       id="questionCard"
       class="flex flex-wrap justify-center"
     >
@@ -99,21 +99,24 @@
       </div>
     </section>
 
-    <CoffeeID v-if="coffeeResultStore.hasResult" />
+    <CoffeeID v-if="coffeeResultStore.hasResult && !isRetaking" />
   </main>
 </template>
 
 <script setup lang="ts">
   import CoffeeID from '../../components/CoffeeID.vue';
   import { reactive, computed, onMounted, ref, nextTick } from 'vue';
+  import { useRoute } from 'vue-router';
   import type { Option, Question, Answer } from './type';
   import { questionAPI, quizAPI } from '@/services/questionService';
   import bgImage from './assets/img/bgImage.jpg';
   import { useCoffeeResultStore } from '@/store/coffeeResult';
   import { getPersona } from '@/utils/getPersona';
 
+  const route = useRoute();
   const coffeeResultStore = useCoffeeResultStore();
   const isLoading = ref(true);
+  const isRetaking = ref(false);
   const emit = defineEmits(['quiz-finished']);
 
   const quizData = reactive({
@@ -136,12 +139,17 @@
   onMounted(async () => {
     const backFromLogin = localStorage.getItem('pending_coffee_save') === 'manual';
     const savedResult = localStorage.getItem('temp_coffee_result');
+    const isRetakeMode = route.query.retake === 'true';
+
     if (backFromLogin && savedResult) {
       const resultData = JSON.parse(savedResult);
       coffeeResultStore.setResult(resultData);
       coffeeResultStore.personaId = resultData.personaId;
       localStorage.removeItem('pending_coffee_save');
       await nextTick();
+    } else if (isRetakeMode && coffeeResultStore.hasResult) {
+      // 重新測驗模式：不清除舊結果，只設定狀態讓用戶可以開始新測驗
+      isRetaking.value = true;
     } else if (coffeeResultStore.hasResult && !backFromLogin) {
       coffeeResultStore.clearResult();
       localStorage.removeItem('temp_coffee_result');
@@ -175,7 +183,8 @@
   function resetTest() {
     quizData.currentIndex = 0;
     quizData.answers = [];
-    coffeeResultStore.clearResult();
+    // 不清除結果，只進入重新測驗模式，等新結果出來後才覆蓋
+    isRetaking.value = true;
   }
 
   async function showResultCard() {
@@ -206,6 +215,8 @@
           }
         }
 
+        // 重新測驗完成，關閉重測模式以顯示新結果
+        isRetaking.value = false;
         emit('quiz-finished', data.data.scores, validAnswers);
       }
     } catch (err: any) {

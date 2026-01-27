@@ -1,7 +1,7 @@
 <template>
   <div class="bg-[--main-color] pb-[200px]">
     <!-- 打叉 -->
-    <div class="flex flex-col items-center py-[64px] w-[450px] mx-auto">
+    <div class="flex flex-col items-center py-[64px] w-[80%] md:w-[450px] lg:w-[450px] mx-auto">
       <div
         class="rounded-full bg-red-800 inline-block w-[100px] h-[100px] text-center leading-[100px] text-[24px] text-white shadow-[0_0_20px_20px_rgba(255,85,85,0.2)]"
       >

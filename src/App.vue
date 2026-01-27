@@ -61,7 +61,6 @@
     () => authStore.isLoggedIn,
     async (isLoggedIn, wasLoggedIn) => {
       if (isLoggedIn && !wasLoggedIn) {
-        console.log('👤 登入狀態變更：即時載入購物車...');
         await cartStore.loadCartFromStrapi(authStore.user?.id);
       }
     }
@@ -71,7 +70,6 @@
   onMounted(async () => {
     // 如果使用者已登入 (LocalStorage 還原)，則同步最新的購物車資料
     if (authStore.isLoggedIn) {
-      console.log('🚀 App Mounted: 同步購物車資料...');
       await cartStore.loadCartFromStrapi(authStore.user?.id);
     }
   });

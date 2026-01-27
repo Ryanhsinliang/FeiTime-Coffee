@@ -23,7 +23,9 @@
     <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
       <div class="flex flex-col gap-1">
         <h2 class="text-3xl font-extrabold">我的帳號資料</h2>
-        <p class="text-[#9a704c]">可修改個人聯絡資訊與預設收件地址（使用者ID、Email不可修改）。</p>
+        <p class="text-gray-400 text-sm">
+          可修改個人聯絡資訊與預設收件地址（使用者ID、Email不可修改）。
+        </p>
       </div>
 
       <button

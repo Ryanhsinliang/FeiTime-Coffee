@@ -29,7 +29,7 @@
   import { useAuthStore } from '@/store/auth';
 
   const route = useRoute();
-  const linepayUrl = import.meta.env.VITE_LINK;
+  const linepayUrl = import.meta.env.VITE_API_BASE_URL;
 
   let pay = ref('');
   const router = useRouter();
@@ -103,9 +103,6 @@
           amount: fontAmount.value, // 這邊之後串資料庫拿總金額
           // linepay要求要再傳一次 amount 給它  所以這邊再傳一次給後端
         });
-        console.log('成功');
-        console.log('金流狀態：', res.data.message);
-        console.log('金流狀態：', res.data.status);
         pay.value = res.data.status; // 把後端給的 status 抓過來 等等依此判斷要跳轉成功頁還是失敗頁
         // message status 是由後端提供的
         // 在那個res.json()內的物件 後端可自行定義要給前端什麼資料
@@ -118,7 +115,6 @@
           router.push('/payment-cancel');
         }
       } catch (error: any) {
-        // console.log('失敗');
         // console.error('確認失敗：', error.res?.data || error.message);
         router.push('/payment-cancel');
       }

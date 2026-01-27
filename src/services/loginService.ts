@@ -7,6 +7,9 @@ export interface User {
   confirmed: boolean;
   blocked: boolean;
   user_role: 'Member' | 'Admin';
+  user_id: string; // LifeCycle 滾出的會員編號
+  phone_number: string | null;
+  shipping_address: string | null;
 
   role?: {
     type: string;

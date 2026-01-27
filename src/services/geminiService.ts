@@ -12,8 +12,14 @@ export interface GeminiResponse {
   text: string;
 }
 
-//呼叫 後端 Express 的 Gemini API
+// 呼叫後端 Express 的 Gemini API（咖啡沖煮參數）
 export async function callGemini(params: GeminiRequest): Promise<GeminiResponse> {
   const res = await api.post<GeminiResponse>('/api/gemini', params);
   return res.data;
+}
+
+// 呼叫後端 Gemini API（純文字提示）
+export async function geminiText(prompt: string): Promise<string> {
+  const res = await api.post<GeminiResponse>('/api/gemini/text', { prompt });
+  return res.data.text;
 }

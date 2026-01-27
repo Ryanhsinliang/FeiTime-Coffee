@@ -276,7 +276,6 @@
     try {
       const res = await callOrders(1, 500);
       allOrders.value = res.data || [];
-      console.log('✅ 成功載入訂單:', allOrders.value.length, '筆');
     } catch (err: any) {
       console.error('❌ 載入失敗:', err);
       error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
@@ -293,7 +292,6 @@
     if (syncing.value) return;
 
     syncing.value = true;
-    console.log('🔄 背景物流同步啟動...');
     updateMessage.value = '';
 
     try {
@@ -301,8 +299,6 @@
 
       // 如果 message 裡顯示有更新 (updatedCount > 0)，則重新抓取列表
       if (res.success) {
-        console.log('✅ 物流同步完成:', res.message);
-
         updateMessage.value = `${res.message}`;
         updateSuccess.value = true;
         // 同步完成後，重新呼叫 loadOrders 刷新畫面的狀態

@@ -30,8 +30,6 @@
       error.value = null;
 
       products.value = await fetchFeaturedProducts();
-
-      console.log('✅ 成功載入精選產品:', products.value);
     } catch (err: any) {
       console.error('❌ 載入產品失敗:', err);
       error.value = err.message || '載入產品失敗，請稍後再試';

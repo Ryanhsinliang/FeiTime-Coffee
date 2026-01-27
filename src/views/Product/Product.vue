@@ -493,8 +493,11 @@
           <!-- 搜尋欄 -->
 
           <input
-            v-model="findWord"
+            type="search"
+            enterkeyhint="search"
+            v-model.trim="findWord"
             @keyup.enter="find(findWord)"
+            @keydown.enter="find(findWord)"
             class="border-2 border-solid border-[#8f745c] rounded-[8px] w-[90%] lg:w-[60%] text-[24px] py-[4px] px-[8px] my-[40px] mx-[24px]"
             placeholder="喝一杯靜謐的午後時光"
           />
@@ -515,9 +518,9 @@
                 <option value="">排序</option>
                 <option value="price">價錢</option>
                 <option value="popularity">熱門度</option>
-                <option value="sweetness">甜味</option>
-                <option value="acidity">酸味</option>
-                <option value="body">口感</option>
+                <option value="sweetness">甜度</option>
+                <option value="acidity">酸度</option>
+                <option value="body">醇厚度</option>
                 <option value="aftertaste">餘韻</option>
                 <option value="clarity">澄澈度</option>
               </select>
@@ -537,6 +540,28 @@
               ↑低到高
             </p>
           </div>
+        </div>
+        <!-- 分頁 -->
+        <div v-if="pagination" class="flex justify-center gap-2 mb-[24px]">
+          <button
+            :disabled="pagination.page === 1"
+            @click="changePage(pagination.page - 1)"
+            class="px-4 py-2 border rounded disabled:opacity-30"
+          >
+            上一頁
+          </button>
+
+          <span class="flex items-center">
+            第 {{ pagination.page }} 頁 / 共 {{ pagination.pageCount }} 頁
+          </span>
+
+          <button
+            :disabled="pagination.page === pagination.pageCount"
+            @click="changePage(pagination.page + 1)"
+            class="px-4 py-2 border rounded disabled:opacity-30"
+          >
+            下一頁
+          </button>
         </div>
         <!-- 產品區 -->
         <div class="grid mx-[24px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[60px]">
@@ -559,7 +584,7 @@
                 <p>．</p>
                 <p>{{ p.roast }}</p>
               </div>
-              <p class="text-[24px] font-[600] my-[4px]">{{ p.name }}</p>
+              <p class="text-[20px] font-[600] my-[4px]">{{ p.name }}</p>
               <p>{{ p.flavor_type }}</p>
             </div>
             <!-- 價錢 -->
@@ -587,12 +612,13 @@
 
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
-  import { ref, reactive, onMounted, watch } from 'vue';
+  import { ref, reactive, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import { useCartStore } from '@/store/cart';
-  import { useAuthStore } from '@/store/auth';
+  import type { FilterDataRule } from '@/services/product';
+  import { productsGet } from '@/services/checkout';
+  import type { LocationQuery } from 'vue-router';
 
-  const authStore = useAuthStore();
   const cartStore = useCartStore();
 
   // 手機板 側邊選單開關
@@ -610,6 +636,16 @@
     }
   };
 
+  // 清空網址但不觸發watch
+  const isResetting = ref(false);
+  const resetRouteOnly = async () => {
+    isResetting.value = true;
+    await router.replace({ query: {} });
+    setTimeout(() => {
+      isResetting.value = false;
+    }, 100);
+  };
+
   interface DataRule {
     // 設定data規格
     id: number;
@@ -617,7 +653,7 @@
     name: string;
     price: number;
     origin: string;
-    img: any[];
+    img: { formats: { large: { url: string }; medium?: { url: string } } }[];
     popularity: number;
     sweetness: number;
     acidity: number;
@@ -626,9 +662,9 @@
     clarity: number;
     flavor_type: string;
     roast: string;
+    stock: number;
   }
 
-  const productCopy = ref<DataRule[]>([]); // 備份資料 【排序】功能使用
   const product = ref<DataRule[]>([]);
   // <DataRule[]>	為TS語法 規範 productCopy 、product 是符合 DataRule 規格的陣列
 
@@ -636,86 +672,114 @@
   const err = ref(''); // 放錯誤訊息
 
   // API(get)函數
-  const getcoffee = async (filterData: any = {}) => {
-    // filterData是參數 它是一個物件
-    // : any  為TS的語法 代表不限制物件裡面的型別
+  const getcoffee = async (query: LocationQuery) => {
     try {
-      err.value = ''; // 每次重新請求前清空錯誤
-      const res = await getProducts(filterData);
-      const apiFormData = res.data || res;
+      loading.value = true;
+      err.value = '';
 
-      product.value = apiFormData;
-      productCopy.value = [...apiFormData]; // 預先準備一個備份資料 之後排序、搜尋時使用
-      if (productCopy.value) {
-        loading.value = false;
+      const params: FilterDataRule = {
+        roast: (query.roast as string) || undefined,
+        flavor_type: (query.flavor_type as string) || undefined,
+        processing: (query.processing as string) || undefined,
+        origin: (query.origin as string) || undefined,
+        page: Number(query.page) || 1,
+        pageSize: 24,
+      };
+
+      if (query.sortWhich) {
+        const order = query.sortOrder === 'asc' ? 'asc' : 'desc';
+        params.sort = [`${query.sortWhich}:${order}`];
       }
+
+      const res = await getProducts(params);
+      product.value = res.data;
+      pagination.value = res.meta.pagination;
+
+      loading.value = false;
     } catch (error) {
-      loading.value = false; // 發生錯誤時也要關閉 loading
+      loading.value = false;
       err.value = (error as Error).message;
-      console.error('API 串接出錯：', error);
     }
   };
 
   // 排序相關
   const sortWhich = ref(''); // 雙向綁定下拉式選單用的變數 依據它來決定現在要排序什麼
   const sortHe = ref(true); // 決定高到低 還是 低到高 的參數 預設true是 高到低
-  const doSort = () => {
-    // 切換 高到低 低到高 的函數 我選擇在前端做
-    if (!sortWhich.value) return; // 如果沒有sortWhich.value 就不做以下的事 相當於if(sortWhich.value){...} 但這樣比較簡潔
 
-    const field = sortWhich.value as keyof DataRule; // 取出這次要排序的東西 例如價錢
-    // as keyof DataRule  保證 field 一定是 DataRule 裡的其中一個 並且用對應的型別
-    const sorted = [...productCopy.value].sort((a, b) => {
-      // [...productCopy.value] 是把元陣列炸開再裝進另一個陣列 這樣不會修改到初始資料
-
-      // 在JS sort()中的callback 可帶兩個參數a b 表示隨機取樣比對時的那兩個元素
-      let vA = Number(a[field]) || 0; // a 為陣列中的其中一個元素 在這就是其中一包商品的物件 a[field] 就像object.price的意思
-      let vB = Number(b[field]) || 0; // b 同理 a
-      let result;
-      if (sortHe.value === true) {
-        // 依據 sortHe 來調整是 高到低 還是 低到高
-        result = vB - vA; // 高到低
-      } else {
-        result = vA - vB; // 低到高
-      }
-      return result;
-    });
-    product.value = sorted; // 把這一次排序的陣列 放到product 讓它來渲染畫面
-  };
-
-  const takeSort = async () => {
-    // 當使用下拉式選單 執行排序的函數
+  // 當使用下拉式選單 執行排序的函數
+  const takeSort = () => {
+    // 移除 async
     if (!sortWhich.value) return;
-    findWord.value = '';
 
-    try {
-      await getcoffee({ sort: [`${sortWhich.value}:desc`] }); // 抓取一個依照 sortWhich 高到低排序的產品陣列 sortWhich可能是 價錢、人氣度...
-      // 依照 getcoffee () 抓到的資料會丟進 product 這個ref()變數
-      productCopy.value = [...product.value]; // 用 productCopy 抓取 product 但怕共享同一個陣列 所以先炸開再用[] 確保它是新的陣列
-      sortHe.value = true; // 預設抓完後是 高到低
-      doSort(); // 執行一次排序來渲染頁面
-      console.log('選單觸發成功，目前資料類別：', sortWhich.value);
-    } catch (err) {
-      console.error('選單排序失敗', err);
-    }
+    // 清空其他前端狀態
+    findWord.value = '';
+    filterData.roast = '';
+    filterData.flavor_type = '';
+    filterData.processing = '';
+    filterData.origin = '';
+
+    // 直接推入「只包含排序與第一頁」的路由，舊的路由參數會直接被蓋掉
+    router.push({
+      path: '/product',
+      query: {
+        sortWhich: sortWhich.value,
+        sortOrder: 'desc',
+        page: 1,
+      },
+    });
   };
 
   const sortChange = () => {
     // 切換頁面 高到低 低到高 的函數
-    sortHe.value = !sortHe.value;
-    doSort();
+
+    if (sortWhich.value == '') {
+      return;
+    }
+    // sortHe.value = !sortHe.value;
+    const order = sortHe.value ? 'asc' : 'desc';
+    router.push({
+      path: '/product',
+      query: {
+        ...route.query,
+        sortOrder: order,
+        page: 1,
+      },
+    });
   };
 
   // 搜尋相關
   const findWord = ref(''); // 雙向綁定輸入框的變數
   const cannotFind = ref(false); // 製作變數來控制【搜尋不到】的CSS樣式是否生成 預設先不要出現
-  const find = (word: string) => {
-    product.value = [...productCopy.value];
-    const allCoffee = [...product.value]; // 複製一份全部產品的陣列
-    const found = allCoffee.filter((obj) => {
+  const find = async (word: string) => {
+    await resetRouteOnly();
+
+    if (!word.trim()) return;
+
+    // 清空排序
+    sortHe.value = true;
+    sortWhich.value = '';
+
+    // 清空篩選
+    filterData.roast = '';
+    filterData.flavor_type = '';
+    filterData.processing = '';
+    filterData.origin = '';
+
+    const apiProducts = await productsGet();
+    product.value = apiProducts;
+
+    const found = apiProducts.filter((obj: DataRule) => {
       return obj.name.includes(word);
     });
     product.value = found;
+
+    pagination.value = {
+      page: 1,
+      pageSize: found.length,
+      pageCount: 1,
+      total: found.length,
+    };
+
     if (found.length == 0) {
       cannotFind.value = true;
     } else {
@@ -724,11 +788,7 @@
   };
 
   // 加入購物車
-  const addToCart = (product: any) => {
-    if (authStore.isLoggedIn == false) {
-      alert('請先登入！');
-      return;
-    }
+  const addToCart = (product: DataRule) => {
     if (product.stock < 1) {
       alert('❌ 庫存不足！');
       return;
@@ -779,16 +839,45 @@
     // 如果網址變了 (按了新按鈕)  要重新抓資料
     () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值
     (newQuery) => {
+      if (isResetting.value) return;
+
       cannotFind.value = false;
+
+      // 清空搜尋
       findWord.value = '';
+
+      sortWhich.value = (newQuery.sortWhich as string) || '';
+      sortHe.value = newQuery.sortOrder !== 'asc';
+
+      // 清空篩選
       filterData.roast = (newQuery.roast as string) || '';
       filterData.flavor_type = (newQuery.flavor_type as string) || '';
       filterData.processing = (newQuery.processing as string) || '';
       filterData.origin = (newQuery.origin as string) || '';
-      first();
+      getcoffee(newQuery);
     },
-    { immediate: true } // 載入頁面時 馬上執行一次來顯示全部產品
+    { immediate: true, deep: true } // 載入頁面時 馬上執行一次來顯示全部產品
   );
+
+  // 分頁
+  interface MetaRule {
+    page: number;
+    pageSize: number;
+    pageCount: number;
+    total: number;
+  }
+
+  const pagination = ref<MetaRule | null>(null);
+
+  const changePage = (newPage: number) => {
+    router.push({
+      path: '/product',
+      query: {
+        ...route.query,
+        page: newPage,
+      },
+    });
+  };
 </script>
 
 <style scoped>

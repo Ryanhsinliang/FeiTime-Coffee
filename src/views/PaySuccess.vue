@@ -1,7 +1,7 @@
 <template>
   <div class="bg-[--main-color]">
     <!-- 打勾 -->
-    <div class="flex flex-col items-center py-[64px] w-[450px] mx-auto">
+    <div class="flex flex-col items-center py-[64px] w-[90%] md:w-[450px] lg:w-[450px] mx-auto">
       <div
         class="rounded-full bg-[var(--green-gray)] inline-block w-[100px] h-[100px] text-center leading-[100px] text-[24px] text-white shadow-[0_0_20px_20px_rgba(0,0,0,0.1)]"
       >
@@ -13,7 +13,7 @@
 
       <!-- 訂單資訊 -->
       <div
-        class="bg-white rounded-[12px] border-[#dddddd] border-4 text-[20px] my-[32px] w-[100%] px-[24px] py-[24px]"
+        class="bg-white rounded-[12px] border-[#dddddd] border-4 text-[14px] md:text-[20px] lg:text-[20px] my-[32px] w-[100%] px-[24px] py-[24px]"
       >
         <div class="flex justify-between">
           <p class="text-[#666666]">訂單編號</p>
@@ -58,6 +58,7 @@
   } from '@/services/checkout';
   import { useAuthStore } from '@/store/auth';
   import { useCartStore } from '@/store/cart';
+  import type { UpdateOrderRule } from '@/services/checkout';
 
   interface AllProductRule {
     // 設定data規格
@@ -113,9 +114,9 @@
   const cartStore = useCartStore();
 
   // 用id取得 現在庫存 和 真正用來put的id
-  const getNowStock = (id: number | string) => {
+  const getNowStock = (pid: number | string) => {
     const findAPIproduct = productsNow.value.filter((obj) => {
-      return obj.id == id;
+      return obj.pid == pid;
     });
     return {
       stock: Number(findAPIproduct[0].stock),
@@ -138,8 +139,8 @@
       }
 
       // 若是貨到付款 只更新order_status
-      let buyAfter;
-      if (orderThing.value.payment_method == 'myself') {
+      let buyAfter: Partial<UpdateOrderRule>;
+      if (orderThing.value.payment_method == 'cod') {
         buyAfter = {
           order_status: 'processing',
         };
@@ -154,8 +155,6 @@
       // 打put更新orders
       try {
         const res = await updateOrder(documentId, buyAfter);
-        console.log('訂單成功更新');
-        // console.log(res.data);
       } catch (err: any) {
         const errorDetail = err.response?.data?.detail || err.message;
         console.error('API 串接出錯：', errorDetail);
@@ -179,21 +178,6 @@
         throw err;
       }
 
-      /*
-      // console.log('買的東西 要扣的數量 pinia提供');
-      // console.log(buyProducts.value); // 完整的 訂購的 產品資料
-      // // 要扣庫存的資料
-
-      // console.log('所有產品簡化資料 打API來的');
-      // console.log(productsNow.value);
-
-      // console.log('這個id 現在資料庫的庫存');
-      // console.log(getNowStock(751));
-
-      // console.log('買的產品的數量');
-      // console.log(buyProducts.value);
-      */
-
       // 用來put產品庫存的 [{},{},...]
       const updateStock = buyProducts.value.map((obj) => {
         return {
@@ -202,19 +186,13 @@
         };
       });
 
-      // console.log('買的產品的id + 扣完的數量');
-      // console.log(updateStock);
-
       for (let i = 0; i < updateStock.length; i++) {
         try {
           const doStock = await updateProduct(updateStock[i].documentId, {
             stock: updateStock[i].stock,
           });
-          console.log(`第${i + 1}筆put成功`);
-          // console.log(doStock);
         } catch (err: any) {
           const errorDetail = err.response?.data?.detail || err.message;
-          console.log(`第${i + 1}筆put失敗`);
           console.error('API 串接出錯：', errorDetail);
           throw err;
         }
@@ -239,17 +217,13 @@
       for (let i = 0; i < idCart.value.length; i++) {
         try {
           const deleteRes = await deleteCart(idCart.value[i].documentId);
-          console.log(`第${i + 1}筆購物車刪除成功`);
-          // console.log(deleteRes);
         } catch (err: any) {
           const errorDetail = err.response?.data?.detail || err.message;
-          console.log(`第${i + 1}筆購物車刪除失敗`);
           console.error('delete串接出錯：', errorDetail);
           throw err;
         }
       }
       cartStore.items = [];
-      console.log('購物車pinia已成功清空');
     }
   });
 
@@ -260,26 +234,6 @@
 </script>
 
 <style>
-  /* Tailwind 3.4 官網 */
-  /* https://v3.tailwindcss.com/ */
-
-  /* Font-awesome */
-  /* https://fontawesome.com/search?ic=free-collection */
-
-  /*
-    先寫不會變動的樣式
-    再用lg: 寫電腦版
-    再用md: 寫平板
-    手機版 不用特別寫
-  */
-
-  /* 
-    在F12 元素丟這段 找回滑鼠
-    const style = document.createElement('style');
-    style.innerHTML = `* { cursor: auto !important; }`;
-    document.head.appendChild(style); 
-  */
-
   :root {
     --main-color: #faf9ee;
     /* 淡黃 */

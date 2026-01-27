@@ -118,6 +118,12 @@
               }}
             </td>
           </tr>
+
+          <tr v-if="filteredUsers.length === 0">
+            <td class="py-10 text-center text-sm text-gray-400" colspan="6">
+              目前沒有符合條件的訂單
+            </td>
+          </tr>
         </tbody>
       </table>
 

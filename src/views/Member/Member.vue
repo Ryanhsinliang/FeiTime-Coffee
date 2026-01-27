@@ -1,13 +1,8 @@
 <template>
   <div
-    class="bg-background-airy font-display min-h-screen text-primary/80 antialiased overflow-x-hidden selection:bg-pale-green"
+    v-if="authStore.isLoggedIn"
+    class="bg-background-airy font-notoserif min-h-screen text-primary/80 antialiased overflow-x-hidden selection:bg-pale-green"
   >
-    <!-- 會員專區專用的背景毛玻璃效果層 -->
-    <div
-      v-if="activeTab === 'member'"
-      class="fixed inset-0 pointer-events-none desktop-bg-glass z-[-1]"
-    ></div>
-
     <!-- 主要內容區域 -->
     <main class="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
       <!-- ========== 會員專區視圖 ========== -->
@@ -44,93 +39,119 @@
             class="relative z-10 glass-panel rounded-[2rem] overflow-hidden flex flex-col min-h-[800px]"
           >
             <!-- ===== 個人資料區域 ===== -->
-            <div class="p-6 sm:p-10 md:p-16 lg:p-20 border-b border-white/20">
-              <div
-                class="flex flex-col lg:flex-row justify-between items-start gap-8 md:gap-12 lg:gap-16"
-              >
-                <!-- 左側：會員基本資料 -->
-                <div class="space-y-8 max-w-2xl w-full">
-                  <!-- 第一行：會員姓名 + 會員編號 -->
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 md:gap-x-16 lg:gap-x-20 gap-y-8">
-                    <div class="space-y-3">
-                      <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
-                        會員姓名
-                      </label>
-                      <p class="text-2xl font-light text-primary tracking-wide">陳小華</p>
-                    </div>
-                    <div class="space-y-3">
-                      <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
-                        會員編號
-                      </label>
-                      <p class="text-2xl font-light text-primary tracking-wide">FT8829-X0</p>
+            <div class="p-6 sm:p-10 md:p-12 lg:p-16 border-b border-white/20">
+              <div class="flex flex-col lg:flex-row justify-between items-stretch gap-6 lg:gap-8">
+                <!-- 左側：會員基本資料（垂直排列） -->
+                <div class="space-y-8 w-full lg:w-[42%] pl-4 lg:pl-8 py-4">
+                  <!-- 會員姓名 -->
+                  <div class="space-y-2">
+                    <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
+                      會員姓名
+                    </label>
+                    <p class="text-2xl font-light text-primary tracking-wide">
+                      {{ authStore.username }}
+                    </p>
+                  </div>
+                  <!-- 會員編號 -->
+                  <div class="space-y-2">
+                    <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
+                      會員編號
+                    </label>
+                    <p class="text-2xl font-light text-primary tracking-wide">
+                      {{ authStore.userId }}
+                    </p>
+                  </div>
+                  <!-- 聯絡電話 -->
+                  <div class="space-y-2">
+                    <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
+                      聯絡電話
+                    </label>
+                    <input
+                      v-if="isEditingPhone"
+                      ref="phoneInputRef"
+                      v-model="phone"
+                      type="tel"
+                      placeholder="請輸入聯絡電話"
+                      class="w-full text-lg font-light text-primary tracking-wide bg-white/20 border border-white/30 rounded-xl px-4 py-2 outline-none focus:border-gold-foil/50 focus:bg-white/30 transition-all placeholder:text-primary/30"
+                      @blur="finishEditingPhone"
+                    />
+                    <div
+                      v-else
+                      class="flex items-center gap-2 cursor-pointer group"
+                      @click="startEditingPhone"
+                    >
+                      <p class="text-lg font-light text-primary tracking-wide">
+                        {{ phone || '尚未填寫' }}
+                      </p>
+                      <span
+                        class="material-symbols-outlined text-base text-primary/30 group-hover:text-gold-foil/70 transition-colors"
+                      >
+                        edit
+                      </span>
                     </div>
                   </div>
-
-                  <!-- 第二行：聯絡電話 + Email + 收件地址 -->
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 md:gap-x-16 lg:gap-x-20 gap-y-8">
-                    <div class="space-y-3">
-                      <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
-                        聯絡電話
-                      </label>
-                      <p class="text-lg font-light text-primary tracking-wide">+1 (555) 012-9934</p>
-                    </div>
-                    <div class="space-y-3">
-                      <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
-                        Email
-                      </label>
-                      <p class="text-lg font-light text-primary tracking-wide">a.chen@collectors.coffee</p>
-                    </div>
-                    <!-- 收件地址（橫跨兩格） -->
-                    <div class="space-y-3 md:col-span-2">
-                      <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
-                        收件地址
-                      </label>
-                      <p class="text-lg font-light text-primary tracking-wide leading-relaxed">
-                        1289 Espresso Way, Suite 400, San Francisco, CA 94103
+                  <!-- Email -->
+                  <div class="space-y-2">
+                    <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
+                      Email
+                    </label>
+                    <p class="text-lg font-light text-primary tracking-wide">
+                      {{ authStore.email }}
+                    </p>
+                  </div>
+                  <!-- 收件地址 -->
+                  <div class="space-y-2">
+                    <label class="text-sm uppercase font-bold text-gold-foil/50 tracking-[0.3em]">
+                      收件地址
+                    </label>
+                    <input
+                      v-if="isEditingAddress"
+                      ref="addressInputRef"
+                      v-model="address"
+                      type="text"
+                      placeholder="請輸入收件地址"
+                      class="w-full text-lg font-light text-primary tracking-wide bg-white/20 border border-white/30 rounded-xl px-4 py-2 outline-none focus:border-gold-foil/50 focus:bg-white/30 transition-all placeholder:text-primary/30"
+                      @blur="finishEditingAddress"
+                    />
+                    <div
+                      v-else
+                      class="flex items-center gap-2 cursor-pointer group"
+                      @click="startEditingAddress"
+                    >
+                      <p class="text-lg font-light text-primary tracking-wide">
+                        {{ address || '尚未填寫' }}
                       </p>
+                      <span
+                        class="material-symbols-outlined text-base text-primary/30 group-hover:text-gold-foil/70 transition-colors"
+                      >
+                        edit
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <!-- 右側：咖啡測驗結果卡片 -->
-                <div class="w-full lg:w-auto">
+                <div class="w-full lg:w-[52%]">
                   <div
-                    class="glass-card p-6 sm:p-8 md:p-10 rounded-[2rem] max-w-[400px] mx-auto lg:mx-0 overflow-hidden"
+                    class="glass-card p-4 sm:p-5 rounded-[2rem] mx-auto lg:mx-0 overflow-hidden h-full"
                   >
                     <!-- 卡片標題列（含重新測驗按鈕） -->
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center justify-between mb-4">
                       <p class="text-xs uppercase font-bold text-primary/30 tracking-[0.4em]">
-                        Coffee Quiz Result
+                        Coffee ID Card
                       </p>
                       <button
+                        v-if="coffeeResultStore.hasResult"
                         class="text-xs font-bold text-accent-green/70 hover:text-accent-green tracking-[0.2em] uppercase transition-colors"
                         @click="retakeQuiz"
                       >
-                        Retake
+                        重新測驗
                       </button>
                     </div>
 
-                    <!-- 測驗結果圖片區域 -->
-                    <div
-                      class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-white/20"
-                    >
-                      <img
-                        v-if="quizResult.image"
-                        :src="quizResult.image"
-                        alt="Coffee Quiz Result"
-                        class="w-full h-full object-cover"
-                      />
-                      <!-- 圖片佔位符（無圖片時顯示） -->
-                      <div
-                        v-else
-                        class="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/30 to-white/10"
-                      >
-                        <span
-                          class="material-symbols-outlined text-6xl text-primary/20 font-extralight"
-                        >
-                          image
-                        </span>
-                      </div>
+                    <!-- 測驗結果卡片區域 -->
+                    <div class="relative w-full rounded-xl overflow-hidden">
+                      <CoffeeIDMini />
                     </div>
                   </div>
                 </div>
@@ -148,12 +169,13 @@
                   Recent Brew Logs
                 </h3>
                 <button
+                  v-if="brewLogs.length > 2"
                   class="text-xs font-bold text-accent-green/70 hover:text-accent-green tracking-[0.2em] uppercase transition-colors flex items-center gap-2"
                   @click="toggleBrewLogsView"
                 >
                   <!-- 桌面版：顯示完整文字 -->
                   <span class="hidden md:inline">
-                    {{ showAllBrewLogs ? 'Collapse' : 'View All History' }}
+                    {{ showAllBrewLogs ? 'Collapse' : '點此顯示更多沖煮紀錄' }}
                   </span>
                   <!-- 圖標 -->
                   <span
@@ -166,24 +188,25 @@
               </div>
 
               <!-- 沖煮記錄卡片網格（3欄布局） -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-                <!-- 沖煮記錄卡片 - 改為圖片卡片 -->
+              <div v-if="isLoadingBrewLogs" class="text-center py-12">
+                <p class="text-sm text-primary/40 uppercase tracking-[0.3em] font-bold">
+                  載入中...
+                </p>
+              </div>
+              <div v-else-if="brewLogs.length === 0" class="text-center py-12">
+                <p class="text-sm text-primary/40 uppercase tracking-[0.3em] font-bold">
+                  目前沒有沖煮記錄
+                </p>
+              </div>
+              <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-start">
+                <!-- 沖煮記錄卡片 -->
                 <div
-                  v-for="(log, index) in displayedBrewLogs"
+                  v-for="log in displayedBrewLogs"
                   :key="log.id"
-                  class="glass-card rounded-[2rem] hover:bg-white/40 transition-all cursor-pointer group border-none shadow-sm overflow-hidden aspect-[4/3]"
+                  class="glass-card rounded-[2rem] hover:bg-white/40 transition-all cursor-pointer group border-none shadow-sm overflow-hidden"
                   @click="viewBrewLog(log.id)"
                 >
-                  <!-- 圖片佔位符 -->
-                  <div
-                    class="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/30 to-white/10"
-                  >
-                    <span
-                      class="material-symbols-outlined text-6xl text-primary/20 font-extralight"
-                    >
-                      image
-                    </span>
-                  </div>
+                  <BrewLogCard :log="log" />
                 </div>
               </div>
             </div>
@@ -255,323 +278,299 @@
                   2026 年度交易記錄
                 </p>
               </div>
-              <!-- 篩選按鈕（年份） -->
-              <div class="flex gap-4">
+              <!-- 篩選按鈕（日期選擇器） -->
+              <div class="flex gap-4 items-center">
+                <div class="relative">
+                  <VueDatePicker
+                    v-model="dateRange"
+                    range
+                    :enable-time-picker="false"
+                    select-text="確定"
+                    cancel-text="取消"
+                    placeholder="選擇日期範圍"
+                    format="yyyy/MM/dd"
+                    @update:model-value="handleDateChange"
+                  >
+                    <template #trigger>
+                      <button
+                        class="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-sm font-bold uppercase tracking-[0.3em] text-primary/50 bg-white/20 flex items-center gap-2 sm:gap-3 hover:bg-white/40 transition-all"
+                      >
+                        <span class="material-symbols-outlined text-base sm:text-lg">
+                          calendar_today
+                        </span>
+                        {{ getDateRangeText() }}
+                      </button>
+                    </template>
+                  </VueDatePicker>
+                </div>
                 <button
-                  class="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-sm font-bold uppercase tracking-[0.3em] text-primary/50 bg-white/20 flex items-center gap-2 sm:gap-3 hover:bg-white/40 transition-all"
+                  v-if="dateRange"
+                  class="px-4 py-2 rounded-full text-xs font-bold text-primary/40 hover:text-primary/60 hover:bg-white/20 transition-all"
+                  @click="clearDateFilter"
                 >
-                  <span class="material-symbols-outlined text-base sm:text-lg">calendar_today</span>
-                  本年度
+                  清除篩選
                 </button>
               </div>
             </div>
 
             <!-- ===== 訂單列表區域 ===== -->
             <div class="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10 lg:p-16 space-y-4 md:space-y-6">
-              <!-- 訂單項目 1 - 詳細內容可展開 -->
-              <details class="group border-none">
-                <!-- 訂單摘要列（可點擊展開） -->
-                <summary
-                  class="glass-row rounded-2xl md:rounded-[2rem] px-4 sm:px-6 md:px-10 py-4 sm:py-6 md:py-8 cursor-pointer flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-8 list-none outline-none"
-                >
-                  <div class="flex items-center gap-4 sm:gap-8 md:gap-12 w-full sm:w-auto">
-                    <!-- 訂單日期 -->
-                    <div class="text-center w-12 sm:w-14 flex-shrink-0">
-                      <p class="text-sm font-bold text-gold-accent/60 uppercase tracking-[0.3em]">
-                        5月
-                      </p>
-                      <p class="text-3xl sm:text-4xl font-extralight text-primary/70">18</p>
-                    </div>
-                    <div class="w-px h-10 sm:h-12 bg-gold-accent/15"></div>
-                    <!-- 訂單編號與名稱 -->
-                    <div class="flex-1 min-w-0">
-                      <p
-                        class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-1 sm:mb-1.5 truncate"
-                      >
-                        訂單編號 #CO-44291
-                      </p>
-                      <h4 class="text-lg font-light text-primary/80 break-words">
-                        衣索比亞 希達摩典藏組合
-                      </h4>
-                    </div>
-                  </div>
-                  <div
-                    class="flex items-center gap-4 sm:gap-8 md:gap-12 w-full sm:w-auto justify-between sm:justify-start"
+              <!-- 載入中 -->
+              <div v-if="isLoadingOrders" class="text-center py-12">
+                <p class="text-sm text-primary/40 uppercase tracking-[0.3em] font-bold">
+                  載入中...
+                </p>
+              </div>
+
+              <!-- 無訂單 -->
+              <div v-else-if="filteredOrders.length === 0" class="text-center py-12">
+                <p class="text-sm text-primary/40 uppercase tracking-[0.3em] font-bold">
+                  {{ dateRange ? '此日期範圍內沒有訂單' : '目前沒有訂單記錄' }}
+                </p>
+              </div>
+
+              <!-- 訂單列表 -->
+              <template v-else>
+                <details v-for="order in paginatedOrders" :key="order.id" class="group border-none">
+                  <!-- 訂單摘要列 -->
+                  <summary
+                    class="glass-row rounded-2xl md:rounded-[2rem] px-4 sm:px-6 md:px-10 py-4 sm:py-6 md:py-8 cursor-pointer flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-8 list-none outline-none"
                   >
-                    <!-- 訂單金額 -->
-                    <div class="text-left sm:text-right">
-                      <p
-                        class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-1 sm:mb-1.5"
-                      >
-                        金額
-                      </p>
-                      <p class="text-lg font-light text-primary/80">$72.00</p>
+                    <div class="flex items-center gap-4 sm:gap-8 md:gap-12 w-full sm:w-auto">
+                      <!-- 訂單日期 -->
+                      <div class="text-center w-12 sm:w-14 flex-shrink-0">
+                        <p class="text-sm font-bold text-gold-accent/60 uppercase tracking-[0.3em]">
+                          {{ formatMonth(order.createdAt) }}
+                        </p>
+                        <p class="text-3xl sm:text-4xl font-extralight text-primary/70">
+                          {{ formatDay(order.createdAt) }}
+                        </p>
+                      </div>
+                      <div class="w-px h-10 sm:h-12 bg-gold-accent/15"></div>
+                      <!-- 訂單編號 -->
+                      <div class="flex-1 min-w-0">
+                        <p
+                          class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-1 sm:mb-1.5"
+                        >
+                          訂單編號
+                        </p>
+                        <h4 class="text-lg font-light text-primary/80">
+                          #{{ order.order_number }}
+                        </h4>
+                      </div>
                     </div>
-                    <!-- 訂單狀態與展開圖標 -->
-                    <div class="flex items-center gap-3 sm:gap-4 md:gap-6">
-                      <span
-                        class="status-success px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm font-bold uppercase tracking-[0.3em]"
-                      >
-                        已出貨
-                      </span>
-                      <span
-                        class="material-symbols-outlined text-primary/20 group-open:rotate-90 transition-transform text-base sm:text-xl"
-                      >
-                        arrow_forward_ios
-                      </span>
+                    <div
+                      class="flex items-center gap-4 sm:gap-8 md:gap-12 w-full sm:w-auto justify-between sm:justify-start"
+                    >
+                      <!-- 訂單金額 -->
+                      <div class="text-left sm:text-right">
+                        <p
+                          class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-1 sm:mb-1.5"
+                        >
+                          金額
+                        </p>
+                        <p class="text-lg font-light text-primary/80">
+                          ${{ order.total_amount.toLocaleString() }}
+                        </p>
+                      </div>
+                      <!-- 訂單狀態與展開圖標 -->
+                      <div class="flex items-center gap-3 sm:gap-4 md:gap-6">
+                        <span
+                          class="status-success px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm font-bold uppercase tracking-[0.3em]"
+                        >
+                          {{ getStatusText(order.order_status) }}
+                        </span>
+                        <span
+                          class="material-symbols-outlined text-primary/20 group-open:rotate-90 transition-transform text-base sm:text-xl"
+                        >
+                          arrow_forward_ios
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </summary>
-                <!-- 訂單詳細資訊（展開時顯示） -->
-                <div
-                  class="mx-2 sm:mx-4 mt-2 rounded-2xl md:rounded-[2rem] p-6 sm:p-8 md:p-12 glass-detail-panel"
-                >
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 md:gap-20">
-                    <!-- 左欄：商品明細與物流資訊 -->
-                    <div class="space-y-6 sm:space-y-8 md:space-y-10">
-                      <!-- 商品清單 -->
+                  </summary>
+
+                  <!-- 訂單詳細資訊 -->
+                  <div
+                    class="mx-2 sm:mx-4 mt-2 rounded-2xl md:rounded-[2rem] p-6 sm:p-8 md:p-12 glass-detail-panel"
+                  >
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 md:gap-20">
+                      <!-- 左欄：商品明細、運費、總金額 -->
                       <div>
                         <p
                           class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-4 sm:mb-6"
                         >
                           商品明細
                         </p>
+                        <!-- 商品項目 -->
                         <div
-                          class="flex justify-between items-center py-4 border-b border-primary/5"
+                          v-for="item in order.order_items"
+                          :key="item.id"
+                          class="flex justify-between items-center py-3"
                         >
                           <span class="text-lg font-light text-primary/70">
-                            3x 希達摩咖啡豆（250g）
+                            {{ item.quantity }}x {{ item.snapshot_name }}（{{
+                              item.snapshot_weight
+                            }}）
                           </span>
-                          <span class="text-lg font-light text-primary/70">$54.00</span>
+                          <span class="text-lg font-light text-primary/70">
+                            ${{ item.item_total.toLocaleString() }}
+                          </span>
                         </div>
+                        <!-- 運費（上方有分隔線） -->
                         <div
-                          class="flex justify-between items-center py-4 border-b border-primary/5"
+                          class="flex justify-between items-center py-4 mt-2 border-t border-primary/10"
                         >
+                          <span class="text-lg font-light text-primary/70">運費</span>
                           <span class="text-lg font-light text-primary/70">
-                            1x 陶瓷濾杯（象牙白）
+                            ${{ order.shipping_fee.toLocaleString() }}
                           </span>
-                          <span class="text-lg font-light text-primary/70">$18.00</span>
+                        </div>
+                        <!-- 總金額（上方有分隔線） -->
+                        <div
+                          class="flex justify-between items-center py-4 border-t border-primary/10"
+                        >
+                          <span class="text-lg font-medium text-primary/80">總計</span>
+                          <span class="text-xl font-medium text-primary/90">
+                            ${{ order.total_amount.toLocaleString() }}
+                          </span>
                         </div>
                       </div>
-                      <!-- 運送方式與追蹤碼 -->
-                      <div class="flex flex-col sm:flex-row gap-6 sm:gap-10">
-                        <div class="flex-1">
+
+                      <!-- 右欄：收件資訊、付款方式、追蹤 -->
+                      <div class="space-y-6 sm:space-y-8">
+                        <!-- 收件資訊 -->
+                        <div>
                           <p
-                            class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                            class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-4 sm:mb-6"
                           >
-                            運送方式
+                            收件資訊
                           </p>
-                          <p class="text-lg text-primary/60">國際快遞</p>
+                          <div class="space-y-5">
+                            <div>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                收件人
+                              </p>
+                              <p class="text-lg font-light text-primary/70">
+                                {{ order.recipient_name }}
+                              </p>
+                            </div>
+                            <div>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                收件地址
+                              </p>
+                              <p class="text-lg text-primary/50 leading-relaxed font-light">
+                                {{ order.recipient_address }}
+                              </p>
+                            </div>
+                            <div>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                聯絡電話
+                              </p>
+                              <p class="text-lg text-primary/50 font-light">
+                                {{ order.recipient_phone }}
+                              </p>
+                            </div>
+                            <div>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                付款方式
+                              </p>
+                              <p class="text-lg text-primary/60">
+                                {{
+                                  order.payment_method === 'linepay'
+                                    ? 'LINE Pay'
+                                    : order.payment_method
+                                }}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <div class="flex-1">
+                        <!-- 追蹤編號（如果有） -->
+                        <div v-if="order.tracking_number">
                           <p
                             class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
                           >
                             追蹤編號
                           </p>
-                          <p
-                            class="text-lg font-light text-gold-accent/70 tracking-wide break-all"
+                          <p class="text-lg font-light text-gold-accent/70 tracking-wide break-all">
+                            {{ order.tracking_number }}
+                          </p>
+                          <button
+                            class="mt-4 px-8 sm:px-10 py-2.5 sm:py-3 bg-pale-green/40 border border-pale-green-dark/20 text-pale-green-dark text-sm font-bold uppercase tracking-[0.3em] rounded-full shadow-sm hover:bg-pale-green/60 transition-all"
                           >
-                            SID-882-TRK
-                          </p>
+                            追蹤訂單
+                          </button>
                         </div>
                       </div>
                     </div>
-                    <!-- 右欄：收件地址與總金額 -->
-                    <div class="space-y-6 sm:space-y-8 md:space-y-10">
-                      <!-- 收件資訊 -->
-                      <div>
-                        <p
-                          class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-4 sm:mb-6"
-                        >
-                          收件地址
-                        </p>
-                        <p class="text-lg font-light text-primary/70 mb-1.5">陳小華</p>
-                        <p class="text-lg text-primary/50 leading-relaxed font-light">
-                          台北市大安區敦化南路一段123號
-                          <br />
-                          10651 台北市，台灣
-                        </p>
-                      </div>
-                      <!-- 總計與追蹤按鈕 -->
-                      <div
-                        class="pt-6 sm:pt-8 border-t border-primary/5 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 sm:gap-0"
-                      >
-                        <div>
-                          <p class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30">
-                            總計
-                          </p>
-                          <p class="text-lg font-light text-primary/80">$72.00</p>
-                        </div>
-                        <button
-                          class="px-8 sm:px-10 py-2.5 sm:py-3 bg-pale-green/40 border border-pale-green-dark/20 text-pale-green-dark text-sm font-bold uppercase tracking-[0.3em] rounded-full shadow-sm hover:bg-pale-green/60 transition-all w-full sm:w-auto"
-                        >
-                          追蹤訂單
-                        </button>
-                      </div>
-                    </div>
                   </div>
-                </div>
-              </details>
-
-              <!-- 訂單項目 2 - 簡化版本 -->
-              <details class="group border-none">
-                <summary
-                  class="glass-row rounded-2xl md:rounded-[2rem] px-4 sm:px-6 md:px-10 py-4 sm:py-6 md:py-8 cursor-pointer flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-8 list-none outline-none"
-                >
-                  <div class="flex items-center gap-4 sm:gap-8 md:gap-12 w-full sm:w-auto">
-                    <div class="text-center w-12 sm:w-14 flex-shrink-0">
-                      <p class="text-sm font-bold text-gold-accent/60 uppercase tracking-[0.3em]">
-                        4月
-                      </p>
-                      <p class="text-3xl sm:text-4xl font-extralight text-primary/70">24</p>
-                    </div>
-                    <div class="w-px h-10 sm:h-12 bg-gold-accent/15"></div>
-                    <div class="flex-1 min-w-0">
-                      <p
-                        class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-1 sm:mb-1.5 truncate"
-                      >
-                        訂單編號 #CO-44118
-                      </p>
-                      <h4 class="text-lg font-light text-primary/80 break-words">
-                        招牌綜合豆訂閱方案
-                      </h4>
-                    </div>
-                  </div>
-                  <div
-                    class="flex items-center gap-4 sm:gap-8 md:gap-12 w-full sm:w-auto justify-between sm:justify-start"
-                  >
-                    <div class="text-left sm:text-right">
-                      <p
-                        class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-1 sm:mb-1.5"
-                      >
-                        金額
-                      </p>
-                      <p class="text-lg font-light text-primary/80">$35.00</p>
-                    </div>
-                    <div class="flex items-center gap-3 sm:gap-4 md:gap-6">
-                      <span
-                        class="status-success px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm font-bold uppercase tracking-[0.3em]"
-                      >
-                        已送達
-                      </span>
-                      <span
-                        class="material-symbols-outlined text-primary/20 group-open:rotate-90 transition-transform text-base sm:text-xl"
-                      >
-                        arrow_forward_ios
-                      </span>
-                    </div>
-                  </div>
-                </summary>
-                <div
-                  class="mx-2 sm:mx-4 mt-2 rounded-2xl md:rounded-[2rem] p-8 sm:p-12 text-center glass-detail-panel"
-                >
-                  <p class="text-sm text-primary/40 uppercase tracking-[0.3em] font-bold">
-                    訂單資料已驗證
-                  </p>
-                </div>
-              </details>
-
-              <!-- 訂單項目 3 - 簡化版本 -->
-              <details class="group border-none">
-                <summary
-                  class="glass-row rounded-2xl md:rounded-[2rem] px-4 sm:px-6 md:px-10 py-4 sm:py-6 md:py-8 cursor-pointer flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-8 list-none outline-none"
-                >
-                  <div class="flex items-center gap-4 sm:gap-8 md:gap-12 w-full sm:w-auto">
-                    <div class="text-center w-12 sm:w-14 flex-shrink-0">
-                      <p class="text-xs font-bold text-gold-accent/60 uppercase tracking-[0.3em]">
-                        4月
-                      </p>
-                      <p class="text-3xl sm:text-4xl font-extralight text-primary/70">02</p>
-                    </div>
-                    <div class="w-px h-10 sm:h-12 bg-gold-accent/15"></div>
-                    <div class="flex-1 min-w-0">
-                      <p
-                        class="text-xs font-bold uppercase tracking-[0.3em] text-primary/30 mb-1 sm:mb-1.5 truncate"
-                      >
-                        訂單編號 #CO-44021
-                      </p>
-                      <h4 class="text-base font-light text-primary/80 break-words">
-                        限量黃銅品飲匙
-                      </h4>
-                    </div>
-                  </div>
-                  <div
-                    class="flex items-center gap-4 sm:gap-8 md:gap-12 w-full sm:w-auto justify-between sm:justify-start"
-                  >
-                    <div class="text-left sm:text-right">
-                      <p
-                        class="text-xs font-bold uppercase tracking-[0.3em] text-primary/30 mb-1 sm:mb-1.5"
-                      >
-                        金額
-                      </p>
-                      <p class="text-base font-light text-primary/80">$28.00</p>
-                    </div>
-                    <div class="flex items-center gap-3 sm:gap-4 md:gap-6">
-                      <span
-                        class="status-success px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-xs font-bold uppercase tracking-[0.3em]"
-                      >
-                        已送達
-                      </span>
-                      <span
-                        class="material-symbols-outlined text-primary/20 group-open:rotate-90 transition-transform text-base sm:text-xl"
-                      >
-                        arrow_forward_ios
-                      </span>
-                    </div>
-                  </div>
-                </summary>
-                <!-- 訂單詳情簡化提示 -->
-                <div
-                  class="mx-2 sm:mx-4 mt-2 rounded-2xl md:rounded-[2rem] p-8 sm:p-12 text-center glass-detail-panel"
-                >
-                  <p class="text-sm text-primary/40 uppercase tracking-[0.3em] font-bold">
-                    訂單資料已驗證
-                  </p>
-                </div>
-              </details>
+                </details>
+              </template>
             </div>
 
             <!-- ===== 分頁導航區域 ===== -->
             <div
               class="p-6 sm:p-8 md:p-12 border-t border-white/10 flex flex-col items-center gap-4 sm:gap-6"
             >
-              <!-- 分頁按鈕組 -->
-              <div class="flex gap-3 sm:gap-4">
+              <!-- 分頁按鈕組 - 只在超過一頁時顯示 -->
+              <div v-if="totalPages > 1" class="flex gap-3 sm:gap-4">
                 <!-- 上一頁按鈕 -->
                 <button
-                  class="size-11 flex items-center justify-center rounded-full text-primary/20 hover:text-primary transition-colors bg-white/5"
+                  class="size-11 flex items-center justify-center rounded-full transition-colors bg-white/5"
+                  :class="
+                    currentPage === 1
+                      ? 'text-primary/10 cursor-not-allowed'
+                      : 'text-primary/20 hover:text-primary'
+                  "
+                  :disabled="currentPage === 1"
+                  @click="prevPage"
                 >
                   <span class="material-symbols-outlined text-lg">chevron_left</span>
                 </button>
                 <!-- 頁碼按鈕 -->
                 <div class="flex items-center gap-2">
                   <button
-                    class="size-11 bg-white/50 flex items-center justify-center rounded-full text-primary/80 text-xs font-bold"
+                    v-for="page in totalPages"
+                    :key="page"
+                    class="size-11 flex items-center justify-center rounded-full text-xs font-bold transition-all"
+                    :class="
+                      page === currentPage
+                        ? 'bg-white/50 text-primary/80'
+                        : 'text-primary/30 hover:bg-white/40'
+                    "
+                    @click="goToPage(page)"
                   >
-                    1
-                  </button>
-                  <button
-                    class="size-11 flex items-center justify-center rounded-full text-primary/30 text-xs font-bold hover:bg-white/40 transition-all"
-                  >
-                    2
-                  </button>
-                  <button
-                    class="size-11 flex items-center justify-center rounded-full text-primary/30 text-xs font-bold hover:bg-white/40 transition-all"
-                  >
-                    3
+                    {{ page }}
                   </button>
                 </div>
                 <!-- 下一頁按鈕 -->
                 <button
-                  class="size-11 flex items-center justify-center rounded-full text-primary/20 hover:text-primary transition-colors bg-white/5"
+                  class="size-11 flex items-center justify-center rounded-full transition-colors bg-white/5"
+                  :class="
+                    currentPage === totalPages
+                      ? 'text-primary/10 cursor-not-allowed'
+                      : 'text-primary/20 hover:text-primary'
+                  "
+                  :disabled="currentPage === totalPages"
+                  @click="nextPage"
                 >
                   <span class="material-symbols-outlined text-lg">chevron_right</span>
                 </button>
               </div>
               <!-- 頁碼資訊 -->
-              <p class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30">
-                第 01 頁 • 共 12 筆訂單
+              <p
+                v-if="filteredOrders.length > 0"
+                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30"
+              >
+                第 {{ String(currentPage).padStart(2, '0') }} 頁 • 共
+                {{ filteredOrders.length }} 筆訂單
               </p>
             </div>
           </div>
@@ -603,20 +602,158 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, computed, onMounted, watch } from 'vue';
+  import { ref, computed, onMounted, watch, nextTick } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { useAuthStore } from '@/store/auth';
+  import { useCoffeeResultStore } from '@/store/coffeeResult';
+  import CoffeeIDMini from '@/components/CoffeeIDMini.vue';
+  import BrewLogCard from '@/components/BrewLogCard.vue';
+  import { memberService, type Order } from '@/services/memberService';
+  import { brewRecordService, type BrewRecord } from '@/services/brewRecordService';
+  import { VueDatePicker } from '@vuepic/vue-datepicker';
+  import '@vuepic/vue-datepicker/dist/main.css';
 
   const route = useRoute();
   const router = useRouter();
+  const authStore = useAuthStore();
+  const coffeeResultStore = useCoffeeResultStore();
+  const user = authStore.user;
 
   // ========== 狀態管理 ==========
   const activeTab = ref<'member' | 'order'>('member');
 
+  // ========== 訂單資料 ==========
+  const orders = ref<Order[]>([]);
+  const isLoadingOrders = ref(false);
+
+  // ========== 日期篩選 ==========
+  const dateRange = ref<[Date, Date] | null>(null);
+
+  // ========== 分頁 ==========
+  const currentPage = ref(1);
+  const pageSize = 10;
+
+  // ========== 聯絡資訊 ==========
+  const phone = ref('');
+  const address = ref('');
+  const isEditingPhone = ref(false);
+  const isEditingAddress = ref(false);
+  const phoneInputRef = ref<HTMLInputElement | null>(null);
+  const addressInputRef = ref<HTMLInputElement | null>(null);
+
+  // ========== 取得會員訂單 ==========
+  const fetchMemberOrders = async () => {
+    if (!authStore.userId) return;
+
+    isLoadingOrders.value = true;
+    try {
+      orders.value = await memberService.getMemberOrders(authStore.userId);
+    } catch (error) {
+      console.error('取得訂單失敗:', error);
+    } finally {
+      isLoadingOrders.value = false;
+    }
+  };
+
+  // ========== 格式化日期 ==========
+  const formatMonth = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const months = [
+      '1月',
+      '2月',
+      '3月',
+      '4月',
+      '5月',
+      '6月',
+      '7月',
+      '8月',
+      '9月',
+      '10月',
+      '11月',
+      '12月',
+    ];
+    return months[date.getMonth()];
+  };
+
+  const formatDay = (dateStr: string) => {
+    return new Date(dateStr).getDate().toString().padStart(2, '0');
+  };
+
+  // ========== 訂單狀態對應 ==========
+  const statusMap: Record<string, string> = {
+    pending: '待處理',
+    processing: '處理中',
+    shipped: '已出貨',
+    delivered: '已送達',
+    cancelled: '已取消',
+  };
+
+  const getStatusText = (status: string) => statusMap[status] || status;
+
+  // ========== 篩選後的訂單（新的在前面） ==========
+  const filteredOrders = computed(() => {
+    let result = [...orders.value];
+
+    // 日期篩選
+    if (dateRange.value) {
+      const [start, end] = dateRange.value;
+      result = result.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        return orderDate >= start && orderDate <= end;
+      });
+    }
+
+    // 按日期排序，新的在前面
+    result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    return result;
+  });
+
+  // ========== 分頁計算 ==========
+  const totalPages = computed(() => Math.ceil(filteredOrders.value.length / pageSize));
+  const paginatedOrders = computed(() => {
+    const start = (currentPage.value - 1) * pageSize;
+    return filteredOrders.value.slice(start, start + pageSize);
+  });
+
+  // ========== 分頁方法 ==========
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages.value) {
+      currentPage.value = page;
+    }
+  };
+
+  const prevPage = () => goToPage(currentPage.value - 1);
+  const nextPage = () => goToPage(currentPage.value + 1);
+
+  // ========== 日期篩選方法 ==========
+  const handleDateChange = (value: [Date, Date] | null) => {
+    dateRange.value = value;
+    currentPage.value = 1; // 重置到第一頁
+  };
+
+  const clearDateFilter = () => {
+    dateRange.value = null;
+    currentPage.value = 1;
+  };
+
+  const getDateRangeText = () => {
+    if (!dateRange.value) return '選擇日期';
+    const [start, end] = dateRange.value;
+    const formatDate = (d: Date) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+    return `${formatDate(start)} - ${formatDate(end)}`;
+  };
+
   // ========== 初始化 ==========
-  onMounted(() => {
+  onMounted(async () => {
     if (route.query.tab === 'order') {
       activeTab.value = 'order';
     }
+    phone.value = authStore.phoneNumber || '';
+    address.value = authStore.shippingAddress || '';
+    await coffeeResultStore.loadFromUserAccount();
+    await fetchMemberOrders();
+    await fetchBrewLogs();
   });
 
   // ========== 監聽路由變化 ==========
@@ -631,29 +768,27 @@
     }
   );
 
-  // ========== 會員資料 ==========
-  const quizResult = reactive({
-    image: '',
-    title: 'The Ethereal Ethiopia Profile',
-    description:
-      'Your palate favors high-acidity, floral notes with a tea-like body. We recommend light roasts from the Yirgacheffe region, brewed with a V60 to accentuate the jasmine and lemon zest undertones.',
-    tags: ['Floral', 'Citrus', 'Light'],
-  });
-
   // ========== 沖煮記錄 ==========
-  const brewLogs = reactive([
-    { id: 1, date: 'Mar 14, 2024', name: 'Yirgacheffe V60', details: '92°C | 1:16 Ratio' },
-    { id: 2, date: 'Mar 12, 2024', name: 'Gesha Aeropress', details: '88°C | Inverted' },
-    { id: 3, date: 'Mar 10, 2024', name: 'Midnight Blend', details: '4min Steep | Coarse' },
-    { id: 4, date: 'Mar 08, 2024', name: 'Kenya AA Filter', details: '90°C | 1:15 Ratio' },
-    { id: 5, date: 'Mar 05, 2024', name: 'Colombia Supremo', details: '93°C | French Press' },
-    { id: 6, date: 'Mar 01, 2024', name: 'Brazilian Santos', details: '88°C | Cold Brew' },
-  ]);
+  const brewLogs = ref<BrewRecord[]>([]);
+  const isLoadingBrewLogs = ref(false);
+
+  const fetchBrewLogs = async () => {
+    if (!authStore.user?.id) return;
+
+    isLoadingBrewLogs.value = true;
+    try {
+      brewLogs.value = await brewRecordService.getUserBrewRecords(authStore.user.id);
+    } catch (error) {
+      console.error('取得沖煮記錄失敗:', error);
+    } finally {
+      isLoadingBrewLogs.value = false;
+    }
+  };
 
   const showAllBrewLogs = ref(false);
 
   const displayedBrewLogs = computed(() => {
-    return showAllBrewLogs.value ? brewLogs : brewLogs.slice(0, 3);
+    return showAllBrewLogs.value ? brewLogs.value : brewLogs.value.slice(0, 2);
   });
 
   // ========== 方法函式 ==========
@@ -665,26 +800,52 @@
   const switchToOrder = () => {
     activeTab.value = 'order';
     router.push('/member?tab=order');
+    document.title = 'FeiTime - 我的訂單';
   };
 
   const retakeQuiz = () => {
-    console.log('Retake quiz');
+    router.push('/coffee-id-test-card?retake=true');
   };
 
   const toggleBrewLogsView = () => {
     showAllBrewLogs.value = !showAllBrewLogs.value;
   };
 
-  const viewBrewLog = (id: number) => {
-    console.log('View brew log:', id);
+  const viewBrewLog = (id: number) => {};
+
+  // ========== 編輯聯絡資訊 ==========
+  const startEditingPhone = () => {
+    isEditingPhone.value = true;
+    nextTick(() => {
+      phoneInputRef.value?.focus();
+    });
   };
 
-  const editLogName = (id: number) => {
-    console.log('Edit log name:', id);
+  const finishEditingPhone = () => {
+    isEditingPhone.value = false;
+    saveContactInfo();
   };
 
-  const addNewLog = () => {
-    console.log('Add new log');
+  const startEditingAddress = () => {
+    isEditingAddress.value = true;
+    nextTick(() => {
+      addressInputRef.value?.focus();
+    });
+  };
+
+  const finishEditingAddress = () => {
+    isEditingAddress.value = false;
+    saveContactInfo();
+  };
+
+  const saveContactInfo = async () => {
+    const result = await authStore.updateContactInfo({
+      phone_number: phone.value || null,
+      shipping_address: address.value || null,
+    });
+    if (!result.success) {
+      console.error('儲存失敗:', result.message);
+    }
   };
 </script>
 
@@ -798,17 +959,6 @@
     font-weight: 200;
   }
 
-  .desktop-bg-glass {
-    background: radial-gradient(
-      circle at top right,
-      rgba(247, 243, 235, 0.6) 0%,
-      rgba(251, 249, 244, 0.4) 50%,
-      rgba(255, 255, 255, 0.2) 100%
-    );
-    backdrop-filter: blur(120px) saturate(150%);
-    -webkit-backdrop-filter: blur(120px) saturate(150%);
-  }
-
   .leather-texture-champagne {
     background: #dce8df;
   }
@@ -917,5 +1067,43 @@
   ::-webkit-scrollbar-thumb {
     background: rgba(220, 203, 176, 0.3);
     border-radius: 10px;
+  }
+
+  /* Vue DatePicker 自訂樣式 */
+  :deep(.dp__theme_light) {
+    --dp-background-color: rgba(255, 255, 255, 0.9);
+    --dp-text-color: #3d3d3d;
+    --dp-hover-color: rgba(220, 232, 222, 0.5);
+    --dp-hover-text-color: #3d3d3d;
+    --dp-hover-icon-color: #5b7a6d;
+    --dp-primary-color: #5b7a6d;
+    --dp-primary-text-color: #fff;
+    --dp-secondary-color: #c5a059;
+    --dp-border-color: rgba(197, 160, 89, 0.2);
+    --dp-menu-border-color: rgba(197, 160, 89, 0.2);
+    --dp-border-color-hover: rgba(197, 160, 89, 0.4);
+    --dp-disabled-color: #f0f0f0;
+    --dp-scroll-bar-background: rgba(220, 232, 222, 0.3);
+    --dp-scroll-bar-color: rgba(91, 122, 109, 0.5);
+    --dp-success-color: #5b7a6d;
+    --dp-success-color-disabled: rgba(91, 122, 109, 0.3);
+    --dp-icon-color: #5b7a6d;
+    --dp-danger-color: #cc4b4b;
+    --dp-highlight-color: rgba(220, 232, 222, 0.3);
+    --dp-range-between-dates-background-color: rgba(220, 232, 222, 0.4);
+    --dp-range-between-dates-text-color: #3d3d3d;
+    --dp-range-between-border-color: rgba(91, 122, 109, 0.2);
+  }
+
+  :deep(.dp__menu) {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  :deep(.dp__action_button) {
+    border-radius: 0.5rem;
+    font-weight: 600;
   }
 </style>

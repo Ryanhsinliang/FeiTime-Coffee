@@ -166,6 +166,7 @@
   import { getCart, formGoPost, productsGet } from '@/services/checkout';
   import { orderList } from '@/store/order';
   import { useAuthStore } from '@/store/auth';
+  import type { OrderForm, GivePiniaRule } from '@/services/checkout';
 
   const authStore = useAuthStore();
   const router = useRouter();
@@ -178,6 +179,7 @@
   interface ProductRule {
     // 購物車物件內的 product物件 的規範
     id: number;
+    pid: string;
     name: string;
     price: number;
     quantity: number;
@@ -192,16 +194,6 @@
     user: UserRule;
     quantity: number;
     snapshot_image: string;
-  }
-
-  interface GivePiniaRule {
-    pid: number;
-    quantity: number;
-    snapshot_name: string;
-    snapshot_price: number;
-    snapshot_image: string;
-    snapshot_weight: string;
-    item_total: number;
   }
 
   const memberBuyArr = ref<CartRule[]>([]); // 裝有同一個id的人買的所有產品物件 的陣列
@@ -230,7 +222,7 @@
     // 依照post需求 做一個符合他規範的 [{},{}...]
     postProducts.value = idCart.map((obj: CartRule) => {
       return {
-        pid: obj.product.id.toString(),
+        pid: obj.product.pid,
         quantity: obj.quantity,
         snapshot_name: obj.product.name,
         snapshot_price: obj.product.price,
@@ -254,13 +246,10 @@
       fontAmount.value = productTotal.value + 250;
       // 運費 250
     }
-
-    // console.log(memberBuyArr.value);
-    // console.log(postProducts.value);
   });
 
   // 【 串linepay 】
-  const linepayUrl = import.meta.env.VITE_LINK;
+  const linepayUrl = import.meta.env.VITE_API_BASE_URL;
   const useLinePay = async () => {
     try {
       // 防呆
@@ -298,7 +287,7 @@
     name: string;
     price: number;
     origin: string;
-    img: any[];
+    img: { formats: { large: { url: string }; medium?: { url: string } } }[];
     popularity: number;
     sweetness: number;
     acidity: number;
@@ -320,9 +309,9 @@
   const productsNow = ref<LittleProductRule[]>([]); // 打get 整理後的產品[{},{},...]
 
   // 判斷庫存的函數
-  const stockHave = (id: number, quantity: number, jsonArr: LittleProductRule[]) => {
+  const stockHave = (pid: string, quantity: number, jsonArr: LittleProductRule[]) => {
     const buy = jsonArr.filter((obj: LittleProductRule) => {
-      return obj.id == id;
+      return obj.pid == pid;
     });
     if (quantity <= Number(buy[0].stock)) {
       return true;
@@ -332,7 +321,7 @@
   };
 
   // 給 後端 > DB 的訂單資料
-  const form = reactive({
+  const form = reactive<OrderForm>({
     user: authStore.user!.id.toString(),
     order_items: postProducts.value,
     subtotal: productTotal.value, // 只有商品的價錢
@@ -411,9 +400,6 @@
 
     try {
       const result = await formGoPost(form);
-      console.log('訂單建立成功');
-      // console.log(result);
-      // console.log(postProducts.value);
 
       // 把資料存入pinia
       const orderStore = orderList();
@@ -434,27 +420,6 @@
 </script>
 
 <style>
-  /* Tailwind 3.4 官網 */
-  /* https://v3.tailwindcss.com/ */
-
-  /* Font-awesome */
-  /* https://fontawesome.com/search?ic=free-collection */
-
-  /*
-    先md 再lg
-    先寫不會變動的樣式
-    再用md: 寫平板 (>768px)
-    再用lg: 寫電腦版 (>1024px)
-    手機版 不用特別寫
-  */
-
-  /* 
-    在F12 元素丟這段 找回滑鼠
-    const style = document.createElement('style');
-    style.innerHTML = `* { cursor: auto !important; }`;
-    document.head.appendChild(style); 
-  */
-
   :root {
     --main-color: #faf9ee;
     /* 淡黃 */

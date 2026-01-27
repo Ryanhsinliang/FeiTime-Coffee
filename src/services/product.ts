@@ -1,8 +1,27 @@
 import api from '@/services/api';
 
-export async function getProducts(obj: any = {}) {
+// export interface FilterDataRule {
+//   roast?: string;
+//   flavor_type?: string;
+//   processing?: string;
+//   origin?: string;
+//   sort?: string[]; // 例如 ["price:desc"]
+// }
+
+export interface FilterDataRule {
+  roast?: string;
+  flavor_type?: string;
+  processing?: string;
+  origin?: string;
+  sort?: string[];
+  page?: number;
+  pageSize?: number;
+  sortWhich?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export async function getProducts(obj: FilterDataRule = {}) {
   // obj 是參數 它是一個物件
-  // : any  TS的規範 代表不限制物件裡面的型別
   try {
     const res = await api.get('/api/products', {
       params: obj,
@@ -11,8 +30,6 @@ export async function getProducts(obj: any = {}) {
     // 物件內除了 params  可能會有 headers或 timeout
     // axios 會把 params 物件的內容以【 ?key=value 】形式轉成網址
     // 若有 key 的值是 undefined 或 null，它通常會忽略這個 key
-
-    // console.log('Products:', res.data); // debug 用
     return res.data;
   } catch (err: any) {
     console.error('API 串接出錯：', err.message);

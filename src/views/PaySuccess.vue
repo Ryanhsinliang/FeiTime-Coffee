@@ -58,6 +58,7 @@
   } from '@/services/checkout';
   import { useAuthStore } from '@/store/auth';
   import { useCartStore } from '@/store/cart';
+  import type { UpdateOrderRule } from '@/services/checkout';
 
   interface AllProductRule {
     // 設定data規格
@@ -113,9 +114,9 @@
   const cartStore = useCartStore();
 
   // 用id取得 現在庫存 和 真正用來put的id
-  const getNowStock = (id: number | string) => {
+  const getNowStock = (pid: number | string) => {
     const findAPIproduct = productsNow.value.filter((obj) => {
-      return obj.id == id;
+      return obj.pid == pid;
     });
     return {
       stock: Number(findAPIproduct[0].stock),
@@ -138,8 +139,8 @@
       }
 
       // 若是貨到付款 只更新order_status
-      let buyAfter;
-      if (orderThing.value.payment_method == 'myself') {
+      let buyAfter: Partial<UpdateOrderRule>;
+      if (orderThing.value.payment_method == 'cod') {
         buyAfter = {
           order_status: 'processing',
         };

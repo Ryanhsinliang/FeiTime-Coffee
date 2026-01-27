@@ -215,7 +215,7 @@
   import { ref, computed, onMounted, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { callSingleProduct, callRecommendations, cartGoPost } from '@/services/ProductDetail';
-  import type { ProductRequest } from '@/services/ProductDetail';
+  import type { ProductRequest, BuyRule } from '@/services/ProductDetail';
   import { useCartStore } from '@/store/cart';
   import { useAuthStore } from '@/store/auth';
 
@@ -427,7 +427,7 @@
     // console.log('使用者按了幾包');
     // console.log(quantity.value);
 
-    const buy = {
+    const buy: BuyRule = {
       user: authStore.user!.id.toString(),
       product: product.value.id,
       quantity: Number(quantity.value),

@@ -59,8 +59,20 @@ export async function callRecommendations(pid: string): Promise<RecommendationsR
   return res.data;
 }
 
+// 立即購買 參數的型別 (柔+)
+export interface BuyRule {
+  user: string;
+  product: string;
+  quantity: number;
+  snapshot_image: string;
+  snapshot_name: string;
+  snapshot_price: number;
+  snapshot_weight: number;
+  item_total: number;
+}
+
 // 新增產品至購物車 (柔+)
-export async function cartGoPost(formData: any) {
+export async function cartGoPost(formData: BuyRule) {
   try {
     const res = await api.post('/api/cart', formData);
     return res.data;

@@ -125,7 +125,7 @@
               required
               v-model.trim="ProductForm.pid"
             />
-            <p class="text-xs text-[#9a704c]">商品編號不可重複。</p>
+            <p class="text-xs text-[#9a704c]">商品編號不可重複，格式：coffee_0XX</p>
           </label>
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">

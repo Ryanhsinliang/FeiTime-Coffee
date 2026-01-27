@@ -371,21 +371,6 @@
     popularity: 0,
   });
 
-  // 載入商品資料
-  // const loadProduct = async () => {
-  //   try {
-  //     console.log('🔍 載入商品:', pid);
-  //     const response = await callSingleProduct(pid);
-  //     console.log('✅ 商品資料:', response.data);
-
-  //     // 深拷貝避免引用問題
-  //     ProductForm.value = JSON.parse(JSON.stringify(response.data));
-  //   } catch (error: any) {
-  //     console.error('載入商品失敗:', error);
-  //     alert('載入商品資料失敗');
-  //   }
-  // };
-
   // 刪除圖片
   const removeImage = (index: number) => {
     if (confirm('確定要刪除這張圖片嗎？')) {
@@ -414,7 +399,6 @@
       // 一次上傳所有檔案
       for (const file of Array.from(files)) {
         const uploadedImages = await callUploadImage(file);
-        console.log('✅ 上傳成功:', uploadedImages);
 
         // 將上傳的圖片加入表單
         if (Array.isArray(uploadedImages)) {
@@ -474,11 +458,8 @@
         popularity: ProductForm.value.popularity,
       };
 
-      console.log('📤 發送更新:', payload);
-
       const response = await callCreateProduct(payload);
 
-      console.log('✅ 更新成功:', response);
       updateMessage.value = '商品新增成功！';
       updateSuccess.value = true;
 

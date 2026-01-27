@@ -312,7 +312,6 @@
       ]);
 
       product.value = productRes.data;
-      console.log('✅ 成功載入商品:', product.value);
 
       // 動態設置瀏覽器標題
       if (product.value?.name) {
@@ -320,7 +319,6 @@
       }
 
       recommendations.value = recommendationsRes.data;
-      console.log('✅ 推薦商品數量:', recommendations.value.length);
 
       // 重置圖片輪播索引、重置數量
       currentIndex.value = 0;
@@ -428,11 +426,6 @@
       return;
     }
 
-    // console.log('這個產品的詳細資料');
-    // console.log(product.value);
-    // console.log('使用者按了幾包');
-    // console.log(quantity.value);
-
     const buy: BuyRule = {
       user: authStore.user!.id.toString(),
       product: product.value.id,
@@ -446,7 +439,6 @@
 
     try {
       const response = await cartGoPost(buy);
-      console.log(response);
     } catch (error) {
       console.error('購物車加入失敗', error);
       throw error;

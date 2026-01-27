@@ -155,8 +155,6 @@
       // 打put更新orders
       try {
         const res = await updateOrder(documentId, buyAfter);
-        console.log('訂單成功更新');
-        // console.log(res.data);
       } catch (err: any) {
         const errorDetail = err.response?.data?.detail || err.message;
         console.error('API 串接出錯：', errorDetail);
@@ -180,21 +178,6 @@
         throw err;
       }
 
-      /*
-      // console.log('買的東西 要扣的數量 pinia提供');
-      // console.log(buyProducts.value); // 完整的 訂購的 產品資料
-      // // 要扣庫存的資料
-
-      // console.log('所有產品簡化資料 打API來的');
-      // console.log(productsNow.value);
-
-      // console.log('這個id 現在資料庫的庫存');
-      // console.log(getNowStock(751));
-
-      // console.log('買的產品的數量');
-      // console.log(buyProducts.value);
-      */
-
       // 用來put產品庫存的 [{},{},...]
       const updateStock = buyProducts.value.map((obj) => {
         return {
@@ -203,19 +186,13 @@
         };
       });
 
-      // console.log('買的產品的id + 扣完的數量');
-      // console.log(updateStock);
-
       for (let i = 0; i < updateStock.length; i++) {
         try {
           const doStock = await updateProduct(updateStock[i].documentId, {
             stock: updateStock[i].stock,
           });
-          console.log(`第${i + 1}筆put成功`);
-          // console.log(doStock);
         } catch (err: any) {
           const errorDetail = err.response?.data?.detail || err.message;
-          console.log(`第${i + 1}筆put失敗`);
           console.error('API 串接出錯：', errorDetail);
           throw err;
         }
@@ -240,17 +217,13 @@
       for (let i = 0; i < idCart.value.length; i++) {
         try {
           const deleteRes = await deleteCart(idCart.value[i].documentId);
-          console.log(`第${i + 1}筆購物車刪除成功`);
-          // console.log(deleteRes);
         } catch (err: any) {
           const errorDetail = err.response?.data?.detail || err.message;
-          console.log(`第${i + 1}筆購物車刪除失敗`);
           console.error('delete串接出錯：', errorDetail);
           throw err;
         }
       }
       cartStore.items = [];
-      console.log('購物車pinia已成功清空');
     }
   });
 

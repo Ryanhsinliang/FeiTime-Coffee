@@ -407,7 +407,6 @@
   /* ===== 購物車相關功能 ===== */
   const handleShoppingBag = () => {
     // TODO: 實現購物車功能
-    console.log('打開購物車');
   };
 
   /* ===== 使用者選單相關功能 ===== */
@@ -429,7 +428,6 @@
   /* ===== 統一選單動作處理 ===== */
   // 處理所有登入/登出/跳轉邏輯
   const handleMenuAction = async (action: 'login' | 'register' | 'member' | 'order' | 'logout') => {
-    console.log(`🚀 Header: handleMenuAction called with '${action}'`);
     // 關閉桌面與手機選單
     userMenuOpen.value = false;
     mobileOpen.value = false;
@@ -450,7 +448,6 @@
         break;
       case 'logout':
         // 先清空購物車 UI (localStorage)
-        console.log('🚪 Logout: Clearing cart and auth data...');
         cartStore.clearLocalCart();
         // 再執行登出
         authStore.logout();

@@ -259,7 +259,6 @@
     if (!persona.value) return;
     const currentId = persona.value.id;
     const fullPersonaData = coffeePersonas.find((p) => p.id === currentId);
-    console.log('比對後的完整資料：', fullPersonaData);
 
     if (!fullPersonaData || !fullPersonaData.strapiImg) {
       console.error('抓不到資料！請檢查 coffeeTypes.ts 檔案路徑。');
@@ -280,9 +279,7 @@
           title: `Coffee ID | ${personaName}`,
           url: shareUrl,
         });
-      } catch (err) {
-        console.log('使用者取消');
-      }
+      } catch (err) {}
     } else {
       await navigator.clipboard.writeText(shareUrl);
       showHint('分享連結已複製！');

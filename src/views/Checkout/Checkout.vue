@@ -246,9 +246,6 @@
       fontAmount.value = productTotal.value + 250;
       // 運費 250
     }
-
-    // console.log(memberBuyArr.value);
-    // console.log(postProducts.value);
   });
 
   // 【 串linepay 】
@@ -403,9 +400,6 @@
 
     try {
       const result = await formGoPost(form);
-      console.log('訂單建立成功');
-      // console.log(result);
-      // console.log(postProducts.value);
 
       // 把資料存入pinia
       const orderStore = orderList();

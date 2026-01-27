@@ -387,4 +387,3 @@ export const coffeePersonas = [
       'https://accessible-dogs-da5b6a029a.media.strapiapp.com/Hazeplume_Crane_74048f1917.webp',
   },
 ];
-console.log('coffeeTypes 資料庫已載入，版本：2025-分享測試');

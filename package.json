@@ -14,6 +14,7 @@
     "@heroicons/vue": "^2.2.0",
     "@types/three": "^0.182.0",
     "@unhead/vue": "^2.1.2",
+    "@vuepic/vue-datepicker": "^12.1.0",
     "@vueuse/core": "^14.1.0",
     "atropos": "^2.0.2",
     "axios": "^1.13.2",

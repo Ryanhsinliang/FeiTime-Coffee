@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import Cookies from 'js-cookie';
 import { loginService, type User, type AuthResponse } from '../services/loginService';
+import { memberService } from '../services/memberService';
 import { useCartStore } from './cart';
 
 import { forgotPasswordService } from '@/services/forgotPasswordService';
@@ -15,6 +16,23 @@ export const useAuthStore = defineStore('auth', () => {
   const isAdmin = computed(() => {
     return user.value?.user_role === 'Admin' || user.value?.role?.type === 'admin';
   });
+
+  const username = computed(() => {
+    return user.value?.username;
+  });
+  const email = computed(() => {
+    return user.value?.email;
+  });
+  const userId = computed(() => {
+    return user.value?.user_id;
+  });
+  const phoneNumber = computed(() => {
+    return user.value?.phone_number;
+  });
+  const shippingAddress = computed(() => {
+    return user.value?.shipping_address;
+  });
+
   const banner = ref<{ message: string; type: 'success' | 'error' | 'warning' | null } | null>(
     null
   );
@@ -75,6 +93,25 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('user');
     localStorage.removeItem('rememberedEmail');
     Cookies.remove('auth_token');
+  }
+
+  // 更新會員資料
+  async function updateContactInfo(data: {
+    phone_number?: string | null;
+    shipping_address?: string | null;
+  }) {
+    if (!user.value) return { success: false, message: '請先登入' };
+
+    try {
+      await memberService.updateMemberInfo(user.value.id, data);
+      // 更新本地狀態
+      user.value = { ...user.value, ...data };
+      localStorage.setItem('user', JSON.stringify(user.value));
+      return { success: true };
+    } catch (error: any) {
+      const message = error.message || '更新失敗';
+      return { success: false, message };
+    }
   }
 
   async function handleForgotPassword(email: string) {
@@ -160,6 +197,11 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     token,
     isAdmin,
+    username,
+    email,
+    userId,
+    phoneNumber,
+    shippingAddress,
     isLoggedIn,
     banner,
     handleLogin,
@@ -168,6 +210,7 @@ export const useAuthStore = defineStore('auth', () => {
     handleForgotPassword,
     handleResetPassword,
     logout,
+    updateContactInfo,
     setBanner,
     clearBanner,
   };

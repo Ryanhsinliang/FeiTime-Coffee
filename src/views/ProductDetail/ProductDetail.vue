@@ -308,6 +308,11 @@
       product.value = productRes.data;
       console.log('✅ 成功載入商品:', product.value);
 
+      // 動態設置瀏覽器標題
+      if (product.value?.name) {
+        document.title = `FeiTime - ${product.value.name}`;
+      }
+
       recommendations.value = recommendationsRes.data;
       console.log('✅ 推薦商品數量:', recommendations.value.length);
 

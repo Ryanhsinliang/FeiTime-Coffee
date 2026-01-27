@@ -51,7 +51,6 @@
 FEITIME-COFFEE/
 
 - 📂 public/ # 靜態資源，不經打包
-
   - 🖼 favicon.ico # 網頁標籤小圖示
   - 📂 images/ # 靜態圖片
     - 📂 banner/ # 頁面大圖、輪播圖
@@ -61,20 +60,16 @@ FEITIME-COFFEE/
       - 🖼 coffee-logo.svg
 
 - 📂 src/ # 專案主要程式碼
-
   - 📂 assets/ # 可 import 的資源
-
     - 📂 images/ # 商品圖片、頁面專用圖片
     - 📂 icons/ # Icon
 
   - 📂 components/ # 全站共用元件
-
     - 🧩 Header.vue
     - 🧩 Footer.vue
     - 📂 common/ # 通用元件 (Button / Card / Input)
 
   - 📂 views/ # 頁面組件
-
     - 📂 HomePage/
       - 📂 assets/ # HomePage 專屬資源
       - 🧩 HomePage.vue # 頁面
@@ -93,22 +88,18 @@ FEITIME-COFFEE/
       - 📄 type.ts # CoffeeIdTest 專屬型別
 
   - 📂 router/ # 路由設定
-
     - 📄 index.ts
 
   - 📂 store/ # Pinia 狀態管理
-
     - 🧩 auth.ts # token / 登入狀態
     - 🧩 cart.ts # 購物車資料
 
   - 📂 services/ # API 封裝
-
     - 📄 api.ts # axios instance & token 攔截器
     - 📄 productService.ts # Product 相關 API
     - 📄 authService.ts # Auth / Login / Register API
 
   - 📂 types/ # 共用 TypeScript 型別
-
     - 📄 index.d.ts # Product、CartItem 等
 
   - 📄 style.css # Tailwind 入口
@@ -158,7 +149,7 @@ FEITIME-COFFEE/
 2. 各自開自己的分支出去做，不要在 main 上做 commit
 3. 最後專案要準備收尾時，將所有分支合併回主線 (由一人做即可)
 
-### 如何開 issue
+### 如何開 issue (以此方法為主)
 
 1. 開 issue 接票
 2. 右下角 create branch（名稱 issue/編號）

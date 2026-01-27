@@ -35,10 +35,10 @@
             {{ log.extraction_yield || '--' }}
           </p>
         </div>
-        <div class="flex items-center justify-between">
+        <!-- <div class="flex items-center justify-between">
           <p class="text-xs text-primary/50">均勻</p>
           <p class="text-base font-mono text-purple-700">{{ log.uniformity || '--' }}</p>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -84,166 +84,166 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick, computed } from 'vue';
-import {
-  Chart,
-  RadarController,
-  RadialLinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  type ChartData,
-} from 'chart.js';
-import type { BrewRecord } from '@/services/brewRecordService';
-import CoffeeFairyIcon from '@/components/common/CoffeeFairyIcon.vue';
+  import { ref, onMounted, watch, nextTick, computed } from 'vue';
+  import {
+    Chart,
+    RadarController,
+    RadialLinearScale,
+    PointElement,
+    LineElement,
+    Filler,
+    type ChartData,
+  } from 'chart.js';
+  import type { BrewRecord } from '@/services/brewRecordService';
+  import CoffeeFairyIcon from '@/components/common/CoffeeFairyIcon.vue';
 
-Chart.register(RadarController, RadialLinearScale, PointElement, LineElement, Filler);
+  Chart.register(RadarController, RadialLinearScale, PointElement, LineElement, Filler);
 
-const props = defineProps<{
-  log: BrewRecord;
-}>();
+  const props = defineProps<{
+    log: BrewRecord;
+  }>();
 
-const radarCanvas = ref<HTMLCanvasElement | null>(null);
-const isExpanded = ref(false);
-let radarChart: Chart | null = null;
+  const radarCanvas = ref<HTMLCanvasElement | null>(null);
+  const isExpanded = ref(false);
+  let radarChart: Chart | null = null;
 
-const formatDate = (dateStr: string) => {
-  if (!dateStr) return '';
-  const date = new Date(dateStr);
-  return `${date.getMonth() + 1}/${date.getDate()}`;
-};
-
-// 解析 ai_feedback（可能是字串或物件）
-const parsedFeedback = computed(() => {
-  const feedback = props.log.ai_feedback;
-  if (!feedback) return null;
-
-  // 如果是字串，嘗試解析為 JSON
-  if (typeof feedback === 'string') {
-    try {
-      return JSON.parse(feedback);
-    } catch {
-      // 如果無法解析，當作純文字
-      return { summary: feedback };
-    }
-  }
-
-  // 如果已經是物件
-  return feedback;
-});
-
-// 取得 summary
-const feedbackSummary = computed(() => {
-  const parsed = parsedFeedback.value;
-  if (!parsed) return '';
-  return parsed.summary || '';
-});
-
-// 取得 taste_prediction
-const feedbackTastePrediction = computed(() => {
-  const parsed = parsedFeedback.value;
-  if (!parsed) return '';
-  return parsed.taste_prediction || '';
-});
-
-// 是否有小精靈反饋
-const hasFairyFeedback = computed(() => {
-  return !!feedbackSummary.value;
-});
-
-// 計算粉水比
-const ratioDisplay = computed(() => {
-  if (!props.log.dose_weight || !props.log.total_water) return '--';
-  const ratio = props.log.total_water / props.log.dose_weight;
-  return `1:${ratio.toFixed(1)}`;
-});
-
-const getExtractionColor = (extraction: string | null) => {
-  if (!extraction) return 'text-primary/50';
-  const val = parseFloat(extraction);
-  if (isNaN(val)) return 'text-primary/50';
-  if (val > 0.25) return 'text-red-600';
-  if (val < -0.25) return 'text-blue-600';
-  return 'text-emerald-700';
-};
-
-const flavorData = computed(() => {
-  const radar = props.log.flavor_radar;
-  if (!radar) return [0, 0, 0, 0, 0];
-
-  // 處理可能是字串的情況
-  const parsed = typeof radar === 'string' ? JSON.parse(radar) : radar;
-
-  return [
-    parsed.sweetness || 0,
-    parsed.acidity || 0,
-    parsed.clarity || 0,
-    parsed.body || 0,
-    parsed.aftertaste || 0,
-  ];
-});
-
-const chartData = computed<ChartData<'radar'>>(() => {
-  return {
-    labels: ['甜', '酸', '淨', '醇', '韻'],
-    datasets: [
-      {
-        label: 'Flavor',
-        data: flavorData.value,
-        backgroundColor: 'rgba(139, 69, 19, 0.2)',
-        borderColor: '#8B4513',
-        borderWidth: 2,
-        pointBackgroundColor: '#8B4513',
-        pointRadius: 3,
-      },
-    ],
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return `${date.getMonth() + 1}/${date.getDate()}`;
   };
-});
 
-const initChart = () => {
-  if (!radarCanvas.value) return;
-  if (radarChart) radarChart.destroy();
+  // 解析 ai_feedback（可能是字串或物件）
+  const parsedFeedback = computed(() => {
+    const feedback = props.log.ai_feedback;
+    if (!feedback) return null;
 
-  radarChart = new Chart(radarCanvas.value, {
-    type: 'radar',
-    data: chartData.value,
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      scales: {
-        r: {
-          suggestedMin: 0,
-          suggestedMax: 5,
-          ticks: { display: false },
-          grid: { color: 'rgba(139, 69, 19, 0.15)' },
-          angleLines: { color: 'rgba(139, 69, 19, 0.15)' },
-          pointLabels: { font: { size: 11 }, color: '#8d6e63' },
-        },
-      },
-      plugins: { legend: { display: false } },
-    },
+    // 如果是字串，嘗試解析為 JSON
+    if (typeof feedback === 'string') {
+      try {
+        return JSON.parse(feedback);
+      } catch {
+        // 如果無法解析，當作純文字
+        return { summary: feedback };
+      }
+    }
+
+    // 如果已經是物件
+    return feedback;
   });
-};
 
-watch(
-  () => props.log,
-  () => {
+  // 取得 summary
+  const feedbackSummary = computed(() => {
+    const parsed = parsedFeedback.value;
+    if (!parsed) return '';
+    return parsed.summary || '';
+  });
+
+  // 取得 taste_prediction
+  const feedbackTastePrediction = computed(() => {
+    const parsed = parsedFeedback.value;
+    if (!parsed) return '';
+    return parsed.taste_prediction || '';
+  });
+
+  // 是否有小精靈反饋
+  const hasFairyFeedback = computed(() => {
+    return !!feedbackSummary.value;
+  });
+
+  // 計算粉水比
+  const ratioDisplay = computed(() => {
+    if (!props.log.dose_weight || !props.log.total_water) return '--';
+    const ratio = props.log.total_water / props.log.dose_weight;
+    return `1:${ratio.toFixed(1)}`;
+  });
+
+  const getExtractionColor = (extraction: string | null) => {
+    if (!extraction) return 'text-primary/50';
+    const val = parseFloat(extraction);
+    if (isNaN(val)) return 'text-primary/50';
+    if (val > 0.25) return 'text-red-600';
+    if (val < -0.25) return 'text-blue-600';
+    return 'text-emerald-700';
+  };
+
+  const flavorData = computed(() => {
+    const radar = props.log.flavor_radar;
+    if (!radar) return [0, 0, 0, 0, 0];
+
+    // 處理可能是字串的情況
+    const parsed = typeof radar === 'string' ? JSON.parse(radar) : radar;
+
+    return [
+      parsed.sweetness || 0,
+      parsed.acidity || 0,
+      parsed.clarity || 0,
+      parsed.body || 0,
+      parsed.aftertaste || 0,
+    ];
+  });
+
+  const chartData = computed<ChartData<'radar'>>(() => {
+    return {
+      labels: ['甜', '酸', '淨', '醇', '韻'],
+      datasets: [
+        {
+          label: 'Flavor',
+          data: flavorData.value,
+          backgroundColor: 'rgba(139, 69, 19, 0.2)',
+          borderColor: '#8B4513',
+          borderWidth: 2,
+          pointBackgroundColor: '#8B4513',
+          pointRadius: 3,
+        },
+      ],
+    };
+  });
+
+  const initChart = () => {
+    if (!radarCanvas.value) return;
+    if (radarChart) radarChart.destroy();
+
+    radarChart = new Chart(radarCanvas.value, {
+      type: 'radar',
+      data: chartData.value,
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          r: {
+            suggestedMin: 0,
+            suggestedMax: 5,
+            ticks: { display: false },
+            grid: { color: 'rgba(139, 69, 19, 0.15)' },
+            angleLines: { color: 'rgba(139, 69, 19, 0.15)' },
+            pointLabels: { font: { size: 11 }, color: '#8d6e63' },
+          },
+        },
+        plugins: { legend: { display: false } },
+      },
+    });
+  };
+
+  watch(
+    () => props.log,
+    () => {
+      nextTick(() => initChart());
+    },
+    { deep: true }
+  );
+
+  onMounted(() => {
     nextTick(() => initChart());
-  },
-  { deep: true }
-);
-
-onMounted(() => {
-  nextTick(() => initChart());
-});
+  });
 </script>
 
 <style scoped>
-.material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 300,
-    'GRAD' 0,
-    'opsz' 20;
-}
+  .material-symbols-outlined {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 300,
+      'GRAD' 0,
+      'opsz' 20;
+  }
 </style>

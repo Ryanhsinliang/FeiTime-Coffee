@@ -169,12 +169,13 @@
                   Recent Brew Logs
                 </h3>
                 <button
+                  v-if="brewLogs.length > 2"
                   class="text-xs font-bold text-accent-green/70 hover:text-accent-green tracking-[0.2em] uppercase transition-colors flex items-center gap-2"
                   @click="toggleBrewLogsView"
                 >
                   <!-- 桌面版：顯示完整文字 -->
                   <span class="hidden md:inline">
-                    {{ showAllBrewLogs ? 'Collapse' : 'View All History' }}
+                    {{ showAllBrewLogs ? 'Collapse' : '點此顯示更多沖煮紀錄' }}
                   </span>
                   <!-- 圖標 -->
                   <span
@@ -187,24 +188,25 @@
               </div>
 
               <!-- 沖煮記錄卡片網格（3欄布局） -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-                <!-- 沖煮記錄卡片 - 改為圖片卡片 -->
+              <div v-if="isLoadingBrewLogs" class="text-center py-12">
+                <p class="text-sm text-primary/40 uppercase tracking-[0.3em] font-bold">
+                  載入中...
+                </p>
+              </div>
+              <div v-else-if="brewLogs.length === 0" class="text-center py-12">
+                <p class="text-sm text-primary/40 uppercase tracking-[0.3em] font-bold">
+                  目前沒有沖煮記錄
+                </p>
+              </div>
+              <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-start">
+                <!-- 沖煮記錄卡片 -->
                 <div
-                  v-for="(log, index) in displayedBrewLogs"
+                  v-for="log in displayedBrewLogs"
                   :key="log.id"
-                  class="glass-card rounded-[2rem] hover:bg-white/40 transition-all cursor-pointer group border-none shadow-sm overflow-hidden aspect-[4/3]"
+                  class="glass-card rounded-[2rem] hover:bg-white/40 transition-all cursor-pointer group border-none shadow-sm overflow-hidden"
                   @click="viewBrewLog(log.id)"
                 >
-                  <!-- 圖片佔位符 -->
-                  <div
-                    class="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/30 to-white/10"
-                  >
-                    <span
-                      class="material-symbols-outlined text-6xl text-primary/20 font-extralight"
-                    >
-                      image
-                    </span>
-                  </div>
+                  <BrewLogCard :log="log" />
                 </div>
               </div>
             </div>
@@ -293,7 +295,9 @@
                       <button
                         class="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-sm font-bold uppercase tracking-[0.3em] text-primary/50 bg-white/20 flex items-center gap-2 sm:gap-3 hover:bg-white/40 transition-all"
                       >
-                        <span class="material-symbols-outlined text-base sm:text-lg">calendar_today</span>
+                        <span class="material-symbols-outlined text-base sm:text-lg">
+                          calendar_today
+                        </span>
                         {{ getDateRangeText() }}
                       </button>
                     </template>
@@ -441,41 +445,52 @@
                           >
                             收件資訊
                           </p>
-                          <div class="space-y-3">
+                          <div class="space-y-5">
                             <div>
-                              <p class="text-xs font-bold text-primary/30 mb-1">收件人</p>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                收件人
+                              </p>
                               <p class="text-lg font-light text-primary/70">
                                 {{ order.recipient_name }}
                               </p>
                             </div>
                             <div>
-                              <p class="text-xs font-bold text-primary/30 mb-1">收件地址</p>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                收件地址
+                              </p>
                               <p class="text-lg text-primary/50 leading-relaxed font-light">
                                 {{ order.recipient_address }}
                               </p>
                             </div>
                             <div>
-                              <p class="text-xs font-bold text-primary/30 mb-1">聯絡電話</p>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                聯絡電話
+                              </p>
                               <p class="text-lg text-primary/50 font-light">
                                 {{ order.recipient_phone }}
                               </p>
                             </div>
+                            <div>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                付款方式
+                              </p>
+                              <p class="text-lg text-primary/60">
+                                {{
+                                  order.payment_method === 'linepay'
+                                    ? 'LINE Pay'
+                                    : order.payment_method
+                                }}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        <!-- 付款方式 -->
-                        <div>
-                          <p
-                            class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
-                          >
-                            付款方式
-                          </p>
-                          <p class="text-lg text-primary/60">
-                            {{
-                              order.payment_method === 'linepay'
-                                ? 'LINE Pay'
-                                : order.payment_method
-                            }}
-                          </p>
                         </div>
                         <!-- 追蹤編號（如果有） -->
                         <div v-if="order.tracking_number">
@@ -484,9 +499,7 @@
                           >
                             追蹤編號
                           </p>
-                          <p
-                            class="text-lg font-light text-gold-accent/70 tracking-wide break-all"
-                          >
+                          <p class="text-lg font-light text-gold-accent/70 tracking-wide break-all">
                             {{ order.tracking_number }}
                           </p>
                           <button
@@ -511,7 +524,11 @@
                 <!-- 上一頁按鈕 -->
                 <button
                   class="size-11 flex items-center justify-center rounded-full transition-colors bg-white/5"
-                  :class="currentPage === 1 ? 'text-primary/10 cursor-not-allowed' : 'text-primary/20 hover:text-primary'"
+                  :class="
+                    currentPage === 1
+                      ? 'text-primary/10 cursor-not-allowed'
+                      : 'text-primary/20 hover:text-primary'
+                  "
                   :disabled="currentPage === 1"
                   @click="prevPage"
                 >
@@ -523,7 +540,11 @@
                     v-for="page in totalPages"
                     :key="page"
                     class="size-11 flex items-center justify-center rounded-full text-xs font-bold transition-all"
-                    :class="page === currentPage ? 'bg-white/50 text-primary/80' : 'text-primary/30 hover:bg-white/40'"
+                    :class="
+                      page === currentPage
+                        ? 'bg-white/50 text-primary/80'
+                        : 'text-primary/30 hover:bg-white/40'
+                    "
                     @click="goToPage(page)"
                   >
                     {{ page }}
@@ -532,7 +553,11 @@
                 <!-- 下一頁按鈕 -->
                 <button
                   class="size-11 flex items-center justify-center rounded-full transition-colors bg-white/5"
-                  :class="currentPage === totalPages ? 'text-primary/10 cursor-not-allowed' : 'text-primary/20 hover:text-primary'"
+                  :class="
+                    currentPage === totalPages
+                      ? 'text-primary/10 cursor-not-allowed'
+                      : 'text-primary/20 hover:text-primary'
+                  "
                   :disabled="currentPage === totalPages"
                   @click="nextPage"
                 >
@@ -540,8 +565,12 @@
                 </button>
               </div>
               <!-- 頁碼資訊 -->
-              <p class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30">
-                第 {{ String(currentPage).padStart(2, '0') }} 頁 • 共 {{ filteredOrders.length }} 筆訂單
+              <p
+                v-if="filteredOrders.length > 0"
+                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30"
+              >
+                第 {{ String(currentPage).padStart(2, '0') }} 頁 • 共
+                {{ filteredOrders.length }} 筆訂單
               </p>
             </div>
           </div>
@@ -573,12 +602,14 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue';
+  import { ref, computed, onMounted, watch, nextTick } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useAuthStore } from '@/store/auth';
   import { useCoffeeResultStore } from '@/store/coffeeResult';
   import CoffeeIDMini from '@/components/CoffeeIDMini.vue';
+  import BrewLogCard from '@/components/BrewLogCard.vue';
   import { memberService, type Order } from '@/services/memberService';
+  import { brewRecordService, type BrewRecord } from '@/services/brewRecordService';
   import { VueDatePicker } from '@vuepic/vue-datepicker';
   import '@vuepic/vue-datepicker/dist/main.css';
 
@@ -722,6 +753,7 @@
     address.value = authStore.shippingAddress || '';
     await coffeeResultStore.loadFromUserAccount();
     await fetchMemberOrders();
+    await fetchBrewLogs();
   });
 
   // ========== 監聽路由變化 ==========
@@ -737,19 +769,26 @@
   );
 
   // ========== 沖煮記錄 ==========
-  const brewLogs = reactive([
-    { id: 1, date: 'Mar 14, 2024', name: 'Yirgacheffe V60', details: '92°C | 1:16 Ratio' },
-    { id: 2, date: 'Mar 12, 2024', name: 'Gesha Aeropress', details: '88°C | Inverted' },
-    { id: 3, date: 'Mar 10, 2024', name: 'Midnight Blend', details: '4min Steep | Coarse' },
-    { id: 4, date: 'Mar 08, 2024', name: 'Kenya AA Filter', details: '90°C | 1:15 Ratio' },
-    { id: 5, date: 'Mar 05, 2024', name: 'Colombia Supremo', details: '93°C | French Press' },
-    { id: 6, date: 'Mar 01, 2024', name: 'Brazilian Santos', details: '88°C | Cold Brew' },
-  ]);
+  const brewLogs = ref<BrewRecord[]>([]);
+  const isLoadingBrewLogs = ref(false);
+
+  const fetchBrewLogs = async () => {
+    if (!authStore.user?.id) return;
+
+    isLoadingBrewLogs.value = true;
+    try {
+      brewLogs.value = await brewRecordService.getUserBrewRecords(authStore.user.id);
+    } catch (error) {
+      console.error('取得沖煮記錄失敗:', error);
+    } finally {
+      isLoadingBrewLogs.value = false;
+    }
+  };
 
   const showAllBrewLogs = ref(false);
 
   const displayedBrewLogs = computed(() => {
-    return showAllBrewLogs.value ? brewLogs : brewLogs.slice(0, 3);
+    return showAllBrewLogs.value ? brewLogs.value : brewLogs.value.slice(0, 2);
   });
 
   // ========== 方法函式 ==========
@@ -765,7 +804,7 @@
   };
 
   const retakeQuiz = () => {
-    router.push('/coffee-id-test-card');
+    router.push('/coffee-id-test-card?retake=true');
   };
 
   const toggleBrewLogsView = () => {

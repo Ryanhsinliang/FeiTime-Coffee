@@ -6,6 +6,8 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import Chart from 'chart.js/auto';
 import html2canvas from 'html2canvas';
 import CoffeeFairyIcon from '@/components/common/CoffeeFairyIcon.vue';
+import { useAuthStore } from '@/store/auth';
+import { brewRecordService, type FlavorRadar, type AIFeedback } from '@/services/brewRecordService';
 
 // 引入本地樣式 (玻璃效果、動畫等)
 import './style.css';
@@ -51,6 +53,8 @@ import {
 import { useBrewState } from '@/composables/Refine/useBrewState';
 
 const brewState = useBrewState();
+const authStore = useAuthStore();
+
 const {
   canvasContainer,
   showResultModal,
@@ -117,6 +121,9 @@ let lastLogTime = 0;
         loading: false,
         done: false
     });
+
+    // 結果卡片的 ref (用於截圖)
+    const resultCardRef = ref<HTMLElement | null>(null);
 
     const fetchAiAdvice = async (trigger = 'update') => {
         // Simple throttle: Don't call if loading or if called within last 8 seconds (unless it's a phase change trigger)
@@ -399,26 +406,83 @@ let lastLogTime = 0;
 
     const downloadResult = async () => {
       isSnapshotting.value = true;
-      showResultModal.value = false;
       await nextTick();
       await new Promise(r => setTimeout(r, 200));
+
+      let brewImgBase64: string | null = null;
+
       try {
-        const canvas = await html2canvas(document.body, {
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#f0e4d7'
-        });
-        const link = document.createElement('a');
-        link.download = `coffee-sim-full-${Date.now()}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        // 截取結果卡片
+        if (resultCardRef.value) {
+          const canvas = await html2canvas(resultCardRef.value, {
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#fdfbf7',
+            scale: 1 // 降低尺寸以減少檔案大小
+          });
+
+          // 取得截圖 base64（使用 JPEG 格式並降低品質以減少大小）
+          brewImgBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+          // 下載截圖
+          const link = document.createElement('a');
+          link.download = `brew-result-${Date.now()}.png`;
+          link.href = brewImgBase64;
+          link.click();
+        }
       } catch (err) {
         console.error("Screenshot failed:", err);
         alert("截圖失敗，請稍後再試。");
-      } finally {
-        isSnapshotting.value = false;
-        showResultModal.value = true;
       }
+
+      // 保存沖煮記錄到後端
+      if (authStore.isLoggedIn && authStore.user) {
+        try {
+          // 組裝風味雷達數據
+          const flavorRadarData: FlavorRadar = {
+            sweetness: flavorScores.value[0],
+            acidity: flavorScores.value[1],
+            clarity: flavorScores.value[2],
+            body: flavorScores.value[3],
+            aftertaste: flavorScores.value[4]
+          };
+
+          // 組裝 AI 反饋數據
+          const aiFeedbackData: AIFeedback | null = aiReport.done ? {
+            summary: aiReport.summary,
+            taste_prediction: aiReport.taste_prediction,
+            top_issues: aiReport.top_issues,
+            next_attempt_plan: aiReport.next_attempt_plan
+          } : null;
+
+          // 發送到後端（不存 brew_img，改用組件動態渲染）
+          // 注意：如果後端尚未新增 uniformity 欄位，先暫時移除
+          await brewRecordService.saveBrewLog({
+            title: `沖煮記錄 ${new Date().toLocaleDateString('zh-TW')}`,
+            bean_roast: roastLabel.value,
+            grind_level: grindLabel.value,
+            dose_weight: coffeeDose,
+            total_water: Math.round(totalWater.value),
+            pour_count: pours.value,
+            brew_time: formattedTime.value,
+            timeline_events: sessionLog.value,
+            extraction_yield: currentExtractionIndex.value,
+            // uniformity: currentUniformityIndex.value, // 需要先在後端 Strapi 新增此欄位
+            flavor_radar: flavorRadarData,
+            ai_feedback: aiFeedbackData,
+            is_public: false,
+            user: authStore.user.documentId || authStore.user.id
+          });
+
+          console.log('沖煮記錄已保存');
+          alert('沖煮記錄已保存！');
+        } catch (err) {
+          console.error('保存沖煮記錄失敗:', err);
+          alert('保存沖煮記錄失敗，請查看 Console');
+        }
+      }
+
+      isSnapshotting.value = false;
     };
 
     const copyShareLink = () => {
@@ -1104,7 +1168,7 @@ let lastLogTime = 0;
 
             <!-- Result Modal -->
             <div v-if="showResultModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-[#3e2723]/20 backdrop-blur-sm pointer-events-auto transition-opacity duration-300 overflow-y-auto py-8">
-                <div class="glass-strong p-8 rounded-3xl w-full max-w-lg flex flex-col gap-6 transform scale-100 animate-[fadeIn_0.3s_ease-out] mx-4 my-auto relative">
+                <div ref="resultCardRef" class="glass-strong p-8 rounded-3xl w-full max-w-lg flex flex-col gap-6 transform scale-100 animate-[fadeIn_0.3s_ease-out] mx-4 my-auto relative">
                     
                     <div class="flex justify-between items-center border-b border-[#3e2723]/10 pb-4">
                         <h2 class="text-xl font-bold text-emerald-700 tracking-wider">沖煮完成 (Brewing Complete)</h2>

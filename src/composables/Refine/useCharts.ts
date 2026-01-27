@@ -35,7 +35,7 @@ export function useCharts(
             radarChartInstance = new Chart(radarCtx, {
                 type: 'radar',
                 data: {
-                    labels: ['甜感', '酸質', '乾淨度', '醇厚度', '餘韻'],
+                    labels: ['甜感', '酸度', '澄澈度', '醇厚度', '餘韻'],
                     datasets: [{
                         label: 'Flavor Profile',
                         data: [3, 3, 3, 3, 3],
@@ -122,7 +122,7 @@ export function useCharts(
                 resultRadarInstance = new Chart(ctx, {
                     type: 'radar',
                     data: {
-                        labels: ['甜感', '酸質', '乾淨度', '醇厚度', '餘韻'],
+                        labels: ['甜感', '酸度', '澄澈度', '醇厚度', '餘韻'],
                         datasets: [{
                             label: 'Flavor Profile',
                             data: flavorScores.value,

@@ -223,7 +223,7 @@ export function useBrewState() {
     );
 
     /**
-     * 風味分數陣列 [甜感, 酸質, 乾淨度, 醇厚度, 餘韻]
+     * 風味分數陣列 [甜感, 酸度, 澄澈度, 醇厚度, 餘韻]
      */
     const flavorScores = computed(() => [
         calculateSweetness(configObject.value),

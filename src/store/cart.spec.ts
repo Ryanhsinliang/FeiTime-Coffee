@@ -196,6 +196,19 @@ describe('Cart Store', () => {
         })
     })
 
+    describe('clearLocalCart - 只清空前端', () => {
+        beforeEach(() => {
+            cartStore.items.push(
+                { id: 1, pid: 'c1', name: 'A', price: 100, quantity: 1, image: '', weight: '', stock: 10 }
+            )
+        })
+
+        it('應清空前端購物車', () => {
+            cartStore.clearLocalCart()
+            expect(cartStore.items).toHaveLength(0)
+        })
+    })
+
     describe('clearCart - 清空購物車', () => {
         beforeEach(() => {
             cartStore.items.push(

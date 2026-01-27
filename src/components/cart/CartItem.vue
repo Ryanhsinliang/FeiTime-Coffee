@@ -8,7 +8,7 @@
       <div>
         <div class="flex justify-between items-start gap-2">
           <h3 class="font-bold text-lg leading-tight text-[#1a2e26] font-notoserif">{{ item.name }}</h3>
-          <p class="font-bold text-[#1a2e26] font-notoserif">${{ item.price.toFixed(2) }}</p>
+          <p class="font-bold text-[#1a2e26] font-notoserif">${{ item.price.toFixed(0) }}</p>
         </div>
         <p class="text-[#546e63] text-sm mt-1 font-medium">{{ item.description }}</p>
         <p v-if="item.stock !== undefined && item.stock !== Infinity && item.stock !== 9999" class="text-xs text-[#8C7B5D] mt-1">

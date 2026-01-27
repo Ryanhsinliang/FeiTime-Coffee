@@ -11,7 +11,7 @@
       <div class="flex-1 min-w-0">
         <div class="flex justify-between items-start">
           <h5 class="text-[#1a2e26] font-bold truncate text-base font-notoserif">{{ product.name }}</h5>
-          <span class="text-sm font-bold text-[#1a2e26] font-notoserif">${{ product.price.toFixed(2) }}</span>
+          <span class="text-sm font-bold text-[#1a2e26] font-notoserif">${{ product.price.toFixed(0) }}</span>
         </div>
         <div class="flex items-center gap-1.5 mt-1 mb-2">
           <span

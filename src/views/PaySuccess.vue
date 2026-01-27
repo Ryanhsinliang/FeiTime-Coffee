@@ -1,7 +1,7 @@
 <template>
   <div class="bg-[--main-color]">
     <!-- 打勾 -->
-    <div class="flex flex-col items-center py-[64px] w-[80%] md:w-[450px] lg:w-[450px] mx-auto">
+    <div class="flex flex-col items-center py-[64px] w-[90%] md:w-[450px] lg:w-[450px] mx-auto">
       <div
         class="rounded-full bg-[var(--green-gray)] inline-block w-[100px] h-[100px] text-center leading-[100px] text-[24px] text-white shadow-[0_0_20px_20px_rgba(0,0,0,0.1)]"
       >
@@ -13,7 +13,7 @@
 
       <!-- 訂單資訊 -->
       <div
-        class="bg-white rounded-[12px] border-[#dddddd] border-4 text-[20px] my-[32px] w-[100%] px-[24px] py-[24px]"
+        class="bg-white rounded-[12px] border-[#dddddd] border-4 text-[14px] md:text-[20px] lg:text-[20px] my-[32px] w-[100%] px-[24px] py-[24px]"
       >
         <div class="flex justify-between">
           <p class="text-[#666666]">訂單編號</p>

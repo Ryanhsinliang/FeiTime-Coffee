@@ -20,7 +20,10 @@ export default defineConfig({
   },
   server: {
     host: true,
-    allowedHosts: ['fourpenny-nonirrigable-jeanette.ngrok-free.dev'],
+    allowedHosts: [
+      'fourpenny-nonirrigable-jeanette.ngrok-free.dev',
+      'attendantly-postgenial-jodee.ngrok-free.dev',
+    ],
     port: 5173,
     strictPort: true, // 如果 5173 被佔用就報錯，避免 Ngrok 連錯埠口
     proxy: {

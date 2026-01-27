@@ -1,12 +1,23 @@
 import api from '@/services/api';
 
+// export interface FilterDataRule {
+//   roast?: string;
+//   flavor_type?: string;
+//   processing?: string;
+//   origin?: string;
+//   sort?: string[]; // 例如 ["price:desc"]
+// }
+
 export interface FilterDataRule {
   roast?: string;
   flavor_type?: string;
   processing?: string;
   origin?: string;
-  sort?: string[]; // 例如 ["price:desc"]
-  // name_contains?: string; 之後的搜尋欄
+  sort?: string[];
+  page?: number;
+  pageSize?: number;
+  sortWhich?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export async function getProducts(obj: FilterDataRule = {}) {

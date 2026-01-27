@@ -493,8 +493,11 @@
           <!-- 搜尋欄 -->
 
           <input
+            type="search"
+            enterkeyhint="search"
             v-model.trim="findWord"
             @keyup.enter="find(findWord)"
+            @keydown.enter="find(findWord)"
             class="border-2 border-solid border-[#8f745c] rounded-[8px] w-[90%] lg:w-[60%] text-[24px] py-[4px] px-[8px] my-[40px] mx-[24px]"
             placeholder="喝一杯靜謐的午後時光"
           />

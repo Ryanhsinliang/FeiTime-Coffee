@@ -252,7 +252,7 @@
   });
 
   // 【 串linepay 】
-  const linepayUrl = import.meta.env.VITE_LINK;
+  const linepayUrl = import.meta.env.VITE_API_BASE_URL;
   const useLinePay = async () => {
     try {
       // 防呆

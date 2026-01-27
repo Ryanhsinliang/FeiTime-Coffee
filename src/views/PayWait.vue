@@ -29,7 +29,7 @@
   import { useAuthStore } from '@/store/auth';
 
   const route = useRoute();
-  const linepayUrl = import.meta.env.VITE_LINK;
+  const linepayUrl = import.meta.env.VITE_API_BASE_URL;
 
   let pay = ref('');
   const router = useRouter();

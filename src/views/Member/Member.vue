@@ -811,17 +811,7 @@
     showAllBrewLogs.value = !showAllBrewLogs.value;
   };
 
-  const viewBrewLog = (id: number) => {
-    console.log('View brew log:', id);
-  };
-
-  const editLogName = (id: number) => {
-    console.log('Edit log name:', id);
-  };
-
-  const addNewLog = () => {
-    console.log('Add new log');
-  };
+  const viewBrewLog = (id: number) => {};
 
   // ========== 編輯聯絡資訊 ==========
   const startEditingPhone = () => {

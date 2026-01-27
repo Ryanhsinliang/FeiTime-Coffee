@@ -180,7 +180,6 @@ export const useCartStore = defineStore(
             quantity: targetItem.quantity, // 使用當前總數量
             item_total: itemToAdd.price * targetItem.quantity,
           };
-          console.log('🛒 準備加入購物車 Payload:', payload);
 
           const response = await fetch(`${API_BASE_URL}/api/cart`, {
             method: 'POST',
@@ -216,12 +215,10 @@ export const useCartStore = defineStore(
 
       if (authStore.isLoggedIn && removedItem?.strapiDocumentId) {
         try {
-          console.log('🗑️ Deleting from Strapi:', removedItem.strapiDocumentId);
           const res = await fetch(`${API_BASE_URL}/api/cart/${removedItem.strapiDocumentId}`, {
             method: 'DELETE',
           });
           if (res.ok) {
-            console.log('✅ Delete success');
           } else {
             console.error('❌ Delete failed:', await res.json());
           }
@@ -256,12 +253,6 @@ export const useCartStore = defineStore(
             if (item.strapiDocumentId) {
               // 有 strapiDocumentId，直接 PUT 更新
               try {
-                console.log(
-                  '📝 Updating Strapi quantity:',
-                  item.strapiDocumentId,
-                  'to',
-                  item.quantity
-                );
                 const res = await fetch(`${API_BASE_URL}/api/cart/${item.strapiDocumentId}`, {
                   method: 'PUT',
                   headers: { 'Content-Type': 'application/json' },
@@ -271,7 +262,6 @@ export const useCartStore = defineStore(
                   }),
                 });
                 if (res.ok) {
-                  console.log('✅ Update success');
                 } else {
                   console.error('❌ Update failed:', await res.json());
                 }
@@ -280,7 +270,6 @@ export const useCartStore = defineStore(
               }
             } else {
               // 沒有 strapiDocumentId，先 POST 新增到 Strapi
-              console.log('📝 Item has no strapiDocumentId, creating in Strapi first...');
               try {
                 const payload = {
                   user: authStore.user.documentId || authStore.user.id,
@@ -292,7 +281,6 @@ export const useCartStore = defineStore(
                   quantity: item.quantity,
                   item_total: item.price * item.quantity,
                 };
-                console.log('🛒 Creating cart item with payload:', payload);
 
                 const response = await fetch(`${API_BASE_URL}/api/cart`, {
                   method: 'POST',
@@ -303,7 +291,6 @@ export const useCartStore = defineStore(
                 if (response.ok) {
                   const strapiData = await response.json();
                   item.strapiDocumentId = strapiData.documentId;
-                  console.log('✅ Created in Strapi, documentId:', strapiData.documentId);
                 } else {
                   console.error('❌ Failed to create in Strapi:', await response.json());
                 }
@@ -321,13 +308,11 @@ export const useCartStore = defineStore(
       const authStore = useAuthStore();
       if (authStore.isLoggedIn && authStore.user?.id) {
         try {
-          console.log('🧹 Clearing backend cart for user:', authStore.user.id);
           // 使用 query param 傳遞 userId
           const response = await fetch(`${API_BASE_URL}/api/cart?userId=${authStore.user.id}`, {
             method: 'DELETE',
           });
           if (response.ok) {
-            console.log('✅ Backend cart cleared');
           } else {
             console.warn('❌ Failed to clear backend cart:', await response.json());
           }
@@ -346,13 +331,8 @@ export const useCartStore = defineStore(
      * 用於登出時清空前端資料，但保留後端資料供下次登入時載入
      */
     function clearLocalCart() {
-      console.log('🧹 clearLocalCart() called, items before:', items.value.length);
       items.value = [];
       localStorage.removeItem('cart');
-      console.log(
-        '✅ clearLocalCart() done, localStorage.getItem(\"cart\"):',
-        localStorage.getItem('cart')
-      );
     }
 
     function checkout() {
@@ -376,7 +356,6 @@ export const useCartStore = defineStore(
       }
 
       try {
-        console.log('🔄 從 Strapi 載入購物車... userId:', userId);
         const response = await fetch(`${API_BASE_URL}/api/cart?userId=${userId}`);
 
         if (!response.ok) {
@@ -385,7 +364,6 @@ export const useCartStore = defineStore(
         }
 
         const strapiItems: StrapiCartItemData[] = await response.json();
-        console.log(`📦 從 Strapi 取得 ${strapiItems.length} 筆購物車資料`);
 
         // 將 Strapi 格式轉換為 CartItem 格式
         const mappedItems: CartItem[] = strapiItems.map((item: StrapiCartItemData) => ({
@@ -405,7 +383,6 @@ export const useCartStore = defineStore(
         }));
         // 替換 Pinia 狀態
         items.value = mappedItems;
-        console.log('✅ 購物車同步完成');
       } catch (error) {
         console.error('[Cart] 從 Strapi 載入購物車失敗:', error);
       }
@@ -429,8 +406,6 @@ export const useCartStore = defineStore(
       isLoadingRecommendations.value = true;
 
       try {
-        console.log('🔮 正在取得 AI 推薦...');
-
         // 準備購物車商品資料
         const cartItemsData = items.value.map((item) => ({
           id: item.id,
@@ -458,8 +433,6 @@ export const useCartStore = defineStore(
               stock: rec.stock || 50,
               matchPercentage: rec.matchScore,
             }));
-
-            console.log('✅ AI 推薦載入完成，契合度:', response.aiMessage.matchPercentage);
           } else {
             noProfileMessage.value = response.message || '完成 Coffee ID 測驗以獲得個人化推薦';
             aiMessage.value = null;

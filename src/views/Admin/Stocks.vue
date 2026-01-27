@@ -279,7 +279,6 @@
     try {
       const res = await callProducts(1, 500);
       products.value = res.data || [];
-      console.log('✅ 成功載入產品:', products.value.length, '筆');
     } catch (err: any) {
       console.error('❌ 載入失敗:', err);
       error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
@@ -411,8 +410,6 @@
       if (index !== -1) {
         products.value[index].stock = newStock;
       }
-
-      console.log('✅ 庫存更新成功:', product.pid, '新庫存:', newStock);
 
       updateMessage.value = '庫存更新成功！';
       updateSuccess.value = true;

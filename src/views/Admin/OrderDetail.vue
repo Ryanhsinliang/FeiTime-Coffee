@@ -445,8 +445,6 @@
     try {
       const res = await callSingleOrder(order_number);
       order.value = res.data;
-      console.log('🔍 載入訂單明細:', order_number);
-      console.log('✅ 載入成功:', order.value);
 
       // 如果訂單已有物流資訊，填入表單
       if (order.value.tracking_number) {
@@ -487,17 +485,10 @@
     updateMessage.value = '';
 
     try {
-      console.log('📦 更新物流資訊:', {
-        order_number: order.value.order_number,
-        ...shippingForm.value,
-      });
-
       const res = await callUpdateOrder(order.value.order_number, {
         tracking_number: shippingForm.value.tracking_number,
         shipped_at: new Date(shippingForm.value.shipped_at).toISOString(),
       });
-
-      console.log('✅ 更新成功:', res);
 
       updateMessage.value = '物流資訊更新成功！';
       updateSuccess.value = true;
@@ -523,7 +514,6 @@
 
   onMounted(() => {
     const orderNumber = route.params.order_number as string;
-    console.log('訂單編號:', orderNumber);
 
     if (orderNumber) {
       loadOrder(orderNumber);

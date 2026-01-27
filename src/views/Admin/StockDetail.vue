@@ -336,9 +336,7 @@
   // 載入商品資料
   const loadProduct = async () => {
     try {
-      console.log('🔍 載入商品:', pid);
       const response = await callSingleProduct(pid);
-      console.log('✅ 商品資料:', response.data);
 
       // 深拷貝避免引用問題
       ProductForm.value = JSON.parse(JSON.stringify(response.data));
@@ -376,7 +374,6 @@
       // 一次上傳所有檔案
       for (const file of Array.from(files)) {
         const uploadedImages = await callUploadImage(file);
-        console.log('✅ 上傳成功:', uploadedImages);
 
         // 將上傳的圖片加入表單
         if (Array.isArray(uploadedImages)) {
@@ -424,11 +421,8 @@
         imgIds: ProductForm.value.img.map((img) => img.id),
       };
 
-      console.log('📤 發送更新:', payload);
-
       const response = await callUpdateProduct(pid, payload);
 
-      console.log('✅ 更新成功:', response);
       updateMessage.value = '商品更新成功！';
       updateSuccess.value = true;
 

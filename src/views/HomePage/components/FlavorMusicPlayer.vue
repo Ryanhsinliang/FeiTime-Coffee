@@ -194,10 +194,6 @@
           vinylRotation.value = (((vinylRotation.value + angleDelta) % 360) + 360) % 360;
 
           // 液體容器不調整角度，始終保持在底部（0度）
-
-          console.log(
-            `⏩ Time jump detected: ${timeDiff.toFixed(2)}s, rotating: ${angleDelta.toFixed(0)}°`
-          );
         }
       }
 
@@ -217,11 +213,9 @@
     return new Promise((resolve) => {
       if (window.YT && window.YT.Player) {
         ytAPIReady.value = true;
-        console.log('✅ YouTube API already loaded');
         resolve();
       } else {
         window.onYouTubeIframeAPIReady = () => {
-          console.log('✅ YouTube IFrame API ready');
           ytAPIReady.value = true;
           resolve();
         };
@@ -261,8 +255,6 @@
   };
 
   const destroyPlayer = () => {
-    console.log('🗑️ Destroying player...');
-
     if (progressCheckInterval) {
       clearInterval(progressCheckInterval);
       progressCheckInterval = null;
@@ -292,8 +284,6 @@
       console.error('❌ No video ID provided');
       return;
     }
-
-    console.log('🎬 Initializing player with video:', videoId);
 
     try {
       // 確保容器存在
@@ -337,9 +327,6 @@
               '3': 'buffering',
               '5': 'cued',
             };
-            console.log(
-              `🎵 Player state changed: ${event.data} (${stateNames[event.data] || 'unknown'})`
-            );
 
             // YouTube Player States
             // -1: unstarted
@@ -366,24 +353,19 @@
             // 當開始播放時，初始化播放時間
             if (event.data === 1 && !wasPlaying) {
               lastPlaybackTime.value = event.target.getCurrentTime() || 0;
-              console.log('▶️ Playback started');
             }
 
             // 當暫停時
             if (event.data === 2) {
-              console.log('⏸️ Playback paused');
             }
 
             // 如果影片結束，自動播放下一首
             if (event.data === 0) {
-              console.log('🎵 Video ended, playing next...');
               isPlaying.value = false;
               setTimeout(() => nextRecommendation(), 1000);
             }
           },
           onReady: (event: YTPlayerEvent) => {
-            console.log('✅ YouTube player ready');
-
             // 關鍵修復：先更新播放器引用
             youtubePlayer = event.target;
 
@@ -397,11 +379,9 @@
 
               // 現在才設置 playerReady，確保其他代碼不會過早調用 API
               playerReady.value = true;
-              console.log('✅ Player ready flag set');
 
               // 移動裝置需要手動觸發播放
               if (isMobileDevice.value && userInteracted.value) {
-                console.log('📱 Mobile device detected, attempting to play...');
                 try {
                   youtubePlayer.playVideo();
                 } catch (err) {
@@ -446,8 +426,6 @@
   // 切換影片 - 核心改進
   // ============================================
   const loadVideo = async (videoId: string) => {
-    console.log('🔄 Loading video:', videoId);
-
     if (!videoId) {
       console.error('❌ No video ID provided');
       return;
@@ -458,8 +436,6 @@
     // 如果播放器已經存在且準備好，直接切換影片
     if (isPlayerAvailable()) {
       try {
-        console.log('🔄 Using existing player to load new video');
-
         // 先重置播放時間，但保持旋轉角度
         lastPlaybackTime.value = 0;
 
@@ -479,7 +455,6 @@
           // 等待影片載入完成後再播放
           setTimeout(() => {
             if (isPlayerAvailable()) {
-              console.log('📱 Mobile: Manually triggering playback after loadVideoById');
               try {
                 youtubePlayer!.playVideo();
               } catch (err) {
@@ -490,7 +465,6 @@
         }
 
         // onStateChange 會處理所有狀態更新
-        console.log('✅ Video load initiated');
 
         return;
       } catch (err) {
@@ -501,7 +475,6 @@
     }
 
     // 如果播放器不存在或出錯，重新初始化
-    console.log('🔧 Reinitializing player for video:', videoId);
     isLoadingVideo.value = true;
     isPlaying.value = false;
     lastPlaybackTime.value = 0;
@@ -519,7 +492,6 @@
   // ============================================
   watch(currentVideo, async (newVideo, oldVideo) => {
     if (newVideo && newVideo.videoId !== oldVideo?.videoId) {
-      console.log('🎵 Current video changed:', newVideo.title);
       await loadVideo(newVideo.videoId);
     }
   });
@@ -528,7 +500,6 @@
   // 音樂推薦方法
   // ============================================
   const selectFlavor = async (flavor: Flavor): Promise<void> => {
-    console.log('🎵 Selecting flavor:', flavor.name);
     selectedFlavor.value = flavor;
 
     // 標記使用者已互動（用於移動裝置播放）
@@ -548,7 +519,6 @@
         currentVideos.value = data.videos;
         currentVideoIndex.value = 0;
         aiRecommendation.value = data.recommendation;
-        console.log('✅ Got music recommendations:', data.videos.length, 'videos');
       } else {
         throw new Error(data.message || '暫時無法找到相關音樂');
       }
@@ -563,21 +533,11 @@
   };
 
   const nextRecommendation = async (): Promise<void> => {
-    console.log('⏭️ Next recommendation requested');
-    console.log('📊 Current state:', {
-      currentVideoIndex: currentVideoIndex.value,
-      totalVideos: currentVideos.value.length,
-      isFetchingNext: isFetchingNext.value,
-      musicLoading: musicLoading.value,
-      selectedFlavor: selectedFlavor.value?.name,
-    });
-
     // 清除之前的錯誤，允許重試
     musicError.value = null;
 
     // 如果還有下一首歌曲在當前列表中
     if (currentVideoIndex.value < currentVideos.value.length - 1) {
-      console.log('📋 Playing next video from current list');
       // 直接切換到下一首
       currentVideoIndex.value++;
       return;
@@ -596,7 +556,6 @@
     }
 
     try {
-      console.log('🔄 Fetching new music recommendations');
       isFetchingNext.value = true;
       musicError.value = null;
 
@@ -608,7 +567,6 @@
         currentVideos.value = data.videos;
         currentVideoIndex.value = 0;
         aiRecommendation.value = data.recommendation || aiRecommendation.value;
-        console.log('✅ Got new recommendations:', data.videos.length, 'videos');
       } else {
         throw new Error(data.message || '暫時無法找到更多音樂');
       }
@@ -624,18 +582,14 @@
   // 生命週期
   // ============================================
   onMounted(async () => {
-    console.log('🚀 Component mounted');
-
     // 檢測是否為移動裝置
     isMobileDevice.value = detectMobileDevice();
-    console.log('📱 Is mobile device:', isMobileDevice.value);
 
     initYouTubeAPI();
     await waitForYouTubeAPI();
   });
 
   onBeforeUnmount(() => {
-    console.log('👋 Component unmounting');
     if (animationFrameId) {
       cancelAnimationFrame(animationFrameId);
     }

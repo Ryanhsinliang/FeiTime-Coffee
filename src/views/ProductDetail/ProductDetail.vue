@@ -171,7 +171,9 @@
           autoplay
           muted
           loop
-          class="w-full lg:w-1/2 playsinline webkit-playsinline"
+          playsinline
+          webkit-playsinline
+          class="w-full lg:w-1/2"
         ></video>
       </div>
     </section>

@@ -450,36 +450,9 @@
     }
   };
 
+  // 保存沖煮紀錄到後端（移除截圖下載功能）
   const downloadResult = async () => {
     isSnapshotting.value = true;
-    await nextTick();
-    await new Promise((r) => setTimeout(r, 200));
-
-    let brewImgBase64: string | null = null;
-
-    try {
-      // 截取結果卡片
-      if (resultCardRef.value) {
-        const canvas = await html2canvas(resultCardRef.value, {
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#fdfbf7',
-          scale: 1, // 降低尺寸以減少檔案大小
-        });
-
-        // 取得截圖 base64（使用 JPEG 格式並降低品質以減少大小）
-        brewImgBase64 = canvas.toDataURL('image/jpeg', 0.7);
-
-        // 下載截圖
-        const link = document.createElement('a');
-        link.download = `brew-result-${Date.now()}.png`;
-        link.href = brewImgBase64;
-        link.click();
-      }
-    } catch (err) {
-      console.error('Screenshot failed:', err);
-      alert('截圖失敗，請稍後再試。');
-    }
 
     // 保存沖煮記錄到後端
     if (authStore.isLoggedIn && authStore.user) {
@@ -503,8 +476,7 @@
             }
           : null;
 
-        // 發送到後端（不存 brew_img，改用組件動態渲染）
-        // 注意：如果後端尚未新增 uniformity 欄位，先暫時移除
+        // 發送到後端
         await brewRecordService.saveBrewLog({
           title: `沖煮記錄 ${new Date().toLocaleDateString('zh-TW')}`,
           bean_roast: roastLabel.value,
@@ -515,7 +487,6 @@
           brew_time: formattedTime.value,
           timeline_events: sessionLog.value,
           extraction_yield: currentExtractionIndex.value,
-          // uniformity: currentUniformityIndex.value, // 需要先在後端 Strapi 新增此欄位
           flavor_radar: flavorRadarData,
           ai_feedback: aiFeedbackData,
           is_public: false,
@@ -527,22 +498,11 @@
         console.error('保存沖煮記錄失敗:', err);
         alert('保存沖煮記錄失敗，請查看 Console');
       }
+    } else {
+      alert('請先登入以保存沖煮紀錄');
     }
 
     isSnapshotting.value = false;
-  };
-
-  const copyShareLink = () => {
-    const params = new URLSearchParams();
-    params.set('r', roastLevel.value.toString());
-    params.set('g', grindLevel.value.toString());
-    params.set('w', Math.round(totalWater.value).toString());
-    params.set('t', Math.round(brewTimeSec.value).toString());
-    params.set('p', pours.value.toString());
-    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-    navigator.clipboard.writeText(url).then(() => {
-      alert('連結已複製！(Link Copied)');
-    });
   };
 
   const initThree = () => {
@@ -1468,22 +1428,13 @@
 
           <!-- Actions -->
           <div class="flex flex-col gap-3 mt-2">
-            <div class="flex gap-3">
-              <button
-                @click="downloadResult"
-                class="flex-1 bg-[#3e2723] text-white py-3 rounded-xl font-bold hover:bg-[#5d4037] transition-colors flex justify-center items-center gap-2"
-              >
-                <span v-if="isSnapshotting">📸 處理中...</span>
-                <span v-else>📸 保存畫面 (Save)</span>
-              </button>
-              <button
-                @click="copyShareLink"
-                class="flex-1 glass py-3 rounded-xl font-bold hover:bg-[#3e2723]/5 transition-colors flex justify-center items-center gap-2 text-[#3e2723]"
-              >
-                <span>🔗</span>
-                複製連結 (Copy Link)
-              </button>
-            </div>
+            <button
+              @click="downloadResult"
+              class="w-full bg-[#3e2723] text-white py-3 rounded-xl font-bold hover:bg-[#5d4037] transition-colors flex justify-center items-center gap-2"
+            >
+              <span v-if="isSnapshotting">� 處理中...</span>
+              <span v-else>� 保存沖煮紀錄</span>
+            </button>
             <button
               @click="resetSimulation"
               class="w-full py-2 text-sm text-[#8d6e63] hover:text-red-600 transition-colors"

@@ -1,19 +1,36 @@
 <template>
-  <header
-    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-10 flex-shrink-0"
-  >
-    <button class="w-10 h-10 hover:text-[#e27312] relative">
-      <i class="fa-regular fa-bell text-2xl"></i>
-      <span
-        class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"
-      ></span>
-    </button>
-  </header>
-
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
-    <section>
-      <h2 class="text-3xl font-bold">訂單管理</h2>
-      <p class="text-gray-400 text-sm">主要管理消費者訂單與出貨事宜。</p>
+    <!-- 更新成功/錯誤提示 -->
+    <div
+      v-if="updateMessage"
+      class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 mb-6 p-4 rounded-lg"
+      :class="
+        updateSuccess
+          ? 'bg-green-100 text-green-800 border border-green-200'
+          : 'bg-red-100 text-red-800 border border-red-200'
+      "
+    >
+      {{ updateMessage }}
+    </div>
+
+    <section class="flex justify-between">
+      <div>
+        <h2 class="text-3xl font-bold">訂單管理</h2>
+        <p class="text-gray-400 text-sm">主要管理消費者訂單與出貨事宜。</p>
+      </div>
+      <div>
+        <button
+          @click="handleAutoSync"
+          :disabled="syncing"
+          class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm disabled:opacity-50"
+        >
+          <span class="material-symbols-outlined" :class="{ 'animate-spin': syncing }">
+            autorenew
+          </span>
+          更新貨態
+        </button>
+        <p class="text-gray-400 text-xs text-center">查詢前請先更新。</p>
+      </div>
     </section>
 
     <!-- 搜尋 -->
@@ -33,7 +50,7 @@
       <div class="relative min-w-48 w-full md:w-auto">
         <select
           v-model="dateRange"
-          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer appearance-none"
         >
           <option value="all">全部</option>
           <option value="today">今天</option>
@@ -68,8 +85,8 @@
         </button>
         <button
           class="px-6 py-4 text-sm"
-          :class="activeStatus === 'paid' ? 'font-bold border-b-2' : ''"
-          @click="activeStatus = 'paid'"
+          :class="activeStatus === 'processing' ? 'font-bold border-b-2' : ''"
+          @click="activeStatus = 'processing'"
         >
           待出貨
         </button>
@@ -97,7 +114,7 @@
       </div>
       <div class="hidden lg:flex items-center gap-2 text-xs text-text-secondary px-4">
         <span class="flex size-2 bg-emerald-500 rounded-full"></span>
-        12 筆新訂單
+        {{ processingCount }}筆待出貨訂單需處理
       </div>
     </section>
 
@@ -112,16 +129,13 @@
     <!-- 訂單列表 -->
     <div
       class="overflow-hidden rounded-xl border border-[#e7dacf] bg-white shadow-sm"
-      v-else-if="orders"
+      v-else-if="allOrders.length"
     >
       <table class="w-full text-left">
         <thead>
           <tr class="border-b border-[#e7dacf] bg-[#fcfaf8]">
             <th class="py-4 px-6 text-xs font-bold">
-              <div class="flex items-center gap-1 cursor-pointer">
-                訂單編號
-                <span class="material-symbols-outlined">arrow_downward</span>
-              </div>
+              <div class="flex items-center gap-1 cursor-pointer">訂單編號</div>
             </th>
             <th class="py-4 px-6 text-xs font-bold">訂購者姓名</th>
             <th class="py-4 px-6 text-xs font-bold">下訂商品名稱</th>
@@ -133,7 +147,7 @@
 
         <tbody>
           <tr
-            v-for="order in filteredOrders"
+            v-for="order in paginatedOrders"
             :key="order.order_number"
             @click="goToOrderDetail(order.order_number)"
             class="hover:bg-gray-100 cursor-pointer"
@@ -159,13 +173,13 @@
             </td>
 
             <td class="py-4 px-6 text-center text-sm font-semibold">
-              {{ order.order_status }}
+              {{ orderStatusText(order.order_status) }}
             </td>
 
             <td class="py-4 px-6 text-right text-sm font-bold">${{ order.total_amount }}</td>
           </tr>
 
-          <tr v-if="!filteredOrders.length">
+          <tr v-if="!paginatedOrders.length">
             <td class="py-10 text-center text-sm text-gray-400" colspan="6">
               目前沒有符合條件的訂單
             </td>
@@ -176,53 +190,70 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">共 {{ filteredOrders.length }} 筆</p>
-
-        <!-- 待修改 -->
-        <!-- <p class="text-sm">每頁 20 筆 / 共 {{ filteredOrders.length }} 筆</p>
+        <p class="text-sm">每頁 {{ pageSize }} 筆 / 共 {{ totalFilteredItems }} 筆</p>
 
         <div class="flex items-center gap-2">
           <button
             class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
-            disabled="false"
+            :disabled="currentPage === 1"
+            @click="changePage(currentPage - 1)"
           >
             <i class="fa-solid fa-chevron-left text-sm"></i>
           </button>
+
+          <!-- 頁碼按鈕 -->
           <button
-            class="flex items-center justify-center size-9 rounded-lg bg-[#f09a4e] font-bold text-sm shadow-sm"
+            v-for="page in totalPages"
+            :key="page"
+            class="flex items-center justify-center size-9 rounded-lg font-bold text-sm"
+            :class="page === currentPage ? 'bg-[#f09a4e] shadow-sm' : 'border bg-white'"
+            @click="changePage(page)"
           >
-            1
+            {{ page }}
           </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            2
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            3
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
+
+          <button
+            class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
+            :disabled="currentPage === totalPages || totalPages === 0"
+            @click="changePage(currentPage + 1)"
+          >
             <i class="fa-solid fa-chevron-right text-sm"></i>
           </button>
-        </div> -->
+        </div>
       </div>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue';
+  import { ref, onMounted, computed, watch } from 'vue';
   import { useRouter } from 'vue-router';
-  import { callOrders } from '@/services/adminOrderService';
-  import type { OrderRequest } from '@/services/adminOrderService';
+  import { callOrders, callBulkSyncLogistics } from '@/services/admin/adminOrderService';
+  import type { OrderRequest } from '@/services/admin/adminOrderService';
+  import { orderStatusText } from '@/utils/statusTranslator';
 
   const router = useRouter();
 
-  const orders = ref<OrderRequest[]>([]);
+  const allOrders = ref<OrderRequest[]>([]); // ✅ 儲存全部訂單
   const loading = ref(false);
   const error = ref('');
   const keyword = ref('');
+  const updateMessage = ref('');
+  const updateSuccess = ref(false);
+
+  // 分頁狀態
+  const currentPage = ref(1);
+  const pageSize = ref(20);
 
   // 目前選到的 tab 狀態
-  type TabStatus = 'all' | 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
+  type TabStatus =
+    | 'all'
+    | 'pending'
+    | 'paid'
+    | 'processing'
+    | 'shipped'
+    | 'delivered'
+    | 'cancelled';
   const activeStatus = ref<TabStatus>('all');
 
   // 訂購日期篩選
@@ -237,14 +268,15 @@
     );
   }
 
+  // 載入全部訂單資料
   async function loadOrders() {
     loading.value = true;
     error.value = '';
 
     try {
-      const res = await callOrders();
-      orders.value = res.data || [];
-      console.log('✅ 成功載入訂單:', orders.value.length, '筆');
+      const res = await callOrders(1, 500);
+      allOrders.value = res.data || [];
+      console.log('✅ 成功載入訂單:', allOrders.value.length, '筆');
     } catch (err: any) {
       console.error('❌ 載入失敗:', err);
       error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
@@ -253,18 +285,58 @@
     }
   }
 
-  // 篩選訂單狀態
+  // 一鍵更新鍵更新物流狀態
+  const syncing = ref(false); // 用來顯示背景同步狀態
+
+  async function handleAutoSync() {
+    // 如果正在同步中則跳過，避免重複觸發
+    if (syncing.value) return;
+
+    syncing.value = true;
+    console.log('🔄 背景物流同步啟動...');
+    updateMessage.value = '';
+
+    try {
+      const res = await callBulkSyncLogistics();
+
+      // 如果 message 裡顯示有更新 (updatedCount > 0)，則重新抓取列表
+      if (res.success) {
+        console.log('✅ 物流同步完成:', res.message);
+
+        updateMessage.value = `${res.message}`;
+        updateSuccess.value = true;
+        // 同步完成後，重新呼叫 loadOrders 刷新畫面的狀態
+        await loadOrders();
+
+        // 3秒後清除提示訊息
+        setTimeout(() => {
+          updateMessage.value = '';
+        }, 3000);
+      }
+    } catch (err: any) {
+      console.error('❌ 自動同步物流失敗:', err);
+      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
+      updateSuccess.value = false;
+      // 3秒後清除提示訊息
+      setTimeout(() => {
+        updateMessage.value = '';
+      }, 3000);
+    } finally {
+      syncing.value = false;
+    }
+  }
+
+  //  先篩選
   const filteredOrders = computed(() => {
-    let result = orders.value;
+    let result = allOrders.value;
 
     // 狀態 tab
     if (activeStatus.value !== 'all') {
       result = result.filter((o) => o.order_status === activeStatus.value);
     }
 
-    // 訂購日期篩選（createdAt）
+    // 訂購日期篩選
     const now = new Date();
-
     result = result.filter((o) => {
       if (dateRange.value === 'all') return true;
       if (!o.createdAt) return false;
@@ -276,7 +348,6 @@
         return isSameLocalDate(created, now);
       }
 
-      // 用「距今幾天」判斷（避免時區/跨日）
       const diffMs = now.getTime() - created.getTime();
       const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
@@ -305,21 +376,53 @@
         return hay.includes(key);
       });
     }
+
     return result;
   });
 
-  // 清除篩選
+  // 計算待出貨訂單數量
+  const processingCount = computed(
+    () => allOrders.value.filter((o) => o.order_status === 'processing').length
+  );
+
+  // ✅ 計算篩選後的總筆數和總頁數
+  const totalFilteredItems = computed(() => filteredOrders.value.length);
+  const totalPages = computed(() => Math.ceil(totalFilteredItems.value / pageSize.value));
+
+  // ✅ 再做分頁切割
+  const paginatedOrders = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return filteredOrders.value.slice(start, end);
+  });
+
+  // ✅ 換頁功能
+  function changePage(page: number) {
+    if (page < 1 || page > totalPages.value) return;
+    currentPage.value = page;
+  }
+
+  // ✅ 清除篩選時重置頁碼
   function clearFilters() {
     keyword.value = '';
     activeStatus.value = 'all';
     dateRange.value = 'all';
+    currentPage.value = 1; // 重置頁碼
   }
+
+  // ✅ 監聽篩選條件變化，重置頁碼
+  watch([activeStatus, dateRange, keyword], () => {
+    currentPage.value = 1;
+  });
 
   function goToOrderDetail(order_number: string) {
     router.push({ name: 'AdminOrderDetail', params: { order_number } });
   }
 
   onMounted(() => {
+    // 加載列表
     loadOrders();
+    // 背景執行同步
+    // handleAutoSync();
   });
 </script>

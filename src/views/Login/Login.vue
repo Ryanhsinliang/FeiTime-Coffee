@@ -78,7 +78,7 @@
                   </span>
                   <input
                     v-model="form.email"
-                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 py-3.5 text-base text-text-main placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 px-4 pl-11 py-3.5 text-base text-text-main placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     id="email"
                     placeholder="barista@coffeeco.com"
                     type="text"
@@ -97,7 +97,7 @@
                   </span>
                   <input
                     v-model="form.password"
-                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 dark:bg-white/5 dark:border-white/10 px-4 pl-11 pr-11 py-3.5 text-base text-text-main placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                    class="form-input w-full rounded-xl border border-border-gray bg-background-light/50 px-4 pl-11 pr-11 py-3.5 text-base text-text-main placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     id="password"
                     placeholder="••••••••"
                     :type="isPasswordVisible ? 'text' : 'password'"
@@ -152,16 +152,16 @@
             </form>
 
             <div class="relative flex py-2 items-center">
-              <div class="flex-grow border-t border-border-gray dark:border-white/10"></div>
+              <div class="flex-grow border-t border-border-gray dark:border-gray-600"></div>
               <span class="flex-shrink-0 mx-4 text-sm text-text-muted">或使用其他方式登入</span>
-              <div class="flex-grow border-t border-border-gray dark:border-white/10"></div>
+              <div class="flex-grow border-t border-border-gray dark:border-gray-600"></div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="flex justify-center">
               <button
                 @click="handleGoogleLogin"
                 :disabled="isGoogleLoading"
-                class="flex items-center justify-center gap-3 rounded-xl border border-border-gray bg-white dark:bg-white/5 dark:border-white/10 px-4 py-3 text-sm font-medium text-text-main hover:bg-background-light dark:hover:bg-[#abb7a5] transition-colors"
+                class="flex items-center justify-center gap-3 rounded-xl border border-border-gray bg-white dark:bg-white/5 px-4 py-3 text-sm font-medium text-text-main hover:bg-background-light dark:hover:bg-[#abb7a5] transition-colors"
                 type="button"
               >
                 <i class="fa-brands fa-google" style="color: #abb7a5"></i>
@@ -189,6 +189,7 @@
   import { useAuthStore } from '../../store/auth';
   import { useRouter, useRoute } from 'vue-router';
   import { useReCaptcha } from 'vue-recaptcha-v3';
+  import { googleAuthService } from '@/services/googleAuthService';
 
   const authStore = useAuthStore();
   const router = useRouter();
@@ -276,6 +277,9 @@
           localStorage.removeItem('rememberedEmail');
         }
         const redirectTo = route.query.redirect as string;
+        if (redirectTo && redirectTo.includes('coffee-id-test-card')) {
+          localStorage.setItem('pending_coffee_save', 'manual');
+        }
         if (redirectTo) {
           router.push(redirectTo);
         } else {
@@ -292,12 +296,17 @@
   };
 
   function handleGoogleLogin() {
-    isGoogleLoading.value = true;
-    errorMessage.value = '';
-    oauthError.value = '';
-
     try {
-      authStore.handleGoogleLogin();
+      isGoogleLoading.value = true;
+      const redirectTo = route.query.redirect as string;
+      if (redirectTo && redirectTo.includes('coffee-id-test-card')) {
+        localStorage.setItem('pending_coffee_save', 'manual');
+      }
+      const finalPath = redirectTo || '/';
+      localStorage.setItem('redirectAfterLogin', finalPath);
+      setTimeout(() => {
+        googleAuthService.initiateGoogleLogin();
+      }, 100);
     } catch (err) {
       isGoogleLoading.value = false;
       errorMessage.value = 'Google 登入啟動失敗';

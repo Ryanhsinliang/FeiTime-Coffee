@@ -59,7 +59,10 @@
       <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
         <!-- Desktop Icons -->
         <!-- Always Visible Cart Icon -->
-        <button class="relative group outline-none flex items-center justify-center" @click="toggleCart">
+        <button
+          class="relative group outline-none flex items-center justify-center"
+          @click="toggleCart"
+        >
           <span
             class="material-symbols-outlined transition-transform group-hover:scale-110 leading-none"
             :style="textColorStyle"

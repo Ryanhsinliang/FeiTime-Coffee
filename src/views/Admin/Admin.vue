@@ -3,7 +3,7 @@
   import AdminHeader from '@/components/AdminHeader.vue';
 </script>
 <template>
-  <section class="flex h-screen">
+  <section class="flex h-screen bg-[#faf9ee]">
     <aside class="fixed top-0 left-0 bottom-0 w-64">
       <AdminSidebar />
     </aside>

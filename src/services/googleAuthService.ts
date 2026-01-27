@@ -2,7 +2,6 @@ import axios from 'axios';
 
 export const googleAuthService = {
   initiateGoogleLogin(): void {
-    localStorage.setItem('redirectAfterLogin', window.location.pathname);
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     window.location.href = `${apiBaseUrl}/api/connect/google`;
   },

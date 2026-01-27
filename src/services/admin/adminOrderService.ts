@@ -48,10 +48,13 @@ export interface OrderUser {
 
 export interface OrderListResponse {
   data: OrderRequest[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number; // 總頁數
+      total: number; // 總筆數
+    };
   };
 }
 
@@ -66,7 +69,7 @@ export interface updateOrderRequest {
 }
 
 //呼叫 後端 Express 的 API
-export async function callOrders(page = 1, pageSize = 100): Promise<OrderListResponse> {
+export async function callOrders(page = 1, pageSize = 500): Promise<OrderListResponse> {
   const res = await api.get<OrderListResponse>('/api/admin-orders', {
     params: {
       page,
@@ -90,5 +93,18 @@ export async function callUpdateOrder(
   // 後端處理完後，回來跟我說的結果
 ): Promise<{ success: boolean; message: string; data: OrderRequest }> {
   const res = await api.put(`/api/admin-orders/${order_number}`, data);
+  return res.data;
+}
+
+// 批量同步物流的結果介面
+export interface BulkSyncResponse {
+  success: boolean;
+  message: string;
+  details?: string[];
+}
+
+// ✅ 一鍵同步物流狀態
+export async function callBulkSyncLogistics(): Promise<BulkSyncResponse> {
+  const res = await api.post<BulkSyncResponse>('/api/admin-orders/bulk-sync');
   return res.data;
 }

@@ -567,7 +567,7 @@
             <!-- 加入購物車按紐 -->
             <div
               class="rounded-full bg-[#222222] inline-block px-[17px] py-[12px] absolute text-white font-bold bottom-[16px] right-[20px] z-10"
-              @click.stop.prevent=""
+              @click.stop.prevent="addToCart(p)"
             >
               <!-- 使用.stop.prevent 讓事件止於【 + 】不要擴散到跳轉 -->
               <i class="fa-solid fa-plus"></i>
@@ -590,9 +590,10 @@
   import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import { useCartStore } from '@/store/cart';
+  import { useAuthStore } from '@/store/auth';
 
+  const authStore = useAuthStore();
   const cartStore = useCartStore();
-  const addToCart = cartStore.addItem;
 
   // 手機板 側邊選單開關
   const he = ref(true); // 定義 true 為【 > 】
@@ -685,6 +686,7 @@
   const takeSort = async () => {
     // 當使用下拉式選單 執行排序的函數
     if (!sortWhich.value) return;
+    findWord.value = '';
 
     try {
       await getcoffee({ sort: [`${sortWhich.value}:desc`] }); // 抓取一個依照 sortWhich 高到低排序的產品陣列 sortWhich可能是 價錢、人氣度...
@@ -721,6 +723,26 @@
     }
   };
 
+  // 加入購物車
+  const addToCart = (product: any) => {
+    if (authStore.isLoggedIn == false) {
+      alert('請先登入！');
+      return;
+    }
+    if (product.stock < 1) {
+      alert('❌ 庫存不足！');
+      return;
+    }
+    cartStore.addItem({
+      id: product.id,
+      pid: String(product.id),
+      name: product.name,
+      price: product.price,
+      image: product.img[0].formats.large.url,
+      stock: product.stock,
+    });
+  };
+
   // 記錄打勾狀態 用於清空
   const filterData = reactive({
     roast: '',
@@ -732,15 +754,11 @@
   // 清空
   const reset = () => {
     findWord.value = '';
-    filterData.roast = '';
-    filterData.flavor_type = '';
-    filterData.processing = '';
-    filterData.origin = '';
+    sortWhich.value = '';
+    sortHe.value = true;
+    cannotFind.value = false;
+    router.push('/product');
   };
-
-  onMounted(async () => {
-    await getcoffee({});
-  });
 
   // 前端路由
   const router = useRouter();
@@ -760,8 +778,13 @@
   watch(
     // 如果網址變了 (按了新按鈕)  要重新抓資料
     () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值
-    () => {
+    (newQuery) => {
       cannotFind.value = false;
+      findWord.value = '';
+      filterData.roast = (newQuery.roast as string) || '';
+      filterData.flavor_type = (newQuery.flavor_type as string) || '';
+      filterData.processing = (newQuery.processing as string) || '';
+      filterData.origin = (newQuery.origin as string) || '';
       first();
     },
     { immediate: true } // 載入頁面時 馬上執行一次來顯示全部產品

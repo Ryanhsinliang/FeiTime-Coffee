@@ -14,14 +14,6 @@
               <p class="text-[#222222] font-[600] py-[8px] text-[20px]">宅配取貨</p>
               <p class="text-[#666666]">約3~5個工作天</p>
             </div>
-            <!-- 店icon
-            <div
-              class="cursor-pointer flex flex-col items-center border-2 border-[--green-gray] rounded-[16px] pb-[12px] pt-[20px] mb-[12px] md:mb-0 lg:mb-0 mx-auto md:mx-[12px] lg:mx-[12px] w-[200px] md:w-[50%] lg:w-[50%]"
-            >
-              <i class="fa-solid fa-shop text-[--green-gray] text-[36px]"></i>
-              <p class="text-[#222222] font-[600] py-[8px] text-[20px]">來店取貨</p>
-              <p class="text-[#666666]">約3~5小時</p>
-            </div> -->
           </div>
         </div>
 
@@ -91,61 +83,12 @@
           <div class="flex my-[12px]">
             <input
               type="radio"
-              id="m-paypay"
-              required
-              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
-              name="give-money"
-              v-model="form.payment_method"
-              value="paypay"
-            />
-            <label for="m-paypay" class="pl-[20px]">
-              <img src="./assets/paypay.svg" alt="paypay支付" class="w-[160px] h-[60px]" />
-            </label>
-          </div>
-
-          <div class="flex">
-            <input
-              type="radio"
-              id="m-card"
-              required
-              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
-              name="give-money"
-              v-model="form.payment_method"
-              value="card"
-            />
-            <label for="m-card" class="pl-[20px]">
-              <img
-                src="./assets/kaato.svg"
-                alt="刷卡"
-                class="w-[160px] py-[16px] h-[60px] bg-white"
-              />
-            </label>
-          </div>
-
-          <div class="flex">
-            <input
-              type="radio"
-              id="m-ok711"
-              required
-              class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
-              name="give-money"
-              v-model="form.payment_method"
-              value="convenience"
-            />
-            <label for="m-ok711" class="pl-[20px]">
-              <img src="./assets/ok711.svg" alt="超商付款" class="w-[160px] h-[60px]" />
-            </label>
-          </div>
-
-          <div class="flex my-[12px]">
-            <input
-              type="radio"
               id="m-come"
               required
               class="p-3 border border-gray-300 rounded-md mt-2 mb-4"
               name="give-money"
               v-model="form.payment_method"
-              value="myself"
+              value="cod"
             />
             <label for="m-come" class="pl-[20px]">
               <img src="./assets/come.svg" alt="貨到付款" class="w-[160px] h-[60px]" />
@@ -222,7 +165,9 @@
   import { useRouter } from 'vue-router';
   import { getCart, formGoPost, productsGet } from '@/services/checkout';
   import { orderList } from '@/store/order';
+  import { useAuthStore } from '@/store/auth';
 
+  const authStore = useAuthStore();
   const router = useRouter();
 
   interface UserRule {
@@ -266,9 +211,13 @@
 
   // 【 渲染畫面 + 抓取資料 】 抓DB購物車的資料 渲染畫面 並計算價錢 準備給後端
   onMounted(async () => {
-    // 打API拿這個user.id的人 買的所有產品的物件 的陣列
+    // 防呆 需登入
+    if (authStore.isLoggedIn == false) {
+      router.push({ name: 'Login' });
+      return;
+    }
 
-    const buyId = 26; // 假參數 之後用user.id 到時候把參數放進()
+    const buyId = authStore.user!.id; // 從pinia抓使用者id
     const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列
     const idCart = cartData.filter((obj: CartRule) => {
       if (Number(obj?.user?.id)) {
@@ -384,6 +333,7 @@
 
   // 給 後端 > DB 的訂單資料
   const form = reactive({
+    user: authStore.user!.id.toString(),
     order_items: postProducts.value,
     subtotal: productTotal.value, // 只有商品的價錢
     shipping_fee: 250, //運費

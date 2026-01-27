@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[--main-color]">
+  <div class="bg-[--main-color] pb-[200px]">
     <p class="text-center pt-[100px] text-[40px] font-bold text-[#222222]">讀取中</p>
     <p class="text-center text-[#666666]">若加載時間太久 請重新整理</p>
     <div class="loader"></div>
@@ -26,12 +26,14 @@
   import { ref, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { getCart } from '@/services/checkout';
+  import { useAuthStore } from '@/store/auth';
 
   const route = useRoute();
   const linepayUrl = import.meta.env.VITE_LINK;
 
   let pay = ref('');
   const router = useRouter();
+  const authStore = useAuthStore();
 
   // 【 抓購物車 】
   interface UserRule {
@@ -64,7 +66,7 @@
   // 計算總價錢 準備給後端再打一次賴佩
   onMounted(async () => {
     // 【 1 】 用userid再抓一次資料
-    const buyId = 26; // 假參數 之後用user.id 到時候把參數放進()
+    const buyId = authStore.user!.id;
     const cartData = await getCart(); // 所有人 買的所有產品的物件 的陣列
     const idCart = cartData.filter((obj: CartRule) => {
       if (Number(obj?.user?.id)) {
@@ -81,6 +83,7 @@
 
     if (totalCost < 350) {
       alert('沒有訂單');
+      router.push({ name: 'Login' });
       return;
       // 防呆 總金額 會 >= 最低價產品的價格
     } else {
@@ -119,6 +122,8 @@
         // console.error('確認失敗：', error.res?.data || error.message);
         router.push('/payment-cancel');
       }
+    } else {
+      router.push({ name: 'Login' });
     }
   });
 </script>

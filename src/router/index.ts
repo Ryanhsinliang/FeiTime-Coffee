@@ -5,8 +5,6 @@ import Product from '@/views/Product/Product.vue';
 import ProductDetail from '@/views/ProductDetail/ProductDetail.vue';
 import CoffeeIdTest from '@/views/CoffeeIdTest/CoffeeIdTest.vue';
 import CoffeeIdTestCard from '@/views/CoffeeIdTest/CoffeeIdTestCard.vue';
-import CoffeeSimulatorT1T from '@/views/CoffeeLabT1-T/CoffeeSimulatorT1T.vue';
-import CoffeeSimulatorT1TP1 from '@/views/CoffeeLabT1-T-P1/CoffeeSimulatorT1TP1.vue';
 import UltraCoffeeSimulator from '@/views/UltraCoffeeSimulator/UltraCoffeeSimulator.vue';
 import RefineSimulator from '@/views/RefineSimulator/RefineSimulator.vue';
 import Login from '@/views/Login/Login.vue';
@@ -23,6 +21,7 @@ import AdminOrderDetail from '@/views/Admin/OrderDetail.vue';
 import AdminStocks from '@/views/Admin/Stocks.vue';
 import AdminStockDetail from '@/views/Admin/StockDetail.vue';
 import AdminUsers from '@/views/Admin/AdminUsers.vue';
+import AdminUserMe from '@/views/Admin/AdminUserMe.vue';
 import AdminUserDetail from '@/views/Admin/AdminUserDetail.vue';
 import Checkout from '@/views/Checkout/Checkout.vue';
 import PayCancel from '@/views/PayCancel.vue';
@@ -131,11 +130,16 @@ const routes = [
         component: AdminStockDetail,
       },
 
-      // 顧客
+      // 使用者
       {
         path: 'users',
         name: 'AdminUsers',
         component: AdminUsers,
+      },
+      {
+        path: 'users/me',
+        name: 'AdminUserMe',
+        component: AdminUserMe,
       },
       {
         path: 'users/:id',
@@ -144,6 +148,49 @@ const routes = [
         props: true,
       },
     ],
+  },
+  {
+    path: '/checkout',
+    name: 'Checkout',
+    component: Checkout,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: '/payment-cancel',
+    name: 'payment-cancel',
+    component: PayCancel,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: '/payment-wait',
+    name: 'payment-wait',
+    component: PayWait,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: '/payment-success',
+    name: 'payment-success',
+    component: PaySuccess,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: '/email-confirmed',
+    name: 'EmailConfirmed',
+    component: EmailConfirmed,
+  },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: ForgotPassword,
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword,
   },
 ];
 

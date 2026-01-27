@@ -105,8 +105,8 @@
 
 <script setup lang="ts">
   import CoffeeID from '../../components/CoffeeID.vue';
-  import { reactive, computed, onMounted, ref } from 'vue';
-  import type { Scores, Option, Question, Answer } from './type';
+  import { reactive, computed, onMounted, ref, nextTick } from 'vue';
+  import type { Option, Question, Answer } from './type';
   import { questionAPI, quizAPI } from '@/services/questionService';
   import bgImage from './assets/img/bgImage.jpg';
   import { useCoffeeResultStore } from '@/store/coffeeResult';
@@ -133,7 +133,21 @@
     }
   };
 
-  onMounted(fetchQuetions);
+  onMounted(async () => {
+    const backFromLogin = localStorage.getItem('pending_coffee_save') === 'manual';
+    const savedResult = localStorage.getItem('temp_coffee_result');
+    if (backFromLogin && savedResult) {
+      const resultData = JSON.parse(savedResult);
+      coffeeResultStore.setResult(resultData);
+      coffeeResultStore.personaId = resultData.personaId;
+      localStorage.removeItem('pending_coffee_save');
+      await nextTick();
+    } else if (coffeeResultStore.hasResult && !backFromLogin) {
+      coffeeResultStore.clearResult();
+      localStorage.removeItem('temp_coffee_result');
+    }
+    fetchQuetions();
+  });
 
   const answeredCount = computed(() => quizData.answers.filter((a) => a !== undefined).length);
   const progressWidth = computed(() => (answeredCount.value / quizData.questions.length) * 100);
@@ -172,12 +186,14 @@
       const { data } = await quizAPI.calculateScores(validAnswers);
 
       if (data.success) {
-        coffeeResultStore.setResult({
+        const resultData = {
           scores: data.data.scores,
           maxScores: data.data.maxScores,
           personaId: '',
           answers: validAnswers,
-        });
+        };
+        coffeeResultStore.setResult(resultData);
+        localStorage.setItem('temp_coffee_result', JSON.stringify(resultData));
         const scores = coffeeResultStore.normalizedScores;
 
         if (scores) {
@@ -185,6 +201,8 @@
 
           if (persona) {
             coffeeResultStore.personaId = persona.id;
+            resultData.personaId = persona.id;
+            localStorage.setItem('temp_coffee_result', JSON.stringify(resultData));
           }
         }
 

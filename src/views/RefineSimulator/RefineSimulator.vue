@@ -1197,7 +1197,7 @@
 
 <template>
   <div
-    class="relative w-full h-screen text-[#3e2723] select-none"
+    class="refine-simulator relative w-full h-screen text-[#3e2723] select-none"
     style="font-family: 'LXGW WenKai TC', serif"
   >
     <!-- 3D Container -->
@@ -1213,7 +1213,7 @@
         class="fixed left-0 top-24 z-40 md:hidden h-12 pl-2 pr-3 bg-white/80 backdrop-blur-sm rounded-r-full shadow-lg border border-l-0 border-[#3e2723]/20 flex items-center gap-1 transition-transform active:scale-95 text-[#3e2723] pointer-events-auto"
       >
         <span class="text-lg animate-spin-slow">⚙️</span>
-        <span class="text-[10px] font-bold vertical-rl">設定</span>
+        <span class="text-sm font-bold vertical-rl">設定</span>
       </button>
 
       <!-- 2. Stats (Bottom) -->
@@ -1223,18 +1223,18 @@
         class="fixed left-0 top-40 z-40 md:hidden h-12 pl-2 pr-3 bg-white/80 backdrop-blur-sm rounded-r-full shadow-lg border border-l-0 border-[#3e2723]/20 flex items-center gap-1 transition-transform active:scale-95 text-[#3e2723] pointer-events-auto"
       >
         <span class="text-lg">📊</span>
-        <span class="text-[10px] font-bold vertical-rl">分析</span>
+        <span class="text-sm font-bold vertical-rl">分析</span>
       </button>
 
       <!-- Top Controls (Reset) -->
       <!-- Top Controls (Reset & Mobile Finish) -->
       <div
-        class="absolute top-4 right-4 md:top-8 md:right-8 pointer-events-auto z-50 flex flex-col items-end gap-2"
+        class="absolute top-4 right-4 md:top-8 md:right-12 pointer-events-auto z-50 flex flex-col items-end gap-2"
       >
         <button
           v-if="!isSnapshotting"
           @click="resetSimulation"
-          class="glass px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-[#3e2723]/5 transition-colors text-red-600 border-red-600/30"
+          class="glass px-4 py-2 rounded-lg text-sm font-bold uppercase hover:bg-[#3e2723]/5 transition-colors text-red-600 border-red-600/30"
         >
           重置 (Reset)
         </button>
@@ -1243,7 +1243,7 @@
         <button
           v-if="hasStarted && !showResultModal && !isSnapshotting && isMobile"
           @click="finishBrewing"
-          class="glass px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-emerald-600/10 hover:border-emerald-500 transition-all duration-300 text-emerald-700 border-emerald-600/30 flex items-center gap-1 shadow-lg animate-pulse"
+          class="glass px-4 py-2 rounded-lg text-sm font-bold uppercase hover:bg-emerald-600/10 hover:border-emerald-500 transition-all duration-300 text-emerald-700 border-emerald-600/30 flex items-center gap-1 shadow-lg animate-pulse"
         >
           <span class="text-sm">✓</span>
           完成
@@ -1252,11 +1252,11 @@
 
       <!-- Header / Timer / Finish Button -->
       <div
-        class="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4 z-40 w-full max-w-md pointer-events-none"
+        class="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4 z-40 w-full max-w-md pointer-events-none"
       >
         <div class="flex flex-col items-center drop-shadow-md">
           <h1
-            class="text-xs tracking-[0.3em] uppercase mb-2 font-semibold text-white drop-shadow-[0_1px_2px_rgba(62,39,35,0.8)]"
+            class="text-sm tracking-[0.3em] uppercase mb-2 font-semibold text-white drop-shadow-[0_1px_2px_rgba(62,39,35,0.8)]"
           >
             手沖模擬器 (Brew Simulator)
           </h1>
@@ -1265,14 +1265,6 @@
           >
             {{ formattedTime }}
           </div>
-        </div>
-
-        <!-- Start Hint -->
-        <div
-          v-if="!hasStarted && !showResultModal"
-          class="mt-2 text-yellow-700 text-sm animate-pulse flex items-center gap-2 bg-white/60 px-3 py-1 rounded-full backdrop-blur-sm shadow-sm"
-        >
-          <span>按住右側按鈕注水 (Hold Button to Pour)</span>
         </div>
 
         <!-- Finish Button -->
@@ -1317,15 +1309,15 @@
             <!-- Stats List -->
             <div class="flex flex-col justify-center gap-4 text-[#3e2723]">
               <div>
-                <span class="text-xs text-[#8d6e63] uppercase tracking-widest">總時間 (Time)</span>
+                <span class="text-sm text-[#8d6e63] uppercase tracking-widest">總時間 (Time)</span>
                 <div class="text-2xl font-mono">{{ formattedTime }}</div>
               </div>
               <div>
-                <span class="text-xs text-[#8d6e63] uppercase tracking-widest">粉水比 (Ratio)</span>
+                <span class="text-sm text-[#8d6e63] uppercase tracking-widest">粉水比 (Ratio)</span>
                 <div class="text-2xl font-mono">1:{{ currentRatio }}</div>
               </div>
               <div>
-                <span class="text-xs text-[#8d6e63] uppercase tracking-widest">
+                <span class="text-sm text-[#8d6e63] uppercase tracking-widest">
                   萃取率 (Extraction)
                 </span>
                 <div
@@ -1336,7 +1328,7 @@
                 </div>
               </div>
               <div>
-                <span class="text-xs text-[#8d6e63] uppercase tracking-widest">
+                <span class="text-sm text-[#8d6e63] uppercase tracking-widest">
                   均勻度 (Uniformity)
                 </span>
                 <div class="text-xl font-mono text-purple-700">{{ currentUniformityIndex }}</div>
@@ -1367,7 +1359,7 @@
               <div class="w-8 h-8 animate-bounce">
                 <CoffeeFairyIcon />
               </div>
-              <span class="text-xs font-bold animate-pulse text-indigo-800">
+              <span class="text-sm font-bold animate-pulse text-indigo-800">
                 咖啡小精靈正在咕嚕咕嚕品嘗您傑作...
               </span>
             </div>
@@ -1380,19 +1372,19 @@
                 "{{ aiReport.summary }}"
               </div>
 
-              <div class="text-xs text-orange-800 font-medium italic">
+              <div class="text-sm text-orange-800 font-medium italic">
                 預測風味: {{ aiReport.taste_prediction }}
               </div>
 
               <div v-if="aiReport.top_issues.length > 0">
-                <span class="text-[10px] uppercase font-bold text-red-700/70 tracking-wider">
+                <span class="text-sm uppercase font-bold text-red-700/70 tracking-wider">
                   主要問題 (Issues)
                 </span>
                 <ul class="list-disc pl-4 mt-1 space-y-1">
                   <li
                     v-for="issue in aiReport.top_issues"
                     :key="issue"
-                    class="text-xs text-red-900 leading-relaxed"
+                    class="text-sm text-red-900 leading-relaxed"
                   >
                     {{ issue }}
                   </li>
@@ -1401,12 +1393,12 @@
 
               <div v-if="aiReport.next_attempt_plan.length > 0">
                 <div class="flex justify-between items-center mt-2">
-                  <span class="text-[10px] uppercase font-bold text-blue-700/70 tracking-wider">
+                  <span class="text-sm uppercase font-bold text-blue-700/70 tracking-wider">
                     下次建議 (Next Plan)
                   </span>
                   <button
                     @click="copyRecipe"
-                    class="text-[10px] px-2 py-0.5 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+                    class="text-sm px-2 py-0.5 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
                   >
                     📋 複製 (Copy)
                   </button>
@@ -1415,7 +1407,7 @@
                   <li
                     v-for="step in aiReport.next_attempt_plan"
                     :key="step"
-                    class="text-xs text-blue-900 leading-relaxed"
+                    class="text-sm text-blue-900 leading-relaxed"
                   >
                     {{ step }}
                   </li>
@@ -1423,7 +1415,7 @@
               </div>
             </div>
 
-            <div v-else class="text-center py-4 text-xs text-[#8d6e63]">等待報告生成...</div>
+            <div v-else class="text-center py-4 text-sm text-[#8d6e63]">等待報告生成...</div>
           </div>
 
           <!-- Actions -->
@@ -1474,7 +1466,7 @@
             "
           >
             <h2
-              class="text-xs font-bold uppercase tracking-wider text-[#8d6e63] border-b border-[#3e2723]/10 pb-2 flex justify-between"
+              class="text-sm font-bold uppercase tracking-wider text-[#8d6e63] border-b border-[#3e2723]/10 pb-2 flex justify-between"
             >
               <span>參數設定 (Parameters)</span>
               <span
@@ -1490,12 +1482,12 @@
             <div :class="isMobile ? 'flex-1 overflow-y-auto min-h-0 pr-1' : ''">
               <!-- Roast Level -->
               <div class="flex flex-col gap-1 mb-3">
-                <div class="flex justify-between text-[10px] text-[#3e2723]">
+                <div class="flex justify-between text-sm text-[#3e2723]">
                   <span>烘焙度 (Roast)</span>
                   <span class="text-orange-600">{{ roastLabel }}</span>
                 </div>
                 <input type="range" min="-1" max="1" step="0.1" v-model.number="roastLevel" />
-                <div class="flex justify-between text-[9px] text-[#8d6e63]">
+                <div class="flex justify-between text-sm text-[#8d6e63]">
                   <span>淺 (Light)</span>
                   <span>深 (Dark)</span>
                 </div>
@@ -1503,12 +1495,12 @@
 
               <!-- Grind Level -->
               <div class="flex flex-col gap-1 mb-3">
-                <div class="flex justify-between text-[10px] text-[#3e2723]">
+                <div class="flex justify-between text-sm text-[#3e2723]">
                   <span>研磨度 (Grind)</span>
                   <span class="text-orange-600">{{ grindLabel }}</span>
                 </div>
                 <input type="range" min="-1" max="1" step="0.1" v-model.number="grindLevel" />
-                <div class="flex justify-between text-[9px] text-[#8d6e63]">
+                <div class="flex justify-between text-sm text-[#8d6e63]">
                   <span>細 (Fine)</span>
                   <span>粗 (Coarse)</span>
                 </div>
@@ -1516,15 +1508,15 @@
 
               <!-- Live Stats -->
               <div class="space-y-1 pt-2 border-t border-[#3e2723]/10 text-[#3e2723]">
-                <div class="flex justify-between text-[10px]">
+                <div class="flex justify-between text-sm">
                   <span class="opacity-60">水量 (Water)</span>
                   <span class="font-mono">{{ Math.round(totalWater) }}ml</span>
                 </div>
-                <div class="flex justify-between text-[10px]">
+                <div class="flex justify-between text-sm">
                   <span class="opacity-60">注水次數 (Pours)</span>
                   <span class="font-mono">{{ pours }}</span>
                 </div>
-                <div class="flex justify-between text-[10px]">
+                <div class="flex justify-between text-sm">
                   <span class="opacity-60">粉水比 (Ratio)</span>
                   <span class="font-mono">1:{{ currentRatio }}</span>
                 </div>
@@ -1538,7 +1530,7 @@
                 class="w-full flex justify-center items-center gap-2 text-[#3e2723] hover:bg-[#3e2723]/10 px-3 py-2 rounded-lg transition-colors font-bold"
               >
                 <span class="text-xl">&lt;</span>
-                <span class="text-xs">返回 (Back)</span>
+                <span class="text-sm">返回 (Back)</span>
               </button>
             </div>
           </div>
@@ -1561,11 +1553,11 @@
             ]"
           >
             <div class="flex justify-between items-baseline mb-2">
-              <span class="text-[9px] font-bold uppercase tracking-widest text-[#8d6e63]">
+              <span class="text-sm font-bold uppercase tracking-widest text-[#8d6e63]">
                 沖煮指引 (Coach)
               </span>
               <span
-                class="text-xs font-bold"
+                class="text-sm font-bold"
                 :class="{
                   'text-blue-700': bloomPhase === 'wetting',
                   'text-yellow-700': bloomPhase === 'degassing',
@@ -1578,7 +1570,7 @@
 
             <!-- Phase 1: Wetting -->
             <div v-if="bloomPhase === 'wetting'">
-              <div class="flex justify-between text-[9px] text-blue-800 mb-1">
+              <div class="flex justify-between text-sm text-blue-800 mb-1">
                 <span>浸濕程度 (Wetting)</span>
                 <span>{{ Math.round(bloomState.saturation01 * 100) }}%</span>
               </div>
@@ -1590,14 +1582,14 @@
                   <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
                 </div>
               </div>
-              <p class="text-[10px] text-blue-800 mt-2 font-bold text-center">
+              <p class="text-sm text-blue-800 mt-2 font-bold text-center">
                 💧 {{ coachInfo.message }}
               </p>
             </div>
 
             <!-- Phase 2: Degassing -->
             <div v-if="bloomPhase === 'degassing'">
-              <div class="flex justify-between text-[9px] text-yellow-800 mb-1">
+              <div class="flex justify-between text-sm text-yellow-800 mb-1">
                 <span>排氣進度 (Degassing)</span>
                 <span>{{ Math.round(bloomState.gasRelease01 * 100) }}%</span>
               </div>
@@ -1610,7 +1602,7 @@
                 </div>
               </div>
               <div class="flex flex-col items-center mt-2">
-                <p class="text-[10px] text-yellow-800 font-bold animate-pulse">
+                <p class="text-sm text-yellow-800 font-bold animate-pulse">
                   !!停止注水!! (Stop Pouring)
                 </p>
                 <p class="text-lg font-mono font-bold text-yellow-700">
@@ -1621,11 +1613,11 @@
 
             <!-- Phase 3: Ready -->
             <div v-if="bloomPhase === 'ready'">
-              <div class="text-[10px] text-green-800 flex flex-col gap-1 items-center">
+              <div class="text-sm text-green-800 flex flex-col gap-1 items-center">
                 <span class="status-ready font-bold text-green-700">悶蒸完成 (Bloom Ready)</span>
                 <div class="w-full h-px bg-green-600/30 my-1"></div>
                 <span class="text-[#3e2723] font-bold text-sm">{{ coachInfo.message }}</span>
-                <span class="text-[10px] text-[#8d6e63]">{{ coachInfo.subMessage }}</span>
+                <span class="text-sm text-[#8d6e63]">{{ coachInfo.subMessage }}</span>
               </div>
             </div>
 
@@ -1634,7 +1626,7 @@
               v-if="aiAdvice.action"
               class="mt-2 pt-2 border-t border-blue-200/50 flex flex-col gap-1 animate-[fadeIn_0.5s_ease-out]"
             >
-              <div class="text-[10px] font-bold text-indigo-600 flex items-center gap-1">
+              <div class="text-sm font-bold text-indigo-600 flex items-center gap-1">
                 <div class="w-4 h-4">
                   <CoffeeFairyIcon />
                 </div>
@@ -1643,7 +1635,7 @@
               <div class="text-sm font-bold text-[#3e2723] leading-tight">
                 {{ aiAdvice.action }}
               </div>
-              <div class="text-[10px] text-[#8d6e63] leading-tight opacity-90">
+              <div class="text-sm text-[#8d6e63] leading-tight opacity-90">
                 {{ aiAdvice.reason }}
               </div>
             </div>
@@ -1673,7 +1665,7 @@
             "
           >
             <h3
-              class="text-[9px] font-bold uppercase tracking-widest text-[#8d6e63] border-b border-[#3e2723]/10 pb-1 flex justify-between"
+              class="text-sm font-bold uppercase tracking-widest text-[#8d6e63] border-b border-[#3e2723]/10 pb-1 flex justify-between"
             >
               <span>即時分析 (Analysis)</span>
               <span
@@ -1689,10 +1681,10 @@
             <div :class="isMobile ? 'flex-1 overflow-y-auto min-h-0 pr-1' : ''">
               <!-- Extraction Bar -->
               <div class="flex flex-col gap-1 mb-3">
-                <div class="flex justify-between items-baseline text-[10px]">
+                <div class="flex justify-between items-baseline text-sm">
                   <span class="text-[#3e2723]">萃取狀態 (Extraction)</span>
                   <span
-                    class="font-bold text-[9px]"
+                    class="font-bold text-sm"
                     :class="
                       extractionVisual.valNum > 0.25
                         ? 'text-red-600'
@@ -1720,9 +1712,9 @@
 
               <!-- Uniformity Bar -->
               <div class="flex flex-col gap-1 mb-3">
-                <div class="flex justify-between items-baseline text-[10px]">
+                <div class="flex justify-between items-baseline text-sm">
                   <span class="text-[#3e2723]">均勻度 (Uniformity)</span>
-                  <span class="font-bold text-[9px] text-[#3e2723]">
+                  <span class="font-bold text-sm text-[#3e2723]">
                     {{ uniformityVisual.label }}
                   </span>
                 </div>
@@ -1747,8 +1739,8 @@
               <!-- 3. Extraction Graph (Inside Stats Panel on Mobile) -->
               <div class="w-full h-32 p-1 rounded-lg relative flex flex-col bg-white/20">
                 <div class="flex justify-between items-center mb-1">
-                  <h3 class="text-[9px] uppercase tracking-widest text-[#8d6e63]">總水量 / 時間</h3>
-                  <span class="text-[9px] text-blue-700">Target: {{ predictedYield }}%</span>
+                  <h3 class="text-sm uppercase tracking-widest text-[#8d6e63]">總水量 / 時間</h3>
+                  <span class="text-sm text-blue-700">Target: {{ predictedYield }}%</span>
                 </div>
                 <div class="relative flex-1 w-full h-full overflow-hidden">
                   <canvas id="lineChart"></canvas>
@@ -1763,21 +1755,46 @@
                 class="w-full flex justify-center items-center gap-2 text-[#3e2723] hover:bg-[#3e2723]/10 px-3 py-2 rounded-lg transition-colors font-bold"
               >
                 <span class="text-xl">&lt;</span>
-                <span class="text-xs">返回 (Back)</span>
+                <span class="text-sm">返回 (Back)</span>
               </button>
+            </div>
+          </div>
+
+          <!-- POUR Button (Desktop: inside right column, centered below panel) -->
+          <div
+            v-show="!showResultModal && !isMobile"
+            class="hidden md:flex flex-col items-center mt-4 gap-3"
+          >
+            <button
+              class="w-32 h-32 rounded-full bg-blue-600/80 backdrop-blur-sm shadow-[0_0_25px_rgba(37,99,235,0.5)] border-4 border-white/30 flex flex-col items-center justify-center text-white transition-all duration-200 active:scale-95 active:bg-blue-700 select-none touch-none hover:bg-blue-500/90"
+              @mousedown="startPour"
+              @mouseup="stopPour"
+              @mouseleave="stopPour"
+              @touchstart.prevent="startPour"
+              @touchend.prevent="stopPour"
+            >
+              <span class="text-4xl filter drop-shadow-md">💧</span>
+              <span class="text-sm font-bold font-mono tracking-widest mt-1">POUR</span>
+            </button>
+            <!-- Start Hint (below POUR button) -->
+            <div
+              v-if="!hasStarted"
+              class="text-yellow-700 text-base font-bold animate-pulse text-center bg-white/70 px-4 py-2 rounded-full backdrop-blur-sm shadow-sm"
+            >
+              按住開始注水
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Dedicated Pour Button (Independent of UI Overlay Layout) -->
+    <!-- Mobile POUR Button (Fixed position for mobile) -->
     <div
-      v-show="!showResultModal"
-      class="absolute right-2 top-[71%] -translate-y-1/2 z-[60] pointer-events-auto flex flex-col items-center gap-2"
+      v-show="!showResultModal && isMobile"
+      class="fixed right-4 bottom-28 z-[60] pointer-events-auto flex flex-col items-center gap-2 md:hidden"
     >
       <button
-        class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-blue-600/80 backdrop-blur-sm shadow-[0_0_20px_rgba(37,99,235,0.5)] border-4 border-white/30 flex flex-col items-center justify-center text-white transition-all duration-200 active:scale-95 active:bg-blue-700 select-none touch-none hover:bg-blue-500/90"
+        class="w-24 h-24 rounded-full bg-blue-600/80 backdrop-blur-sm shadow-[0_0_20px_rgba(37,99,235,0.5)] border-4 border-white/30 flex flex-col items-center justify-center text-white transition-all duration-200 active:scale-95 active:bg-blue-700 select-none touch-none hover:bg-blue-500/90"
         @mousedown="startPour"
         @mouseup="stopPour"
         @mouseleave="stopPour"
@@ -1785,8 +1802,15 @@
         @touchend.prevent="stopPour"
       >
         <span class="text-3xl filter drop-shadow-md">💧</span>
-        <span class="text-xs font-bold font-mono tracking-widest mt-1">POUR</span>
+        <span class="text-sm font-bold font-mono tracking-widest mt-1">POUR</span>
       </button>
+      <!-- Start Hint (below POUR button) -->
+      <div
+        v-if="!hasStarted"
+        class="text-yellow-700 text-sm font-bold animate-pulse text-center bg-white/70 px-4 py-2 rounded-full backdrop-blur-sm shadow-sm"
+      >
+        按住開始注水
+      </div>
     </div>
   </div>
 </template>

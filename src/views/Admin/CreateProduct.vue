@@ -6,7 +6,7 @@
       <div class="flex items-center text-sm gap-2">
         <p>庫存管理</p>
         <span class="material-symbols-outlined text-lg">chevron_right</span>
-        <p class="font-semibold">商品編號PID: {{ ProductForm.pid }}</p>
+        <p class="font-semibold">新增商品</p>
       </div>
     </div>
   </header>
@@ -15,8 +15,8 @@
     <!-- 標題 -->
     <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
       <div class="flex flex-col gap-1">
-        <h2 class="text-3xl font-extrabold">編輯商品資料</h2>
-        <p class="text-gray-400 text-sm">主要負責修改商品資料。</p>
+        <h2 class="text-3xl font-extrabold">新增商品資料</h2>
+        <p class="text-gray-400 text-sm">主要負責建立新的商品資料。</p>
       </div>
       <button
         type="button"
@@ -41,13 +41,15 @@
       {{ updateMessage }}
     </div>
 
-    <form class="space-y-8 pb-20" @submit.prevent="handleUpdateProduct">
+    <form class="space-y-8 pb-20" @submit.prevent="handleCreateProduct">
       <!-- 商品圖片 -->
       <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
           <span class="material-symbols-outlined text-xl">photo_library</span>
-          <h2 class="text-lg font-bold">商品圖</h2>
-          <p class="text-xs text-[#9a704c]">(檔案大小不得超過5MB。)</p>
+          <h2 class="text-lg font-bold">
+            商品圖
+            <span class="text-red-500">*</span>
+          </h2>
         </div>
         <div class="p-6">
           <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -113,13 +115,17 @@
         </div>
         <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
           <label class="flex flex-col gap-2">
-            <p class="text-sm font-semibold">商品編號PID</p>
+            <p class="text-sm font-semibold">
+              商品編號PID
+              <span class="text-red-500">*</span>
+            </p>
             <input
-              class="w-full rounded-lg border border-[#e7dacf] bg-[#f8f7f6] px-4 py-3 cursor-not-allowed text-[#9a704c]"
+              class="w-full rounded-lg border border-[#e7dacf] px-4 py-3"
               type="text"
-              disabled
-              v-model="ProductForm.pid"
+              required
+              v-model.trim="ProductForm.pid"
             />
+            <p class="text-xs text-[#9a704c]">商品編號不可重複，格式：coffee_0XX</p>
           </label>
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">
@@ -141,6 +147,7 @@
             <input
               class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="text"
+              required
               v-model="ProductForm.english_name"
             />
           </label>
@@ -155,29 +162,41 @@
         </div>
         <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
           <label class="flex flex-col gap-2">
-            <p class="text-sm font-semibold">產地</p>
+            <p class="text-sm font-semibold">
+              產地
+              <span class="text-red-500">*</span>
+            </p>
             <input
               class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="text"
               placeholder="例如：Panama"
+              required
               v-model="ProductForm.origin"
             />
           </label>
           <label class="flex flex-col gap-2">
-            <p class="text-sm font-semibold">處理法</p>
+            <p class="text-sm font-semibold">
+              處理法
+              <span class="text-red-500">*</span>
+            </p>
             <input
               class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="text"
               placeholder="例如：Anaerobic"
+              required
               v-model="ProductForm.processing"
             />
           </label>
           <label class="flex flex-col gap-2">
-            <p class="text-sm font-semibold">烘焙度</p>
+            <p class="text-sm font-semibold">
+              烘焙度
+              <span class="text-red-500">*</span>
+            </p>
             <input
               class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="text"
               placeholder="例如：Light"
+              required
               v-model="ProductForm.roast"
             />
           </label>
@@ -193,7 +212,10 @@
         <div class="p-6 space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <label class="flex flex-col gap-2">
-              <p class="text-sm font-semibold">風味類型</p>
+              <p class="text-sm font-semibold">
+                風味類型
+                <span class="text-red-500">*</span>
+              </p>
               <select
                 class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
                 v-model="ProductForm.flavor_type"
@@ -216,7 +238,10 @@
         </div>
         <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
           <label class="flex flex-col gap-2">
-            <p class="text-sm font-semibold">價格</p>
+            <p class="text-sm font-semibold">
+              價格
+              <span class="text-red-500">*</span>
+            </p>
             <div class="relative">
               <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#9a704c]">$</span>
               <input
@@ -229,7 +254,10 @@
             </div>
           </label>
           <label class="flex flex-col gap-2">
-            <p class="text-sm font-semibold">庫存量(包)</p>
+            <p class="text-sm font-semibold">
+              庫存量(包)
+              <span class="text-red-500">*</span>
+            </p>
             <input
               class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="number"
@@ -239,7 +267,10 @@
             />
           </label>
           <label class="flex flex-col gap-2">
-            <p class="text-sm font-semibold">重量</p>
+            <p class="text-sm font-semibold">
+              重量
+              <span class="text-red-500">*</span>
+            </p>
             <input
               class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="text"
@@ -255,7 +286,10 @@
       <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
           <span class="material-symbols-outlined text-xl">description</span>
-          <h2 class="text-lg font-bold">商品描述</h2>
+          <h2 class="text-lg font-bold">
+            商品描述
+            <span class="text-red-500">*</span>
+          </h2>
         </div>
         <div class="p-6">
           <textarea
@@ -288,7 +322,7 @@
           class="px-8 py-2.5 w-36 rounded-lg text-white text-sm bg-[#e27312] font-bold shadow-md hover:bg-[#d66a10] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           :disabled="updating || uploading"
         >
-          {{ updating ? '儲存中...' : '儲存' }}
+          {{ updating ? '建立商品中...' : '建立商品' }}
         </button>
       </div>
     </form>
@@ -299,24 +333,22 @@
   import { ref, onMounted, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import {
-    callSingleProduct,
-    callUpdateProduct,
+    callCreateProduct,
     callUploadImage,
-    type ProductRequest,
-    type UpdateProductPayload,
+    type CreateProductRequest,
+    type CreateProductPayload,
   } from '@/services/admin/adminProductService';
 
   const route = useRoute();
   const router = useRouter();
 
-  const pid = route.params.pid as string;
   const updating = ref(false);
   const uploading = ref(false);
   const updateMessage = ref('');
   const updateSuccess = ref(false);
 
   // 商品表單資料
-  const ProductForm = ref<ProductRequest>({
+  const ProductForm = ref<CreateProductRequest>({
     name: '',
     english_name: '',
     pid: '',
@@ -331,22 +363,28 @@
     img: [],
     weight: '',
     documentId: '',
+    acidity: 0,
+    sweetness: 0,
+    body: 0,
+    aftertaste: 0,
+    clarity: 0,
+    popularity: 0,
   });
 
   // 載入商品資料
-  const loadProduct = async () => {
-    try {
-      console.log('🔍 載入商品:', pid);
-      const response = await callSingleProduct(pid);
-      console.log('✅ 商品資料:', response.data);
+  // const loadProduct = async () => {
+  //   try {
+  //     console.log('🔍 載入商品:', pid);
+  //     const response = await callSingleProduct(pid);
+  //     console.log('✅ 商品資料:', response.data);
 
-      // 深拷貝避免引用問題
-      ProductForm.value = JSON.parse(JSON.stringify(response.data));
-    } catch (error: any) {
-      console.error('載入商品失敗:', error);
-      alert('載入商品資料失敗');
-    }
-  };
+  //     // 深拷貝避免引用問題
+  //     ProductForm.value = JSON.parse(JSON.stringify(response.data));
+  //   } catch (error: any) {
+  //     console.error('載入商品失敗:', error);
+  //     alert('載入商品資料失敗');
+  //   }
+  // };
 
   // 刪除圖片
   const removeImage = (index: number) => {
@@ -393,10 +431,15 @@
     }
   };
 
-  // 更新商品
-  const handleUpdateProduct = async () => {
+  // 新增商品
+  const handleCreateProduct = async () => {
     // 驗證必填欄位
-    if (!ProductForm.value.name || !ProductForm.value.english_name) {
+    if (!ProductForm.value.pid.trim()) {
+      alert('請填寫商品pid');
+      return;
+    }
+
+    if (!ProductForm.value.name) {
       alert('請填寫商品名稱');
       return;
     }
@@ -410,7 +453,8 @@
     updateMessage.value = '';
 
     try {
-      const payload: UpdateProductPayload = {
+      const payload: CreateProductPayload = {
+        pid: ProductForm.value.pid,
         name: ProductForm.value.name,
         english_name: ProductForm.value.english_name,
         price: Math.max(0, ProductForm.value.price),
@@ -422,26 +466,29 @@
         flavor_type: ProductForm.value.flavor_type,
         description: ProductForm.value.description,
         imgIds: ProductForm.value.img.map((img) => img.id),
+        acidity: ProductForm.value.acidity,
+        sweetness: ProductForm.value.sweetness,
+        body: ProductForm.value.body,
+        aftertaste: ProductForm.value.aftertaste,
+        clarity: ProductForm.value.clarity,
+        popularity: ProductForm.value.popularity,
       };
 
       console.log('📤 發送更新:', payload);
 
-      const response = await callUpdateProduct(pid, payload);
+      const response = await callCreateProduct(payload);
 
       console.log('✅ 更新成功:', response);
-      updateMessage.value = '商品更新成功！';
+      updateMessage.value = '商品新增成功！';
       updateSuccess.value = true;
-
-      // 重新載入商品資料
-      await loadProduct();
 
       // 3秒後清除提示訊息
       setTimeout(() => {
         updateMessage.value = '';
       }, 3000);
     } catch (error: any) {
-      console.error('更新商品失敗:', error);
-      updateMessage.value = error?.response?.data?.error || '更新商品失敗，請重試';
+      console.error('新增商品失敗:', error);
+      updateMessage.value = error?.response?.data?.error || '新增商品失敗，請重試';
       updateSuccess.value = false;
       setTimeout(() => {
         updateMessage.value = '';
@@ -459,11 +506,6 @@
   };
 
   onMounted(() => {
-    if (!pid) {
-      alert('缺少商品編號');
-      router.back();
-      return;
-    }
-    loadProduct();
+    handleCreateProduct;
   });
 </script>

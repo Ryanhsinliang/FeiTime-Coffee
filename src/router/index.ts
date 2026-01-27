@@ -20,6 +20,7 @@ import AdminOrders from '@/views/Admin/Orders.vue';
 import AdminOrderDetail from '@/views/Admin/OrderDetail.vue';
 import AdminStocks from '@/views/Admin/Stocks.vue';
 import AdminStockDetail from '@/views/Admin/StockDetail.vue';
+import AdminCreateProduct from '@/views/Admin/CreateProduct.vue';
 import AdminUsers from '@/views/Admin/AdminUsers.vue';
 import AdminUserMe from '@/views/Admin/AdminUserMe.vue';
 import AdminUserDetail from '@/views/Admin/AdminUserDetail.vue';
@@ -128,6 +129,11 @@ const routes = [
         path: 'stocks/:pid',
         name: 'AdminStockDetail',
         component: AdminStockDetail,
+      },
+      {
+        path: 'stocks/new',
+        name: 'AdminCreateProduct',
+        component: AdminCreateProduct,
       },
 
       // 使用者

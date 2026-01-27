@@ -441,41 +441,52 @@
                           >
                             收件資訊
                           </p>
-                          <div class="space-y-3">
+                          <div class="space-y-5">
                             <div>
-                              <p class="text-xs font-bold text-primary/30 mb-1">收件人</p>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                收件人
+                              </p>
                               <p class="text-lg font-light text-primary/70">
                                 {{ order.recipient_name }}
                               </p>
                             </div>
                             <div>
-                              <p class="text-xs font-bold text-primary/30 mb-1">收件地址</p>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                收件地址
+                              </p>
                               <p class="text-lg text-primary/50 leading-relaxed font-light">
                                 {{ order.recipient_address }}
                               </p>
                             </div>
                             <div>
-                              <p class="text-xs font-bold text-primary/30 mb-1">聯絡電話</p>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                聯絡電話
+                              </p>
                               <p class="text-lg text-primary/50 font-light">
                                 {{ order.recipient_phone }}
                               </p>
                             </div>
+                            <div>
+                              <p
+                                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
+                              >
+                                付款方式
+                              </p>
+                              <p class="text-lg text-primary/60">
+                                {{
+                                  order.payment_method === 'linepay'
+                                    ? 'LINE Pay'
+                                    : order.payment_method
+                                }}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        <!-- 付款方式 -->
-                        <div>
-                          <p
-                            class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
-                          >
-                            付款方式
-                          </p>
-                          <p class="text-lg text-primary/60">
-                            {{
-                              order.payment_method === 'linepay'
-                                ? 'LINE Pay'
-                                : order.payment_method
-                            }}
-                          </p>
                         </div>
                         <!-- 追蹤編號（如果有） -->
                         <div v-if="order.tracking_number">
@@ -540,7 +551,10 @@
                 </button>
               </div>
               <!-- 頁碼資訊 -->
-              <p class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30">
+              <p
+                v-if="filteredOrders.length > 0"
+                class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30"
+              >
                 第 {{ String(currentPage).padStart(2, '0') }} 頁 • 共 {{ filteredOrders.length }} 筆訂單
               </p>
             </div>
@@ -765,7 +779,7 @@
   };
 
   const retakeQuiz = () => {
-    router.push('/coffee-id-test-card');
+    router.push('/coffee-id-test-card?retake=true');
   };
 
   const toggleBrewLogsView = () => {

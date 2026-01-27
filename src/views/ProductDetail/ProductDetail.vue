@@ -112,9 +112,9 @@
               <i :class="showFlavor ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
             </button>
             <p v-show="showFlavor" class="pb-2">
-              {{ descriptionFlavor }}
+              {{ flavorTypeText }}
               <br />
-              核心風味：{{ flavorTagsText.join('、') }}
+              {{ flavorTagsText.join('、') }}
             </p>
           </div>
 
@@ -157,12 +157,18 @@
         <div class="w-full lg:w-1/2 pb-12">
           <div class="w-3/4 mx-auto">
             <h3 class="text-3xl font-semibold text-[#6d654f]">{{ product.name }}</h3>
+<<<<<<< HEAD
             <p class="pt-2 pb-4 text-[#808080]">{{ product.english_name }}</p>
             <p class="text-lg text-[#808080] pt-10">
               {{ descriptionBody }}
             </p>
             <p class="text-lg text-[#808080] pt-4">
               {{ descriptionBody2 }}
+=======
+            <p class="pt-2 text-[#808080]">{{ product.english_name }}</p>
+            <p class="whitespace-pre-line text-lg text-[#6d654f] pt-9">
+              {{ product.description }}
+>>>>>>> issue/59
             </p>
           </div>
         </div>
@@ -171,9 +177,13 @@
           autoplay
           muted
           loop
+<<<<<<< HEAD
           playsinline
           webkit-playsinline
           class="w-full lg:w-1/2"
+=======
+          class="w-full lg:w-1/2 playsinline webkit-playsinline"
+>>>>>>> issue/59
         ></video>
       </div>
     </section>
@@ -284,6 +294,13 @@
     'Tea-like': '茶感',
     Clean: '乾淨',
     Bright: '明亮酸質',
+  };
+
+  const flavorTypeMap: Record<string, string> = {
+    Fruity: '果香清爽',
+    Nutty: '堅果巧克力',
+    Bold: '濃郁厚實',
+    Floral: '花香明亮',
   };
 
   // 2. 組件狀態與邏輯
@@ -470,6 +487,11 @@
   const processingText = computed(() => {
     return product.value ? processingMap[product.value.processing] || product.value.processing : '';
   });
+  const flavorTypeText = computed(() => {
+    return product.value
+      ? flavorTypeMap[product.value?.flavor_type] || product.value?.flavor_type
+      : '';
+  });
 
   const flavorTagsText = computed(() => {
     if (!product.value?.flavor_tags) return [];
@@ -477,21 +499,6 @@
       const tag = tagObj.name;
       return flavorTagsMap[tag] ?? tag;
     });
-  });
-
-  // 產品描述分段
-  const descriptionLines = computed(() => {
-    if (!product.value?.description) return [];
-    return product.value.description.split('\n');
-  });
-  const descriptionFlavor = computed(() => {
-    return descriptionLines.value[0] || '';
-  });
-  const descriptionBody = computed(() => {
-    return descriptionLines.value.slice(1, 2).join('\n');
-  });
-  const descriptionBody2 = computed(() => {
-    return descriptionLines.value.slice(2).join('\n');
   });
 </script>
 

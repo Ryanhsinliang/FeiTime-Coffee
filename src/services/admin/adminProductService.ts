@@ -16,7 +16,6 @@ export interface ProductRequest {
   img: StrapiImage[]; // 產品圖片
   weight: string; // 重量（克）
   documentId: string; // Strapi v5 Document ID
-  publishedAt: string | null; // 上下架狀態
 }
 
 // 基礎圖片型別 (Strapi 格式)
@@ -40,7 +39,6 @@ export interface FlavorTag {
   name: string;
   createdAt?: string;
   updatedAt?: string;
-  publishedAt?: string;
 }
 
 export interface ProductListResponse {
@@ -73,7 +71,53 @@ export interface UpdateProductPayload {
   flavor_tags?: FlavorTag[];
   description?: string;
   imgIds?: number[]; // 用 id 陣列更新圖片關聯
-  publishedAt?: string | null; // 上下架狀態
+}
+
+// 定義商品型別
+export interface CreateProductRequest {
+  name: string; // 產品名稱
+  english_name: string; // 產品英文名稱
+  pid: string; // 產品編號
+  origin: string; // 產地
+  processing: string; // 處理法
+  roast: string; // 烘焙度
+  flavor_type: string; // 風味類型
+  flavor_tags: FlavorTag[]; // 風味標籤
+  description: string; // 產品描述
+  price: number; // 價格
+  stock: number; // 庫存量
+  img: StrapiImage[]; // 產品圖片
+  weight: string; // 重量（克）
+  documentId: string; // Strapi v5 Document ID
+  acidity: number;
+  sweetness: number;
+  body: number;
+  aftertaste: number;
+  clarity: number;
+  popularity: number;
+}
+
+// 新增商品時發送的資料(前端傳給後端)
+export interface CreateProductPayload {
+  pid?: string;
+  name?: string;
+  english_name?: string;
+  price?: number;
+  origin?: string;
+  processing?: string;
+  roast?: string;
+  stock?: number;
+  weight?: string;
+  flavor_type?: string;
+  flavor_tags?: FlavorTag[];
+  description?: string;
+  imgIds?: number[]; // 用 id 陣列更新圖片關聯
+  acidity: number;
+  sweetness: number;
+  body: number;
+  aftertaste: number;
+  clarity: number;
+  popularity: number;
 }
 
 //呼叫 後端 Express 的 API
@@ -101,6 +145,18 @@ export async function callUpdateProduct(
   // 在發送前可以做最後的型別檢查或清理
   const res = await api.put<{ success: boolean; message: string; data: ProductRequest }>(
     `/api/admin-products/${pid}`,
+    payload
+  );
+  return res.data;
+}
+
+// 更新商品資料
+export async function callCreateProduct(
+  payload: CreateProductPayload
+): Promise<{ success: boolean; message: string; data: CreateProductRequest }> {
+  // 在發送前可以做最後的型別檢查或清理
+  const res = await api.post<{ success: boolean; message: string; data: CreateProductRequest }>(
+    '/api/admin-products',
     payload
   );
   return res.data;

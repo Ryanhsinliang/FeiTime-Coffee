@@ -18,13 +18,16 @@
         <h2 class="text-3xl font-bold">庫存管理</h2>
         <p class="text-gray-400 text-sm">主要管理商品庫存。</p>
       </div>
-      <!-- <button
-        class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm disabled:opacity-50"
-      >
-        <span class="material-symbols-outlined">download</span>
-        <p>新增商品</p>
-      </button> -->
-      <p class="text-red-400 text-sm font-bold">待補貨商品數量: {{ restockCount }}</p>
+      <div>
+        <RouterLink
+          to="/admin/stocks/new"
+          class="flex items-center justify-center gap-2 h-10 px-4 bg-white border rounded-lg text-sm font-semibold hover:bg-gray-100 shadow-sm disabled:opacity-50"
+        >
+          <span class="material-symbols-outlined">add</span>
+          <p>新增商品</p>
+        </RouterLink>
+        <p class="text-red-400 text-sm font-bold">待補貨商品數量: {{ restockCount }}</p>
+      </div>
     </section>
 
     <!-- 搜尋 -->
@@ -199,6 +202,12 @@
                   <span>編輯</span>
                 </button>
               </div>
+            </td>
+          </tr>
+
+          <tr v-if="!paginatedProducts.length">
+            <td class="py-10 text-center text-sm text-gray-400" colspan="6">
+              目前沒有符合條件的訂單
             </td>
           </tr>
         </tbody>

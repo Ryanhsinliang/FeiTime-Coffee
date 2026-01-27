@@ -28,7 +28,7 @@
     <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
       <div class="flex flex-col gap-1">
         <h2 class="text-3xl font-extrabold">編輯使用者資料</h2>
-        <p class="text-[#9a704c]">可修改使用者資料及「封鎖狀態」、「身分別」。</p>
+        <p class="text-gray-400 text-sm">可修改使用者資料及「封鎖狀態」、「身分別」。</p>
       </div>
       <button
         type="button"

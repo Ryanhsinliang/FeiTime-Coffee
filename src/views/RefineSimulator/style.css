@@ -1,18 +1,19 @@
 /* Applied LXGW WenKai TC as primary font */
+/* 只鎖定 body 的 overflow，不影響其他樣式 */
 .refine-simulator-body-lock {
     margin: 0;
     overflow: hidden;
     background-color: #f0e4d7;
-    font-family: 'LXGW WenKai TC', 'Inter', sans-serif;
 }
 
-canvas {
+/* 以下樣式只作用在 RefineSimulator 內部 */
+.refine-simulator canvas {
     display: block;
     outline: none;
 }
 
-/* Glassmorphism Utilities (Light Theme) */
-.glass {
+/* Glassmorphism Utilities (Light Theme) - 限定在 RefineSimulator 內 */
+.refine-simulator .glass {
     background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -20,7 +21,7 @@ canvas {
     box-shadow: 0 4px 20px rgba(62, 39, 35, 0.05);
 }
 
-.glass-strong {
+.refine-simulator .glass-strong {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -28,22 +29,24 @@ canvas {
     box-shadow: 0 20px 50px rgba(62, 39, 35, 0.15);
 }
 
-/* Custom Scrollbar (Warm Theme) - 使用標準屬性保持預設寬度 */
-* {
+/* Custom Scrollbar - 只作用在 RefineSimulator 內 */
+.refine-simulator,
+.refine-simulator * {
     scrollbar-color: #a1887f transparent;
 }
 
-input[type=range] {
+/* Input Range - 限定在 RefineSimulator 內 */
+.refine-simulator input[type=range] {
     -webkit-appearance: none;
     width: 100%;
     background: transparent;
 }
 
-input[type=range]:focus {
+.refine-simulator input[type=range]:focus {
     outline: none;
 }
 
-input[type=range]::-webkit-slider-thumb {
+.refine-simulator input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     height: 16px;
     width: 16px;
@@ -54,7 +57,7 @@ input[type=range]::-webkit-slider-thumb {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-input[type=range]::-webkit-slider-runnable-track {
+.refine-simulator input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
     height: 4px;
     cursor: pointer;
@@ -62,9 +65,8 @@ input[type=range]::-webkit-slider-runnable-track {
     border-radius: 2px;
 }
 
-/* Status Animations */
+/* Status Animations - 限定在 RefineSimulator 內 */
 @keyframes pulse-green {
-
     0%,
     100% {
         opacity: 1;
@@ -76,7 +78,7 @@ input[type=range]::-webkit-slider-runnable-track {
     }
 }
 
-.status-ready {
+.refine-simulator .status-ready {
     animation: pulse-green 2s infinite;
 }
 

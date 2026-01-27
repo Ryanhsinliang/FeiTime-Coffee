@@ -56,6 +56,7 @@
 
 <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
+  import { useThrottleFn } from '@vueuse/core';
 
   const x = ref(-100);
   const y = ref(-100);
@@ -63,12 +64,16 @@
   const sparkles = ref([]);
   const isDesktop = ref(false);
 
-  const updateMouse = (e) => {
+  const updateMouse = useThrottleFn((e) => {
     x.value = e.clientX;
     y.value = e.clientY;
 
-    // 提高產生頻率
-    if (Math.random() > 0.7) {
+    // 檢測是否在禁用粒子的區域
+    const target = e.target;
+    const inNoSparkleZone = target?.closest?.('[data-no-sparkles]');
+
+    // 降低產生頻率以提升效能，在禁用區域內不產生粒子
+    if (!inNoSparkleZone && Math.random() > 0.85) {
       const id = Math.random();
 
       // 雪花飄落效果：主要向下，帶有輕微的水平漂移
@@ -98,7 +103,7 @@
         sparkles.value = sparkles.value.filter((item) => item.id !== id);
       }, duration * 1000 + 100);
     }
-  };
+  }, 16); // 約 60fps 的節流
 
   // 透過全局事件委託來精確捕捉 Hover 狀態
   const handleOver = (e) => {

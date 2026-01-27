@@ -91,6 +91,8 @@
   const isLoadingVideo = ref<boolean>(false);
   const isMobileDevice = ref<boolean>(false);
   const userInteracted = ref<boolean>(false);
+  const isMouseMoving = ref<boolean>(false);
+  let mouseIdleTimer: number | null = null;
 
   let animationFrameId: number | null = null;
   let youtubePlayer: YTPlayer | null = null;
@@ -579,6 +581,22 @@
   };
 
   // ============================================
+  // 滑鼠移動處理 - 移動時暫停波浪動畫，靜止後恢復
+  // ============================================
+  const handlePlayerMouseMove = () => {
+    isMouseMoving.value = true;
+
+    if (mouseIdleTimer) {
+      clearTimeout(mouseIdleTimer);
+    }
+
+    // 滑鼠靜止 200ms 後恢復動畫
+    mouseIdleTimer = window.setTimeout(() => {
+      isMouseMoving.value = false;
+    }, 200);
+  };
+
+  // ============================================
   // 生命週期
   // ============================================
   onMounted(async () => {
@@ -592,6 +610,9 @@
   onBeforeUnmount(() => {
     if (animationFrameId) {
       cancelAnimationFrame(animationFrameId);
+    }
+    if (mouseIdleTimer) {
+      clearTimeout(mouseIdleTimer);
     }
     destroyPlayer();
   });
@@ -607,6 +628,9 @@
       <!-- Header Section with Vinyl and Video -->
       <div
         class="relative z-10 w-full flex flex-col lg:flex-row p-8 lg:px-10 lg:py-6 gap-8 lg:gap-20 items-center"
+        data-no-sparkles
+        @mousemove="handlePlayerMouseMove"
+        @mouseleave="isMouseMoving = false"
       >
         <!-- Vinyl Record -->
         <div class="flex-shrink-0 flex items-center justify-center relative p-8 lg:p-12">
@@ -623,7 +647,7 @@
               <!-- 液體容器 - 固定在底部不旋轉，反向抵消黑膠旋轉 -->
               <div
                 class="liquid-container absolute inset-0 rounded-full overflow-hidden"
-                :class="{ 'liquid-container-active': isPlaying }"
+                :class="{ 'liquid-container-active': isPlaying && !isMouseMoving }"
                 :style="{ transform: `rotate(-${vinylRotation}deg)` }"
               >
                 <!-- 液體本體 -->
@@ -804,39 +828,20 @@
               </div>
             </div>
 
-            <!-- Default State -->
-            <div v-else-if="!currentVideo" class="group">
+            <!-- Default State - 未選擇風味時只顯示圖片 -->
+            <div v-else-if="!currentVideo">
               <div
-                class="absolute inset-0 bg-cover bg-center opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                class="absolute inset-0 bg-cover bg-center"
                 :style="{ backgroundImage: `url('${defaultAlbum}')` }"
               ></div>
               <div
-                class="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none p-4"
+                class="absolute inset-0 bg-black/30 flex items-center justify-center"
               >
-                <h3 class="text-white text-base font-medium tracking-wide truncate pr-8">
-                  選擇風味開始播放
-                </h3>
-              </div>
-              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div
-                  class="w-14 h-10 bg-red-600 rounded-lg flex items-center justify-center shadow-lg opacity-90 group-hover:opacity-100 transition-opacity scale-90 group-hover:scale-100 duration-300"
-                >
-                  <span class="material-symbols-outlined text-white text-2xl">play_arrow</span>
-                </div>
+                <p class="text-white/70 text-sm">請先選擇風味</p>
               </div>
             </div>
 
-            <!-- Video Title Overlay -->
-            <div
-              v-if="currentVideo && !musicLoading && !musicError"
-              class="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none p-4 z-20"
-            >
-              <h3 class="text-white text-base font-medium tracking-wide truncate pr-8">
-                {{ currentVideo.title }}
-              </h3>
-              <p class="text-white/70 text-xs mt-1">{{ currentVideo.channelTitle }}</p>
-            </div>
-          </div>
+                      </div>
 
           <!-- AI DJ Panel -->
           <div
@@ -914,7 +919,7 @@
               ]"
             >
               <div
-                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 rounded-xl"
                 :style="{ backgroundImage: `url('${flavor.image}')` }"
               ></div>
               <div

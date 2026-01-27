@@ -55,6 +55,7 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
+  import { useThrottleFn } from '@vueuse/core';
   import bgImage from './assets/img/bgImage.jpg';
   import coffeeWalk from './assets/img/coffeeWalk.gif';
   import cafe from './assets/img/cafe.jpg';
@@ -100,7 +101,7 @@
 
   const glowStyle = ref('');
 
-  function handleMove(e: MouseEvent) {
+  const handleMove = useThrottleFn((e: MouseEvent) => {
     if (!card.value) return;
 
     const rect = card.value.getBoundingClientRect();
@@ -129,7 +130,7 @@
         transparent 45%
       );
   `;
-  }
+  }, 16);
 
   function reset() {
     style.value = `

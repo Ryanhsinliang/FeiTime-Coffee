@@ -226,12 +226,11 @@
   }
 
   .logo-shadow {
+    will-change: filter;
     filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.25))
       drop-shadow(0 0 20px rgba(212, 175, 55, 0.15))
-      drop-shadow(2px 2px 5px rgba(255, 255, 255, 0.1))
-      drop-shadow(-2px -2px 5px rgba(255, 255, 255, 0.1))
-      drop-shadow(3px -3px 6px rgba(255, 255, 255, 0.08))
-      drop-shadow(-3px 3px 6px rgba(255, 255, 255, 0.08));
+      drop-shadow(2px 2px 5px rgba(255, 255, 255, 0.15))
+      drop-shadow(-2px -2px 5px rgba(255, 255, 255, 0.15));
     animation: smokeyGlow 4s ease-in-out infinite;
   }
 
@@ -240,18 +239,14 @@
     100% {
       filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.25))
         drop-shadow(0 0 20px rgba(212, 175, 55, 0.15))
-        drop-shadow(2px 2px 5px rgba(255, 255, 255, 0.1))
-        drop-shadow(-2px -2px 5px rgba(255, 255, 255, 0.1))
-        drop-shadow(3px -3px 6px rgba(255, 255, 255, 0.08))
-        drop-shadow(-3px 3px 6px rgba(255, 255, 255, 0.08));
+        drop-shadow(2px 2px 5px rgba(255, 255, 255, 0.15))
+        drop-shadow(-2px -2px 5px rgba(255, 255, 255, 0.15));
     }
     50% {
       filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.3))
         drop-shadow(0 0 24px rgba(212, 175, 55, 0.18))
-        drop-shadow(3px 1px 6px rgba(255, 255, 255, 0.12))
-        drop-shadow(-1px -3px 6px rgba(255, 255, 255, 0.12))
-        drop-shadow(4px -2px 7px rgba(255, 255, 255, 0.1))
-        drop-shadow(-4px 2px 7px rgba(255, 255, 255, 0.1));
+        drop-shadow(3px 1px 6px rgba(255, 255, 255, 0.18))
+        drop-shadow(-2px -2px 6px rgba(255, 255, 255, 0.18));
     }
   }
 
@@ -335,17 +330,37 @@
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(16px);
     border-radius: 4px;
-    box-shadow: inset 0 0 80px rgba(255, 255, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 80px rgba(255, 255, 255, 0.06), 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  /* 邊緣高光 - 避開角落避免 hover 時露出 */
+  .tech-bg::before,
+  .tech-bg::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    height: 1px;
+    pointer-events: none;
+  }
+
+  .tech-bg::before {
+    top: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2) 10%, rgba(255, 255, 255, 0.2) 90%, transparent);
+  }
+
+  .tech-bg::after {
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05) 10%, rgba(255, 255, 255, 0.05) 90%, transparent);
   }
 
   /* 邊框線 - 四條分開以便動畫，直接連到角落 */
   .tech-border {
     position: absolute;
     background: rgba(212, 175, 55, 0.5);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
     z-index: 1;
-    transition: clip-path 0.3s ease-out;
+    transition: left 0.3s ease-out, right 0.3s ease-out, top 0.3s ease-out, bottom 0.3s ease-out, filter 0.3s ease-out;
   }
 
   .tech-border-top {
@@ -354,7 +369,6 @@
     right: 0;
     height: 1px;
     animation: borderGrowOutwardX 1.2s ease-out 0.3s both;
-    clip-path: inset(0 0 0 0);
   }
 
   .tech-border-bottom {
@@ -363,7 +377,6 @@
     right: 0;
     height: 1px;
     animation: borderGrowOutwardX 1.2s ease-out 0.3s both;
-    clip-path: inset(0 0 0 0);
   }
 
   .tech-border-left {
@@ -372,7 +385,6 @@
     bottom: 0;
     width: 1px;
     animation: borderGrowOutwardY 1.2s ease-out 0.3s both;
-    clip-path: inset(0 0 0 0);
   }
 
   .tech-border-right {
@@ -381,24 +393,19 @@
     bottom: 0;
     width: 1px;
     animation: borderGrowOutwardY 1.2s ease-out 0.3s both;
-    clip-path: inset(0 0 0 0);
   }
 
   /* Hover 效果 - 邊框線從兩端縮短 */
-  .tech-frame-container:hover .tech-border-top {
-    clip-path: inset(0 12px 0 12px);
-  }
-
+  .tech-frame-container:hover .tech-border-top,
   .tech-frame-container:hover .tech-border-bottom {
-    clip-path: inset(0 12px 0 12px);
+    left: 12px;
+    right: 12px;
   }
 
-  .tech-frame-container:hover .tech-border-left {
-    clip-path: inset(12px 0 12px 0);
-  }
-
+  .tech-frame-container:hover .tech-border-left,
   .tech-frame-container:hover .tech-border-right {
-    clip-path: inset(12px 0 12px 0);
+    top: 12px;
+    bottom: 12px;
   }
 
   @keyframes borderGrowOutwardX {

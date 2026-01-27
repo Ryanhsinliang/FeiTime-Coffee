@@ -432,8 +432,8 @@
       return;
     }
 
-    if (!ProductForm.value.description || ProductForm.value.description.length < 10) {
-      alert('商品描述至少需要 10 個字');
+    if (!ProductForm.value.img || ProductForm.value.img.length === 0) {
+      alert('請至少上傳一張商品圖片');
       return;
     }
 

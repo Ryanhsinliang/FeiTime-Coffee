@@ -450,7 +450,7 @@
                          <div class="size-5 text-[#8FA98F]">
                            <CoffeeFairyIcon />
                          </div>
-                         小精靈的點寧
+                         小精靈的叮嚀
                       </h3>
                       <div class="flex flex-wrap gap-2">
                          <button

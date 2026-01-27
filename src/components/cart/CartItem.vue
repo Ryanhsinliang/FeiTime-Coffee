@@ -18,13 +18,7 @@
           <span class="material-symbols-outlined text-[14px]">warning</span>
           此商品暫時無法購買，請聯繫客服
         </p>
-        <div
-          v-if="item.matchPercentage"
-          class="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#8C7B5D]/10 border border-[#8C7B5D]/20 text-[#8C7B5D]"
-        >
-          <span class="material-symbols-outlined text-[14px]">favorite</span>
-          <span class="text-[10px] font-bold tracking-wide uppercase">{{ item.matchPercentage }}% 契合度</span>
-        </div>
+        <!-- 契合度已移至小精靈訊息顯示，這裡不再重複 -->
       </div>
       <div class="flex items-center justify-between mt-3">
         <div class="flex items-center bg-[#f4f7f6] rounded-lg border border-[#e0e6e4] p-0.5 h-8">

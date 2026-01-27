@@ -124,7 +124,7 @@ export const useCartStore = defineStore(
           image: getProductImage(product),
           weight: product.weight || '半磅',
           stock: product.stock || 50,
-          matchPercentage: 95,
+          // 移除 matchPercentage（假契合度），真實契合度由小精靈 AI 訊息顯示
         };
       } else {
         itemToAdd = { ...product };

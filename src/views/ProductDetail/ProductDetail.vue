@@ -213,8 +213,8 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { callSingleProduct, callRecommendations, cartGoPost } from '@/services/ProductDetail';
-  import type { ProductRequest, BuyRule } from '@/services/ProductDetail';
+  import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
+  import type { ProductRequest } from '@/services/ProductDetail';
   import { useCartStore } from '@/store/cart';
   import { useAuthStore } from '@/store/auth';
 
@@ -410,6 +410,7 @@
   const router = useRouter();
 
   // 新增按下【 立即購買 】後會加入購物車 (柔+)
+  // 修正：使用 cartStore.addItem() 確保 Pinia 狀態同步更新，購物車畫面會即時顯示
   const buyNow = async () => {
     // 防呆 防使用者在還沒渲染產品時就按
     if (!product.value) return;
@@ -426,24 +427,14 @@
       return;
     }
 
-    const buy: BuyRule = {
-      user: authStore.user!.id.toString(),
-      product: product.value.id,
-      quantity: Number(quantity.value),
-      snapshot_image: product.value.img[0].formats.large.url,
-      snapshot_name: product.value.name,
-      snapshot_price: Number(product.value.price),
-      snapshot_weight: product.value.weight,
-      item_total: Number(product.value.price) * Number(quantity.value),
-    };
+    // ✅ 使用 cartStore.addItem() 更新購物車
+    // 這會同時更新 Pinia 狀態（前端即時更新）和同步到後端資料庫
+    await cartStore.addItem({
+      ...product.value,
+      quantity: quantity.value,
+    });
 
-    try {
-      const response = await cartGoPost(buy);
-    } catch (error) {
-      console.error('購物車加入失敗', error);
-      throw error;
-    }
-
+    // 跳轉到結帳頁面
     router.push('/checkout');
   };
 

@@ -1,15 +1,4 @@
 <template>
-  <header
-    class="h-16 flex items-center justify-end px-8 border-b border-[#e7dacf] backdrop-blur-md sticky top-0 z-10 flex-shrink-0"
-  >
-    <button class="w-10 h-10 hover:text-[#e27312] relative">
-      <i class="fa-regular fa-bell text-2xl"></i>
-      <span
-        class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"
-      ></span>
-    </button>
-  </header>
-
   <main class="overflow-y-auto p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
     <section>
       <h2 class="text-3xl font-bold">使用者管理</h2>
@@ -32,7 +21,7 @@
       <div class="relative min-w-48 w-full md:w-auto">
         <select
           v-model="roleFilter"
-          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm appearance-none cursor-pointer"
         >
           <option value="all">所有使用者</option>
           <option value="Admin">管理者</option>
@@ -45,7 +34,7 @@
       <div class="relative min-w-48 w-full md:w-auto">
         <select
           v-model="statusFilter"
-          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm cursor-pointer"
+          class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm appearance-none cursor-pointer"
         >
           <option value="all">所有狀態</option>
           <option value="active">已驗證</option>
@@ -77,10 +66,7 @@
         <thead>
           <tr class="border-b border-[#e7dacf] bg-[#fcfaf8]">
             <th class="py-4 px-6 text-xs font-bold">
-              <div class="flex items-center gap-1 cursor-pointer">
-                使用者ID
-                <span class="material-symbols-outlined">arrow_downward</span>
-              </div>
+              <div class="flex items-center gap-1 cursor-pointer">使用者ID</div>
             </th>
             <th class="py-4 px-6 text-xs font-bold">使用者姓名</th>
             <th class="py-4 px-6 text-xs font-bold">Email</th>
@@ -107,7 +93,7 @@
 
             <td class="py-4 px-6 text-sm">{{ user.email }}</td>
 
-            <td class="py-4 px-6 text-sm">{{ formatDate(user.updatedAt) }}</td>
+            <td class="py-4 px-6 text-sm">{{ formatDate(user.createdAt) }}</td>
 
             <td class="py-4 px-6 text-center">
               <p
@@ -118,7 +104,7 @@
                     : 'bg-purple-100 text-purple-800 border-purple-200'
                 "
               >
-                {{ user.user_role }}
+                {{ user_roleText(user.user_role) }}
               </p>
             </td>
 
@@ -139,32 +125,6 @@
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
         <p class="text-sm">共 {{ filteredUsers.length }} 筆</p>
-
-        <!-- 待修改 -->
-        <!-- <p class="text-sm">每頁 20 筆 / 共 {{ filteredUsers.length }} 筆</p>
-
-        <div class="flex items-center gap-2">
-          <button
-            class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
-            disabled="false"
-          >
-            <i class="fa-solid fa-chevron-left text-sm"></i>
-          </button>
-          <button
-            class="flex items-center justify-center size-9 rounded-lg bg-[#f09a4e] font-bold text-sm shadow-sm"
-          >
-            1
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            2
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            3
-          </button>
-          <button class="flex items-center justify-center size-9 rounded-lg border bg-white">
-            <i class="fa-solid fa-chevron-right text-sm"></i>
-          </button>
-        </div> -->
       </div>
     </div>
   </main>
@@ -173,8 +133,9 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import { getAllUsers } from '@/services/adminUserService';
-  import type { UserRequest } from '@/services/adminUserService';
+  import { getAllUsers } from '@/services/admin/adminUserService';
+  import type { UserRequest } from '@/services/admin/adminUserService';
+  import { user_roleText } from '@/utils/statusTranslator';
 
   const router = useRouter();
 

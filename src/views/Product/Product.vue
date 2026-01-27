@@ -1,29 +1,515 @@
 <template>
-  <div class="font-wenkai text-[#222222]">
-    <div v-show="sortTopbar" class="top-find-bar">
-      <div class="mb-[12px] mx-[3%] flex justify-center relative">
+  <div 作用="全域設定" class="font-wenkai text-[#705944] bg-[--main-color]">
+    <!-- 【 1 】 標頭 -->
+    <header class="px-[24px] py-[48px]">
+      <!-- border-2 border-black -->
+      <h2 class="text-[32px] font-bold">精選單品咖啡豆</h2>
+      <p class="text-[20px]">
+        我們親自走訪產地，為您挑選最優質的咖啡豆，每一批次皆由資深烘豆師精心烘焙，呈現最完美的風味層次
+      </p>
+    </header>
+
+    <!-- 2+3的div -->
+    <div class="flex pb-[64px]">
+      <!-- 【 2 】 左側篩選選單 -->
+      <nav
+        :class="have"
+        class="px-[24px] w-[80%] md:w-[25%] lg:w-[25%] my-[24px] absolute md:static lg:static z-[2] bg-[--main-color] shadow-2xl md:shadow-none lg:md:shadow-none"
+      >
         <div
-          class="relative lg:justify-center lg:w-[70%] md:w-[80%] md:justify-center w-[94%] flex justify-start"
+          class="px-[8px] py-[4px] my-[12px] bg-[--soft-brown] text-right inline-block text-[20px] rounded-[8px]"
+          @click="(getcoffee({}), reset())"
         >
+          清空
+        </div>
+        <!-- 焙度 -->
+        <div>
+          <h3 class="text-[24px] font-[600]">焙度</h3>
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Light"
+              name="pFilter"
+              value="Light"
+              v-model="filterData.roast"
+              @click="goProduct('roast', 'Light')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Light" @click="goProduct('roast', 'Light')">
+              淺焙
+            </label>
+          </div>
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Medium"
+              name="pFilter"
+              value="Medium"
+              v-model="filterData.roast"
+              @click="goProduct('roast', 'Medium')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Medium" @click="goProduct('roast', 'Medium')">
+              中焙
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Dark"
+              name="pFilter"
+              value="Dark"
+              v-model="filterData.roast"
+              @click="goProduct('roast', 'Dark')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Dark" @click="goProduct('roast', 'Dark')">
+              深焙
+            </label>
+          </div>
+        </div>
+
+        <!-- 風味 -->
+        <div class="my-[24px]">
+          <h3 class="text-[24px] font-[600]">風味</h3>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Fruity"
+              name="pFilter"
+              value="Fruity"
+              v-model="filterData.flavor_type"
+              @click="goProduct('flavor_type', 'Fruity')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Fruity"
+              @click="goProduct('flavor_type', 'Fruity')"
+            >
+              果香清爽
+            </label>
+          </div>
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Nutty"
+              name="pFilter"
+              value="Nutty"
+              v-model="filterData.flavor_type"
+              @click="goProduct('flavor_type', 'Nutty')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Nutty"
+              @click="goProduct('flavor_type', 'Nutty')"
+            >
+              堅果巧克力
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Bold"
+              name="pFilter"
+              value="Bold"
+              v-model="filterData.flavor_type"
+              @click="goProduct('flavor_type', 'Bold')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Bold"
+              @click="goProduct('flavor_type', 'Bold')"
+            >
+              濃郁厚實
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Floral"
+              name="pFilter"
+              value="Floral"
+              v-model="filterData.flavor_type"
+              @click="goProduct('flavor_type', 'Floral')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Floral"
+              @click="goProduct('flavor_type', 'Floral')"
+            >
+              花香明亮
+            </label>
+          </div>
+        </div>
+
+        <!-- 處理法 -->
+        <div class="my-[24px]">
+          <h3 class="text-[24px] font-[600]">處理法</h3>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Washed"
+              name="pFilter"
+              value="Washed"
+              v-model="filterData.processing"
+              @click="goProduct('processing', 'Washed')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Washed"
+              @click="goProduct('processing', 'Washed')"
+            >
+              水洗
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Natural"
+              name="pFilter"
+              value="Natural"
+              v-model="filterData.processing"
+              @click="goProduct('processing', 'Natural')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Natural"
+              @click="goProduct('processing', 'Natural')"
+            >
+              日曬
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Honey"
+              name="pFilter"
+              value="Honey"
+              v-model="filterData.processing"
+              @click="goProduct('processing', 'Honey')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Honey"
+              @click="goProduct('processing', 'Honey')"
+            >
+              蜜處理
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Wet-Hulled"
+              name="pFilter"
+              value="Wet-Hulled"
+              v-model="filterData.processing"
+              @click="goProduct('processing', 'Wet-Hulled')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Wet-Hulled"
+              @click="goProduct('processing', 'Wet-Hulled')"
+            >
+              厭氧
+            </label>
+          </div>
+        </div>
+
+        <!-- 產地 -->
+        <div class="my-[24px]">
+          <h3 class="text-[24px] font-[600]">產地</h3>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Ethiopia"
+              name="pFilter"
+              value="Ethiopia"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Ethiopia')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Ethiopia"
+              @click="goProduct('origin', 'Ethiopia')"
+            >
+              衣索比亞
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Kenya"
+              name="pFilter"
+              value="Kenya"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Kenya')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Kenya" @click="goProduct('origin', 'Kenya')">
+              肯亞
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Rwanda"
+              name="pFilter"
+              value="Rwanda"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Rwanda')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Rwanda" @click="goProduct('origin', 'Rwanda')">
+              盧安達
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Burundi"
+              name="pFilter"
+              value="Burundi"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Burundi')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Burundi"
+              @click="goProduct('origin', 'Burundi')"
+            >
+              布隆迪
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Colombia"
+              name="pFilter"
+              value="Colombia"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Colombia')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Colombia"
+              @click="goProduct('origin', 'Colombia')"
+            >
+              哥倫比亞
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Brazil"
+              name="pFilter"
+              value="Brazil"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Brazil')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Brazil" @click="goProduct('origin', 'Brazil')">
+              巴西
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Guatemala"
+              name="pFilter"
+              value="Guatemala"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Guatemala')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Guatemala"
+              @click="goProduct('origin', 'Guatemala')"
+            >
+              瓜地馬拉
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Costa Rica"
+              name="pFilter"
+              value="Costa Rica"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Costa Rica')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Costa Rica"
+              @click="goProduct('origin', 'Costa Rica')"
+            >
+              哥斯大黎加
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="El Salvador"
+              name="pFilter"
+              value="El Salvador"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'El Salvador')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="El Salvador"
+              @click="goProduct('origin', 'El Salvador')"
+            >
+              薩爾瓦多
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Panama"
+              name="pFilter"
+              value="Panama"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Panama')"
+            />
+            <label class="ml-[8px] text-[20px]" for="Panama" @click="goProduct('origin', 'Panama')">
+              巴拿馬
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Indonesia"
+              name="pFilter"
+              value="Indonesia"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Indonesia')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Indonesia"
+              @click="goProduct('origin', 'Indonesia')"
+            >
+              印尼
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Vietnam"
+              name="pFilter"
+              value="Vietnam"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Vietnam')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Vietnam"
+              @click="goProduct('origin', 'Vietnam')"
+            >
+              越南
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="India"
+              name="pFilter"
+              value="India"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'India')"
+            />
+            <label class="ml-[8px] text-[20px]" for="India" @click="goProduct('origin', 'India')">
+              印度
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Thailand"
+              name="pFilter"
+              value="Thailand"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Thailand')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Thailand"
+              @click="goProduct('origin', 'Thailand')"
+            >
+              泰國
+            </label>
+          </div>
+
+          <div class="mt-[8px]">
+            <input
+              type="radio"
+              id="Papua New Guinea"
+              name="pFilter"
+              value="Papua New Guinea"
+              v-model="filterData.origin"
+              @click="goProduct('origin', 'Papua New Guinea')"
+            />
+            <label
+              class="ml-[8px] text-[20px]"
+              for="Papua New Guinea"
+              @click="goProduct('origin', 'Papua New Guinea')"
+            >
+              巴布亞紐幾內亞
+            </label>
+          </div>
+        </div>
+      </nav>
+      <!-- 【>】  -->
+      <div
+        class="inline-block md:hidden lg:hidden rounded-full px-[17px] py-[12px] bg-[--soft-brown] z-[3] absolute"
+        :class="navHe"
+        @click="navSwitch"
+      >
+        <i class="fa-solid fa-angle-up text-[#222222]"></i>
+      </div>
+
+      <!-- 【 3 】 搜尋欄 + 排序 和 產品卡片 -->
+      <main class="w-[100%] md:w-[75%] lg:w-[75%]">
+        <!-- 搜尋欄 + 排序 -->
+        <div
+          class="flex flex-col md:flex-col lg:flex-row items-start lg:items-center justify-between"
+        >
+          <!-- 搜尋欄 -->
+
           <input
             v-model="findWord"
             @keyup.enter="find(findWord)"
-            class="border-2 border-solid border-[#8f745c] lg:text-[24px] lg:py-[12px] lg:px-[24px] lg:rounded-[12px] lg:w-[100%] md:text-[20px] md:py-[8px] md:px-[24px] md:rounded-[12px] md:w-[100%] text-[20px] py-[8px] px-[18px] rounded-[8px] w-[90%]"
-            type="search"
+            class="border-2 border-solid border-[#8f745c] rounded-[8px] w-[90%] lg:w-[60%] text-[24px] py-[4px] px-[8px] my-[40px] mx-[24px]"
             placeholder="喝一杯靜謐的午後時光"
           />
-          <div
-            class="sort flex absolute md:top-[calc(100%+64px)] md:left-[24px] whitespace-nowrap lg:top-[calc(100%+8px)] lg:right-[24px] lg:left-auto"
-          >
+
+          <!-- 排序 -->
+          <div class="flex mx-[24px] mb-[32px] md:mb-[32px] lg:mb-0">
             <div
-              class="sort-list flex bg-[var(--main-color)] px-[12px] rounded-[8px] overflow-hidden mr-[8px]"
+              class="flex bg-[var(--main-color)] px-[12px] rounded-[8px] overflow-hidden mr-[8px]"
             >
               <img class="IC-sort w-[32px] bg-[var(--main-color)]" src="./assets/sort.svg" alt="" />
               <select
                 v-model="sortWhich"
                 @change="takeSort"
                 id="sort-page"
-                class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0"
+                class="bg-[var(--main-color)] pl-[16px] pr-[8px] cursor-pointer shrink-0 text-[#222222]"
               >
                 <!-- change 是DOM原生事件 當 <select> 中的 <option> 更動時觸發  -->
                 <option value="">排序</option>
@@ -38,280 +524,96 @@
             </div>
             <p
               v-if="sortHe"
-              class="oriru rounded-[4px] bg-[#bdeda4] leading-8 px-[6px]"
+              class="oriru rounded-[4px] bg-[--heavy-brown] leading-8 px-[6px] text-[#222222]"
               @click="sortChange"
             >
               ↓高到低
             </p>
             <p
               v-else
-              class="noboru rounded-[4px] bg-[#a4e9e2] leading-8 px-[6px]"
+              class="noboru rounded-[4px] bg-[--soft-brown] leading-8 px-[6px] text-[#222222]"
               @click="sortChange"
             >
               ↑低到高
             </p>
           </div>
         </div>
-      </div>
-
-      <div class="find lg:mx-[16.95%] md:mx-[12.4%] w-[70%] flex whitespace-nowrap">
-        <div class="filter px-[16px] flex lg:w-[70%] md:w-[80%]">
-          <div class="filter-type">
-            <p class="filter-word" tabindex="0">焙度</p>
-            <div class="type-list">
-              <p @click="goProduct('roast', 'Light')" class="list" tabindex="0" value="Light">
-                淺焙
-              </p>
-              <p @click="goProduct('roast', 'Medium')" class="list" tabindex="0" value="Medium">
-                中焙
-              </p>
-              <p @click="goProduct('roast', 'Dark')" class="list" tabindex="0" value="Dark">深焙</p>
-            </div>
-          </div>
-          <div class="filter-type">
-            <p class="filter-word" tabindex="0">風味</p>
-            <div class="type-list">
-              <p
-                @click="goProduct('flavor_type', 'Fruity')"
-                class="list"
-                tabindex="0"
-                value="Fruity"
-              >
-                果香清爽
-              </p>
-              <p @click="goProduct('flavor_type', 'Nutty')" class="list" tabindex="0" value="Nutty">
-                堅果巧克力
-              </p>
-              <p @click="goProduct('flavor_type', 'Bold')" class="list" tabindex="0" value="Bold">
-                濃郁厚實
-              </p>
-              <p
-                @click="goProduct('flavor_type', 'Floral')"
-                class="list"
-                tabindex="0"
-                value="Floral"
-              >
-                花香明亮
-              </p>
-            </div>
-          </div>
-          <div class="filter-type">
-            <p class="filter-word" tabindex="0">工法</p>
-            <div class="type-list">
-              <p
-                @click="goProduct('processing', 'Washed')"
-                class="list"
-                tabindex="0"
-                value="Washed"
-              >
-                水洗
-              </p>
-              <p
-                @click="goProduct('processing', 'Natural')"
-                class="list"
-                tabindex="0"
-                value="Natural"
-              >
-                日曬
-              </p>
-              <p @click="goProduct('processing', 'Honey')" class="list" tabindex="0" value="Honey">
-                蜜處理
-              </p>
-              <p
-                @click="goProduct('processing', 'Wet-Hulled')"
-                class="list"
-                tabindex="0"
-                value="Wet-Hulled"
-              >
-                厭氧
-              </p>
-            </div>
-          </div>
-          <div class="filter-type">
-            <p class="filter-word" tabindex="0">產地</p>
-            <div class="big-list">
-              <p
-                @click="goProduct('origin', 'Ethiopia')"
-                class="list"
-                tabindex="0"
-                value="Ethiopia"
-              >
-                衣索比亞
-              </p>
-              <p @click="goProduct('origin', 'Kenya')" class="list" tabindex="0" value="Kenya">
-                肯亞
-              </p>
-              <p @click="goProduct('origin', 'Rwanda')" class="list" tabindex="0" value="Rwanda">
-                盧安達
-              </p>
-              <p @click="goProduct('origin', 'Burundi')" class="list" tabindex="0" value="Burundi">
-                布隆迪
-              </p>
-              <p
-                @click="goProduct('origin', 'Colombia')"
-                class="list"
-                tabindex="0"
-                value="Colombia"
-              >
-                哥倫比亞
-              </p>
-              <p @click="goProduct('origin', 'Brazil')" class="list" tabindex="0" value="Brazil">
-                巴西
-              </p>
-              <p
-                @click="goProduct('origin', 'Guatemala')"
-                class="list"
-                tabindex="0"
-                value="Guatemala"
-              >
-                瓜地馬拉
-              </p>
-              <p
-                @click="goProduct('origin', 'Costa Rica')"
-                class="list"
-                tabindex="0"
-                value="Costa Rica"
-              >
-                哥斯大黎加
-              </p>
-              <p
-                @click="goProduct('origin', 'El Salvador')"
-                class="list"
-                tabindex="0"
-                value="El Salvador"
-              >
-                薩爾瓦多
-              </p>
-              <p @click="goProduct('origin', 'Panama')" class="list" tabindex="0" value="Panama">
-                巴拿馬
-              </p>
-              <p
-                @click="goProduct('origin', 'Indonesia')"
-                class="list"
-                tabindex="0"
-                value="Indonesia"
-              >
-                印尼
-              </p>
-              <p @click="goProduct('origin', 'Vietnam')" class="list" tabindex="0" value="Vietnam">
-                越南
-              </p>
-              <p @click="goProduct('origin', 'India')" class="list" tabindex="0" value="India">
-                印度
-              </p>
-              <p
-                @click="goProduct('origin', 'Thailand')"
-                class="list"
-                tabindex="0"
-                value="Thailand"
-              >
-                泰國
-              </p>
-              <p
-                @click="goProduct('origin', 'Papua New Guinea')"
-                class="list"
-                tabindex="0"
-                value="Papua New Guinea"
-              >
-                巴布亞紐幾內亞
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="somaho-up none" :class="rotation" @click="sortBarSwitch">
-      <i class="fa-solid fa-angle-up"></i>
-    </div>
-
-    <div
-      class="grid lg:grid-cols-3 lg:mx-[3%] lg:w-[94%] lg:gap-[80px] lg:pt-[258px] md:mx-[6%] md:w-[88%] md:gap-[60px] md:grid-cols-2 md:pt-[272px] mx-[6%] w-[88%] gap-[60px] grid-cols-1"
-      :class="topBarSapce"
-    >
-      <!-- card start -->
-      <router-link
-        :to="{ name: 'ProductDetail', params: { pid: p.pid } }"
-        v-for="p in product"
-        :key="p.id"
-      >
-        <div class="relative group cursor-pointer">
-          <img
-            v-if="p.img && p.img.length > 0"
-            class="w-[100%] aspect-[1/1.2] object-cover object-center"
-            :src="p.img[0].formats.large.url"
-            :alt="p.name"
-          />
-
-          <img v-else src="" alt="暫無圖片" />
-
-          <div
-            class="flex flex-col items-center absolute w-[100%] bottom-[24px] left-[50%] text-[20px] -translate-x-[50%] opacity-[0.75]"
+        <!-- 產品區 -->
+        <div class="grid mx-[24px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[60px]">
+          <!-- 產品卡片 -->
+          <router-link
+            v-for="p in product"
+            :key="p.pid"
+            :to="`/product-detail/${p.pid}`"
+            class="px-[20px] bg-white rounded-[12px] relative"
           >
-            <p class="bg-[var(--soft-brown)] py-[2px] px-[8px] rounded-[8px]">{{ p.origin }}</p>
-            <h3
-              class="text-[28px] font-bold bg-[var(--main-color)] py-[2px] px-[8px] my-[12px] rounded-[8px]"
+            <img
+              class="aspect-[4/3] object-cover object-center rounded-[12px] mt-[20px]"
+              :src="p.img[0].formats.large.url"
+              :alt="p.name"
+            />
+            <!-- 文字 -->
+            <div class="my-[16px]">
+              <div class="flex">
+                <p>{{ p.origin }}</p>
+                <p>．</p>
+                <p>{{ p.roast }}</p>
+              </div>
+              <p class="text-[24px] font-[600] my-[4px]">{{ p.name }}</p>
+              <p>{{ p.flavor_type }}</p>
+            </div>
+            <!-- 價錢 -->
+            <p class="text-[20px] font-[600] mt-[48px] mb-[16px]">NT$ {{ p.price }}</p>
+            <!-- 加入購物車按紐 -->
+            <div
+              class="rounded-full bg-[#222222] inline-block px-[17px] py-[12px] absolute text-white font-bold bottom-[16px] right-[20px] z-10"
+              @click.stop.prevent="addToCart(p)"
             >
-              {{ p.name }}
-            </h3>
-            <p class="bg-[var(--light-gray)] py-[2px] px-[8px] rounded-[8px]">$ {{ p.price }}</p>
-          </div>
-
-          <!-- Add to Cart Overlay -->
-          <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-             <button 
-                @click.stop="addToCart(p)"
-                class="bg-[#A2AF9B] text-white font-bold py-3 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all hover:bg-[#8f9b88] hover:scale-105 shadow-lg flex items-center gap-2"
-             >
-                <span class="material-symbols-outlined">shopping_cart</span>
-                加入購物車
-             </button>
-          </div>
+              <!-- 使用.stop.prevent 讓事件止於【 + 】不要擴散到跳轉 -->
+              <i class="fa-solid fa-plus"></i>
+            </div>
+          </router-link>
+          <!-- 產品卡片結束 -->
+          <div v-show="cannotFind">查無商品，請確認關鍵字</div>
         </div>
-      </router-link>
-      <!-- card end -->
+      </main>
     </div>
+    <!-- 2+3的div 結束 -->
   </div>
+  <!-- 全域設定結束 -->
 
-  <!-- 等API.get時顯示 -->
-  <div v-show="loading" class="flex w-full justify-center mb-[100px]">
-    <img class="w-[35%]" src="./assets/w.png" alt="正在為您準備咖啡清單..." />
-  </div>
-
-  <!-- input搜尋不到才顯示 -->
-  <div v-show="cannotFind" class="flex w-full justify-center mb-[100px]">
-    <img class="w-[35%]" src="./assets/sagashinai.png" alt="找不到符合的商品" />
-  </div>
+  <div v-show="cannotFind"></div>
 </template>
 
 <script setup lang="ts">
   import { getProducts } from '../../services/product';
-  import { ref, watch } from 'vue';
+  import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import { useCartStore } from '@/store/cart';
+  import { useAuthStore } from '@/store/auth';
 
+  const authStore = useAuthStore();
   const cartStore = useCartStore();
-  const addToCart = cartStore.addItem;
 
-  // 手機板 切換topbar 、旋轉按鈕 、更改商品卡 grid 的上距 避免留白
-  const sortTopbar = ref(true);
-  const rotation = ref('');
-  const topBarSapce = ref('pt-[500px]');
-  const sortBarSwitch = () => {
-    sortTopbar.value = !sortTopbar.value;
-    if (!sortTopbar.value) {
-      rotation.value = 'rotate-180';
-      topBarSapce.value = 'pt-[50px]';
+  // 手機板 側邊選單開關
+  const he = ref(true); // 定義 true 為【 > 】
+  const navHe = ref('rotate-90 left-[8px] top-[250px]'); // 初始【 > 】
+  const have = ref('hidden  md:block lg:block');
+  const navSwitch = () => {
+    he.value = !he.value;
+    if (he.value) {
+      navHe.value = 'rotate-90 left-[8px] top-[250px]'; //【 < 】
+      have.value = 'hidden  md:block lg:block';
     } else {
-      rotation.value = '';
-      topBarSapce.value = 'pt-[550px]';
+      navHe.value = 'rotate-[270deg] left-[calc(80%-24px)]'; //【 > 】
+      have.value = 'block md:block lg:block';
     }
   };
 
   interface DataRule {
     // 設定data規格
     id: number;
-    pid: number;
+    pid: string;
     name: string;
     price: number;
     origin: string;
@@ -322,6 +624,8 @@
     body: number;
     aftertaste: number;
     clarity: number;
+    flavor_type: string;
+    roast: string;
   }
 
   const productCopy = ref<DataRule[]>([]); // 備份資料 【排序】功能使用
@@ -382,6 +686,7 @@
   const takeSort = async () => {
     // 當使用下拉式選單 執行排序的函數
     if (!sortWhich.value) return;
+    findWord.value = '';
 
     try {
       await getcoffee({ sort: [`${sortWhich.value}:desc`] }); // 抓取一個依照 sortWhich 高到低排序的產品陣列 sortWhich可能是 價錢、人氣度...
@@ -418,12 +723,49 @@
     }
   };
 
+  // 加入購物車
+  const addToCart = (product: any) => {
+    if (authStore.isLoggedIn == false) {
+      alert('請先登入！');
+      return;
+    }
+    if (product.stock < 1) {
+      alert('❌ 庫存不足！');
+      return;
+    }
+    cartStore.addItem({
+      id: product.id,
+      pid: String(product.id),
+      name: product.name,
+      price: product.price,
+      image: product.img[0].formats.large.url,
+      stock: product.stock,
+    });
+  };
+
+  // 記錄打勾狀態 用於清空
+  const filterData = reactive({
+    roast: '',
+    flavor_type: '',
+    processing: '',
+    origin: '',
+  });
+
+  // 清空
+  const reset = () => {
+    findWord.value = '';
+    sortWhich.value = '';
+    sortHe.value = true;
+    cannotFind.value = false;
+    router.push('/product');
+  };
+
   // 前端路由
   const router = useRouter();
   const goProduct = (type: string, val: string) => {
     router.push({
       path: '/product',
-      query: { [type]: val }, // 把網址變成類似 ?origin=Brazil 這樣的型式
+      query: { [type]: val },
     });
   };
 
@@ -433,31 +775,23 @@
     // 預留一個地方處理route.query (若之後需傳遞數字的話 要在這邊轉型)
     getcoffee(route.query);
   };
-
   watch(
     // 如果網址變了 (按了新按鈕)  要重新抓資料
     () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值
-    () => {
+    (newQuery) => {
+      cannotFind.value = false;
+      findWord.value = '';
+      filterData.roast = (newQuery.roast as string) || '';
+      filterData.flavor_type = (newQuery.flavor_type as string) || '';
+      filterData.processing = (newQuery.processing as string) || '';
+      filterData.origin = (newQuery.origin as string) || '';
       first();
     },
     { immediate: true } // 載入頁面時 馬上執行一次來顯示全部產品
   );
 </script>
 
-<style>
-  /* Tailwind 3.4 官網 */
-  /* https://v3.tailwindcss.com/ */
-
-  /* Font-awesome */
-  /* https://fontawesome.com/search?ic=free-collection */
-
-  /*
-    先寫不會變動的樣式
-    再用lg: 寫電腦版
-    再用md: 寫平板
-    手機版 不用特別寫
-  */
-
+<style scoped>
   :root {
     --main-color: #faf9ee;
     /* 淡黃 */
@@ -469,10 +803,6 @@
     /* 深咖啡 */
     --light-gray: #eeeeee;
     /* 淡灰 */
-  }
-
-  body {
-    background-color: var(--main-color);
   }
 
   a {
@@ -496,272 +826,5 @@
   input:focus {
     outline: none;
     box-shadow: none;
-  }
-
-  .top-find-bar {
-    background-image: url(./assets/find-bg2.png);
-    background-position: right center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    padding-top: 40px;
-    padding-bottom: 24px;
-    width: 100%;
-    position: fixed;
-    z-index: 2;
-  }
-
-  /* .find {
-    margin-left: 16.95%;
-    margin-right: 16.95%;
-    width: 70%;
-    display: flex;
-    white-space: nowrap;
-  } */
-
-  /* .filter {
-    display: flex;
-    padding: 0 16px;
-    width: 70%;
-  } */
-
-  .filter-type {
-    font-size: 20px;
-    padding: 4px 12px;
-    background-color: var(--soft-brown);
-    border-radius: 12px;
-    margin-left: 8px;
-    margin-right: 8px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
-
-  .type-list {
-    display: none;
-  }
-
-  .filter-type:focus-within {
-    background-color: var(--heavy-brown);
-  }
-
-  .filter-type:focus-within .type-list {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--soft-brown);
-    border-radius: 16px;
-    position: absolute;
-    top: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    padding: 0px 24px;
-    z-index: 2;
-  }
-
-  .big-list {
-    display: none;
-  }
-
-  .filter-type:focus-within .big-list {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    background-color: var(--soft-brown);
-    border-radius: 16px;
-    position: absolute;
-    top: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    padding: 0px 24px;
-    z-index: 2;
-  }
-
-  .list {
-    margin: 12px;
-    padding: 12px 24px;
-    border-bottom: 2px solid transparent;
-  }
-
-  .list:hover {
-    border-bottom: 2px solid var(--heavy-brown);
-    color: var(--heavy-brown);
-  }
-
-  .list:focus {
-    background-color: var(--heavy-brown);
-    border-bottom: 2px solid transparent;
-    color: #222222;
-    border-radius: 16px;
-    box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.35);
-  }
-
-  /* .sort {
-    display: flex;
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 24px;
-    white-space: nowrap;
-  } */
-
-  /* .sort-list {
-    display: flex;
-    background-color: var(--main-color);
-    padding: 0 12px;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-right: 8px;
-  } */
-
-  /* .IC-sort {
-    width: 32px;
-    background-color: var(--main-color);
-  } */
-
-  /* #sort-page {
-    background-color: var(--main-color);
-    padding-left: 16px;
-    padding-right: 8px;
-    cursor: pointer;
-    flex-shrink: 0;
-  } */
-
-  /* .noboru {
-    border-radius: 4px;
-    background-color: #bdeda4;
-    line-height: 32px;
-    padding: 0 6px;
-  } */
-
-  /* .oriru {
-    border-radius: 4px;
-    background-color: #a4e9e2;
-    line-height: 32px;
-    padding: 0 6px;
-  } */
-
-  /* .somaho-up {
-    display: none;
-  } */
-
-  @media (768px <= width < 1024px) {
-    /* .filter {
-      width: 80%;
-    } */
-
-    /* .find {
-      margin-left: 12.4%;
-      margin-right: 12.4%;
-    } */
-
-    /* .sort {
-      top: calc(100% + 64px);
-      left: 24px;
-    } */
-
-    .top-find-bar {
-      padding-bottom: 72px;
-    }
-  }
-
-  @media (width < 768px) {
-    .find {
-      width: 88%;
-      margin-left: 6%;
-      margin-right: 6%;
-      margin-top: 100px;
-    }
-
-    .filter {
-      width: 100%;
-      padding: 0;
-      display: block;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .filter-type {
-      margin: 0;
-      border-radius: 0px;
-      padding: 0 12px;
-      flex-direction: column;
-      line-height: 48px;
-    }
-
-    .filter-type:focus-within .type-list {
-      width: 100%;
-      position: static;
-      left: 0;
-      transform: translateX(0);
-      margin-bottom: 8px;
-    }
-
-    .filter-type:focus-within .big-list {
-      grid-template-columns: repeat(4, 1fr);
-      position: static;
-      left: 0;
-      transform: translateX(0);
-      margin-bottom: 8px;
-    }
-
-    .list {
-      padding: 0 24px;
-      margin: 0;
-    }
-
-    .filter-word {
-      width: 100%;
-      border-top: 2px solid var(--heavy-brown);
-    }
-
-    #first-noline {
-      border-top: 2px solid transparent;
-    }
-
-    .sort {
-      top: calc(100% + 20px);
-      left: 0;
-    }
-
-    .top-find-bar {
-      padding-bottom: 60px;
-    }
-
-    #sort-page {
-      padding-top: 12px;
-      padding-bottom: 12px;
-      font-size: 20px;
-    }
-
-    .sort-list {
-      margin-right: 24px;
-    }
-
-    .noboru {
-      font-size: 20px;
-      line-height: 54px;
-      padding: 0 8px;
-    }
-
-    .oriru {
-      font-size: 20px;
-      line-height: 54px;
-      padding: 0 8px;
-    }
-
-    .somaho-up {
-      display: inline-block;
-      position: fixed;
-      top: 72px;
-      right: 8px;
-      z-index: 3;
-      font-size: 32px;
-      line-height: 32px;
-      padding: 12px 14px;
-      background-color: var(--green-gray);
-      border-radius: 100%;
-      cursor: pointer;
-      /* transform: rotate(180deg); */
-    }
   }
 </style>

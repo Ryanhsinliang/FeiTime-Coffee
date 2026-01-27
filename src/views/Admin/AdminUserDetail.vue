@@ -6,24 +6,29 @@
       <div class="flex items-center text-sm gap-2">
         <p>使用者管理</p>
         <span class="material-symbols-outlined text-lg">chevron_right</span>
-        <p class="font-semibold">使用者ID #87352</p>
+        <p class="font-semibold">使用者ID #{{ user?.user_id }}</p>
       </div>
-    </div>
-    <div class="flex items-center gap-4">
-      <button class="w-10 h-10 hover:text-[#e27312] relative">
-        <i class="fa-regular fa-bell text-2xl"></i>
-        <span
-          class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"
-        ></span>
-      </button>
     </div>
   </header>
 
   <main class="px-8 py-6 max-w-5xl mx-auto w-full">
+    <!-- 更新成功/錯誤提示 -->
+    <div
+      v-if="updateMessage"
+      class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 mb-6 p-4 rounded-lg"
+      :class="
+        updateSuccess
+          ? 'bg-green-100 text-green-800 border border-green-200'
+          : 'bg-red-100 text-red-800 border border-red-200'
+      "
+    >
+      {{ updateMessage }}
+    </div>
+
     <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
       <div class="flex flex-col gap-1">
         <h2 class="text-3xl font-extrabold">編輯使用者資料</h2>
-        <p class="text-[#9a704c]">僅可修改「封鎖狀態」與「身分別」。</p>
+        <p class="text-[#9a704c]">可修改使用者資料及「封鎖狀態」、「身分別」。</p>
       </div>
       <button
         type="button"
@@ -73,10 +78,8 @@
           <div class="flex flex-col gap-2">
             <label class="text-sm font-bold">姓名</label>
             <input
-              class="bg-[#f3ede7] rounded-lg text-[#9a704c] text-sm px-4 py-3 cursor-not-allowed"
-              disabled
-              type="text"
-              :value="user.username"
+              v-model="form.username"
+              class="border border-[#f3ede7] rounded-lg text-sm px-4 py-3"
             />
           </div>
 
@@ -107,6 +110,7 @@
               type="password"
               value="********"
             />
+            <p class="text-xs text-[#9a704c]">密碼請會員透過「忘記密碼 / 重設密碼」流程修改。</p>
           </div>
 
           <!-- 電話 -->
@@ -119,20 +123,19 @@
                 call
               </span>
               <input
-                class="w-full bg-[#f3ede7] rounded-lg text-sm text-[#9a704c] pl-10 pr-4 py-3 cursor-not-allowed"
-                disabled
+                v-model="form.phone_number"
+                class="w-full border border-[#f3ede7] rounded-lg text-sm pl-10 pr-4 py-3"
                 type="tel"
-                :value="user.phone_number || ''"
               />
             </div>
           </div>
 
           <!-- 身分別 -->
           <div class="flex flex-col gap-2">
-            <label class="text-sm font-bold">使用者身分（可修改）</label>
+            <label class="text-sm font-bold">使用者身分</label>
             <select
               v-model="form.user_role"
-              class="bg-[#f3ede7] rounded-lg text-sm px-4 py-3 focus:ring-2"
+              class="border border-[#f3ede7] rounded-lg text-sm px-4 py-3 focus:ring-2"
             >
               <option value="Member">一般會員</option>
               <option value="Admin">管理者</option>
@@ -149,7 +152,7 @@
 
           <!-- 封鎖狀態 -->
           <div class="flex flex-col gap-2">
-            <h3 class="text-sm font-bold">狀態（可修改）</h3>
+            <h3 class="text-sm font-bold">狀態</h3>
             <label class="relative flex items-center cursor-pointer flex-wrap">
               <input v-model="form.blocked" class="sr-only peer" type="checkbox" />
               <div
@@ -160,9 +163,6 @@
               </p>
             </label>
           </div>
-
-          <!-- 更新時間 -->
-          <p class="text-xs text-[#9a704c]">最近更新：{{ formatDate(user.updatedAt) }}</p>
         </div>
       </div>
 
@@ -175,18 +175,17 @@
 
         <div class="flex flex-col gap-2">
           <textarea
-            class="border border-[#f3ede7] rounded-lg text-sm px-4 py-3 resize-none bg-[#f3ede7] text-[#9a704c] cursor-not-allowed"
+            v-model="form.shipping_address"
+            class="border border-[#f3ede7] rounded-lg text-sm px-4 py-3 resize-none"
             rows="3"
-            disabled
-            :value="user.shipping_address || ''"
           />
         </div>
+
+        <!-- 更新時間 -->
+        <p class="mt-2 text-xs text-[#9a704c]">最近更新：{{ formatDate(user.updatedAt) }}</p>
       </div>
 
       <div class="p-6 flex justify-end items-center gap-4 bg-white border-t border-[#f3ede7]">
-        <div v-if="success" class="px-6 py-2.5 text-sm text-emerald-700 font-semibold 00">
-          更新成功
-        </div>
         <button
           type="button"
           @click="loadUser"
@@ -205,37 +204,13 @@
         </button>
       </div>
     </form>
-
-    <!-- <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="p-4 bg-white border border-[#f3ede7] rounded-lg flex items-center gap-4">
-        <div
-          class="size-12 rounded-full bg-green-100 flex items-center justify-center text-green-600"
-        >
-          <span class="material-symbols-outlined">check_circle</span>
-        </div>
-        <div>
-          <p class="text-xs font-bold text-[#9a704c]">帳號狀態</p>
-          <p class="text-sm font-bold">啟用中</p>
-        </div>
-      </div>
-
-      <div class="p-4 bg-white border border-[#f3ede7] rounded-lg flex items-center gap-4">
-        <div class="size-12 rounded-full flex items-center justify-center">
-          <span class="material-symbols-outlined">loyalty</span>
-        </div>
-        <div>
-          <p class="text-xs font-bold text-[#9a704c]">咖啡ID</p>
-          <p class="text-sm font-bold">深海鯨魚</p>
-        </div>
-      </div>
-    </div> -->
   </main>
 </template>
 <script setup lang="ts">
   import { computed, onMounted, reactive, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { getUserById, updateUser } from '@/services/adminUserService';
-  import type { UserRequest } from '@/services/adminUserService';
+  import { getUserById, updateUser } from '@/services/admin/adminUserService';
+  import type { UserRequest, UpdateUserRequest } from '@/services/admin/adminUserService';
 
   type UserRole = 'Admin' | 'Member';
 
@@ -246,13 +221,24 @@
   const saving = ref(false);
   const error = ref('');
   const success = ref(false);
+  const updateMessage = ref('');
+  const updateSuccess = ref(false);
 
   const user = ref<UserRequest | null>(null);
 
-  // ✅ 只允許編輯的欄位
-  const form = reactive<{ blocked: boolean; user_role: UserRole }>({
+  //  只允許編輯的欄位
+  const form = reactive<{
+    blocked: boolean;
+    user_role: UserRole;
+    username: string;
+    phone_number: string;
+    shipping_address: string;
+  }>({
     blocked: false,
     user_role: 'Member',
+    username: '',
+    phone_number: '',
+    shipping_address: '',
   });
 
   const id = computed(() => String(route.params.id || ''));
@@ -276,6 +262,9 @@
       // 初始化可編輯欄位
       form.blocked = !!res.data.blocked;
       form.user_role = (res.data.user_role as UserRole) || 'Member';
+      form.username = res.data.username || '';
+      form.phone_number = res.data.phone_number || '';
+      form.shipping_address = res.data.shipping_address || '';
     } catch (e: any) {
       error.value = e?.message || e?.response?.data?.message || '載入使用者失敗';
     } finally {
@@ -287,25 +276,34 @@
     if (!user.value) return;
     saving.value = true;
     error.value = '';
-    success.value = false;
+    updateMessage.value = '';
 
     try {
       // ✅ 只送允許更新的欄位
       const res = await updateUser(user.value.id, {
         blocked: form.blocked,
         user_role: form.user_role,
+        username: form.username.trim(),
+        phone_number: form.phone_number.trim(),
+        shipping_address: form.shipping_address.trim(),
       });
 
       // 更新畫面資料
       user.value = res.data;
-      success.value = true;
+      updateMessage.value = '資料更新成功！';
+      updateSuccess.value = true;
 
       // 3秒後清除提示訊息
       setTimeout(() => {
-        success.value = false;
+        updateMessage.value = '';
       }, 3000);
-    } catch (e: any) {
-      error.value = e?.message || e?.response?.data?.message || '更新失敗';
+    } catch (err: any) {
+      console.error('❌ 更新失敗:', err);
+      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
+      // 3秒後清除提示訊息
+      setTimeout(() => {
+        updateMessage.value = '';
+      }, 3000);
     } finally {
       saving.value = false;
     }

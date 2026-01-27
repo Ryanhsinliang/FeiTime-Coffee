@@ -84,7 +84,7 @@
       ></span>
     </button>
     <router-link
-      to="/coffeeLabT1-T-P1"
+      to="UltraCoffeeSimulator"
       class="group/option relative flex items-center justify-center h-14 px-10 bg-white/20 text-white tracking-widest uppercase rounded-xl shadow-md backdrop-blur-sm overflow-hidden transition-all duration-300 mt-3"
     >
       試試沖煮模擬器
@@ -99,7 +99,7 @@
 
   <div
     v-if="hint.show"
-    class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-lg z-50"
+    class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-lg z-[100]"
   >
     {{ hint.message }}
   </div>
@@ -119,6 +119,7 @@
     ChartData,
   } from 'chart.js';
   import { useCoffeeResultStore } from '@/store/coffeeResult';
+  import { coffeePersonas } from '@/views/CoffeeIdTest/assets/data/coffeeTypes';
   import { useAuthStore } from '@/store/auth';
   import { getPersona } from '@/utils/getPersona';
   import router from '@/router';
@@ -213,6 +214,10 @@
   );
   onMounted(() => {
     initChart();
+    const saveMode = localStorage.getItem('pending_coffee_save');
+    if (authStore.isLoggedIn && saveMode === 'manual') {
+      showHint('歡迎回來！現在您可以點擊「儲存」按鈕來同步結果。');
+    }
   });
 
   const idCard = ref<HTMLElement | null>(null);
@@ -250,15 +255,6 @@
     }, 3000);
   }
 
-  const shareText = computed(() => {
-    if (!persona.value) return '';
-    return `我的 Coffee ID 是 ${persona.value.name}！
-  風味分數：酸:${normalizedScores.value.acidity}, 甜:${normalizedScores.value.sweetness}, 醇:${normalizedScores.value.body}...
-  來看看你的風味測試結果吧！`;
-  });
-
-  import { coffeePersonas } from '@/views/CoffeeIdTest/assets/data/coffeeTypes';
-
   async function handleMainShare() {
     if (!persona.value) return;
     const currentId = persona.value.id;
@@ -271,7 +267,7 @@
     }
     const personaName = fullPersonaData.name;
     const ogImageUrl = fullPersonaData.strapiImg;
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+    const backendUrl = import.meta.env.VITE_API_BASE_URL;
     const params = new URLSearchParams({
       name: personaName,
       img: ogImageUrl,
@@ -293,15 +289,7 @@
     }
   }
 
-  async function saveIdCard() {
-    if (!authStore.isLoggedIn) {
-      showHint('請先登入以儲存您的 Coffee ID！');
-      router.push({
-        name: 'Login',
-        query: { redirect: router.currentRoute.value.fullPath },
-      });
-      return;
-    }
+  const executeSave = async () => {
     if (isSaving.value || !persona.value || !coffeeResultStore.hasResult) return;
     isSaving.value = true;
     try {
@@ -316,6 +304,24 @@
       showHint(`儲存失敗: ${error.message}`);
     } finally {
       isSaving.value = false;
+      localStorage.removeItem('pending_coffee_save');
+      localStorage.removeItem('temp_coffee_result');
     }
+  };
+
+  async function saveIdCard() {
+    if (!authStore.isLoggedIn) {
+      localStorage.setItem('pending_coffee_save', 'manual');
+      showHint('即將前往登入頁面，登入後即可儲存儲存您的 Coffee ID！');
+
+      setTimeout(() => {
+        router.push({
+          name: 'Login',
+          query: { redirect: router.currentRoute.value.fullPath },
+        });
+      }, 2000);
+      return;
+    }
+    await executeSave();
   }
 </script>

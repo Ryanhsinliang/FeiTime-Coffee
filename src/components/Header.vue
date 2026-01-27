@@ -1,7 +1,7 @@
 <template>
   <nav
     :class="navClasses"
-    class="sticky top-0 z-50 w-full border-b border-[#DCCFC0]/40 backdrop-blur-lg transition-colors duration-300"
+    class="sticky top-0 z-50 w-full border-b border-[#DCCFC0]/40 backdrop-blur-lg transition-colors duration-300 overflow-x-clip"
   >
     <div class="px-6 xl:px-12 flex items-center justify-between max-w-[1600px] mx-auto h-16">
       <router-link to="/home" class="flex items-center gap-2 flex-shrink-0">
@@ -48,7 +48,8 @@
             </span>
 
             <span
-              class="absolute -bottom-1 left-0 w-0 h-px transition-all duration-300 group-hover:w-full"
+              class="absolute -bottom-1 left-0 h-px transition-all duration-300"
+              :class="isActive(link) ? 'w-0' : 'w-0 group-hover:w-full'"
               :style="underlineStyle"
             ></span>
           </RouterLink>
@@ -58,9 +59,20 @@
       <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
         <!-- Desktop Icons -->
         <!-- Always Visible Cart Icon -->
-        <button class="relative group outline-none" @click="toggleCart">
-          <span class="material-symbols-outlined transition-transform group-hover:scale-110" :style="textColorStyle">shopping_bag</span>
-          <span v-if="totalItems > 0" class="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#17cf82] text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
+        <button
+          class="relative group outline-none flex items-center justify-center"
+          @click="toggleCart"
+        >
+          <span
+            class="material-symbols-outlined transition-transform group-hover:scale-110 leading-none"
+            :style="textColorStyle"
+          >
+            shopping_bag
+          </span>
+          <span
+            v-if="totalItems > 0"
+            class="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#17cf82] text-[10px] font-bold text-white shadow-sm ring-2 ring-white"
+          >
             {{ totalItems }}
           </span>
         </button>
@@ -73,7 +85,7 @@
             @mouseleave="closeUserMenu"
           >
             <span
-              class="material-symbols-outlined cursor-pointer transition-all duration-200 hover:scale-110"
+              class="material-symbols-outlined cursor-pointer transition-all duration-200 hover:scale-110 leading-none"
               :style="textColorStyle"
             >
               person
@@ -131,6 +143,19 @@
                         訂單查詢
                       </span>
                     </button>
+                    <button
+                      v-if="isAdmin"
+                      class="w-full text-left px-3 py-2 text-sm font-medium transition-colors duration-200"
+                      :style="menuItemHoverStyle('admin')"
+                      @mouseenter="hoveredMenuItem = 'admin'"
+                      @mouseleave="hoveredMenuItem = null"
+                      @click="handleAdminPanel"
+                    >
+                      <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+                        進入後台
+                      </span>
+                    </button>
                     <div
                       class="mx-2 h-px"
                       :style="{
@@ -179,6 +204,7 @@
           :key="link.name"
           :to="link.to"
           class="block px-6 py-4 text-lg font-jp border-b border-[#DCCFC0]/30"
+          :class="{ 'bg-[#DCCFC0]/30 border-l-4 border-l-[#CDBE9A] pl-5': isActive(link) }"
           :style="textColorStyle"
           @click="mobileOpen = false"
         >
@@ -243,14 +269,14 @@
 
   const route = useRoute();
   const router = useRouter();
-  
+
   // 整合 Cart Store
   const cartStore = useCartStore();
   const authStore = useAuthStore();
-  
+
   // 直接使用 cartStore.toggleCart 方法
   const toggleCart = cartStore.toggleCart;
-  
+
   // 使用 computed 取得購物車總數量，確保數字會即時更新
   const totalItems = computed(() => cartStore.totalItems);
 
@@ -265,7 +291,6 @@
   /* ===== Menu Data ===== */
   const links: NavLink[] = [
     { name: 'Shop', zh: '商店', max: '商店', to: '/product' },
-    { name: 'Story', zh: '故事', max: '故事', to: '/about' },
     { name: 'CoffeeIDTest', zh: 'CoffeeID測驗', max: 'CoffeeID測驗', to: '/coffee-id-test' },
     {
       name: 'CoffeeSimulator',
@@ -283,6 +308,7 @@
 
   // 從 authStore 取得登入狀態
   const isLoggedIn = computed(() => authStore.isLoggedIn);
+  const isAdmin = computed(() => authStore.isAdmin);
 
   // 購物車數量 (暫時使用測試數據，之後需整合購物車 store)
   const cartItemCount = ref<number>(0);
@@ -392,6 +418,12 @@
   const closeUserMenu = () => {
     userMenuOpen.value = false;
     hoveredMenuItem.value = null;
+  };
+
+  /* ===== 管理員後台 ===== */
+  const handleAdminPanel = () => {
+    userMenuOpen.value = false;
+    router.push('/admin');
   };
 
   /* ===== 統一選單動作處理 ===== */

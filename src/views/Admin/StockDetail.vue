@@ -6,16 +6,8 @@
       <div class="flex items-center text-sm gap-2">
         <p>庫存管理</p>
         <span class="material-symbols-outlined text-lg">chevron_right</span>
-        <p class="font-semibold">商品編號PID: coffee_001</p>
+        <p class="font-semibold">商品編號PID: {{ ProductForm.pid }}</p>
       </div>
-    </div>
-    <div class="flex items-center gap-4">
-      <button class="w-10 h-10 hover:text-[#e27312] relative">
-        <i class="fa-regular fa-bell text-2xl"></i>
-        <span
-          class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"
-        ></span>
-      </button>
     </div>
   </header>
 
@@ -27,50 +19,123 @@
         <p class="text-[#9a704c]">主要負責修改商品資料。</p>
       </div>
       <button
+        type="button"
         class="flex items-center gap-2 px-4 py-2 bg-[#f3ede7] rounded-lg text-sm font-bold hover:bg-[#e6ddda] active:scale-95"
+        @click="$router.back()"
       >
         <span class="material-symbols-outlined text-lg">arrow_back</span>
         <p>返回庫存管理</p>
       </button>
     </div>
 
-    <div class="space-y-8 pb-20">
+    <!-- 更新訊息提示 -->
+    <div
+      v-if="updateMessage"
+      class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 mb-6 p-4 rounded-lg"
+      :class="
+        updateSuccess
+          ? 'bg-green-50 text-green-800 border border-green-200'
+          : 'bg-red-50 text-red-800 border border-red-200'
+      "
+    >
+      {{ updateMessage }}
+    </div>
+
+    <form class="space-y-8 pb-20" @submit.prevent="handleUpdateProduct">
+      <!-- 上下架狀態 -->
+      <!-- <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
+        <div
+          class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center justify-between"
+        >
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-xl">visibility</span>
+            <h2 class="text-lg font-bold">商品狀態</h2>
+          </div>
+          <div class="flex items-center gap-3">
+            <span
+              class="text-sm font-semibold"
+              :class="ProductForm.publishedAt ? 'text-green-600' : 'text-gray-500'"
+            >
+              {{ ProductForm.publishedAt ? '已上架' : '已下架' }}
+            </span>
+            <button
+              type="button"
+              @click="togglePublishStatus"
+              class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#e27312] focus:ring-offset-2"
+              :class="ProductForm.publishedAt ? 'bg-[#e27312]' : 'bg-gray-300'"
+            >
+              <span
+                class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                :class="ProductForm.publishedAt ? 'translate-x-6' : 'translate-x-1'"
+              />
+            </button>
+          </div>
+        </div>
+      </section> -->
+
+      <!-- 商品圖片 -->
       <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
           <span class="material-symbols-outlined text-xl">photo_library</span>
-          <h2 class="text-lg font-bold">產品圖</h2>
+          <h2 class="text-lg font-bold">商品圖</h2>
         </div>
         <div class="p-6">
           <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <!-- 現有圖片 -->
             <div
+              v-for="(image, index) in ProductForm.img"
+              :key="image?.id ?? index"
               class="relative group aspect-square rounded-lg overflow-hidden border border-[#e7dacf]"
             >
               <img
-                src="./assets/coffee_001.png"
-                alt=""
-                class="absolute inset-0 bg-cover bg-center w-full aspect-square object-cover"
+                :src="image?.formats?.large?.url || image?.formats?.medium?.url || image?.url"
+                :alt="ProductForm.name"
+                class="w-full h-full object-cover"
               />
 
               <div
                 class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2"
               >
-                <button class="bg-white/20 p-2 rounded-full text-white hover:bg-white/40">
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-                <button class="bg-white/20 p-2 rounded-full text-white hover:bg-red-500">
+                <button
+                  type="button"
+                  class="bg-white/20 p-2 rounded-full text-white hover:bg-red-500 transition-colors"
+                  @click="removeImage(index)"
+                  title="刪除圖片"
+                >
                   <span class="material-symbols-outlined">delete</span>
                 </button>
               </div>
             </div>
-            <div
-              class="border-2 border-dashed border-[#e7dacf] rounded-lg flex flex-col items-center justify-center gap-2 bg-[#fcfaf8] cursor-pointer aspect-square"
+
+            <!-- 上傳按鈕 -->
+            <input
+              type="file"
+              id="imageUpload"
+              class="hidden"
+              accept="image/webp"
+              multiple
+              @change="handleImageUpload"
+            />
+            <label
+              for="imageUpload"
+              class="border-2 border-dashed border-[#e7dacf] rounded-lg flex flex-col items-center justify-center gap-2 bg-[#fcfaf8] cursor-pointer aspect-square hover:bg-[#f3ede7] transition-colors"
+              :class="{ 'opacity-50 pointer-events-none': uploading }"
             >
-              <span class="material-symbols-outlined text-[#9a704c] text-3xl">upload_file</span>
-              <p class="text-xs text-[#9a704c]">新增照片</p>
-            </div>
+              <span
+                class="material-symbols-outlined text-[#9a704c] text-3xl"
+                :class="{ 'animate-spin': uploading }"
+              >
+                {{ uploading ? 'progress_activity' : 'upload_file' }}
+              </span>
+              <p class="text-xs text-[#9a704c]">
+                {{ uploading ? '上傳中...' : '新增 Webp 照片' }}
+              </p>
+            </label>
           </div>
         </div>
       </section>
+
+      <!-- 商品名稱 -->
       <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
           <span class="material-symbols-outlined text-xl">info</span>
@@ -80,29 +145,39 @@
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">商品編號PID</p>
             <input
-              class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              class="w-full rounded-lg border border-[#e7dacf] bg-[#f8f7f6] px-4 py-3 cursor-not-allowed text-[#9a704c]"
               type="text"
-              value="coffee_001"
+              disabled
+              v-model="ProductForm.pid"
             />
           </label>
           <label class="flex flex-col gap-2">
-            <p class="text-sm font-semibold">中文名稱</p>
+            <p class="text-sm font-semibold">
+              中文名稱
+              <span class="text-red-500">*</span>
+            </p>
             <input
-              class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="text"
-              value="衣索比亞 耶家雪菲 日曬 G1"
+              v-model="ProductForm.name"
+              required
             />
           </label>
           <label class="flex flex-col gap-2">
-            <p class="text-sm font-semibold">英文名稱</p>
+            <p class="text-sm font-semibold">
+              英文名稱
+              <span class="text-red-500">*</span>
+            </p>
             <input
-              class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="text"
-              value="Ethiopian Yirgacheffe G1"
+              v-model="ProductForm.english_name"
             />
           </label>
         </div>
       </section>
+
+      <!-- 產地 & 處理法 & 烘焙度 -->
       <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
           <span class="material-symbols-outlined text-xl">public</span>
@@ -112,87 +187,84 @@
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">產地</p>
             <input
-              class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="text"
-              value="衣索比亞"
+              placeholder="例如：Panama"
+              v-model="ProductForm.origin"
             />
           </label>
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">處理法</p>
-            <select class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3">
-              <option selected="">Washed</option>
-              <option>Natural</option>
-              <option>Honey</option>
-              <option>Anaerobic</option>
-            </select>
+            <input
+              class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
+              type="text"
+              placeholder="例如：Anaerobic"
+              v-model="ProductForm.processing"
+            />
           </label>
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">烘焙度</p>
-            <select class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3">
-              <option selected="">淺焙</option>
-              <option>中焙</option>
-              <option>深焙</option>
-            </select>
+            <input
+              class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
+              type="text"
+              placeholder="例如：Light"
+              v-model="ProductForm.roast"
+            />
           </label>
         </div>
       </section>
 
-      <!-- <section
-        class="bg-white dark:bg-[#2a1e14] rounded-xl border border-[#e7dacf] dark:border-[#3d2b1d] overflow-hidden shadow-sm"
-      >
-        <div
-          class="px-6 py-4 border-b border-[#e7dacf] dark:border-[#3d2b1d] bg-[#fcfaf8] dark:bg-[#2d2116] flex items-center gap-2"
-        >
-          <span class="material-symbols-outlined text-primary text-xl">palette</span>
-          <h2 class="text-lg font-bold">Flavor Profile</h2>
+      <!-- 風味資訊 -->
+      <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
+        <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
+          <span class="material-symbols-outlined text-xl">palette</span>
+          <h2 class="text-lg font-bold">風味資訊</h2>
         </div>
-        <div class="p-6 space-y-8">
+        <div class="p-6 space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <label class="flex flex-col gap-2">
-              <p class="text-sm font-semibold">Flavor Tags</p>
+            <!-- <div class="flex flex-col gap-2">
+              <p class="text-sm font-semibold">
+                風味標籤
+                <span class="text-red-500">*</span>
+              </p>
               <div
-                class="flex flex-wrap gap-2 p-3 border border-[#e7dacf] dark:border-[#3d2b1d] rounded-lg bg-white dark:bg-[#221810]"
+                class="flex flex-wrap gap-2 p-4 border border-[#e7dacf] rounded-lg bg-white min-h-[100px]"
               >
-                <span
-                  class="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold border border-primary/20"
+                <button
+                  v-for="tag in FLAVOR_TAG_OPTIONS"
+                  :key="tag"
+                  type="button"
+                  @click="toggleFlavorTag(tag)"
+                  class="px-3 py-1.5 rounded-full text-xs font-bold border transition-all"
+                  :class="
+                    isTagSelected(tag)
+                      ? 'bg-[#e27312] text-white border-[#e27312] shadow-sm'
+                      : 'bg-white text-[#9a704c] border-[#e7dacf] hover:border-[#e27312] hover:bg-[#fcfaf8]'
+                  "
                 >
-                  Jasmine
-                  <span class="material-symbols-outlined text-sm cursor-pointer">close</span>
-                </span>
-                <span
-                  class="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold border border-primary/20"
-                >
-                  Lemon
-                  <span class="material-symbols-outlined text-sm cursor-pointer">close</span>
-                </span>
-                <span
-                  class="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold border border-primary/20"
-                >
-                  Earl Grey
-                  <span class="material-symbols-outlined text-sm cursor-pointer">close</span>
-                </span>
-                <input
-                  class="flex-1 bg-transparent border-none focus:ring-0 text-sm p-1 min-w-[120px]"
-                  placeholder="Add flavor tag..."
-                  type="text"
-                />
+                  {{ tag }}
+                </button>
               </div>
-            </label>
+              <p class="text-xs text-[#9a704c]">已選擇 {{ selectedFlavorTags.length }} 個標籤</p>
+            </div> -->
+
             <label class="flex flex-col gap-2">
-              <p class="text-sm font-semibold">Flavor Type</p>
+              <p class="text-sm font-semibold">風味類型</p>
               <select
-                class="w-full rounded-lg border-[#e7dacf] dark:border-[#3d2b1d] bg-white dark:bg-[#221810]  px-4 py-3"
+                class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
+                v-model="ProductForm.flavor_type"
               >
-                <option selected="">Floral &amp; Citrusy</option>
-                <option>Chocolatey &amp; Nutty</option>
-                <option>Fruity &amp; Winey</option>
-                <option>Spicy &amp; Earthy</option>
+                <option value="Floral">Floral</option>
+                <option value="Nutty">Nutty</option>
+                <option value="Fruity">Fruity</option>
+                <option value="Bold">Bold</option>
               </select>
             </label>
           </div>
         </div>
-      </section> -->
+      </section>
 
+      <!-- 價格 & 庫存 & 重量 -->
       <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
           <span class="material-symbols-outlined text-xl">payments</span>
@@ -204,57 +276,307 @@
             <div class="relative">
               <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#9a704c]">$</span>
               <input
-                class="w-full pl-8 rounded-lg border-[#e7dacf] bg-[#f8f7f6] py-3"
+                class="w-full pl-8 rounded-lg border border-[#e7dacf] bg-white py-3 pr-4 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
                 type="number"
-                value="300"
+                min="0"
+                v-model.number="ProductForm.price"
+                required
               />
             </div>
           </label>
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">庫存量(包)</p>
             <input
-              class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="number"
-              value="156"
+              min="0"
+              v-model.number="ProductForm.stock"
+              required
             />
           </label>
           <label class="flex flex-col gap-2">
             <p class="text-sm font-semibold">重量</p>
             <input
-              class="w-full rounded-lg border-[#e7dacf] bg-[#f8f7f6] px-4 py-3"
+              class="w-full rounded-lg border border-[#e7dacf] bg-white px-4 py-3 focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
               type="text"
-              value="250g"
+              placeholder="例如：250g"
+              v-model="ProductForm.weight"
+              required
             />
           </label>
         </div>
       </section>
+
+      <!-- 商品描述 -->
       <section class="bg-white rounded-xl border border-[#e7dacf] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-[#e7dacf] bg-[#fcfaf8] flex items-center gap-2">
           <span class="material-symbols-outlined text-xl">description</span>
           <h2 class="text-lg font-bold">商品描述</h2>
         </div>
-        <textarea
-          class="w-full bg-white p-6 resize-none"
-          placeholder="請輸入商品詳細介紹，字數不得超過300字，最少須大於10字"
-          minlength="10"
-          maxlength="300"
-          rows="6"
-        ></textarea>
+        <div class="p-6">
+          <textarea
+            class="w-full bg-white border border-[#e7dacf] rounded-lg p-4 resize-none focus:border-[#e27312] focus:ring-1 focus:ring-[#e27312]"
+            placeholder="請輸入商品詳細介紹，字數不得超過300字，最少須大於10字"
+            minlength="10"
+            maxlength="300"
+            rows="6"
+            v-model="ProductForm.description"
+            required
+          ></textarea>
+          <div class="flex justify-end mt-2 text-xs text-[#9a704c]">
+            {{ ProductForm.description?.length || 0 }} / 300
+          </div>
+        </div>
       </section>
 
+      <!-- 操作按鈕 -->
       <div class="flex justify-end gap-3 pt-6 border-t border-[#e7dacf]">
         <button
-          class="px-6 py-2.5 w-36 rounded-lg border border-[#e7dacf] text-sm font-bold hover:bg-[#f3ede7] active:scale-95"
+          type="button"
+          class="px-6 py-2.5 w-36 rounded-lg border border-[#e7dacf] text-sm font-bold hover:bg-[#f3ede7] active:scale-95 transition-all"
+          @click="handleCancel"
+          :disabled="updating"
         >
           取消
         </button>
         <button
-          class="px-8 py-2.5 w-36 rounded-lg text-white text-sm bg-[#e27312] font-bold shadow-md hover:bg-[#e6a974] active:scale-95"
+          type="submit"
+          class="px-8 py-2.5 w-36 rounded-lg text-white text-sm bg-[#e27312] font-bold shadow-md hover:bg-[#d66a10] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          :disabled="updating || uploading"
         >
-          儲存
+          {{ updating ? '儲存中...' : '儲存' }}
         </button>
       </div>
-    </div>
+    </form>
   </main>
 </template>
-<script></script>
+
+<script setup lang="ts">
+  import { ref, onMounted, computed } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import {
+    callSingleProduct,
+    callUpdateProduct,
+    callUploadImage,
+    type ProductRequest,
+    type UpdateProductPayload,
+  } from '@/services/admin/adminProductService';
+
+  const route = useRoute();
+  const router = useRouter();
+
+  const pid = route.params.pid as string;
+  const updating = ref(false);
+  const uploading = ref(false);
+  const updateMessage = ref('');
+  const updateSuccess = ref(false);
+
+  // 固定的 Flavor Tags 選項
+  const FLAVOR_TAG_OPTIONS = [
+    'Fruity',
+    'Berry',
+    'Tropical',
+    'Citrus',
+    'Sweet',
+    'Fermented',
+    'Winey',
+    'Balanced',
+    'Wild',
+    'Nutty',
+    'Chocolate',
+    'Cocoa',
+    'Caramel',
+    'Smooth',
+    'Heavy',
+    'Earthy',
+    'Woody',
+    'Spice',
+    'Herbal',
+    'Bitter',
+    'Rich',
+    'Floral',
+    'Jasmine',
+    'Tea-like',
+    'Clean',
+    'Bright',
+  ];
+
+  // 商品表單資料
+  const ProductForm = ref<ProductRequest>({
+    name: '',
+    english_name: '',
+    pid: '',
+    origin: '',
+    processing: '',
+    roast: '',
+    flavor_type: 'Floral',
+    flavor_tags: [],
+    description: '',
+    price: 0,
+    stock: 0,
+    img: [],
+    weight: '',
+    documentId: '',
+    publishedAt: null,
+  });
+
+  // 計算已選擇的 flavor tags 名稱
+  // const selectedFlavorTags = computed(() => ProductForm.value.flavor_tags.map((tag) => tag.name));
+
+  // 載入商品資料
+  const loadProduct = async () => {
+    try {
+      console.log('🔍 載入商品:', pid);
+      const response = await callSingleProduct(pid);
+      console.log('✅ 商品資料:', response.data);
+
+      // 深拷貝避免引用問題
+      ProductForm.value = JSON.parse(JSON.stringify(response.data));
+    } catch (error: any) {
+      console.error('載入商品失敗:', error);
+      alert('載入商品資料失敗');
+    }
+  };
+
+  // 切換 flavor tag 選擇
+  // const toggleFlavorTag = (tagName: string) => {
+  //   const index = ProductForm.value.flavor_tags.findIndex((tag) => tag.name === tagName);
+
+  //   if (index > -1) {
+  //     ProductForm.value.flavor_tags.splice(index, 1);
+  //   } else {
+  //     ProductForm.value.flavor_tags.push({ name: tagName });
+  //   }
+  // };
+
+  // 檢查 tag 是否已選擇
+  // const isTagSelected = (tagName: string) => {
+  //   return selectedFlavorTags.value.includes(tagName);
+  // };
+
+  // 刪除圖片
+  const removeImage = (index: number) => {
+    if (confirm('確定要刪除這張圖片嗎？')) {
+      ProductForm.value.img.splice(index, 1);
+    }
+  };
+
+  // 上傳圖片
+  const handleImageUpload = async (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const files = target.files;
+
+    if (!files || files.length === 0) return;
+
+    // 驗證所有檔案都是 webp 格式
+    const invalidFiles = Array.from(files).filter((file) => file.type !== 'image/webp');
+    if (invalidFiles.length > 0) {
+      alert('只能上傳 WebP 格式的圖片！');
+      target.value = '';
+      return;
+    }
+
+    uploading.value = true;
+
+    try {
+      // 一次上傳所有檔案
+      for (const file of Array.from(files)) {
+        const uploadedImages = await callUploadImage(file);
+        console.log('✅ 上傳成功:', uploadedImages);
+
+        // 將上傳的圖片加入表單
+        if (Array.isArray(uploadedImages)) {
+          ProductForm.value.img.push(...uploadedImages);
+        }
+      }
+
+      target.value = '';
+    } catch (error: any) {
+      console.error('上傳圖片失敗:', error);
+      alert(error?.response?.data?.error || '上傳圖片失敗，請重試');
+    } finally {
+      uploading.value = false;
+    }
+  };
+
+  // 切換上下架狀態
+  // const togglePublishStatus = () => {
+  //   ProductForm.value.publishedAt = ProductForm.value.publishedAt ? null : new Date().toISOString();
+  // };
+
+  // 更新商品
+  const handleUpdateProduct = async () => {
+    // 驗證必填欄位
+    if (!ProductForm.value.name || !ProductForm.value.english_name) {
+      alert('請填寫商品名稱');
+      return;
+    }
+
+    if (!ProductForm.value.description || ProductForm.value.description.length < 10) {
+      alert('商品描述至少需要 10 個字');
+      return;
+    }
+
+    updating.value = true;
+    updateMessage.value = '';
+
+    try {
+      const payload: UpdateProductPayload = {
+        name: ProductForm.value.name,
+        english_name: ProductForm.value.english_name,
+        price: Math.max(0, ProductForm.value.price),
+        origin: ProductForm.value.origin,
+        processing: ProductForm.value.processing,
+        roast: ProductForm.value.roast,
+        stock: Math.max(0, ProductForm.value.stock),
+        weight: ProductForm.value.weight,
+        flavor_type: ProductForm.value.flavor_type,
+        // flavor_tags: ProductForm.value.flavor_tags,
+        description: ProductForm.value.description,
+        imgIds: ProductForm.value.img.map((img) => img.id),
+        publishedAt: ProductForm.value.publishedAt,
+      };
+
+      console.log('📤 發送更新:', payload);
+
+      const response = await callUpdateProduct(pid, payload);
+
+      console.log('✅ 更新成功:', response);
+      updateMessage.value = '商品更新成功！';
+      updateSuccess.value = true;
+
+      // 重新載入商品資料
+      await loadProduct();
+
+      // 3秒後清除提示訊息
+      setTimeout(() => {
+        updateMessage.value = '';
+      }, 3000);
+    } catch (error: any) {
+      console.error('更新商品失敗:', error);
+      updateMessage.value = error?.response?.data?.error || '更新商品失敗，請重試';
+      updateSuccess.value = false;
+      setTimeout(() => {
+        updateMessage.value = '';
+      }, 3000);
+    } finally {
+      updating.value = false;
+    }
+  };
+
+  // 取消編輯
+  const handleCancel = () => {
+    if (confirm('確定要取消編輯嗎？未儲存的變更將會遺失。')) {
+      router.back();
+    }
+  };
+
+  onMounted(() => {
+    if (!pid) {
+      alert('缺少商品編號');
+      router.back();
+      return;
+    }
+    loadProduct();
+  });
+</script>

@@ -24,10 +24,12 @@ import AdminOrderDetail from '@/views/Admin/OrderDetail.vue';
 import AdminStocks from '@/views/Admin/Stocks.vue';
 import AdminStockDetail from '@/views/Admin/StockDetail.vue';
 import AdminUsers from '@/views/Admin/AdminUsers.vue';
+import AdminUserMe from '@/views/Admin/AdminUserMe.vue';
 import AdminUserDetail from '@/views/Admin/AdminUserDetail.vue';
-
-//後端串接測試用
-import CTest from '@/views/HomePage/CoffeeSimulatorT1TTest.vue';
+import Checkout from '@/views/Checkout/Checkout.vue';
+import PayCancel from '@/views/PayCancel.vue';
+import PaySuccess from '@/views/PaySuccess.vue';
+import PayWait from '@/views/PayWait.vue';
 
 const routes = [
   {
@@ -137,11 +139,16 @@ const routes = [
         component: AdminStockDetail,
       },
 
-      // 顧客
+      // 使用者
       {
         path: 'users',
         name: 'AdminUsers',
         component: AdminUsers,
+      },
+      {
+        path: 'users/me',
+        name: 'AdminUserMe',
+        component: AdminUserMe,
       },
       {
         path: 'users/:id',
@@ -151,7 +158,34 @@ const routes = [
       },
     ],
   },
-  //測試用
+  {
+    path: '/checkout',
+    name: 'Checkout',
+    component: Checkout,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: '/payment-cancel',
+    name: 'payment-cancel',
+    component: PayCancel,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: '/payment-wait',
+    name: 'payment-wait',
+    component: PayWait,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: '/payment-success',
+    name: 'payment-success',
+    component: PaySuccess,
+    meta: { requiresAuth: true },
+  },
+
   {
     path: '/email-confirmed',
     name: 'EmailConfirmed',

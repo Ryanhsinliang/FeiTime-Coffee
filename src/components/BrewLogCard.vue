@@ -61,21 +61,55 @@
         </span>
       </button>
 
-      <!-- 展開的內容 -->
       <div
         v-if="hasFairyFeedback"
         class="overflow-hidden transition-all duration-300 ease-out"
-        :class="isExpanded ? 'max-h-[500px] mt-3' : 'max-h-0'"
+        :class="isExpanded ? 'max-h-[1000px] mt-3' : 'max-h-0'"
       >
-        <p class="text-sm text-primary/60 leading-relaxed">
+        <p class="text-sm text-primary/70 leading-relaxed">
           {{ feedbackSummary }}
         </p>
-        <p v-if="feedbackTastePrediction" class="text-xs text-orange-700 mt-2 italic">
-          預測風味: {{ feedbackTastePrediction }}
+
+        <p
+          v-if="feedbackTastePrediction"
+          class="text-xs text-orange-800 mt-3 font-medium bg-orange-50 p-2 rounded border border-orange-100 italic"
+        >
+          ✨ 預測風味: {{ feedbackTastePrediction }}
         </p>
+
+        <div v-if="parsedFeedback.top_issues?.length" class="mt-4">
+          <p class="text-[11px] font-bold text-red-700/70 uppercase tracking-wider mb-1">
+            主要問題
+          </p>
+          <ul class="space-y-1.5">
+            <li
+              v-for="(issue, idx) in parsedFeedback.top_issues"
+              :key="idx"
+              class="text-xs text-primary/60 flex gap-2 leading-snug"
+            >
+              <span class="text-red-400 shrink-0">•</span>
+              {{ issue }}
+            </li>
+          </ul>
+        </div>
+
+        <div v-if="parsedFeedback.next_attempt_plan?.length" class="mt-4 pb-2">
+          <p class="text-[11px] font-bold text-emerald-700/70 uppercase tracking-wider mb-1">
+            下次嘗試建議
+          </p>
+          <ul class="space-y-1.5">
+            <li
+              v-for="(plan, idx) in parsedFeedback.next_attempt_plan"
+              :key="idx"
+              class="text-xs text-primary/60 flex gap-2 leading-snug"
+            >
+              <span class="text-emerald-400 shrink-0">✓</span>
+              {{ plan }}
+            </li>
+          </ul>
+        </div>
       </div>
 
-      <!-- 無 AI 反饋時顯示烘焙資訊 -->
       <div v-if="!hasFairyFeedback" class="mt-2">
         <p class="text-sm text-primary/40">{{ log.bean_roast || '尚無提醒' }}</p>
       </div>

@@ -455,25 +455,37 @@
                       <div class="flex flex-wrap gap-2">
                          <button
                           type="button"
-                          class="flex-1 bg-[#F2F7F2] hover:bg-[#E6EBE6] text-[#2C3E2D] px-3 py-2 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-colors"
+                          class="flex-1 bg-[#F2F7F2] hover:bg-[#E6EBE6] text-[#2C3E2D] px-3 py-2 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          :disabled="isAssistantLoading"
                           @click="triggerAssistant('select')"
                         >
-                          幫我選 (Pick)
+                          {{ isAssistantLoading && assistantMode === 'select' ? '精靈思考中...' : '幫我選 (Pick)' }}
                         </button>
                         <button
                           type="button"
-                          class="flex-1 bg-[#F2F7F2] hover:bg-[#E6EBE6] text-[#2C3E2D] px-3 py-2 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-colors"
+                          class="flex-1 bg-[#F2F7F2] hover:bg-[#E6EBE6] text-[#2C3E2D] px-3 py-2 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          :disabled="isAssistantLoading"
                           @click="triggerAssistant('adjust')"
                         >
-                          幫我調整 (Adjust)
+                          {{ isAssistantLoading && assistantMode === 'adjust' ? '精靈思考中...' : '幫我調整 (Adjust)' }}
                         </button>
                       </div>
                       
                       <div v-if="assistantOpen" class="rounded-xl bg-[#F8FAF9] p-3 border border-[#E6EBE6]">
                         <div class="mb-3 max-h-40 space-y-2 overflow-y-auto pr-1 custom-scrollbar">
+                          <!-- 載入動畫 -->
+                          <div v-if="isAssistantLoading && assistantMessages.length === 0" class="flex items-center gap-2 text-[#8DA390] text-xs">
+                            <span class="animate-spin material-symbols-outlined text-sm">progress_activity</span>
+                            <span>精靈正在思考中...</span>
+                          </div>
                           <div v-for="(msg, idx) in assistantMessages" :key="idx"
                             :class="['rounded-lg px-3 py-2 text-xs leading-relaxed max-w-[90%]', msg.role === 'assistant' ? 'bg-white border border-[#E6EBE6] text-[#2C3E2D] self-start' : 'ml-auto bg-[#6B8E6B] text-white self-end']">
                             <p class="m-0">{{ msg.text }}</p>
+                          </div>
+                          <!-- 回覆載入中 -->
+                          <div v-if="isAssistantLoading && assistantMessages.length > 0" class="flex items-center gap-2 text-[#8DA390] text-xs">
+                            <span class="animate-spin material-symbols-outlined text-sm">progress_activity</span>
+                            <span>精靈思考中...</span>
                           </div>
                         </div>
                          <div class="flex items-end gap-2">
@@ -485,10 +497,12 @@
                           ></textarea>
                           <button
                             type="button"
-                            class="h-[34px] w-[34px] flex items-center justify-center rounded-lg bg-[#2C3E2D] text-white hover:bg-[#3E5240]"
+                            class="h-[34px] w-[34px] flex items-center justify-center rounded-lg bg-[#2C3E2D] text-white hover:bg-[#3E5240] disabled:opacity-50 disabled:cursor-not-allowed"
+                            :disabled="isAssistantLoading || !userInput.trim()"
                             @click="sendUserMessage"
                           >
-                            <span class="material-symbols-outlined text-base">send</span>
+                            <span v-if="isAssistantLoading" class="animate-spin material-symbols-outlined text-base">progress_activity</span>
+                            <span v-else class="material-symbols-outlined text-base">send</span>
                           </button>
                         </div>
                         <!-- Hidden actual btn component just to import logic if needed, or we implement logic directly -->
@@ -540,6 +554,13 @@ import { useAuthStore } from '@/store/auth';
 import FlavorRadar from '@/components/FlavorRadar.vue';
 import GeminiTestButton from '@/components/GeminiTestButton.vue';
 import CoffeeFairyIcon from '@/components/common/CoffeeFairyIcon.vue';
+import {
+  askFairyToSelect,
+  askFairyToAdjust,
+  chatWithFairy,
+  type FairyContext,
+  type FairyMessage
+} from '@/services/coffeeFairyService';
 import {
   calculateSweetness,
   calculateAcidity,
@@ -628,7 +649,7 @@ const origins = [
 
 const roasts = [
   { name: '淺焙 (Light Roast)', desc: '保留原始豆子風味。 (Retains flavor)', color: '#dcb188' },
-  { name: '中焙 (Medium Roast)', desc: '酸質與醇厚度平衡。 (Balanced)', color: '#8c5e3c' },
+  { name: '中焙 (Medium Roast)', desc: '酸度與醇厚度平衡。 (Balanced)', color: '#8c5e3c' },
   { name: '深焙 (Dark Roast)', desc: '強烈、煙燻、低酸。 (Bold & Smoky)', color: '#3e2723' },
 ];
 
@@ -759,8 +780,8 @@ const flavorEntries = computed(() =>
 
 const labelMap: Record<string, string> = {
   Sweetness: '甜度',
-  Acidity: '酸質',
-  Clarity: '清晰度',
+  Acidity: '酸度',
+  Clarity: '澄澈度',
   Body: '醇厚度',
   Aftertaste: '餘韻'
 };
@@ -776,6 +797,35 @@ const assistantOpen = ref(false);
 const assistantMode = ref<string | null>(null);
 const assistantMessages = ref<{role: string, text: string}[]>([]);
 const userInput = ref('');
+const isAssistantLoading = ref(false);
+const assistantError = ref('');
+
+// 建構精靈 API 所需的 context
+function buildFairyContext(): FairyContext {
+  return {
+    origin: selectedOrigin.value,
+    roast: selectedRoast.value,
+    grind: selectedGrind.value,
+    ratio: selectedRatio.value,
+    method: selectedMethod.value,
+    pourStages: selectedMethod.value === '手沖 (Pour Over)' ? pourStages.value : undefined,
+    flavorProfile: {
+      sweetness: finalProfile.value.Sweetness,
+      acidity: finalProfile.value.Acidity,
+      clarity: finalProfile.value.Clarity,
+      body: finalProfile.value.Body,
+      aftertaste: finalProfile.value.Aftertaste,
+    },
+  };
+}
+
+// 轉換對話歷史格式
+function getConversationHistory(): FairyMessage[] {
+  return assistantMessages.value.map(msg => ({
+    role: msg.role as 'user' | 'assistant',
+    content: msg.text,
+  }));
+}
 
 function triggerAssistant(mode: string) {
   assistantMode.value = mode;
@@ -783,42 +833,52 @@ function triggerAssistant(mode: string) {
   buildAssistantSuggestion();
 }
 
-function buildAssistantSuggestion() {
-  const profile = finalProfile.value;
-  const parts = [];
+async function buildAssistantSuggestion() {
+  isAssistantLoading.value = true;
+  assistantError.value = '';
+  assistantMessages.value = [];
 
-  if (profile.Acidity >= 4) {
-    parts.push('目前酸質偏高，適合喜歡明亮果酸的配方。');
-  } else if (profile.Acidity <= 2.2) {
-    parts.push('目前酸質較低，整體會偏向可可、堅果調性。');
+  try {
+    const context = buildFairyContext();
+    let answer: string;
+
+    if (assistantMode.value === 'select') {
+      answer = await askFairyToSelect(context);
+    } else {
+      answer = await askFairyToAdjust(context);
+    }
+
+    assistantMessages.value = [{ role: 'assistant', text: answer }];
+  } catch (err: any) {
+    console.error('Fairy API Error:', err);
+    assistantError.value = '抱歉，精靈現在忙碌中，請稍後再試 ☕';
+    assistantMessages.value = [{ role: 'assistant', text: assistantError.value }];
+  } finally {
+    isAssistantLoading.value = false;
   }
-
-  if (profile.Body >= 4) {
-    parts.push('醇厚度較高，口感會像奶茶一樣有份量。');
-  } else if (profile.Body <= 2.2) {
-    parts.push('醇厚度偏薄，適合早晨想喝得清爽一點的時候。');
-  }
-
-  if (profile.Clarity >= 3.5) {
-    parts.push('清晰度良好，風味輪廓會比較乾淨。');
-  }
-
-  let action = '';
-  if (assistantMode.value === 'select') {
-    action = '我幫你抓了一個「日常均衡杯」的方向：維持現有設定，這是一個不錯的起點。';
-  } else if (assistantMode.value === 'adjust') {
-    action = '如果你想再微調，建議先試著改變研磨度，觀察風味的變化。';
-  }
-
-  const text = [action, ...parts].join(' ');
-  assistantMessages.value = [{ role: 'assistant', text }];
 }
 
-function sendUserMessage() {
+async function sendUserMessage() {
   const content = userInput.value.trim();
-  if (!content) return;
+  if (!content || isAssistantLoading.value) return;
+
+  // 加入用戶訊息
   assistantMessages.value.push({ role: 'user', text: content });
   userInput.value = '';
+  isAssistantLoading.value = true;
+  assistantError.value = '';
+
+  try {
+    const context = buildFairyContext();
+    const history = getConversationHistory().slice(0, -1); // 不包含剛加入的用戶訊息
+    const answer = await chatWithFairy(content, context, history);
+    assistantMessages.value.push({ role: 'assistant', text: answer });
+  } catch (err: any) {
+    console.error('Fairy Chat Error:', err);
+    assistantMessages.value.push({ role: 'assistant', text: '抱歉，我暫時無法回應，請稍後再試 ☕' });
+  } finally {
+    isAssistantLoading.value = false;
+  }
 }
 
 </script>

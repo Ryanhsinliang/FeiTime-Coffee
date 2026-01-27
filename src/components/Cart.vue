@@ -31,7 +31,7 @@
       <!-- Cart Content -->
       <div class="flex-1 overflow-y-auto no-scrollbar p-8 space-y-8">
         <!-- AI Assistant Message -->
-        <div v-if="cartItems.length > 0" class="flex gap-5 items-start animate-fade-in-up">
+        <div v-if="cartItems.length > 0 && aiMessage" class="flex gap-5 items-start animate-fade-in-up">
           <div class="relative shrink-0 pt-2">
             <!-- Icon changed to #8C7B5D, border changed to gray -->
             <div class="group relative flex items-center justify-center w-11 h-11 rounded-full bg-white border border-[#DCCFC0] shadow-sm hover:shadow-md hover:border-[#8C7B5D]/40 transition-all duration-300 z-10 overflow-hidden p-1">
@@ -66,20 +66,44 @@
                 <span class="text-[10px] text-[#B5A893]/80">• 剛剛</span>
               </div>
               <p class="text-sm text-[#1a2e26] leading-relaxed">
-                絕佳選擇！<span class="font-bold border-b-2 border-[#8C7B5D]/30">{{ featuredItem?.name || '耶加雪菲' }}</span>
+                {{ aiMessage.message }}
+                <span class="font-bold border-b-2 border-[#8C7B5D]/30">{{ featuredItem?.name || '您選的咖啡' }}</span>
                 與您的口味檔案有
                 <span class="text-[#8C7B5D] font-bold inline-flex items-center gap-0.5">
-                  <span class="material-symbols-outlined text-[14px]">favorite</span>{{ matchPercentage }}% 契合度
+                  <span class="material-symbols-outlined text-[14px]">favorite</span>{{ aiMessage.matchPercentage }}% 契合度
                 </span>
                 。
               </p>
               <div class="mt-3 pt-3 border-t border-[#DCCFC0]/60 flex gap-2 items-start">
                 <span class="material-symbols-outlined text-[#8C7B5D] text-[16px] mt-0.5">lightbulb</span>
                 <span class="text-xs text-[#546e63] leading-relaxed font-medium">
-                  小撇步：試試用 93°C 的熱水搭配您的新分享壺，能釋放出更棒的蜜桃風味喔！
+                  小撇步：{{ aiMessage.brewingTip }}
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+        <!-- AI Loading Skeleton -->
+        <div v-else-if="cartItems.length > 0 && isLoadingRecommendations" class="flex gap-5 items-start animate-pulse">
+          <div class="w-11 h-11 rounded-full bg-[#DCCFC0]/50"></div>
+          <div class="flex-1 bg-white/80 rounded-2xl p-5 space-y-3">
+            <div class="h-3 bg-[#DCCFC0]/50 rounded w-1/4"></div>
+            <div class="h-4 bg-[#DCCFC0]/50 rounded w-3/4"></div>
+            <div class="h-4 bg-[#DCCFC0]/50 rounded w-1/2"></div>
+          </div>
+        </div>
+        <!-- No Profile Prompt -->
+        <div v-else-if="cartItems.length > 0 && !hasProfile && !isLoadingRecommendations" class="flex gap-5 items-start animate-fade-in-up">
+          <div class="relative shrink-0 pt-2">
+            <div class="group relative flex items-center justify-center w-11 h-11 rounded-full bg-white border border-[#DCCFC0] shadow-sm z-10 overflow-hidden p-1">
+              <span class="material-symbols-outlined text-[#8C7B5D] text-xl">quiz</span>
+            </div>
+          </div>
+          <div class="relative flex-1 bg-white/95 backdrop-blur-sm border border-[#DCCFC0]/80 rounded-2xl rounded-tl-none p-5 shadow-sm">
+            <div class="absolute -left-[7px] top-6 w-3.5 h-3.5 bg-white border-l border-b border-[#DCCFC0]/80 transform rotate-45"></div>
+            <p class="text-sm text-[#546e63] leading-relaxed">
+              完成 <router-link to="/coffeeIdTest" class="text-[#8C7B5D] font-bold underline" @click="closeCart">Coffee ID 測驗</router-link> 以獲得個人化推薦呦！
+            </p>
           </div>
         </div>
 
@@ -118,7 +142,7 @@
         <div class="space-y-3 mb-6">
           <div class="flex justify-between items-center text-[#546e63] text-sm">
             <span>小計</span>
-            <span class="font-bold text-[#1a2e26]">${{ subtotal.toFixed(2) }}</span>
+            <span class="font-bold text-[#1a2e26]">${{ subtotal.toFixed(0) }}</span>
           </div>
           <div class="flex justify-between items-center text-[#546e63] text-sm">
             <span>運費</span>
@@ -126,7 +150,7 @@
           </div>
           <div class="flex justify-between items-center pt-4 border-t border-[#e0e6e4]/60">
             <span class="font-bold text-lg text-[#1a2e26] font-notoserif">總計</span>
-            <span class="font-extrabold text-2xl text-[#1a2e26] font-notoserif">${{ total.toFixed(2) }}</span>
+            <span class="font-extrabold text-2xl text-[#1a2e26] font-notoserif">${{ total.toFixed(0) }}</span>
           </div>
         </div>
         <!-- 庫存不明警告 -->
@@ -166,7 +190,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import CartItem from './cart/CartItem.vue'
 import RecommendationCard from './cart/RecommendationCard.vue'
@@ -185,6 +209,9 @@ const router = useRouter()
 const isOpen = computed(() => cartStore.isOpen)
 const cartItems = computed(() => cartStore.items)
 const recommendations = computed(() => cartStore.recommendations)
+const aiMessage = computed(() => cartStore.aiMessage)
+const isLoadingRecommendations = computed(() => cartStore.isLoadingRecommendations)
+const hasProfile = computed(() => cartStore.hasProfile)
 
 // Getters - 從 Store 取得計算後的數值
 const subtotal = computed(() => cartStore.subtotal)
@@ -206,9 +233,16 @@ const featuredItem = computed(() => {
   return cartItems.value.find(item => item.matchPercentage)
 })
 
+// 當購物車開啟時，觸發 AI 推薦
+watch(isOpen, (newVal) => {
+  if (newVal && cartItems.value.length > 0) {
+    cartStore.fetchAIRecommendations()
+  }
+}, { immediate: true })
 
+// 已經不需要團隟的 matchPercentage 計算，改用 aiMessage.matchPercentage
 const matchPercentage = computed(() => {
-  return featuredItem.value?.matchPercentage || 98
+  return aiMessage.value?.matchPercentage || featuredItem.value?.matchPercentage || 0
 })
 
 const handleUpdateQuantity = (itemId, newQuantity) => {

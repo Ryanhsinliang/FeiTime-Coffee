@@ -378,7 +378,7 @@ export function calculateSweetness(cfg: Partial<BrewConfig>): number {
 }
 
 /**
- * 計算酸質 (1~5)
+ * 計算酸度 (1~5)
  */
 export function calculateAcidity(cfg: Partial<BrewConfig>): number {
     const rn = getRatioNorm(cfg);
@@ -396,7 +396,7 @@ export function calculateAcidity(cfg: Partial<BrewConfig>): number {
 }
 
 /**
- * 計算乾淨度 (1~5)
+ * 計算澄澈度 (1~5)
  */
 export function calculateClarity(cfg: Partial<BrewConfig>): number {
     const rn = getRatioNorm(cfg);

@@ -305,7 +305,7 @@ let lastLogTime = 0;
           resultRadarInstance = new Chart(ctx, {
             type: 'radar',
             data: {
-              labels: ['甜感', '酸質', '乾淨度', '醇厚度', '餘韻'],
+              labels: ['甜感', '酸度', '澄澈度', '醇厚度', '餘韻'],
               datasets: [{
                 label: 'Flavor Profile',
                 data: flavorScores.value,
@@ -936,7 +936,7 @@ let lastLogTime = 0;
         radarChartInstance = new Chart(radarCanvas, {
           type: 'radar',
           data: {
-            labels: [['甜感', '(Sweetness)'], ['酸質', '(Acidity)'], ['清晰度', '(Clarity)'], ['醇厚度', '(Body)'], ['餘韻', '(Aftertaste)']],
+            labels: [['甜感', '(Sweetness)'], ['酸度', '(Acidity)'], ['澄澈度', '(Clarity)'], ['醇厚度', '(Body)'], ['餘韻', '(Aftertaste)']],
             datasets: [{
               label: '風味輪廓 (Flavor Profile)',
               data: [1, 1, 1, 1, 1],
@@ -1015,12 +1015,7 @@ let lastLogTime = 0;
     };
 
     onMounted(() => {
-      // Debug API Key loading
-      if (import.meta.env.VITE_API_KEY) {
-         console.log("FeiTime: API Key loaded successfully");
-      } else {
-         console.error("FeiTime: API Key IS MISSING or Undefined!");
-      }
+      // Debug API Key check removed as it is handled by backend
 
       checkMobile();
       window.addEventListener('resize', checkMobile);

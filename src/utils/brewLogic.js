@@ -69,7 +69,7 @@ export function calculateSweetness(cfg) {
   );
 }
 
-// 酸質 (Acidity)
+// 酸度 (Acidity)
 export function calculateAcidity(cfg) {
   const rn = getRatioNorm(cfg);
   const ei = getExtractionIndex(cfg);
@@ -88,7 +88,7 @@ export function calculateAcidity(cfg) {
   );
 }
 
-// 清晰度 (Clarity)
+// 澄澈度 (Clarity)
 export function calculateClarity(cfg) {
   const rn = getRatioNorm(cfg);
   const ei = getExtractionIndex(cfg);

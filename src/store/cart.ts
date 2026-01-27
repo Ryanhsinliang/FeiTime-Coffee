@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import type { CartItem, StrapiCartItemData } from '@/types/cart';
 import { useAuthStore } from '@/store/auth';
+import { fetchCartRecommendations, type AIRecommendedProduct } from '@/services/cartRecommendationService';
 
 // Express API 設定 (使用環境變數或預設 localhost:4000)
 // VITE_API_BASE_URL 應在 .env.local 定義
@@ -18,20 +19,18 @@ export const useCartStore = defineStore('cart', () => {
     const items = ref<CartItem[]>([]);
     const isOpen = ref(false); // 控制購物車側邊欄開關
 
-    // 推薦商品 (Mock Data)
-    const recommendations = ref<CartItem[]>([
-        {
-            id: 999,
-            pid: 'coffee_mock_001',
-            name: '測試用咖啡豆 (Mock)',
-            price: 350,
-            quantity: 1,
-            image: 'https://placehold.co/200x200',
-            weight: '半磅',
-            stock: 10,
-            matchPercentage: 88
-        }
-    ]);
+    // 推薦商品 (動態從 API 取得)
+    const recommendations = ref<CartItem[]>([]);
+
+    // AI 推薦相關狀態
+    const aiMessage = ref<{
+        matchPercentage: number;
+        message: string;
+        brewingTip: string;
+    } | null>(null);
+    const isLoadingRecommendations = ref(false);
+    const hasProfile = ref(false);
+    const noProfileMessage = ref('');
 
     // Getters
     const subtotal = computed(() => {
@@ -387,10 +386,81 @@ export const useCartStore = defineStore('cart', () => {
         }
     }
 
+    /**
+     * 取得 AI 購物車推薦
+     * 呼叫後端 API 獲取個人化的咖啡精靈訊息和推薦商品
+     */
+    async function fetchAIRecommendations() {
+        const authStore = useAuthStore();
+
+        // 必須登入且有商品才呼叫
+        if (!authStore.isLoggedIn || !authStore.user?.id || items.value.length === 0) {
+            aiMessage.value = null;
+            recommendations.value = [];
+            hasProfile.value = false;
+            return;
+        }
+
+        isLoadingRecommendations.value = true;
+
+        try {
+            console.log('🔮 正在取得 AI 推薦...');
+
+            // 準備購物車商品資料
+            const cartItemsData = items.value.map(item => ({
+                id: item.id,
+                name: item.name,
+                flavor_type: (item as any).flavor_type || 'Fruity',
+            }));
+
+            const response = await fetchCartRecommendations(
+                authStore.user.id,
+                cartItemsData
+            );
+
+            if (response.success) {
+                hasProfile.value = response.hasProfile;
+
+                if (response.hasProfile && response.aiMessage) {
+                    aiMessage.value = response.aiMessage;
+
+                    // 轉換推薦商品格式
+                    recommendations.value = response.recommendations.map((rec: AIRecommendedProduct) => ({
+                        id: rec.id,
+                        pid: rec.documentId || String(rec.id),
+                        name: rec.name,
+                        price: rec.price,
+                        quantity: 1,
+                        image: rec.img?.[0]?.formats?.medium?.url || rec.img?.[0]?.url || '',
+                        weight: '半磅',
+                        stock: rec.stock || 50,
+                        matchPercentage: rec.matchScore,
+                    }));
+
+                    console.log('✅ AI 推薦載入完成，契合度:', response.aiMessage.matchPercentage);
+                } else {
+                    noProfileMessage.value = response.message || '完成 Coffee ID 測驗以獲得個人化推薦';
+                    aiMessage.value = null;
+                    recommendations.value = [];
+                }
+            }
+        } catch (error) {
+            console.error('❌ AI 推薦載入失敗:', error);
+            aiMessage.value = null;
+            recommendations.value = [];
+        } finally {
+            isLoadingRecommendations.value = false;
+        }
+    }
+
     return {
         items,
         isOpen,
         recommendations,
+        aiMessage,
+        isLoadingRecommendations,
+        hasProfile,
+        noProfileMessage,
         totalAmount,
         subtotal,
         total,
@@ -406,7 +476,8 @@ export const useCartStore = defineStore('cart', () => {
         openCart,
         closeCart,
         checkout,
-        loadCartFromStrapi
+        loadCartFromStrapi,
+        fetchAIRecommendations
     };
 }, {
     persist: {

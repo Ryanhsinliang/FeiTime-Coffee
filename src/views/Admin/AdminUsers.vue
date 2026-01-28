@@ -24,7 +24,7 @@
           class="w-full rounded-lg focus:ring-2 border border-[#e7dacf] bg-[#fcfaf8] h-12 pl-4 pr-10 text-sm appearance-none cursor-pointer"
         >
           <option value="all">所有使用者</option>
-          <option value="Admin">管理者</option>
+          <option value="Admin">管理員</option>
           <option value="Member">一般會員</option>
         </select>
         <i

@@ -4,18 +4,10 @@
   >
     <div class="flex items-center gap-4">
       <div class="flex items-center text-sm gap-2">
-        <p>我的帳號</p>
+        <p>設定</p>
         <span class="material-symbols-outlined text-lg">chevron_right</span>
-        <p class="font-semibold">個人資料設定</p>
+        <p class="font-semibold">我的帳號資料</p>
       </div>
-    </div>
-    <div class="flex items-center gap-4">
-      <button class="w-10 h-10 hover:text-[#e27312] relative">
-        <i class="fa-regular fa-bell text-2xl"></i>
-        <span
-          class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"
-        ></span>
-      </button>
     </div>
   </header>
 
@@ -23,9 +15,7 @@
     <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
       <div class="flex flex-col gap-1">
         <h2 class="text-3xl font-extrabold">我的帳號資料</h2>
-        <p class="text-gray-400 text-sm">
-          可修改個人聯絡資訊與預設收件地址（使用者ID、Email不可修改）。
-        </p>
+        <p class="text-gray-400 text-sm">可修改個人聯絡資訊（使用者ID、Email不可修改）。</p>
       </div>
 
       <button

@@ -30,9 +30,9 @@
 </template>
 
 <script setup>
-  import Cart from '@/components/Cart.vue';
-  import Header from './components/Header.vue';
-  import Footer from './components/Footer.vue';
+  import Cart from '@/components/common/cart/Cart.vue';
+  import Header from './components/common/Header.vue';
+  import Footer from './components/common/Footer.vue';
   import AIChatBall from './components/common/AIChatBall.vue';
   import CustomCursor from './components/common/CustomCursor.vue';
   import GlobalBanner from './components/GlobalBanner.vue';

@@ -122,7 +122,7 @@
         <div v-if="recommendations.length > 0" class="pt-6 border-t border-[#e0e6e4]">
           <div class="flex items-center gap-2 mb-4 px-1">
             <div class="p-1 rounded bg-[#8C7B5D]/10">
-              <img src="/icons/feitime-logo.png" alt="FeiTime Logo" class="w-5 h-5 object-contain opacity-80" />
+              <img src="/feitime-logo.png" alt="FeiTime Logo" class="w-5 h-5 object-contain opacity-80" />
             </div>
             <h4 class="text-xs font-bold text-[#546e63] uppercase tracking-widest font-notoserif">您可能也喜歡</h4>
           </div>
@@ -192,8 +192,8 @@
 <script setup>
 import { computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import CartItem from './cart/CartItem.vue'
-import RecommendationCard from './cart/RecommendationCard.vue'
+import CartItem from './CartItem.vue'
+import RecommendationCard from './RecommendationCard.vue'
 
 import { useCartStore } from '@/store/cart'
 import { useAuthStore } from '@/store/auth'

@@ -6,7 +6,7 @@
     <div class="px-6 xl:px-12 flex items-center justify-between max-w-[1600px] mx-auto h-16">
       <router-link to="/home" class="flex items-center gap-2 flex-shrink-0">
         <img
-          src="/icons/feitime-logo.png"
+          src="/feitime-logo.png"
           alt="FeiTime Logo"
           class="w-12 h-12 lg:w-16 lg:h-16 object-cover"
         />

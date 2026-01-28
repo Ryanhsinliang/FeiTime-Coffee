@@ -27,7 +27,7 @@
       <!-- 後台標題 -->
       <div class="flex items-center gap-3 px-2 pb-6">
         <img
-          src="/icons/feitime-logo.png"
+          src="/feitime-logo.png"
           alt="FeiTime Logo"
           class="w-16 h-16 object-cover aspect-square rounded-full"
         />

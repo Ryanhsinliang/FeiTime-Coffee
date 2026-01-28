@@ -279,9 +279,8 @@
     try {
       const res = await callProducts(1, 500);
       products.value = res.data || [];
-    } catch (err: any) {
-      console.error('❌ 載入失敗:', err);
-      error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
+    } catch (err: unknown) {
+      error.value = '商品載入失敗';
     } finally {
       loading.value = false;
     }
@@ -420,9 +419,8 @@
       }, 3000);
 
       editingProduct.value = null;
-    } catch (err: any) {
-      console.error('❌ 更新失敗:', err);
-      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
+    } catch (err: unknown) {
+      updateMessage.value = '庫存更新失敗';
       updateSuccess.value = false;
       setTimeout(() => {
         updateMessage.value = '';

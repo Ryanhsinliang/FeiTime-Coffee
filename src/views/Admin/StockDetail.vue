@@ -314,6 +314,7 @@
   const uploading = ref(false);
   const updateMessage = ref('');
   const updateSuccess = ref(false);
+  const error = ref('');
 
   // 商品表單資料
   const ProductForm = ref<ProductRequest>({
@@ -340,8 +341,7 @@
 
       // 深拷貝避免引用問題
       ProductForm.value = JSON.parse(JSON.stringify(response.data));
-    } catch (error: any) {
-      console.error('載入商品失敗:', error);
+    } catch (error: unknown) {
       alert('載入商品資料失敗');
     }
   };
@@ -382,9 +382,8 @@
       }
 
       target.value = '';
-    } catch (error: any) {
-      console.error('上傳圖片失敗:', error);
-      alert(error?.response?.data?.error || '上傳圖片失敗，請重試');
+    } catch (err: unknown) {
+      error.value = '上傳圖片失敗，請重試';
     } finally {
       uploading.value = false;
     }
@@ -433,9 +432,8 @@
       setTimeout(() => {
         updateMessage.value = '';
       }, 3000);
-    } catch (error: any) {
-      console.error('更新商品失敗:', error);
-      updateMessage.value = error?.response?.data?.error || '更新商品失敗，請重試';
+    } catch (error: unknown) {
+      updateMessage.value = '更新商品失敗，請重試';
       updateSuccess.value = false;
       setTimeout(() => {
         updateMessage.value = '';

@@ -276,9 +276,8 @@
     try {
       const res = await callOrders(1, 500);
       allOrders.value = res.data || [];
-    } catch (err: any) {
-      console.error('❌ 載入失敗:', err);
-      error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
+    } catch (err: unknown) {
+      error.value = '商品載入失敗';
     } finally {
       loading.value = false;
     }
@@ -309,9 +308,8 @@
           updateMessage.value = '';
         }, 3000);
       }
-    } catch (err: any) {
-      console.error('❌ 自動同步物流失敗:', err);
-      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
+    } catch (err: unknown) {
+      updateMessage.value = '同步物流失敗';
       updateSuccess.value = false;
       // 3秒後清除提示訊息
       setTimeout(() => {

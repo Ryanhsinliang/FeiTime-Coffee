@@ -9,6 +9,8 @@ import { forgotPasswordService } from '@/services/forgotPasswordService';
 import { resetPasswordService } from '@/services/resetPasswordService';
 import { googleAuthService } from '@/services/googleAuthService';
 
+import { ApiError } from '@/types/apiError';
+
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,}$/;
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
@@ -73,9 +75,12 @@ export const useAuthStore = defineStore('auth', () => {
       await cartStore.loadCartFromStrapi(data.user.id);
 
       return { success: true };
-    } catch (err: any) {
-      const status = err.status;
-      let message = err.message || '帳號或密碼錯誤';
+    } catch (err: unknown) {
+      const error = err as ApiError;
+
+      const status = error.status;
+      let message = error.message || '帳號或密碼錯誤';
+
       if (status === 401) {
         message = '帳號或密碼錯誤，請重新輸入';
       } else if (status === 429) {
@@ -109,7 +114,8 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = { ...user.value, ...data };
       localStorage.setItem('user', JSON.stringify(user.value));
       return { success: true };
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as ApiError;
       const message = error.message || '更新失敗';
       return { success: false, message };
     }
@@ -121,7 +127,8 @@ export const useAuthStore = defineStore('auth', () => {
       await forgotPasswordService.forgotPassword(email);
       setBanner('重設密碼連結已發送至您的信箱', 'success');
       return { success: true };
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as ApiError;
       const message = error.response?.data?.error?.message || '發送失敗，請稍後再試';
       setBanner(message, 'error');
       return { success: false };
@@ -149,10 +156,13 @@ export const useAuthStore = defineStore('auth', () => {
       await resetPasswordService.resetPassword(code, cleanPassword, cleanConfirmPass, captchaToken);
       setBanner('密碼修改成功', 'success');
       return { success: true };
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as ApiError;
       let displayMessage = '重設失敗，連結可能已過期或無效';
       const backendMessage = error.response?.data?.error?.message;
-      if (backendMessage && error.response?.status < 500) {
+      const responseStatus = error.response?.status;
+
+      if (backendMessage && responseStatus && responseStatus < 500) {
         displayMessage = backendMessage;
       }
       setBanner(displayMessage, 'error');
@@ -169,7 +179,8 @@ export const useAuthStore = defineStore('auth', () => {
           : currentPath;
       localStorage.setItem('redirectAfterLogin', safeRedirectPath);
       googleAuthService.initiateGoogleLogin();
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as ApiError;
       const message = error.message || 'Google 登入失敗';
       setBanner(message, 'error');
       return { success: false, message };
@@ -191,7 +202,8 @@ export const useAuthStore = defineStore('auth', () => {
       cartStore.loadCartFromStrapi(userData.id);
 
       return { success: true };
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as ApiError;
       const message = error.message || 'Google 登入處理失敗';
       setBanner(message, 'error');
       return { success: false, message };

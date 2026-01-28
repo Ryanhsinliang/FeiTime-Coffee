@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { useAuthStore } from '@/store/auth';
 import { ref, computed } from 'vue';
 import api from '@/services/api';
+import { ApiError } from '@/types/apiError';
 
 export interface Scores {
   acidity: number;
@@ -83,8 +84,10 @@ export const useCoffeeResultStore = defineStore(
         };
         const response = await api.post('/api/coffee-results', payload);
         return response.data;
-      } catch (err: any) {
-        console.error(`'儲存失敗:', ${err.message}`);
+      } catch (err: unknown) {
+        const error = err as ApiError;
+        const errorMessage = error.message || '未知錯誤';
+        console.error(`'儲存失敗:', ${errorMessage}`);
         throw err;
       }
     }
@@ -93,7 +96,7 @@ export const useCoffeeResultStore = defineStore(
       if (!userId.value) return false;
       try {
         const response = await api.get('/api/coffee-results', {
-          params: { userId: userId.value }
+          params: { userId: userId.value },
         });
         const results = response.data?.data;
         if (results && results.length > 0) {
@@ -109,8 +112,10 @@ export const useCoffeeResultStore = defineStore(
           return true;
         }
         return false;
-      } catch (err: any) {
-        console.error('載入測驗結果失敗:', err.message);
+      } catch (err: unknown) {
+        const error = err as ApiError;
+        const errorMessage = error.message || '未知錯誤';
+        console.error('載入測驗結果失敗:', errorMessage);
         return false;
       }
     }

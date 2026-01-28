@@ -25,9 +25,9 @@ import AdminUsers from '@/views/Admin/AdminUsers.vue';
 import AdminUserMe from '@/views/Admin/AdminUserMe.vue';
 import AdminUserDetail from '@/views/Admin/AdminUserDetail.vue';
 import Checkout from '@/views/Checkout/Checkout.vue';
-import PayCancel from '@/views/PayCancel.vue';
-import PaySuccess from '@/views/PaySuccess.vue';
-import PayWait from '@/views/PayWait.vue';
+import PayCancel from '@/views/Checkout/PayCancel.vue';
+import PaySuccess from '@/views/Checkout/PaySuccess.vue';
+import PayWait from '@/views/Checkout/PayWait.vue';
 
 const routes = [
   {

@@ -13,7 +13,7 @@
         ></div>
 
         <!-- 會員專區主卡片容器（外層金色背景） -->
-        <div class="relative max-w-6xl mx-auto p-2 md:p-3 leather-texture-gold rounded-[2.5rem]">
+        <div class="relative max-w-6xl mx-auto leather-texture-gold rounded-[2.5rem]">
           <!-- 頁籤切換列 -->
           <div class="absolute -top-12 left-4 sm:left-10 md:left-20 flex gap-2 sm:gap-3 z-0">
             <!-- 會員專區頁籤（已選中狀態） -->
@@ -36,7 +36,7 @@
 
           <!-- 主要玻璃面板（內層透明玻璃效果） -->
           <div
-            class="relative z-10 glass-panel rounded-[2rem] overflow-hidden flex flex-col min-h-[800px]"
+            class="relative z-10 glass-panel rounded-[2.5rem] overflow-hidden flex flex-col min-h-[800px]"
           >
             <!-- ===== 個人資料區域 ===== -->
             <div class="p-6 sm:p-10 md:p-12 lg:p-16 border-b border-white/20">
@@ -175,7 +175,7 @@
                 >
                   <!-- 桌面版：顯示完整文字 -->
                   <span class="hidden md:inline">
-                    {{ showAllBrewLogs ? 'Collapse' : '點此顯示更多沖煮紀錄' }}
+                    {{ showAllBrewLogs ? '點此收起' : '點此顯示更多沖煮紀錄' }}
                   </span>
                   <!-- 圖標 -->
                   <span
@@ -235,9 +235,7 @@
         ></div>
 
         <!-- 訂單記錄主卡片容器（外層綠色背景） -->
-        <div
-          class="relative max-w-6xl mx-auto p-2 md:p-3 leather-texture-champagne rounded-[2.5rem]"
-        >
+        <div class="relative max-w-6xl mx-auto leather-texture-champagne rounded-[2.5rem]">
           <!-- 頁籤切換列 -->
           <div class="absolute -top-12 left-4 sm:left-10 md:left-20 flex gap-2 sm:gap-3 z-0">
             <!-- 會員專區頁籤（未選中狀態） -->
@@ -260,7 +258,7 @@
 
           <!-- 主要玻璃容器（內層透明玻璃效果） -->
           <div
-            class="relative z-10 glass-container rounded-[2rem] min-h-[800px] flex flex-col overflow-hidden"
+            class="relative z-10 glass-container rounded-[2.5rem] min-h-[800px] flex flex-col overflow-hidden"
           >
             <!-- ===== 頁面標題區域 ===== -->
             <div
@@ -331,10 +329,11 @@
 
               <!-- 訂單列表 -->
               <template v-else>
-                <details v-for="order in paginatedOrders" :key="order.id" class="group border-none">
+                <div v-for="order in paginatedOrders" :key="order.id" class="order-item">
                   <!-- 訂單摘要列 -->
-                  <summary
-                    class="glass-row rounded-2xl md:rounded-[2rem] px-4 sm:px-6 md:px-10 py-4 sm:py-6 md:py-8 cursor-pointer flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-8 list-none outline-none"
+                  <div
+                    class="glass-row rounded-2xl md:rounded-[2rem] px-4 sm:px-6 md:px-10 py-4 sm:py-6 md:py-8 cursor-pointer flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-8"
+                    @click="toggleOrder(order.id)"
                   >
                     <div class="flex items-center gap-4 sm:gap-8 md:gap-12 w-full sm:w-auto">
                       <!-- 訂單日期 -->
@@ -381,18 +380,21 @@
                           {{ getStatusText(order.order_status) }}
                         </span>
                         <span
-                          class="material-symbols-outlined text-primary/20 group-open:rotate-90 transition-transform text-base sm:text-xl"
+                          class="material-symbols-outlined text-primary/20 transition-transform duration-300 text-base sm:text-xl"
+                          :class="{ 'rotate-90': expandedOrderId === order.id }"
                         >
                           arrow_forward_ios
                         </span>
                       </div>
                     </div>
-                  </summary>
+                  </div>
 
                   <!-- 訂單詳細資訊 -->
-                  <div
-                    class="mx-2 sm:mx-4 mt-2 rounded-2xl md:rounded-[2rem] p-6 sm:p-8 md:p-12 glass-detail-panel"
-                  >
+                  <Transition name="slide">
+                    <div
+                      v-show="expandedOrderId === order.id"
+                      class="mx-2 sm:mx-4 mt-2 rounded-2xl md:rounded-[2rem] p-6 sm:p-8 md:p-12 glass-detail-panel"
+                    >
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 md:gap-20">
                       <!-- 左欄：商品明細、運費、總金額 -->
                       <div>
@@ -416,18 +418,18 @@
                             ${{ item.item_total.toLocaleString() }}
                           </span>
                         </div>
-                        <!-- 運費（上方有分隔線） -->
+                        <!-- 運費（上下有分隔線） -->
                         <div
-                          class="flex justify-between items-center py-4 mt-2 border-t border-primary/10"
+                          class="flex justify-between items-center py-4 mt-2 border-y border-[rgba(91,122,109,0.2)]"
                         >
                           <span class="text-lg font-light text-primary/70">運費</span>
                           <span class="text-lg font-light text-primary/70">
                             ${{ order.shipping_fee.toLocaleString() }}
                           </span>
                         </div>
-                        <!-- 總金額（上方有分隔線） -->
+                        <!-- 總金額 -->
                         <div
-                          class="flex justify-between items-center py-4 border-t border-primary/10"
+                          class="flex justify-between items-center py-4"
                         >
                           <span class="text-lg font-medium text-primary/80">總計</span>
                           <span class="text-xl font-medium text-primary/90">
@@ -484,7 +486,7 @@
                               </p>
                               <p class="text-lg text-primary/60">
                                 {{
-                                  order.payment_method === 'linepay'
+                                  ['linepay', 'line pay'].includes(order.payment_method?.toLowerCase())
                                     ? 'LINE Pay'
                                     : order.payment_method
                                 }}
@@ -493,25 +495,21 @@
                           </div>
                         </div>
                         <!-- 追蹤編號（如果有） -->
-                        <div v-if="order.tracking_number">
+                        <div v-if="order.tracking_number" class="tracking-number-highlight">
                           <p
                             class="text-sm font-bold uppercase tracking-[0.3em] text-primary/30 mb-2"
                           >
                             追蹤編號
                           </p>
-                          <p class="text-lg font-light text-gold-accent/70 tracking-wide break-all">
+                          <p class="text-lg font-light text-primary/70 tracking-wide break-all">
                             {{ order.tracking_number }}
                           </p>
-                          <button
-                            class="mt-4 px-8 sm:px-10 py-2.5 sm:py-3 bg-pale-green/40 border border-pale-green-dark/20 text-pale-green-dark text-sm font-bold uppercase tracking-[0.3em] rounded-full shadow-sm hover:bg-pale-green/60 transition-all"
-                          >
-                            追蹤訂單
-                          </button>
                         </div>
                       </div>
                     </div>
                   </div>
-                </details>
+                  </Transition>
+                </div>
               </template>
             </div>
 
@@ -813,6 +811,13 @@
 
   const viewBrewLog = (id: number) => {};
 
+  // ========== 訂單展開/收合 ==========
+  const expandedOrderId = ref<number | null>(null);
+
+  const toggleOrder = (orderId: number) => {
+    expandedOrderId.value = expandedOrderId.value === orderId ? null : orderId;
+  };
+
   // ========== 編輯聯絡資訊 ==========
   const startEditingPhone = () => {
     isEditingPhone.value = true;
@@ -868,19 +873,6 @@
   .glass-panel {
     backdrop-filter: blur(60px) saturate(150%);
     -webkit-backdrop-filter: blur(60px) saturate(150%);
-    border: 2px solid transparent;
-    background-image:
-      linear-gradient(rgba(247, 243, 235, 0.25), rgba(247, 243, 235, 0.15)),
-      linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.08) 0%,
-        rgba(197, 160, 89, 0.25) 25%,
-        rgba(255, 255, 255, 0.4) 50%,
-        rgba(197, 160, 89, 0.25) 75%,
-        rgba(255, 255, 255, 0.08) 100%
-      );
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
     box-shadow:
       0 16px 48px rgba(197, 160, 89, 0.1),
       0 4px 12px rgba(197, 160, 89, 0.06),
@@ -911,10 +903,10 @@
   }
 
   .glass-tab-member {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(220, 232, 222, 0.2);
     backdrop-filter: blur(40px) saturate(150%);
     -webkit-backdrop-filter: blur(40px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(127, 166, 149, 0.1);
     border-bottom: none;
     box-shadow:
       0 4px 12px rgba(0, 0, 0, 0.03),
@@ -964,10 +956,8 @@
   }
 
   .glass-container {
-    background: rgba(220, 232, 222, 0.4);
     backdrop-filter: blur(60px) saturate(150%);
     -webkit-backdrop-filter: blur(60px) saturate(150%);
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
     box-shadow:
       0 16px 48px rgba(122, 140, 124, 0.15),
       0 4px 12px rgba(122, 140, 124, 0.1),
@@ -1014,10 +1004,10 @@
   }
 
   .glass-tab-order {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(232, 223, 200, 0.25);
     backdrop-filter: blur(40px) saturate(150%);
     -webkit-backdrop-filter: blur(40px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(197, 160, 89, 0.1);
     border-bottom: none;
     box-shadow:
       0 4px 12px rgba(0, 0, 0, 0.03),
@@ -1105,5 +1095,46 @@
   :deep(.dp__action_button) {
     border-radius: 0.5rem;
     font-weight: 600;
+  }
+
+  .tracking-number-highlight {
+    position: relative;
+    padding: 1rem 0;
+    margin-top: 1.25rem;
+  }
+
+  .tracking-number-highlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -1rem;
+    right: -1rem;
+    bottom: 0;
+    border-radius: 0.75rem;
+    background: rgba(197, 160, 89, 0.15);
+    border: 1px solid rgba(197, 160, 89, 0.25);
+    z-index: -1;
+  }
+
+  /* 訂單展開/收合動畫 */
+  .slide-enter-active,
+  .slide-leave-active {
+    transition: all 0.3s ease-out;
+    overflow: hidden;
+  }
+
+  .slide-enter-from,
+  .slide-leave-to {
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .slide-enter-to,
+  .slide-leave-from {
+    opacity: 1;
+    max-height: 1000px;
   }
 </style>

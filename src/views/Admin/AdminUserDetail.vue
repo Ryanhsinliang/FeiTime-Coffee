@@ -265,8 +265,8 @@
       form.username = res.data.username || '';
       form.phone_number = res.data.phone_number || '';
       form.shipping_address = res.data.shipping_address || '';
-    } catch (e: any) {
-      error.value = e?.message || e?.response?.data?.message || '載入使用者失敗';
+    } catch (err: unknown) {
+      error.value = '載入使用者失敗';
     } finally {
       loading.value = false;
     }
@@ -297,9 +297,8 @@
       setTimeout(() => {
         updateMessage.value = '';
       }, 3000);
-    } catch (err: any) {
-      console.error('❌ 更新失敗:', err);
-      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
+    } catch (err: unknown) {
+      updateMessage.value = '資料更新失敗';
       // 3秒後清除提示訊息
       setTimeout(() => {
         updateMessage.value = '';

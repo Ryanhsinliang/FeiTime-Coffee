@@ -130,14 +130,43 @@
       <div
         class="flex items-center justify-between p-4 border-t gap-4 border-[#e7dacf] bg-[#fcfaf8]"
       >
-        <p class="text-sm">共 {{ filteredUsers.length }} 筆</p>
+        <p class="text-sm">每頁 {{ pageSize }} 筆 / 共 {{ totalFilteredItems }} 筆</p>
+
+        <div class="flex items-center gap-2">
+          <button
+            class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
+            :disabled="currentPage === 1"
+            @click="changePage(currentPage - 1)"
+          >
+            <i class="fa-solid fa-chevron-left text-sm"></i>
+          </button>
+
+          <!-- 頁碼按鈕 -->
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            class="flex items-center justify-center size-9 rounded-lg font-bold text-sm"
+            :class="page === currentPage ? 'bg-[#f09a4e] shadow-sm' : 'border bg-white'"
+            @click="changePage(page)"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            class="flex items-center justify-center size-9 rounded-lg border bg-white disabled:opacity-50"
+            :disabled="currentPage === totalPages || totalPages === 0"
+            @click="changePage(currentPage + 1)"
+          >
+            <i class="fa-solid fa-chevron-right text-sm"></i>
+          </button>
+        </div>
       </div>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { getAllUsers } from '@/services/admin/adminUserService';
   import type { UserRequest } from '@/services/admin/adminUserService';
@@ -149,6 +178,10 @@
   const loading = ref(false);
   const error = ref('');
   const keyword = ref('');
+
+  // 分頁狀態
+  const currentPage = ref(1);
+  const pageSize = ref(20);
 
   type RoleFilter = 'all' | 'Admin' | 'Member';
   const roleFilter = ref<RoleFilter>('all');
@@ -211,11 +244,28 @@
     try {
       const res = await getAllUsers();
       users.value = res.data || [];
-    } catch (err: any) {
-      error.value = err?.response?.data?.message || err?.message || '取得使用者列表失敗';
+    } catch (err: unknown) {
+      error.value = '取得使用者列表失敗';
     } finally {
       loading.value = false;
     }
+  }
+
+  // ✅ 計算篩選後的總筆數和總頁數
+  const totalFilteredItems = computed(() => filteredUsers.value.length);
+  const totalPages = computed(() => Math.ceil(totalFilteredItems.value / pageSize.value));
+
+  // ✅ 再做分頁切割
+  const paginatedProducts = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return filteredUsers.value.slice(start, end);
+  });
+
+  // ✅ 換頁功能
+  function changePage(page: number) {
+    if (page < 1 || page > totalPages.value) return;
+    currentPage.value = page;
   }
 
   // 清除篩選
@@ -223,7 +273,13 @@
     keyword.value = '';
     statusFilter.value = 'all';
     roleFilter.value = 'all';
+    currentPage.value = 1; // 重置頁碼
   }
+
+  // ✅ 監聽篩選條件變化，重置頁碼
+  watch([statusFilter, roleFilter, keyword], () => {
+    currentPage.value = 1;
+  });
 
   function goToUserDetail(id: number) {
     router.push({ name: 'AdminUserDetail', params: { id } });

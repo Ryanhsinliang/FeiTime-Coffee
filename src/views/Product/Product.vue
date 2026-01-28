@@ -551,7 +551,9 @@
             class="group px-[16px] pb-[16px] bg-white rounded-[12px] relative flex flex-col cursor-pointer"
           >
             <!-- 產品圖片 -->
-            <div class="relative aspect-[4/3] overflow-hidden bg-[#f5f5f5] mt-[16px] rounded-[12px]">
+            <div
+              class="relative aspect-[4/3] overflow-hidden bg-[#f5f5f5] mt-[16px] rounded-[12px]"
+            >
               <div
                 class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-out"
                 :style="{ backgroundImage: `url('${p.img[0].formats.large.url}')` }"
@@ -619,8 +621,6 @@
     <!-- 2+3的div 結束 -->
   </div>
   <!-- 全域設定結束 -->
-
-  <div v-show="cannotFind"></div>
 </template>
 
 <script setup lang="ts">
@@ -680,8 +680,6 @@
   }
 
   const product = ref<DataRule[]>([]);
-  // <DataRule[]>	為TS語法 規範 productCopy 、product 是符合 DataRule 規格的陣列
-
   const loading = ref(true); // 用來調整讀取中圖片是否呈現
   const err = ref(''); // 放錯誤訊息
 
@@ -709,6 +707,8 @@
       product.value = res.data;
       pagination.value = res.meta.pagination;
 
+      cannotFind.value = product.value.length === 0;
+
       loading.value = false;
     } catch (error) {
       loading.value = false;
@@ -722,7 +722,6 @@
 
   // 當使用下拉式選單 執行排序的函數
   const takeSort = () => {
-    // 移除 async
     if (!sortWhich.value) return;
 
     // 清空其他前端狀態
@@ -749,7 +748,7 @@
     if (sortWhich.value == '') {
       return;
     }
-    // sortHe.value = !sortHe.value;
+
     const order = sortHe.value ? 'asc' : 'desc';
     router.push({
       path: '/product',
@@ -762,7 +761,7 @@
   };
 
   // 搜尋相關
-  const findWord = ref(''); // 雙向綁定輸入框的變數
+  const findWord = ref('');
   const cannotFind = ref(false); // 製作變數來控制【搜尋不到】的CSS樣式是否生成 預設先不要出現
   const find = async (word: string) => {
     await resetRouteOnly();
@@ -853,11 +852,7 @@
   };
 
   const route = useRoute();
-  const first = () => {
-    // 把網址上的參數 (route.query) 帶到 API 函數
-    // 預留一個地方處理route.query (若之後需傳遞數字的話 要在這邊轉型)
-    getcoffee(route.query);
-  };
+
   watch(
     // 如果網址變了 (按了新按鈕)  要重新抓資料
     () => route.query, // watch要監視物件裡的值 需要套一層函數 否則它是監視整個物件 而非裡面的值

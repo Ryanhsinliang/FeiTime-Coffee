@@ -76,11 +76,9 @@ export async function cartGoPost(formData: BuyRule) {
   try {
     const res = await api.post('/api/cart', formData);
     return res.data;
-  } catch (err: any) {
-    console.error('API 串接出錯：', err.message);
-    console.error(err.res.error);
-    console.error(err.res.message);
-    console.error(err.res.detail);
+  } catch (e: unknown) {
+    const err = e as Error;
+    console.error('API 串接出錯：', err);
     throw err;
   }
 }

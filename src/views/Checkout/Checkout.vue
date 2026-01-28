@@ -274,8 +274,10 @@
       } else {
         alert('建立交易失敗：' + response.data.returnMessage); // 從物件中抓出錯誤訊息
       }
-    } catch (error: any) {
-      console.error('結帳出錯：', error.response?.data || error.message);
+    } catch (e: unknown) {
+      const err = e as Error;
+      console.error('API 串接出錯：', err);
+      throw err;
     }
   };
 
@@ -381,9 +383,9 @@
           stock: Number(obj.stock),
         };
       });
-    } catch (err: any) {
-      const errorDetail = err.response?.data?.detail || err.message;
-      console.error('API 串接出錯：', errorDetail);
+    } catch (e: unknown) {
+      const err = e as Error;
+      console.error('API 串接出錯：', err);
       throw err;
     }
 

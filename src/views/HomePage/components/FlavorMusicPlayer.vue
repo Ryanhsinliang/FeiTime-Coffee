@@ -834,14 +834,11 @@
                 class="absolute inset-0 bg-cover bg-center"
                 :style="{ backgroundImage: `url('${defaultAlbum}')` }"
               ></div>
-              <div
-                class="absolute inset-0 bg-black/30 flex items-center justify-center"
-              >
+              <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
                 <p class="text-white/70 text-sm">請先選擇風味</p>
               </div>
             </div>
-
-                      </div>
+          </div>
 
           <!-- AI DJ Panel -->
           <div
@@ -914,12 +911,12 @@
               :key="flavor.id"
               @click="selectFlavor(flavor)"
               :class="[
-                'group relative h-28 sm:h-32 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition-[shadow,transform] duration-500 hover:-translate-y-1',
+                'group relative h-28 sm:h-32 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition-[shadow,transform] duration-500 hover:-translate-y-1 isolate',
                 selectedFlavor?.id === flavor.id ? 'ring-2 ring-amber-300/50' : '',
               ]"
             >
               <div
-                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 rounded-xl"
+                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                 :style="{ backgroundImage: `url('${flavor.image}')` }"
               ></div>
               <div

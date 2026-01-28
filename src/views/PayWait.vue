@@ -114,8 +114,9 @@
         } else {
           router.push('/payment-cancel');
         }
-      } catch (error: any) {
-        // console.error('確認失敗：', error.res?.data || error.message);
+      } catch (e: unknown) {
+        const err = e as Error;
+        console.error('API 串接出錯：', err);
         router.push('/payment-cancel');
       }
     } else {
@@ -125,26 +126,6 @@
 </script>
 
 <style scoped>
-  /* Tailwind 3.4 官網 */
-  /* https://v3.tailwindcss.com/ */
-
-  /* Font-awesome */
-  /* https://fontawesome.com/search?ic=free-collection */
-
-  /*
-    先寫不會變動的樣式
-    再用lg: 寫電腦版
-    再用md: 寫平板
-    手機版 不用特別寫
-  */
-
-  /* 
-    在F12 元素丟這段 找回滑鼠
-    const style = document.createElement('style');
-    style.innerHTML = `* { cursor: auto !important; }`;
-    document.head.appendChild(style); 
-  */
-
   :root {
     --main-color: #faf9ee;
     /* 淡黃 */

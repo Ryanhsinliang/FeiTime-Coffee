@@ -213,8 +213,8 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { callSingleProduct, callRecommendations } from '@/services/ProductDetail';
-  import type { ProductRequest } from '@/services/ProductDetail';
+  import { callSingleProduct, callRecommendations } from '@/services/productDetail';
+  import type { ProductRequest } from '@/services/productDetail';
   import { useCartStore } from '@/store/cart';
   import { useAuthStore } from '@/store/auth';
 

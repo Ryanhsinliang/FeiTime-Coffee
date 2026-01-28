@@ -112,6 +112,7 @@
   import bgImage from './assets/img/bgImage.jpg';
   import { useCoffeeResultStore } from '@/store/coffeeResult';
   import { getPersona } from '@/utils/getPersona';
+  import { ApiError } from '@/types/apiError';
 
   const route = useRoute();
   const coffeeResultStore = useCoffeeResultStore();
@@ -148,7 +149,6 @@
       localStorage.removeItem('pending_coffee_save');
       await nextTick();
     } else if (isRetakeMode && coffeeResultStore.hasResult) {
-      // 重新測驗模式：不清除舊結果，只設定狀態讓用戶可以開始新測驗
       isRetaking.value = true;
     } else if (coffeeResultStore.hasResult && !backFromLogin) {
       coffeeResultStore.clearResult();
@@ -183,7 +183,6 @@
   function resetTest() {
     quizData.currentIndex = 0;
     quizData.answers = [];
-    // 不清除結果，只進入重新測驗模式，等新結果出來後才覆蓋
     isRetaking.value = true;
   }
 
@@ -215,12 +214,13 @@
           }
         }
 
-        // 重新測驗完成，關閉重測模式以顯示新結果
         isRetaking.value = false;
         emit('quiz-finished', data.data.scores, validAnswers);
       }
-    } catch (err: any) {
-      console.error('計算分數失敗:', err.message);
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      const errorMessage = error.message || '未知錯誤';
+      console.error('計算分數失敗:', errorMessage);
     }
   }
 

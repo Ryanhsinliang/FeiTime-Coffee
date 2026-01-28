@@ -128,6 +128,7 @@
   import { registerUser, resendConfirmationEmail } from '@/services/register/register';
   import { useUserStore } from '@/store/user';
   import { useAuthStore } from '@/store/auth';
+  import { ApiError } from '@/types/apiError';
 
   const apiError = ref('');
   const userStore = useUserStore();
@@ -202,11 +203,11 @@
       userStore.setPendingEmail(form.email);
       isSubmitted.value = true;
       authStore.setBanner('註冊成功！請檢查電子信箱驗證帳號。', 'success');
-    } catch (err: any) {
+    } catch (err: unknown) {
       let message = '註冊失敗，請稍後再試';
-
-      const status = err.status;
-      const serverMessage = err.message;
+      const error = err as ApiError;
+      const status = error.status;
+      const serverMessage = error.message || '';
 
       if (status === 429) {
         message = '操作過於頻繁，請稍等 15 分鐘後再試。';
@@ -218,7 +219,7 @@
         } else {
           message = serverMessage || '格式錯誤，請檢查輸入內容。';
         }
-      } else if (status >= 500) {
+      } else if (status && status >= 500) {
         message = '伺服器維護中，請稍後再試。';
       } else {
         if (serverMessage.includes('Network Error')) {
@@ -241,9 +242,10 @@
     try {
       await resendConfirmationEmail(targetEmail);
       authStore.setBanner('驗證信已重發，請查看信箱', 'success');
-    } catch (err: any) {
-      const status = err.status;
-      let msg = err.message || '重發失敗，請稍後再試';
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      const status = error.status;
+      let msg = error.message || '重發失敗，請稍後再試';
       if (status === 429) {
         msg = '發送頻率過高，請稍後再試。';
       } else if (status === 404) {

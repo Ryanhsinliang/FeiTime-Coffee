@@ -123,6 +123,7 @@
   import { useAuthStore } from '@/store/auth';
   import { getPersona } from '@/utils/getPersona';
   import router from '@/router';
+  import { ApiError } from '@/types/apiError';
 
   const authStore = useAuthStore();
   const coffeeResultStore = useCoffeeResultStore();
@@ -297,8 +298,10 @@
         normalizedScores: normalizedScores.value,
       });
       showHint('測驗結果已同步至您的個人帳號！');
-    } catch (error: any) {
-      showHint(`儲存失敗: ${error.message}`);
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      const message = error.message || '未知錯誤';
+      showHint(`儲存失敗: ${message}`);
     } finally {
       isSaving.value = false;
       localStorage.removeItem('pending_coffee_save');

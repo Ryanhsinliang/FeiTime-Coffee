@@ -1,5 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
+import { ApiError } from '@/types/apiError';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -18,10 +19,10 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  (error: AxiosError) => {
     const status = error.response?.status;
     const pathname = window.location.pathname;
-    const isLoginPage = pathname.includes('/login');
+    const isLoginPage = ['/login', '/Login'].includes(pathname);
 
     if (status === 401 && !isLoginPage) {
       localStorage.clear();
@@ -30,22 +31,25 @@ api.interceptors.response.use(
       return Promise.reject(new Error('登入逾時，請重新登入'));
     }
 
-    const serverData = error.response?.data?.error;
+    const responseData = error.response?.data as
+      | { error?: string | { message?: string }; message?: string }
+      | undefined;
+    const serverData = responseData?.error;
     let finalMsg = '未知錯誤';
 
     if (typeof serverData === 'string') {
       finalMsg = serverData;
     } else if (serverData && typeof serverData === 'object' && serverData.message) {
       finalMsg = serverData.message;
-    } else if (error.response?.data?.message) {
-      finalMsg = error.response.data.message;
+    } else if (responseData?.message) {
+      finalMsg = responseData.message;
     } else {
       finalMsg = error.message || '連線伺服器失敗';
     }
 
-    const customError = new Error(finalMsg);
-    (customError as any).status = status;
-    (customError as any).originalError = error;
+    const customError = new Error(finalMsg) as Error & ApiError;
+    customError.status = status;
+    customError.originalError = error;
 
     return Promise.reject(customError);
   }

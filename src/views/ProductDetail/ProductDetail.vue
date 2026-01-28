@@ -226,7 +226,6 @@
   } from '@/views/ProductDetail/type';
 
   // 組件狀態與邏輯
-
   const route = useRoute();
   const authStore = useAuthStore();
 
@@ -259,7 +258,6 @@
       currentIndex.value = 0;
       quantity.value = 1;
     } catch (err: unknown) {
-      console.error('❌ API載入失敗', err);
       error.value = '商品載入失敗';
     } finally {
       loading.value = false;
@@ -344,7 +342,7 @@
   // 立即購買：檢驗登入狀態，導向結帳頁
   const router = useRouter();
 
-  // 新增按下【 立即購買 】後會加入購物車 (柔+)
+  // 新增按下【 立即購買 】後會加入購物車
   // 修正：使用 cartStore.addItem() 確保 Pinia 狀態同步更新，購物車畫面會即時顯示
   const buyNow = async () => {
     // 防呆 防使用者在還沒渲染產品時就按

@@ -211,8 +211,8 @@
     try {
       const res = await getAllUsers();
       users.value = res.data || [];
-    } catch (err: any) {
-      error.value = err?.response?.data?.message || err?.message || '取得使用者列表失敗';
+    } catch (err: unknown) {
+      error.value = '取得使用者列表失敗';
     } finally {
       loading.value = false;
     }

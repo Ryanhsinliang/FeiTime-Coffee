@@ -457,9 +457,8 @@
         // 如果沒有出貨時間，預設為當前時間
         setCurrentDateTime();
       }
-    } catch (err: any) {
-      console.error('❌ 載入失敗:', err);
-      error.value = `載入失敗: ${err.response?.data?.message || err.message}`;
+    } catch (err: unknown) {
+      error.value = '商品載入失敗';
     } finally {
       loading.value = false;
     }
@@ -500,9 +499,8 @@
       setTimeout(() => {
         updateMessage.value = '';
       }, 3000);
-    } catch (err: any) {
-      console.error('❌ 更新失敗:', err);
-      updateMessage.value = `更新失敗: ${err.response?.data?.error || err.message}`;
+    } catch (err: unknown) {
+      updateMessage.value = '物流資訊更新失敗';
       updateSuccess.value = false;
       setTimeout(() => {
         updateMessage.value = '';

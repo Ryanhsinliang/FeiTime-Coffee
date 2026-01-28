@@ -223,8 +223,8 @@
       const res = await getCurrentUser();
       me.value = res.data;
       resetForm();
-    } catch (e: any) {
-      error.value = e?.message || e?.response?.data?.message || '載入個人資料失敗';
+    } catch (err: unknown) {
+      error.value = '載入個人資料失敗';
     } finally {
       loading.value = false;
     }
@@ -252,8 +252,8 @@
       setTimeout(() => {
         success.value = false;
       }, 3000);
-    } catch (e: any) {
-      error.value = e?.message || e?.response?.data?.message || '更新失敗';
+    } catch (err: unknown) {
+      error.value = '更新失敗';
     } finally {
       saving.value = false;
     }

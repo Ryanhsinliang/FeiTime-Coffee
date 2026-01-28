@@ -68,7 +68,7 @@
     name: string;
     price: number;
     origin: string;
-    img: any[];
+    img: { formats: { large: { url: string }; medium?: { url: string } } }[];
     popularity: number;
     sweetness: number;
     acidity: number;
@@ -155,9 +155,9 @@
       // 打put更新orders
       try {
         const res = await updateOrder(documentId, buyAfter);
-      } catch (err: any) {
-        const errorDetail = err.response?.data?.detail || err.message;
-        console.error('API 串接出錯：', errorDetail);
+      } catch (e: unknown) {
+        const err = e as Error;
+        console.error('API 串接出錯：', err);
         throw err;
       }
       // 打put更新products
@@ -172,9 +172,9 @@
             stock: Number(obj.stock),
           };
         });
-      } catch (err: any) {
-        const errorDetail = err.response?.data?.detail || err.message;
-        console.error('API 串接出錯：', errorDetail);
+      } catch (e: unknown) {
+        const err = e as Error;
+        console.error('API 串接出錯：', err);
         throw err;
       }
 
@@ -191,9 +191,9 @@
           const doStock = await updateProduct(updateStock[i].documentId, {
             stock: updateStock[i].stock,
           });
-        } catch (err: any) {
-          const errorDetail = err.response?.data?.detail || err.message;
-          console.error('API 串接出錯：', errorDetail);
+        } catch (e: unknown) {
+          const err = e as Error;
+          console.error('API 串接出錯：', err);
           throw err;
         }
       }
@@ -208,18 +208,18 @@
             return obj.user.id == userId;
           }
         });
-      } catch (err: any) {
-        const errorDetail = err.response?.data?.detail || err.message;
-        console.error('API 串接出錯：', errorDetail);
+      } catch (e: unknown) {
+        const err = e as Error;
+        console.error('API 串接出錯：', err);
         throw err;
       }
 
       for (let i = 0; i < idCart.value.length; i++) {
         try {
           const deleteRes = await deleteCart(idCart.value[i].documentId);
-        } catch (err: any) {
-          const errorDetail = err.response?.data?.detail || err.message;
-          console.error('delete串接出錯：', errorDetail);
+        } catch (e: unknown) {
+          const err = e as Error;
+          console.error('API 串接出錯：', err);
           throw err;
         }
       }

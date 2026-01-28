@@ -4,7 +4,7 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useCartStore } from '../store/cart'
+import { useCartStore } from '@/store/cart'
 
 // Mock useAuthStore
 vi.mock('../store/auth', () => ({

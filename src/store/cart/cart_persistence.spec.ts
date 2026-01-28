@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useCartStore } from './cart'
+import { useCartStore } from '@/store/cart'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { nextTick } from 'vue'
 

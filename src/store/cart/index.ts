@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { CartItem, StrapiCartItemData } from '@/types/cart';
+import type { CartItem, StrapiCartItemData } from './types';
 import { useAuthStore } from '@/store/auth';
 import {
   fetchCartRecommendations,

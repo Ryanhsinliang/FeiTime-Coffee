@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-  import CoffeeID from '../../components/CoffeeID.vue';
+  import CoffeeID from '@/components/CoffeeID.vue';
   import { reactive, computed, onMounted, ref, nextTick } from 'vue';
   import { useRoute } from 'vue-router';
   import type { Option, Question, Answer } from './type';

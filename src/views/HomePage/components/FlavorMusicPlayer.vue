@@ -893,7 +893,7 @@
       <div class="relative z-10 w-full p-8 lg:px-10 lg:py-6">
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:items-center">
           <div class="flex flex-col items-start gap-2 min-w-[200px] shrink-0">
-            <h2 class="text-[#171412] text-2xl lg:text-3xl font-bold tracking-tight leading-tight">
+            <h2 class="text-[#171412] text-2xl lg:text-3xl font-bold tracking-tight leading-tight font-notoserif">
               今天我想
               <br />
               選擇的風味是:

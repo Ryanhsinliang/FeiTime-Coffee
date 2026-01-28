@@ -1,7 +1,7 @@
 <template>
-  <div 作用="全域設定" class="font-wenkai text-[#705944] bg-[--main-color]">
+  <div 作用="全域設定" class="font-notoserif text-[#705944] bg-[--main-color]">
     <!-- 【 1 】 標頭 -->
-    <header class="px-[24px] py-[48px]">
+    <header class="px-[24px] md:px-[48px] py-[48px] max-w-[1600px] mx-auto">
       <!-- border-2 border-black -->
       <h2 class="text-[32px] font-bold">精選單品咖啡豆</h2>
       <p class="text-[20px]">
@@ -10,11 +10,11 @@
     </header>
 
     <!-- 2+3的div -->
-    <div class="flex pb-[64px]">
+    <div class="flex pb-[64px] max-w-[1600px] mx-auto px-[24px] md:px-[48px]">
       <!-- 【 2 】 左側篩選選單 -->
       <nav
         :class="have"
-        class="px-[24px] w-[80%] md:w-[25%] lg:w-[25%] my-[24px] absolute md:static lg:static z-[2] bg-[--main-color] shadow-2xl md:shadow-none lg:md:shadow-none"
+        class="pr-[24px] w-[80%] md:w-[20%] lg:w-[18%] my-[24px] absolute md:static lg:static z-[2] bg-[--main-color] shadow-2xl md:shadow-none lg:md:shadow-none"
       >
         <div
           class="px-[8px] py-[4px] my-[12px] bg-[--soft-brown] text-right inline-block text-[20px] rounded-[8px]"
@@ -541,8 +541,59 @@
             </p>
           </div>
         </div>
+        <!-- 產品區 -->
+        <div class="grid mx-[24px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px]">
+          <!-- 產品卡片 -->
+          <router-link
+            v-for="p in product"
+            :key="p.pid"
+            :to="`/product-detail/${p.pid}`"
+            class="group px-[16px] pb-[16px] bg-white rounded-[12px] relative flex flex-col cursor-pointer"
+          >
+            <!-- 產品圖片 -->
+            <div class="relative aspect-[4/3] overflow-hidden bg-[#f5f5f5] mt-[16px] rounded-[12px]">
+              <div
+                class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-out"
+                :style="{ backgroundImage: `url('${p.img[0].formats.large.url}')` }"
+              ></div>
+              <div
+                class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"
+              ></div>
+            </div>
+
+            <!-- 產品資訊 -->
+            <div class="flex flex-col gap-2 items-center text-center my-[16px]">
+              <h3
+                class="text-base font-medium text-text-main tracking-wide group-hover:text-sage transition-colors font-serif"
+              >
+                {{ p.name }}
+              </h3>
+
+              <span
+                v-if="p.flavor_type"
+                :class="getFlavorStyle(p.flavor_type)"
+                class="inline-block px-3 py-1 text-xs font-medium tracking-wider uppercase rounded-full"
+              >
+                {{ getFlavorLabel(p.flavor_type) }}
+              </span>
+
+              <span class="text-lg font-semibold text-text-main">NT$ {{ p.price }}</span>
+            </div>
+
+            <!-- 加入購物車按紐 -->
+            <div
+              class="rounded-full bg-[#222222] inline-block px-[14px] py-[10px] absolute text-white font-bold bottom-[16px] right-[16px] z-10"
+              @click.stop.prevent="addToCart(p)"
+            >
+              <!-- 使用.stop.prevent 讓事件止於【 + 】不要擴散到跳轉 -->
+              <i class="fa-solid fa-plus"></i>
+            </div>
+          </router-link>
+          <!-- 產品卡片結束 -->
+          <div v-show="cannotFind">查無商品，請確認關鍵字</div>
+        </div>
         <!-- 分頁 -->
-        <div v-if="pagination" class="flex justify-center gap-2 mb-[24px]">
+        <div v-if="pagination" class="flex justify-center gap-2 mt-[48px] mx-[24px]">
           <button
             :disabled="pagination.page === 1"
             @click="changePage(pagination.page - 1)"
@@ -563,44 +614,6 @@
             下一頁
           </button>
         </div>
-        <!-- 產品區 -->
-        <div class="grid mx-[24px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[60px]">
-          <!-- 產品卡片 -->
-          <router-link
-            v-for="p in product"
-            :key="p.pid"
-            :to="`/product-detail/${p.pid}`"
-            class="px-[20px] bg-white rounded-[12px] relative"
-          >
-            <img
-              class="aspect-[4/3] object-cover object-center rounded-[12px] mt-[20px]"
-              :src="p.img[0].formats.large.url"
-              :alt="p.name"
-            />
-            <!-- 文字 -->
-            <div class="my-[16px]">
-              <div class="flex">
-                <p>{{ p.origin }}</p>
-                <p>．</p>
-                <p>{{ p.roast }}</p>
-              </div>
-              <p class="text-[20px] font-[600] my-[4px]">{{ p.name }}</p>
-              <p>{{ p.flavor_type }}</p>
-            </div>
-            <!-- 價錢 -->
-            <p class="text-[20px] font-[600] mt-[48px] mb-[16px]">NT$ {{ p.price }}</p>
-            <!-- 加入購物車按紐 -->
-            <div
-              class="rounded-full bg-[#222222] inline-block px-[17px] py-[12px] absolute text-white font-bold bottom-[16px] right-[20px] z-10"
-              @click.stop.prevent="addToCart(p)"
-            >
-              <!-- 使用.stop.prevent 讓事件止於【 + 】不要擴散到跳轉 -->
-              <i class="fa-solid fa-plus"></i>
-            </div>
-          </router-link>
-          <!-- 產品卡片結束 -->
-          <div v-show="cannotFind">查無商品，請確認關鍵字</div>
-        </div>
       </main>
     </div>
     <!-- 2+3的div 結束 -->
@@ -618,6 +631,7 @@
   import type { FilterDataRule } from '@/services/product';
   import { productsGet } from '@/services/checkout';
   import type { LocationQuery } from 'vue-router';
+  import { flavorMap, flavorStyles } from '@/views/HomePage/type';
 
   const cartStore = useCartStore();
 
@@ -801,6 +815,15 @@
       image: product.img[0].formats.large.url,
       stock: product.stock,
     });
+  };
+
+  // 風味相關方法
+  const getFlavorLabel = (flavorType: string): string => {
+    return flavorMap[flavorType] || flavorType;
+  };
+
+  const getFlavorStyle = (flavorType: string): string => {
+    return flavorStyles[flavorType] || 'bg-gray-100 text-gray-700 border border-gray-200';
   };
 
   // 記錄打勾狀態 用於清空

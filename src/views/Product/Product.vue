@@ -14,7 +14,7 @@
       <!-- 【 2 】 左側篩選選單 -->
       <nav
         :class="have"
-        class="pr-[24px] w-[80%] md:w-[20%] lg:w-[18%] my-[24px] absolute md:static lg:static z-[2] bg-[--main-color] shadow-2xl md:shadow-none lg:md:shadow-none"
+        class="pr-[24px] w-[80%] md:w-[20%] lg:w-[18%] my-[24px] absolute md:static lg:static z-[15] bg-[--main-color] shadow-2xl md:shadow-none lg:md:shadow-none"
       >
         <div
           class="px-[8px] py-[4px] my-[12px] bg-[--soft-brown] text-right inline-block text-[20px] rounded-[8px]"
